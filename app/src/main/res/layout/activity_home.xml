@@ -11,20 +11,48 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/space_10dp">
 
-            <com.smarteist.autoimageslider.SliderLayout
-                    android:id="@+id/image_slider"
-                    android:layout_width="0dp"
-                    android:layout_height="180dp"
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/image_slider_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                <com.smarteist.autoimageslider.SliderView
+                        android:id="@+id/image_slider"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:visibility="invisible"
+                        app:sliderAnimationDuration="1000"
+                        app:sliderAutoCycleDirection="back_and_forth"
+                        app:sliderAutoCycleEnabled="true"
+                        app:sliderIndicatorAnimationDuration="1000"
+                        app:sliderIndicatorGravity="center_vertical|end"
+                        app:sliderIndicatorMargin="15dp"
+                        app:sliderIndicatorOrientation="vertical"
+                        app:sliderIndicatorPadding="3dp"
+                        app:sliderIndicatorRadius="2dp"
+                        app:sliderIndicatorSelectedColor="#5A5A5A"
+                        app:sliderIndicatorUnselectedColor="#FFF"
+                        app:sliderScrollTimeInSec="3"
+                        app:sliderStartAutoCycle="true" />
+            </androidx.cardview.widget.CardView>
+
+            <ProgressBar
+                    android:id="@+id/slider_loader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintTop_toTopOf="@id/image_slider_container"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/image_slider_container"/>
 
             <TextView
                     android:id="@+id/tv_rv_title"
                     style="@style/TextButton.Medium"
                     android:text="@string/label_faculties"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/image_slider"
+                    app:layout_constraintTop_toBottomOf="@+id/image_slider_container"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
             <ProgressBar

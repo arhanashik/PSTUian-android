@@ -10,9 +10,11 @@ android {
         minSdkVersion min_sdk
         targetSdkVersion target_sdk
         versionName version_name
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -48,7 +50,10 @@ dependencies {
 
     //room
     implementation "androidx.room:room-runtime:$room"
-    kapt "androidx.room:room-compiler:$room"
+    // To use Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$room")
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room")
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
@@ -68,15 +73,21 @@ dependencies {
 
     //coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
 
     //multiDex
     implementation "androidx.multidex:multidex:$multidex"
 }
 
+//google
+dependencies {
+    implementation("com.google.android.gms:play-services-location:$playServicesLocation")
+}
+
 //3rd party
 dependencies {
     // dependency injection
-    implementation "io.insert-koin:koin-core:$koin"
+    implementation "io.insert-koin:koin-android:$koin"
 
     // circle image
     implementation "com.mikhaellopez:circularimageview:$circularimageview"
@@ -95,6 +106,7 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit"
     implementation "com.squareup.okhttp3:okhttp:$okhttp"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp"
 
     //logger
     implementation "com.jakewharton.timber:timber:$timber"
@@ -112,6 +124,9 @@ dependencies {
 dependencies {
     // Koin(dependency injector) testing
     testImplementation "io.insert-koin:koin-test:$koin"
+
+    // optional - Test helpers
+    testImplementation("androidx.room:room-testing:$room")
 
     testImplementation "junit:junit:$rootProject.junit"
     androidTestImplementation "androidx.test:runner:$rootProject.runner"

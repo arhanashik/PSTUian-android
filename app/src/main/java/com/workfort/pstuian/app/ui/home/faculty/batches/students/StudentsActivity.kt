@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.appconst.AppConst
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.databinding.ActivityStudentsBinding
@@ -48,7 +48,7 @@ class StudentsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mBatch = intent.getParcelableExtra(AppConst.Key.BATCH)
+        mBatch = intent.getParcelableExtra(Const.Key.BATCH)
         if (mBatch == null) finish()
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_students)

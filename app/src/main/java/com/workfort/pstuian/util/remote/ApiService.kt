@@ -1,5 +1,6 @@
 package com.workfort.pstuian.util.remote
 
+import com.workfort.pstuian.app.data.local.slider.SliderEntity
 import com.workfort.pstuian.app.data.remote.*
 import io.reactivex.Observable
 import retrofit2.http.*

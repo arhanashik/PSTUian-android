@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.appconst.AppConst
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.databinding.FragmentBatchesBinding
@@ -62,7 +62,7 @@ class BatchesFragment : Fragment() {
         mAdapter.setListener(object: BatchClickEvent {
             override fun onClickBatch(batch: BatchEntity) {
                 val intent = Intent(context, StudentsActivity::class.java)
-                intent.putExtra(AppConst.Key.BATCH, batch)
+                intent.putExtra(Const.Key.BATCH, batch)
                 startActivity(intent)
             }
         })

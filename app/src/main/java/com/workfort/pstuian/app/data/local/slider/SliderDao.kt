@@ -13,7 +13,7 @@ interface SliderDao {
 
     @Query("SELECT * FROM " + TableNames.SLIDER
             + " ORDER BY " + ColumnNames.Slider.ID + " ASC")
-    fun getAll(): List<SliderEntity>
+    suspend fun getAll(): List<SliderEntity>
 
     @Query("SELECT * FROM " + TableNames.SLIDER
             + " WHERE " + ColumnNames.Slider.ID + "=:id LIMIT 1")
@@ -23,7 +23,7 @@ interface SliderDao {
     fun insert(slider: SliderEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(sliders: List<SliderEntity>)
+    suspend fun insertAll(sliders: List<SliderEntity>)
 
     @Update
     fun update(slider: SliderEntity)

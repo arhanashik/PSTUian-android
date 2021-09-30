@@ -2,16 +2,13 @@ package com.workfort.pstuian.app.ui.home.faculty.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.databinding.RowFacultyBinding
 import com.workfort.pstuian.app.ui.home.faculty.holder.FacultyViewHolder
 import com.workfort.pstuian.app.ui.home.faculty.listener.FacultyClickEvent
+import com.workfort.pstuian.databinding.RowFacultyBinding
 
 class FacultyAdapter : RecyclerView.Adapter<FacultyViewHolder>() {
-
     private val faculties : MutableList<FacultyEntity> = ArrayList()
     private var listener: FacultyClickEvent? = null
 
@@ -31,20 +28,16 @@ class FacultyAdapter : RecyclerView.Adapter<FacultyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FacultyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil.inflate(inflater, R.layout.row_faculty, parent, false)
-                as RowFacultyBinding
+        val binding = RowFacultyBinding.inflate(inflater, parent, false)
         return FacultyViewHolder(binding)
     }
 
-    // Binds each animal in the ArrayList to a view
     override fun onBindViewHolder(holder: FacultyViewHolder, position: Int) {
         val faculty = faculties[position]
 
         holder.bind(faculty)
-        holder.binding.root.setOnClickListener { view ->
-            run {
-                if(listener != null) listener?.onClickFaculty(faculty)
-            }
+        holder.binding.root.setOnClickListener {
+            listener?.onClickFaculty(faculty)
         }
     }
 }

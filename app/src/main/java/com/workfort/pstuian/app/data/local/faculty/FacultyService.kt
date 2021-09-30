@@ -3,35 +3,19 @@ package com.workfort.pstuian.app.data.local.faculty
 import androidx.lifecycle.LiveData
 
 class FacultyService(private val facultyDao: FacultyDao) {
-    fun getAllLive(): LiveData<List<FacultyEntity>> {
-        return facultyDao.getAllLive()
-    }
+    fun getAllLive(): LiveData<List<FacultyEntity>> = facultyDao.getAllLive()
 
-    fun getAll(): List<FacultyEntity> {
-        return facultyDao.getAll()
-    }
+    suspend fun getAll(): List<FacultyEntity> = facultyDao.getAll()
 
-    fun get(shortTitle: String) : FacultyEntity{
-        return facultyDao.get(shortTitle)
-    }
+    fun get(shortTitle: String) : FacultyEntity = facultyDao.get(shortTitle)
 
-    fun insert(facultyEntity: FacultyEntity) {
-        facultyDao.insert(facultyEntity)
-    }
+    fun insert(facultyEntity: FacultyEntity) = facultyDao.insert(facultyEntity)
 
-    fun insertAll(facultyEntities: List<FacultyEntity>) {
-        facultyDao.insertAll(facultyEntities)
-    }
+    suspend fun insertAll(facultyEntities: List<FacultyEntity>) = facultyDao.insertAll(facultyEntities)
 
-    fun update(facultyEntity: FacultyEntity) {
-        facultyDao.update(facultyEntity)
-    }
+    fun update(facultyEntity: FacultyEntity) = facultyDao.update(facultyEntity)
 
-    fun delete(facultyEntity: FacultyEntity) {
-        facultyDao.delete(facultyEntity)
-    }
+    fun delete(facultyEntity: FacultyEntity) = facultyDao.delete(facultyEntity)
 
-    fun deleteAll() {
-        facultyDao.deleteAll()
-    }
+    fun deleteAll() = facultyDao.deleteAll()
 }

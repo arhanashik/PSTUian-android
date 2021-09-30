@@ -72,7 +72,7 @@
                     android:value=".app.ui.home.HomeActivity"/>
         </activity>
         <activity
-                android:name=".app.ui.home.donors.DonorsActivity"
+                android:name=".app.ui.donors.DonorsActivity"
                 android:label="@string/title_activity_donors"
                 android:parentActivityName=".app.ui.home.HomeActivity"
                 android:theme="@style/AppTheme">

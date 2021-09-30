@@ -13,7 +13,7 @@ interface FacultyDao {
 
     @Query("SELECT * FROM " + TableNames.FACULTY
             + " ORDER BY " + ColumnNames.Faculty.TITLE + " ASC")
-    fun getAll(): List<FacultyEntity>
+    suspend fun getAll(): List<FacultyEntity>
 
     @Query("SELECT * FROM " + TableNames.FACULTY
             + " WHERE " + ColumnNames.Faculty.SHORT_TITLE + " = :shortTitle LIMIT 1")
@@ -23,7 +23,7 @@ interface FacultyDao {
     fun insert(facultyEntity: FacultyEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(facultyEntities: List<FacultyEntity>)
+    suspend fun insertAll(facultyEntities: List<FacultyEntity>)
 
     @Update
     fun update(facultyEntity: FacultyEntity)

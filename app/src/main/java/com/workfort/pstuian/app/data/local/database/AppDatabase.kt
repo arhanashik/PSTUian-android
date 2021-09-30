@@ -20,7 +20,8 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherDao
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 
-@Database(entities = [SliderEntity::class,
+@Database(entities = [
+    SliderEntity::class,
     FacultyEntity::class,
     StudentEntity::class,
     TeacherEntity::class,
@@ -30,18 +31,15 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
-        private var INSTANCE: AppDatabase? = null
+        private lateinit var INSTANCE: AppDatabase
 
-        fun getDatabase(): AppDatabase? {
-            if (INSTANCE == null) {
+        fun getDatabase(): AppDatabase {
+            if (!::INSTANCE.isInitialized) {
                 synchronized(AppDatabase::class.java) {
-                    if (INSTANCE == null) {
-                        INSTANCE = Room.databaseBuilder(
-                            PstuianApp.getBaseApplicationContext(),
-                            AppDatabase::class.java,
-                            PstuianApp.getBaseApplicationContext().getString(R.string.db_name)
-                        ).build()
-                    }
+                    val context = PstuianApp.getBaseApplicationContext()
+                    INSTANCE = Room.databaseBuilder(
+                        context, AppDatabase::class.java, context.getString(R.string.db_name)
+                    ).build()
                 }
             }
 

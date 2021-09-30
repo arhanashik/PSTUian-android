@@ -8,7 +8,6 @@ class FacultyViewHolder (val binding: RowFacultyBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(faculty: FacultyEntity) {
-        //val title = (adapterPosition + 1).toString() + ". " + faculty.title
         binding.tvTitle.text = faculty.title
     }
 }
