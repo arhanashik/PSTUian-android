@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_donation_request"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:strokeColor="@color/colorAccent"
+            app:strokeWidth="1dp">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <TextView
+                    style="@style/TextViewInformation"
+                    android:layout_marginStart="@dimen/space_10dp"
+                    android:layout_marginTop="@dimen/space_10dp"
+                    android:layout_marginEnd="@dimen/space_10dp"
+                    android:text="@string/donation_request_message"
+                    android:textStyle="normal"/>
+
+            <TextView
+                    android:id="@+id/btn_donate"
+                    style="@style/TextButton.Medium"
+                    android:layout_gravity="center"
+                    android:text="@string/label_send_donate"
+                    android:textAllCaps="true" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

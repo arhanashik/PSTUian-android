@@ -1,0 +1,135 @@
+<resources>
+    <string name="app_name">PSTUian</string>
+    <string name="db_name">pstuian_db</string>
+
+    <string name="title_activity_students">Students</string>
+    <string name="title_activity_settings">PSTUian</string>
+    <string name="title_activity_donors">Donors</string>
+
+    <string name="hint_search">Search hint</string>
+    <string name="hint_search_teacher">Search teacher</string>
+    <string name="hint_search_student">Search student</string>
+    <string name="hint_search_batch">Search batch</string>
+    <string name="hint_search_employee">Search employee</string>
+    <string name="hint_search_course_schedule">Search course schedule</string>
+    <string name="hint_name">Please insert your name</string>
+    <string name="hint_info">Please insert who you are</string>
+    <string name="hint_email">Please insert your email</string>
+    <string name="hint_reference">Please insert TrxID / TxnId</string>
+    <string name="hint_save_donation">After sending donation</string>
+    <string name="hint_search_donors">Search donors</string>
+
+    <string name="label_faculties">Faculties</string>
+    <string name="label_course_schedule">Course Schedule</string>
+    <string name="label_grading_system">Grading System</string>
+    <string name="label_marks_distribution">Marks Distribution</string>
+    <string name="label_view">View</string>
+    <string name="label_whats_is">What\'s it</string>
+    <string name="label_search">Search</string>
+    <string name="label_fb_link">Facebook</string>
+    <string name="label_linked_in">LinkedIn</string>
+    <string name="label_teacher">Teacher</string>
+    <string name="label_batch">Batch</string>
+    <string name="label_employee">Employee</string>
+    <string name="label_other">Other</string>
+    <string name="label_credit_hour">Credit hour</string>
+    <string name="label_information_corner">Information Corner</string>
+    <string name="label_university_website">Website of PSTU</string>
+    <string name="label_admission_seat_plan">Admission Seat Plan</string>
+    <string name="label_admission_help">Admission Help</string>
+    <string name="label_send_donate">Send Donation</string>
+    <string name="label_rate_our">Rate app</string>
+    <string name="label_clear_data">Clear data</string>
+    <string name="label_donation_list">
+        Noble peoples who helped us with donation
+    </string>
+    <string name="label_are_you_sure">Are you sure?</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_save_donation">Save donation</string>
+    <string name="label_be_the_first_donor">Be the first donor</string>
+    <string name="label_call_us">Call us</string>
+    <string name="label_feedback">Send Feedback</string>
+
+    <string name="description_app_logo" translatable="false">App logo</string>
+    <string name="description_ic_call" translatable="false">Icon call</string>
+    <string name="description_ic_email" translatable="false">Email Icon</string>
+    <string name="description_img_profile" translatable="false">Profile Image</string>
+
+    <string name="no_data_found_exception">Ops, No data found</string>
+    <string name="internet_not_available_exception">Internet not available</string>
+    <string name="required_field_missing_exception">All fields are required</string>
+
+    <string name="link_pstu_website" translatable="false">http://www.pstu.ac.bd/</string>
+    <string name="link_pstu_seat_plan" translatable="false">
+        https://play.google.com/store/apps/details?id=com.pstu.admissiontest
+    </string>
+    <string name="link_pstu_help_line" translatable="false">
+        https://play.google.com/store/apps/details?id=com.pstuhelpline.rickyislam.myapplication
+    </string>
+
+    <string name="install_google_play_store" translatable="false">Please install google play store and then try again.</string>
+    <string name="url_market_details" translatable="false">market://details?id=</string>
+    <string name="url_playstore_app" translatable="false">https://play.google.com/store/apps/details?id=</string>
+    <string name="url_market_search_app" translatable="false">market://search?q=pub:</string>
+    <string name="url_playstore_search_app" translatable="false">http://play.google.com/store/search?q=pub:</string>
+    <string name="app_link" translatable="false">https://play.google.com/store/apps/details?id=</string>
+
+    <string name="text_please_rate">Please help us to improve the app with your rating and valuable feedback</string>
+    <string name="text_rate_app">Rate App</string>
+    <string name="text_check_for_update">Check for update</string>
+    <string name="text_similar_app">More app</string>
+
+    <string name="about_it">
+        <b>PSTUian</b> is a small tribute to our beloved university. It\'s an step to connect every teacher,
+        students, employees and everything else in a single place.
+    </string>
+
+    <string name="data_load_policy">
+        All data are sync from our remote server.
+        So, for getting the data of any options(like faculty, student list etc) you will need to load with a live
+        internet connection for the first time. After that you can access everything without internet.
+    </string>
+
+    <string name="donation_request_message">
+        <u>PLEASE DONATE</u>\nOur dev team work without hoping any benefit. But, we still need some maintenance(like server) cost.
+        Your small donation can help us a lot for continuing our development. Show us your noble heart.
+        Thanks a lot in advance.\n
+        আমাদের Dev Team সম্পূর্ণ অলাভজনক ভাবে ভার্সিটির বিভিন্ন অ্যাপের জন্য কাজ করে আসছে। তবুও বিভন্ন সময় maintaince
+        এর জন্য(যেমন server, playstore accouct) খরচের প্রয়োজন হয়। আপনার মহৎ হৃদয় আর সামন্য পরিমাণ ডোনেশন আমাদের অনেক দূর নিয়ে যাবে।
+        আপনার ডোনেশনের জন্য আন্তরিক ভাবে ধন্যবাদ জানাই।
+    </string>
+
+     <string name="data_clear_message">
+         All data will be deleted. You\'ll need internet connection for reloading.
+     </string>
+
+    <string name="grading_system">
+        Numerical Grade  :  Letter Grade  :  Grade Point
+        \n\n80% and Above  :  A+            :  4.00
+        \n75% - 79%      :  A             :  3.75
+        \n70% - 74%      :  A-            :  3.50
+        \n65% - 69%      :  B+            :  3.25
+        \n60% - 64%      :  B             :  3.00
+        \n55% - 59%      :  B-            :  2.75
+        \n50% - 54%      :  C+            :  2.50
+        \n45% - 49%      :  C             :  2.25
+        \n40% - 44%      :  D             :  2.00
+        \nLess than 40%  :  F             :  0.00
+    </string>
+
+    <string name="donation_information_message">
+        Send donation via\n\n
+        bKash: 123456789\n
+        Rocket: 123456789
+    </string>
+    <string name="saving_donation_message">Saving donation. Please wait…</string>
+
+    <string name="dev_team">
+        DEVELOPED BY\n\n
+        WORK FORT\n
+        Where Innovation Meets Passion
+    </string>
+    <string name="dev_team_phone">+8801792200456</string>
+    <string name="dev_team_email">workfort.bd@gmail.com</string>
+    <string name="label_got_it">Got it</string>
+</resources>

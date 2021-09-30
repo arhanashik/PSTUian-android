@@ -1,0 +1,103 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion target_sdk
+    defaultConfig {
+        applicationId 'com.workfort.pstuian'
+        minSdkVersion min_sdk
+        targetSdkVersion target_sdk
+        versionName version_name
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$rootProject.appcompat"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraint"
+    // reading and writing Exif tags in a JPEG file or a RAW image file
+    implementation "androidx.exifinterface:exifinterface:$rootProject.exifinterface"
+    //instead of support v4
+    implementation "androidx.legacy:legacy-support-v4:$rootProject.support"
+    //instead of support design
+    implementation "com.google.android.material:material:$rootProject.material"
+
+    //room
+    implementation "androidx.room:room-runtime:$rootProject.room"
+    kapt "androidx.room:room-compiler:$rootProject.room"
+
+    // liveData + viewModel
+    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.lifecycle"
+    kapt "androidx.lifecycle:lifecycle-compiler:$rootProject.lifecycle"
+
+    //recycler + card
+    implementation "androidx.cardview:cardview:$rootProject.support"
+    implementation "androidx.recyclerview:recyclerview:$rootProject.support"
+
+    //kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //multiDex
+    implementation "androidx.multidex:multidex:$rootProject.multidex"
+}
+
+//3rd party
+dependencies {
+    // circle image
+    implementation "com.mikhaellopez:circularimageview:$rootProject.circularimageview"
+
+    //image loader
+    implementation "com.github.bumptech.glide:glide:$rootProject.glide"
+
+    //rx
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroid"
+    implementation "io.reactivex.rxjava2:rxkotlin:$rootProject.rxkotlin"
+
+    //networking lib
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofit"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofit"
+    implementation "com.squareup.okhttp3:okhttp:$rootProject.retrofit"
+
+    //logger
+    implementation "com.jakewharton.timber:timber:$rootProject.timber"
+
+    //animation on text
+    implementation "com.hanks:htextview-base:$htextview_version"
+    //available: line, fade, rainbow, typer, scale, evaporate, fall
+    implementation "com.hanks:htextview-line:$htextview_version"
+
+    //image slider
+    implementation "com.github.smarteist:autoimageslider:$autoimageslider"
+}
+
+//testing libs
+dependencies {
+    testImplementation "junit:junit:$rootProject.junit"
+    androidTestImplementation "androidx.test:runner:$rootProject.runner"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espresso"
+}

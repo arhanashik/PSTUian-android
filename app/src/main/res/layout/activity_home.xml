@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/space_10dp">
+
+            <com.smarteist.autoimageslider.SliderLayout
+                    android:id="@+id/image_slider"
+                    android:layout_width="0dp"
+                    android:layout_height="180dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                    android:id="@+id/tv_rv_title"
+                    style="@style/TextButton.Medium"
+                    android:text="@string/label_faculties"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/image_slider"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <ProgressBar
+                    android:id="@+id/loader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_rv_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                    android:id="@+id/tv_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_data_found_exception"
+                    android:textAppearance="@android:style/TextAppearance.Medium"
+                    android:visibility="invisible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_rv_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_faculties"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/space_5dp"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/row_faculty"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_rv_title"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                    android:id="@+id/tv_information_title"
+                    style="@style/TextButton.Medium"
+                    android:text="@string/label_information_corner"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_faculties"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_university_website"
+                    style="@style/MaterialCardView"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_information_title">
+
+                <TextView
+                        android:id="@+id/tv_university_website"
+                        style="@style/TextViewInformation"
+                        android:text="@string/label_university_website"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_donation_list"
+                    style="@style/MaterialCardView"
+                    app:strokeColor="@color/colorAccent"
+                    app:layout_constraintTop_toBottomOf="@+id/card_university_website">
+
+                <TextView
+                        android:id="@+id/tv_donation_list"
+                        style="@style/TextViewInformation"
+                        android:text="@string/label_donation_list"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_grading_system"
+                    style="@style/MaterialCardView"
+                    app:layout_constraintTop_toBottomOf="@+id/card_donation_list">
+
+                <TextView
+                        android:id="@+id/tv_grading_system"
+                        style="@style/TextViewInformation"
+                        android:text="@string/label_grading_system"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_admission_seat_plan"
+                    style="@style/MaterialCardView"
+                    app:layout_constraintTop_toBottomOf="@+id/card_grading_system">
+
+                <TextView
+                        android:id="@+id/tv_admission_seat_plan"
+                        style="@style/TextViewInformation"
+                        android:text="@string/label_admission_seat_plan"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_admission_help"
+                    style="@style/MaterialCardView"
+                    app:layout_constraintTop_toBottomOf="@+id/card_admission_seat_plan">
+
+                <TextView
+                        android:id="@+id/tv_admission_help"
+                        style="@style/TextViewInformation"
+                        android:text="@string/label_admission_help"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_options"
+                    style="@style/MaterialCardView"
+                    app:layout_constraintTop_toBottomOf="@+id/card_admission_help">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/btn_donate"
+                        style="@style/TextButton.Small"
+                        android:text="@string/label_send_donate"/>
+
+                    <TextView
+                            android:id="@+id/btn_rate_app"
+                            style="@style/TextButton.Small"
+                            android:text="@string/label_rate_our" />
+
+                    <TextView
+                            android:id="@+id/btn_clear_data"
+                            style="@style/TextButton.Small"
+                            android:text="@string/label_clear_data" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>
