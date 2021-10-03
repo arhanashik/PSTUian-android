@@ -12,20 +12,20 @@ interface StudentDao {
     fun getAllLive(): LiveData<List<StudentEntity>>
 
     @Query("SELECT * FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.FACULTY + "=:faculty"
-            + " AND " + ColumnNames.Student.BATCH + "=:batch"
+            + " WHERE " + ColumnNames.Student.FACULTY_ID + "=:faculty"
+            + " AND " + ColumnNames.Student.BATCH_ID + "=:batch"
             + " ORDER BY " + ColumnNames.Student.ID + " ASC")
     fun getAllLive(faculty: String, batch: String): LiveData<List<StudentEntity>>
 
     @Query("SELECT * FROM " + TableNames.STUDENT
             + " ORDER BY " + ColumnNames.Student.ID + " ASC")
-    fun getAll(): List<StudentEntity>
+    suspend fun getAll(): List<StudentEntity>
 
     @Query("SELECT * FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.FACULTY + "=:faculty"
-            + " AND " + ColumnNames.Student.BATCH + "=:batch"
+            + " WHERE " + ColumnNames.Student.FACULTY_ID + "=:facultyId"
+            + " AND " + ColumnNames.Student.BATCH_ID + "=:batchId"
             + " ORDER BY " + ColumnNames.Student.ID + " ASC")
-    fun getAll(faculty: String, batch: String): List<StudentEntity>
+    suspend fun getAll(facultyId: Int, batchId: Int): List<StudentEntity>
 
     @Query("SELECT * FROM " + TableNames.STUDENT
             + " WHERE " + ColumnNames.Student.ID + " = :id LIMIT 1")
@@ -35,7 +35,7 @@ interface StudentDao {
     fun insert(studentEntity: StudentEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(studentEntities: List<StudentEntity>)
+    suspend fun insertAll(entities: List<StudentEntity>)
 
     @Update
     fun update(studentEntity: StudentEntity)
@@ -44,14 +44,14 @@ interface StudentDao {
     fun delete(studentEntity: StudentEntity)
 
     @Query("DELETE FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.FACULTY + "=:faculty")
+            + " WHERE " + ColumnNames.Student.FACULTY_ID + "=:faculty")
     fun deleteAll(faculty: String)
 
     @Query("DELETE FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.FACULTY + "=:faculty"
-            + " AND " + ColumnNames.Student.BATCH + "=:batch")
-    fun deleteAll(faculty: String, batch: String)
+            + " WHERE " + ColumnNames.Student.FACULTY_ID + "=:faculty"
+            + " AND " + ColumnNames.Student.BATCH_ID + "=:batch")
+    suspend fun deleteAll(faculty: String, batch: String)
 
     @Query("DELETE FROM " + TableNames.STUDENT)
-    fun deleteAll()
+    suspend fun deleteAll()
 }

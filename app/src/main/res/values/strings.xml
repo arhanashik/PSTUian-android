@@ -2,6 +2,10 @@
     <string name="app_name">PSTUian</string>
     <string name="db_name">pstuian_db</string>
 
+    <string name="search_suggestion_provider_authority" translatable="false">
+        com.workfort.pstuian.BaseSuggestionProvider
+    </string>
+
     <string name="title_activity_students">Students</string>
     <string name="title_activity_settings">PSTUian</string>
     <string name="title_activity_donors">Donors</string>
@@ -24,7 +28,7 @@
     <string name="label_grading_system">Grading System</string>
     <string name="label_marks_distribution">Marks Distribution</string>
     <string name="label_view">View</string>
-    <string name="label_whats_is">What\'s it</string>
+    <string name="label_whats_it">What\'s it</string>
     <string name="label_search">Search</string>
     <string name="label_fb_link">Facebook</string>
     <string name="label_linked_in">LinkedIn</string>
@@ -37,11 +41,11 @@
     <string name="label_university_website">Website of PSTU</string>
     <string name="label_admission_seat_plan">Admission Seat Plan</string>
     <string name="label_admission_help">Admission Help</string>
-    <string name="label_send_donate">Send Donation</string>
+    <string name="txt_donate">Donate</string>
     <string name="label_rate_our">Rate app</string>
     <string name="label_clear_data">Clear data</string>
     <string name="label_donation_list">
-        Noble peoples who helped us with donation
+        Noble peoples who donated
     </string>
     <string name="label_are_you_sure">Are you sure?</string>
     <string name="label_cancel">Cancel</string>
@@ -100,7 +104,7 @@
     </string>
 
      <string name="data_clear_message">
-         All data will be deleted. You\'ll need internet connection for reloading.
+         All data will be deleted. You\'ll need data connection for reloading. The app will restart after the process.
      </string>
 
     <string name="grading_system">
@@ -132,4 +136,16 @@
     <string name="dev_team_phone">+8801792200456</string>
     <string name="dev_team_email">workfort.bd@gmail.com</string>
     <string name="label_got_it">Got it</string>
+    <string name="title_home">Welcome, Dear PSTUian</string>
+    <string name="label_options">Options</string>
+    <string name="txt_need_help">Need Help?</string>
+    <string name="txt_start_typing">Start Typing</string>
+    <string name="txt_session">Session</string>
+    <string name="txt_total_students">Total Students</string>
+    <string name="txt_designation">Designation</string>
+    <string name="txt_department">Department</string>
+    <string name="txt_credit">Credit</string>
+    <string name="txt_id">ID</string>
+    <string name="txt_registration_number">Reg</string>
+    <string name="txt_blood_group">Blood Group</string>
 </resources>

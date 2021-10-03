@@ -6,15 +6,17 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:tabMode="scrollable"
-            app:tabPaddingStart="@dimen/space_16dp"
-            app:tabPaddingEnd="@dimen/space_16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+                android:id="@+id/tabs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:tabMode="scrollable"
+                app:tabPaddingStart="@dimen/space_16dp"
+                app:tabPaddingEnd="@dimen/space_16dp"
+                app:tabIndicatorColor="@android:color/black"
+                app:tabSelectedTextColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"

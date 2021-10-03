@@ -8,7 +8,6 @@ import com.workfort.pstuian.app.data.repository.DonationRepository
 import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
 import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.app.ui.donors.viewstate.DonorsState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +32,6 @@ import timber.log.Timber
  *  ****************************************************************************
  */
 
-@ExperimentalCoroutinesApi
 class DonorsViewModel(
     private val donationRepo: DonationRepository
 ) : ViewModel() {

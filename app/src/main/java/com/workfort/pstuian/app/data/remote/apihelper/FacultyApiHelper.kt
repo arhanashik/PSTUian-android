@@ -1,13 +1,15 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
+import com.workfort.pstuian.app.data.local.batch.BatchEntity
+import com.workfort.pstuian.app.data.local.course.CourseEntity
+import com.workfort.pstuian.app.data.local.employee.EmployeeEntity
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.slider.SliderEntity
-import com.workfort.pstuian.util.remote.FacultyApiService
-import com.workfort.pstuian.util.remote.SliderApiService
+import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 
 /**
  *  ****************************************************************************
- *  * Created by : arhan on 01 Oct, 2021 at 12:58 AM.
+ *  * Created by : arhan on 02 Oct, 2021 at 5:10 AM.
  *  * Email : ashik.pstu.cse@gmail.com
  *  *
  *  * This class is for:
@@ -15,16 +17,17 @@ import com.workfort.pstuian.util.remote.SliderApiService
  *  * 2.
  *  * 3.
  *  *
- *  * Last edited by : arhan on 10/1/21.
+ *  * Last edited by : arhan on 10/2/21.
  *  *
  *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
-class FacultyApiHelper(private val service: FacultyApiService) : ApiHelper<FacultyEntity> {
-    override suspend fun getAll(): List<FacultyEntity> {
-        val response = service.getFaculties()
-        if(!response.success) throw Exception(response.message)
 
-        return response.data?: emptyList()
-    }
+interface FacultyApiHelper {
+    suspend fun getFaculties(): List<FacultyEntity>
+    suspend fun getBatches(facultyId: Int): List<BatchEntity>
+    suspend fun getStudents(facultyId: Int, batchId: Int): List<StudentEntity>
+    suspend fun getTeachers(facultyId: Int): List<TeacherEntity>
+    suspend fun getCourses(facultyId: Int): List<CourseEntity>
+    suspend fun getEmployees(facultyId: Int): List<EmployeeEntity>
 }

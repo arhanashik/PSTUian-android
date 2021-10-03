@@ -3,50 +3,47 @@ package com.workfort.pstuian.app.ui.settings
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
-import android.text.TextUtils
-import android.widget.Toast
+import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.pref.Prefs
+import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
+import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.databinding.ActivitySettingsBinding
 import com.workfort.pstuian.databinding.PromptDonateBinding
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.NetworkUtil
-import com.workfort.pstuian.util.remote.ApiClient
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
+import com.workfort.pstuian.util.helper.Toaster
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity: BaseActivity<ActivitySettingsBinding>() {
+    override val bindingInflater: (LayoutInflater) -> ActivitySettingsBinding
+            = ActivitySettingsBinding::inflate
 
-    private lateinit var mBinding: ActivitySettingsBinding
+    private val mViewModel: DonorsViewModel by viewModel()
 
-    private var disposable = CompositeDisposable()
-    private val apiService by lazy {
-        ApiClient.create()
-    }
+    override fun afterOnCreate(savedInstanceState: Bundle?) {
+        observeDonation()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_settings)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        mBinding.btnDonate.setOnClickListener { showDonationOption() }
-        mBinding.btnCallDev.setOnClickListener {
-            LinkUtil(this).callTo(getString(R.string.dev_team_phone))
+        val linkUtil = LinkUtil(this@SettingsActivity)
+        with(binding) {
+            btnDonate.setOnClickListener { showDonationOption() }
+            btnCallDev.setOnClickListener {
+                linkUtil.callTo(getString(R.string.dev_team_phone))
+            }
+            btnFeedback.setOnClickListener {
+                linkUtil.sendEmail(getString(R.string.dev_team_email))
+            }
         }
-        mBinding.btnFeedback.setOnClickListener {
-            LinkUtil(this).sendEmail(getString(R.string.dev_team_email))
-        }
+        binding.btnDonate.setOnClickListener { showDonationOption() }
     }
 
     private fun showDonationOption() {
-        val donationView = DataBindingUtil.inflate<PromptDonateBinding>(
-            layoutInflater, R.layout.prompt_donate, null, false)
+        val donationView = PromptDonateBinding.inflate(layoutInflater,null, false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             donationView.tvDonationInfo.text = Html.fromHtml(Prefs.donateOption,
@@ -55,7 +52,7 @@ class SettingsActivity : AppCompatActivity() {
             donationView.tvDonationInfo.text = Html.fromHtml(Prefs.donateOption)
         }
 
-        val alertDialog = AlertDialog.Builder(this)
+        donationDialog = AlertDialog.Builder(this)
             .setView(donationView.root)
             .create()
 
@@ -66,49 +63,35 @@ class SettingsActivity : AppCompatActivity() {
                 val email = donationView.donationEmail.text.toString()
                 val reference = donationView.donationReference.text.toString()
 
-                saveDonation(name, info, email, reference, alertDialog)
+                mViewModel.saveDonation(name, info, email, reference)
             }else {
-               showToast(getString(R.string.internet_not_available_exception))
+                Toaster.show(getString(R.string.internet_not_available_exception))
             }
         }
 
-        alertDialog.show()
+        donationDialog?.show()
     }
 
-    private fun saveDonation(name: String, info: String, email: String, reference: String,
-                             dialog: AlertDialog) {
-        if(TextUtils.isEmpty(name) || TextUtils.isEmpty(info) || TextUtils.isEmpty(email)
-            || TextUtils.isEmpty(reference)) {
-            showToast(getString(R.string.required_field_missing_exception))
-            return
-        }else {
-            showToast(getString(R.string.saving_donation_message))
-        }
-
-        disposable.add(
-            apiService.saveDonation(name, info, email, reference)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    dialog.dismiss()
-                    showToast(it.message)
-                    if (it.success) {
-                        Prefs.donationId = it.donationId
+    private var donationDialog: AlertDialog? = null
+    private fun observeDonation() {
+        lifecycleScope.launch {
+            mViewModel.donationState.collect {
+                when (it) {
+                    is DonationState.Idle -> {
                     }
-                }, {
-                    Timber.e(it)
-                    dialog.dismiss()
-                    showToast(it.message.toString())
-                })
-        )
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDestroy() {
-        disposable.dispose()
-        super.onDestroy()
+                    is DonationState.Loading -> {
+                        Toaster.show(getString(R.string.saving_donation_message))
+                    }
+                    is DonationState.Success -> {
+                        donationDialog?.dismiss()
+                        Toaster.show(it.message)
+                    }
+                    is DonationState.Error -> {
+                        donationDialog?.dismiss()
+                        Toaster.show(it.error?: "Donation failed!")
+                    }
+                }
+            }
+        }
     }
 }

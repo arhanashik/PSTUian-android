@@ -4,42 +4,59 @@
 
     <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="96dp"
             android:layout_marginStart="@dimen/space_16dp"
-            android:layout_marginTop="@dimen/space_5dp"
+            android:layout_marginTop="@dimen/space_10dp"
             android:layout_marginEnd="@dimen/space_16dp"
-            android:layout_marginBottom="@dimen/space_5dp"
-            app:strokeColor="@color/colorPrimary"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/space_10dp"
+            app:cardElevation="@dimen/space_5dp"
+            app:cardCornerRadius="@dimen/space_8dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <FrameLayout
+                android:id="@+id/container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient10">
 
-            <TextView
-                    android:id="@+id/tv_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    tools:text="Name"
-                    android:singleLine="true"
-                    android:textAppearance="@android:style/TextAppearance.Medium"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/space_16dp">
 
-            <TextView
-                    android:id="@+id/tv_info"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    tools:text="Student"
-                    android:singleLine="true"
-                    android:textAppearance="@android:style/TextAppearance.Small"
-                    app:layout_constraintStart_toStartOf="@+id/tv_name"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_name"
-                    app:layout_constraintEnd_toEndOf="@+id/tv_name"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        tools:text="Name"
+                        android:singleLine="true"
+                        android:textAppearance="@android:style/TextAppearance.Medium"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                        android:id="@+id/tv_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/space_5dp"
+                        tools:text="Student"
+                        android:singleLine="true"
+                        android:textAppearance="@android:style/TextAppearance.Small"
+                        android:textColor="@android:color/black"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_name"/>
+
+                <ImageView
+                        android:id="@+id/ic_donor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/ic_account_heart_outline"
+                        app:tint="@android:color/darker_gray"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        tools:ignore="ContentDescription" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

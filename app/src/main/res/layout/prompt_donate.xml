@@ -8,17 +8,21 @@
 
         <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_donation_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 style="@style/MaterialCardView"
                 app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                     android:id="@+id/tv_donation_info"
-                    style="@style/TextViewInformation"
+                    style="@style/TvInformation"
                     tools:text="@string/donation_information_message"/>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_donation_save"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 style="@style/MaterialCardView"
                 app:layout_constraintTop_toBottomOf="@+id/card_donation_info">
 
@@ -28,7 +32,7 @@
                     android:orientation="vertical">
 
                 <TextView
-                        style="@style/TextViewInformation"
+                        style="@style/TvInformation"
                         android:text="@string/hint_save_donation"
                         android:gravity="center" />
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.workfort.pstuian.util.view.InformationCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_gradient10">
+
+        <TextView
+                android:id="@+id/tv_title"
+                style="@style/TvInformation"
+                tools:text="@string/label_donation_list"
+                android:layout_gravity="bottom"/>
+
+        <ImageView
+                android:id="@+id/iv_icon"
+                style="@style/IvInformationIcon"
+                tools:srcCompat="@drawable/ic_account_heart_outline"
+                tools:ignore="ContentDescription" />
+</com.workfort.pstuian.util.view.InformationCardView>

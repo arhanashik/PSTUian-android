@@ -32,5 +32,5 @@ interface FacultyDao {
     fun delete(facultyEntity: FacultyEntity)
 
     @Query("DELETE FROM " + TableNames.FACULTY)
-    fun deleteAll()
+    suspend fun deleteAll()
 }

@@ -56,12 +56,13 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/fab_margin"
                 android:src="@drawable/ic_donate"
-                android:shadowColor="@color/colorPrimary"
+                android:shadowColor="#bdd4e7"
                 app:fabSize="normal"
                 app:borderWidth="2dp"
                 app:rippleColor="@android:color/white"
-                app:backgroundTint="@color/colorPrimary"
+                app:backgroundTint="#8693ab"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="ContentDescription" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

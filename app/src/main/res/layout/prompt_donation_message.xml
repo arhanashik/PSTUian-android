@@ -13,7 +13,7 @@
                 android:orientation="vertical">
 
             <TextView
-                    style="@style/TextViewInformation"
+                    style="@style/TvInformation"
                     android:layout_marginStart="@dimen/space_10dp"
                     android:layout_marginTop="@dimen/space_10dp"
                     android:layout_marginEnd="@dimen/space_10dp"
@@ -24,7 +24,7 @@
                     android:id="@+id/btn_donate"
                     style="@style/TextButton.Medium"
                     android:layout_gravity="center"
-                    android:text="@string/label_send_donate"
+                    android:text="@string/txt_donate"
                     android:textAllCaps="true" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

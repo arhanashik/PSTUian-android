@@ -2,22 +2,30 @@ package com.workfort.pstuian.app.ui.base.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.provider.SearchRecentSuggestions
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.viewbinding.ViewBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.app.ui.base.BaseSuggestionProvider
 import com.workfort.pstuian.app.ui.base.callback.BaseLocationCallback
 import com.workfort.pstuian.util.helper.NetworkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
+
 
 /**
  *  ****************************************************************************
@@ -46,6 +54,7 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
     private lateinit var mMenu: Menu
+    private lateinit var mSearchView: SearchView
 
     companion object {
         const val NO_TOOLBAR = -1
@@ -70,13 +79,15 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
      * have android:launchMode="singleTop"
      *
      * */
-    open fun getSearchMenuItemId(): Int {
-        return NO_MENU_ITEM
-    }
+    open fun getSearchMenuItemId(): Int = NO_MENU_ITEM
+    open fun getSearchQueryHint(): String = getString(R.string.txt_start_typing)
+    /**
+     * If it is activated the search query will be saved from the intent and can be
+     * used by the method "onRequestSearch(searchQuery: String?)"
+     * */
+    open fun shouldHandleSearchQueryIntent(): Boolean = false
 
-    open fun enableLocation(): Boolean {
-        return false
-    }
+    open fun enableLocation(): Boolean = false
 
     abstract fun afterOnCreate(savedInstanceState: Bundle?)
 
@@ -85,23 +96,27 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
     }
 
     /**
+     * When the search query is changed in search view, this function is triggered
+     * */
+    open fun onSearchQueryChange(searchQuery: String) = Unit
+
+    /**
      * If default searchView is activated(by providing getSearchMenuItemId()) from
      * child activity the search query provided by te users will be returned in
      * this method. Overriding this method with super call will save the query
      * to show suggestions. The suggestions will be cleared while the activity
-     * is destroyed. To prevent this or modifying the suggestion behaviour
+     * is destroyed. To prevent this or to modify the suggestion behaviour
      * remove 'clearSearchQueryHistory()' this line from onDestroy() and set as
-     * required
-     *
+     * required.
      * */
-//    open fun onRequestSearch(searchQuery: String?) {
-//        if(!TextUtils.isEmpty(searchQuery)) {
-//            SearchRecentSuggestions(
-//                this, getString(R.string.search_suggestion_provider_authority),
-//                BaseSuggestionProvider.MODE
-//            ).saveRecentQuery(searchQuery, null)
-//        }
-//    }
+    open fun onRequestSearch(searchQuery: String?) {
+        if(!TextUtils.isEmpty(searchQuery)) {
+            SearchRecentSuggestions(
+                this, getString(R.string.search_suggestion_provider_authority),
+                BaseSuggestionProvider.MODE
+            ).saveRecentQuery(searchQuery, null)
+        }
+    }
 
     open fun onConnectivityChanged(connected: Boolean) { }
 
@@ -156,16 +171,11 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
     override fun onClick(v: View?) { }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-
         if(getMenuId() == NO_MENU) return super.onCreateOptionsMenu(menu)
-
         menuInflater.inflate(getMenuId(), menu)
-
         if(menu != null) mMenu = menu
         setSearchEnabled()
-
         afterOnCreateOptionsMenu(menu)
-
         return true
     }
 
@@ -201,19 +211,48 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
     private fun setSearchEnabled() {
         if(!::mMenu.isInitialized || getSearchMenuItemId() == NO_MENU_ITEM) return
 
-        val searchMenuItem = mMenu.findItem(getSearchMenuItemId())
-        if(searchMenuItem != null) {
-//            val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-//            (searchMenuItem.actionView as SearchView).apply {
-//                setSearchableInfo(searchManager.getSearchableInfo(componentName))
-//            }
+        mMenu.findItem(getSearchMenuItemId())?.let { searchMenuItem ->
+            val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+            (searchMenuItem.actionView as SearchView).apply {
+                mSearchView = this
+                queryHint = getSearchQueryHint()
+                setSearchableInfo(searchManager.getSearchableInfo(componentName))
+                setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String): Boolean {
+                        if (!isIconified) isIconified = true
+                        searchMenuItem.collapseActionView()
+                        return false
+                    }
+
+                    override fun onQueryTextChange(s: String): Boolean {
+                        onSearchQueryChange(s)
+                        return false
+                    }
+                })
+            }
+        }
+    }
+
+    fun setSearchQueryHint(hint: String) {
+        if(::mSearchView.isInitialized) mSearchView.queryHint = hint
+    }
+
+    fun hindSearchView() {
+        if(::mMenu.isInitialized && ::mSearchView.isInitialized) {
+            mSearchView.visibility = View.INVISIBLE
+            mMenu.findItem(getSearchMenuItemId())?.apply {
+                isVisible = false
+                collapseActionView()
+            }
         }
     }
 
     fun showMenu(show: Boolean) {
         if(!::mMenu.isInitialized) return
 
-//        mMenu.forEach { item -> item.isVisible = show }
+        for (i in 0 until mMenu.size()) {
+            mMenu.getItem(i).isVisible = show
+        }
     }
 
     fun setClickListener(vararg views: View) {
@@ -221,25 +260,31 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
     }
 
     private fun handleIntent(intent: Intent?) {
-//        if (intent?.action == Intent.ACTION_SEARCH) {
-//            val searchQuery = intent.getStringExtra(SearchManager.QUERY)
-//
-//            onRequestSearch(searchQuery)
-//        }
+        when(intent?.action) {
+            Intent.ACTION_SEARCH -> {
+                if(shouldHandleSearchQueryIntent()) {
+                    onRequestSearch(intent.getStringExtra(SearchManager.QUERY))
+                }
+            }
+        }
     }
 
     fun saveSearQuery(query: String) {
-//        SearchRecentSuggestions(
-//            this, getString(R.string.search_suggestion_provider_authority),
-//            BaseSuggestionProvider.MODE
-//        ).saveRecentQuery(query, null)
+        SearchRecentSuggestions(
+            this, getString(R.string.search_suggestion_provider_authority),
+            BaseSuggestionProvider.MODE
+        ).saveRecentQuery(query, null)
     }
 
     fun clearSearchQueryHistory() {
-//        SearchRecentSuggestions(
-//            this, getString(R.string.search_suggestion_provider_authority),
-//            BaseSuggestionProvider.MODE
-//        ).clearHistory()
+        try {
+            SearchRecentSuggestions(
+                this, getString(R.string.search_suggestion_provider_authority),
+                BaseSuggestionProvider.MODE
+            ).clearHistory()
+        } catch (ex: IllegalArgumentException) {
+            ex.printStackTrace()
+        }
     }
 
     private fun observeConnectivity() {
@@ -248,21 +293,21 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
         })
     }
 
-    /*
-     * This function gets user's current location using async FusedLocationClient.
-     * If the location permission is not given it requests for the permission.
-     * Else it tries to find the current lat and lng.
-     * If not found then returns 0.0 as lat and lng.
-     *
-     * Careful: To use this function one needs to enable the location service from the child activity
-     * by overriding the 'enableLocation()' function
-     */
+    /**
+      * This function gets user's current location using async FusedLocationClient.
+      * If the location permission is not given it requests for the permission.
+      * Else it tries to find the current lat and lng.
+      * If not found then returns 0.0 as lat and lng.
+      *
+      * Careful: To use this function one needs to enable the location service from the child activity
+      * by overriding the 'enableLocation()' function
+      */
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation(callback: BaseLocationCallback) {
 
         if(PermissionUtil.isAllowed(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            mFusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
-                callback.onComplete(location?.latitude?: 0.0, location?.longitude?: 0.0)
+            mFusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                callback.onComplete(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
             }.addOnFailureListener {
                 callback.onComplete(0.0, 0.0)
             }

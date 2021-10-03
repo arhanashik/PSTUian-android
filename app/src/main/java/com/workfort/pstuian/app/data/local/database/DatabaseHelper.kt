@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.data.local.database
 
 import com.workfort.pstuian.app.data.local.batch.BatchService
-import com.workfort.pstuian.app.data.local.courseschedule.CourseScheduleService
+import com.workfort.pstuian.app.data.local.course.CourseService
 import com.workfort.pstuian.app.data.local.employee.EmployeeService
 import com.workfort.pstuian.app.data.local.faculty.FacultyService
 import com.workfort.pstuian.app.data.local.slider.SliderService
@@ -16,5 +16,5 @@ object DatabaseHelper {
     fun provideTeacherService() = TeacherService(db.teacherDao())
     fun provideBatchService() = BatchService(db.batchDao())
     fun provideEmployeeService() = EmployeeService(db.employeeDao())
-    fun provideCourseScheduleService() = CourseScheduleService(db.courseScheduleDao())
+    fun provideCourseScheduleService() = CourseService(db.courseScheduleDao())
 }

@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="colorBlackOverlay">#88000000</color>
+
+    <color name="colorLightGray">#D3D3D3</color>
 </resources>

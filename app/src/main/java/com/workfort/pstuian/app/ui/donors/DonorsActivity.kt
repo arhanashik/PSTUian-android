@@ -1,15 +1,11 @@
 package com.workfort.pstuian.app.ui.donors
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.R
@@ -20,8 +16,8 @@ import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
 import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.app.ui.donors.viewstate.DonorsState
-import com.workfort.pstuian.app.ui.home.faculty.adapter.DonorsAdapter
-import com.workfort.pstuian.app.ui.home.faculty.listener.DonorClickEvent
+import com.workfort.pstuian.app.ui.donors.adapter.DonorsAdapter
+import com.workfort.pstuian.app.ui.faculty.listener.DonorClickEvent
 import com.workfort.pstuian.databinding.ActivityDonorsBinding
 import com.workfort.pstuian.databinding.PromptDonateBinding
 import com.workfort.pstuian.databinding.PromptDonationMessageBinding
@@ -37,6 +33,10 @@ import timber.log.Timber
 class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityDonorsBinding
         = ActivityDonorsBinding::inflate
+
+    override fun getMenuId(): Int = R.menu.menu_search
+    override fun getSearchMenuItemId(): Int = R.id.action_search
+    override fun getSearchQueryHint(): String = getString(R.string.hint_search_donors)
 
     private val mViewModel: DonorsViewModel by viewModel()
     private lateinit var mAdapter: DonorsAdapter
@@ -55,36 +55,8 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_search, menu)
-
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-
-        val searchMenuItem = menu?.findItem(R.id.action_search)
-        if (searchMenuItem != null) {
-            val searchView = searchMenuItem.actionView as SearchView
-            searchView.queryHint = getString(R.string.hint_search_donors)
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String): Boolean {
-                    if (!searchView.isIconified) {
-                        searchView.isIconified = true
-                    }
-
-                    //mSubject.onComplete()
-                    searchMenuItem.collapseActionView()
-                    return false
-                }
-
-                override fun onQueryTextChange(s: String): Boolean {
-                    mAdapter.filter.filter(s)
-                    return false
-                }
-            })
-        }
-
-        return super.onCreateOptionsMenu(menu)
+    override fun onSearchQueryChange(searchQuery: String) {
+        mAdapter.filter.filter(searchQuery)
     }
 
     private fun initDonorsList() {

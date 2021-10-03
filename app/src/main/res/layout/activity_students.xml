@@ -5,7 +5,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".app.ui.home.faculty.batches.students.StudentsActivity">
+            tools:context=".app.ui.students.StudentsActivity">
 
         <ProgressBar
                 android:id="@+id/loader"
@@ -31,14 +31,10 @@
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_students"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:paddingTop="@dimen/space_5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 tools:itemCount="5"
                 tools:listitem="@layout/row_student"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -7,8 +7,8 @@ import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchDao
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
-import com.workfort.pstuian.app.data.local.courseschedule.CourseScheduleDao
-import com.workfort.pstuian.app.data.local.courseschedule.CourseScheduleEntity
+import com.workfort.pstuian.app.data.local.course.CourseDao
+import com.workfort.pstuian.app.data.local.course.CourseEntity
 import com.workfort.pstuian.app.data.local.employee.EmployeeDao
 import com.workfort.pstuian.app.data.local.employee.EmployeeEntity
 import com.workfort.pstuian.app.data.local.faculty.FacultyDao
@@ -27,7 +27,7 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
     TeacherEntity::class,
     BatchEntity::class,
     EmployeeEntity::class,
-    CourseScheduleEntity::class], version = 1, exportSchema = false)
+    CourseEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
@@ -53,5 +53,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun teacherDao(): TeacherDao
     abstract fun batchDao(): BatchDao
     abstract fun employeeDao(): EmployeeDao
-    abstract fun courseScheduleDao(): CourseScheduleDao
+    abstract fun courseScheduleDao(): CourseDao
 }

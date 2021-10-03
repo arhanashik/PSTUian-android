@@ -32,3 +32,10 @@ sealed class FacultyState {
     data class Faculties(val faculties: List<FacultyEntity>) : FacultyState()
     data class Error(val error: String?) : FacultyState()
 }
+
+sealed class DeleteAllState {
+    object Idle : DeleteAllState()
+    object Loading : DeleteAllState()
+    object Success : DeleteAllState()
+    data class Error(val error: String?) : DeleteAllState()
+}

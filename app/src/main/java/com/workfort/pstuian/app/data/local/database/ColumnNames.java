@@ -25,9 +25,9 @@ public interface ColumnNames {
         String BLOOD = "blood";
         String ADDRESS = "address";
         String EMAIL = "email";
-        String BATCH = "batch";
+        String BATCH_ID = "batch_id";
         String SESSION = "session";
-        String FACULTY = "faculty";
+        String FACULTY_ID = "faculty_id";
         String IMAGE_URL = "image_url";
     }
 
@@ -42,7 +42,7 @@ public interface ColumnNames {
         String ADDRESS = "address";
         String EMAIL = "email";
         String DEPARTMENT = "department";
-        String FACULTY = "faculty";
+        String FACULTY_ID = "faculty_id";
         String IMAGE_URL = "image_url";
     }
 
@@ -53,7 +53,7 @@ public interface ColumnNames {
         String DEPARTMENT = "department";
         String PHONE = "phone";
         String ADDRESS = "address";
-        String FACULTY = "faculty";
+        String FACULTY_ID = "faculty_id";
         String IMAGE_URL = "image_url";
     }
 
@@ -62,16 +62,16 @@ public interface ColumnNames {
         String NAME = "name";
         String TITLE = "title";
         String SESSION = "session";
-        String FACULTY = "faculty";
+        String FACULTY_ID = "faculty_id";
         String TOTAL_STUDENT = "total_student";
     }
 
-    interface CourseSchedule {
+    interface Course {
         String ID = "id";
         String COURSE_CODE = "course_code";
         String COURSE_TITLE = "course_title";
         String CREDIT_HOUR = "credit_hour";
-        String FACULTY = "faculty";
+        String FACULTY_ID = "faculty_id";
         String STATUS = "status";
     }
 }

@@ -10,7 +10,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.SliderAnimations
 import com.workfort.pstuian.BuildConfig
@@ -24,12 +24,13 @@ import com.workfort.pstuian.app.ui.donors.DonorsActivity
 import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
 import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
+import com.workfort.pstuian.app.ui.faculty.FacultyActivity
+import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
+import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.home.adapter.SliderAdapter
-import com.workfort.pstuian.app.ui.home.faculty.FacultyActivity
-import com.workfort.pstuian.app.ui.home.faculty.adapter.FacultyAdapter
-import com.workfort.pstuian.app.ui.home.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
+import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
 import com.workfort.pstuian.app.ui.home.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
 import com.workfort.pstuian.app.ui.settings.SettingsActivity
@@ -52,8 +53,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityHomeBinding
             = ActivityHomeBinding::inflate
 
-    override fun getMenuId() = R.menu.menu_home
-
     private val mViewModel: HomeViewModel by viewModel()
     private val mDonorsViewModel: DonorsViewModel by viewModel()
 
@@ -68,6 +67,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         observeSliders()
         observeFaculties()
         observeDonation()
+        observeDeleteAllData()
         lifecycleScope.launch {
             mViewModel.intent.send(HomeIntent.GetSliders)
             mViewModel.intent.send(HomeIntent.GetFaculties)
@@ -107,24 +107,27 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         })
 
         binding.rvFaculties.setHasFixedSize(true)
-        binding.rvFaculties.layoutManager = LinearLayoutManager(this)
+//        binding.rvFaculties.layoutManager = GridLayoutManager(this, 2)
         binding.rvFaculties.adapter = mAdapter
     }
 
     private fun setClickEvents() {
         val linkUtil = LinkUtil(this)
         with(binding) {
-            tvUniversityWebsite.setOnClickListener {
+            btnAbout.setOnClickListener {
+                startActivity(Intent(this@HomeActivity, SettingsActivity::class.java))
+            }
+            cardUniversityWebsite.setOnClickListener {
                 linkUtil.openBrowser(getString(R.string.link_pstu_website))
             }
-            tvDonationList.setOnClickListener {
+            cardDonationList.setOnClickListener {
                 startActivity(Intent(this@HomeActivity, DonorsActivity::class.java))
             }
-            tvGradingSystem.setOnClickListener { showGrading() }
-            tvAdmissionSeatPlan.setOnClickListener {
+            cardGradingSystem.setOnClickListener { showGrading() }
+            cardAdmissionSeatPlan.setOnClickListener {
                 linkUtil.openBrowser(getString(R.string.link_pstu_seat_plan))
             }
-            tvAdmissionHelp.setOnClickListener {
+            cardAdmissionHelp.setOnClickListener {
                 linkUtil.openBrowser(getString(R.string.link_pstu_help_line))
             }
             btnDonate.setOnClickListener { donate() }
@@ -271,7 +274,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     }
                     is DonationState.Success -> {
                         donationDialog?.dismiss()
-                        Toaster.show(it.message?: "Donation Successful!")
+                        Toaster.show(it.message)
                     }
                     is DonationState.Error -> {
                         donationDialog?.dismiss()
@@ -283,15 +286,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     private fun clearData() {
-        val alertDialog = AlertDialog.Builder(this)
+        val alertDialog = MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.label_are_you_sure))
             .setMessage(getString(R.string.data_clear_message))
             .setPositiveButton(getString(R.string.label_clear_data)) {
                     dialog, _ ->
                 dialog.dismiss()
-                if(mViewModel.clearAllData()) {
-                    finishAffinity()
-                    startActivity(Intent(this, SplashActivity::class.java))
+                lifecycleScope.launch {
+                    mViewModel.intent.send(HomeIntent.DeleteAllData)
                 }
             }
             .setNegativeButton(getString(R.string.label_cancel)) {
@@ -300,5 +302,28 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             .create()
 
         alertDialog.show()
+    }
+
+    private fun observeDeleteAllData() {
+        lifecycleScope.launch {
+            mViewModel.deleteAllDataState.collect {
+                when (it) {
+                    is DeleteAllState.Idle -> {
+                    }
+                    is DeleteAllState.Loading -> {
+                        Toaster.show("Deleting please wait....")
+                    }
+                    is DeleteAllState.Success -> {
+                        finishAffinity()
+                        startActivity(Intent(this@HomeActivity,
+                            SplashActivity::class.java))
+                    }
+                    is DeleteAllState.Error -> {
+                        donationDialog?.dismiss()
+                        Toaster.show(it.error?: "Deletion failed!")
+                    }
+                }
+            }
+        }
     }
 }

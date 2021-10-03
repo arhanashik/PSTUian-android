@@ -14,17 +14,18 @@
 
             <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_about_it"
-                    style="@style/MaterialCardView"
+                    style="@style/MaterialCardView.Settings"
                     app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                        style="@style/TextViewInformation"
+                        style="@style/TvInformation"
+                        android:textColor="@android:color/black"
                         android:text="@string/about_it"/>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_donation_request"
-                    style="@style/MaterialCardView"
+                    style="@style/MaterialCardView.Settings"
                     app:strokeColor="@color/colorAccent"
                     app:layout_constraintTop_toBottomOf="@+id/card_about_it">
 
@@ -34,7 +35,7 @@
                         android:orientation="vertical">
 
                     <TextView
-                            style="@style/TextViewInformation"
+                            style="@style/TvInformation"
                             android:background="@drawable/shape_rectangle"
                             android:layout_marginStart="@dimen/space_10dp"
                             android:layout_marginTop="@dimen/space_10dp"
@@ -47,25 +48,26 @@
                             android:id="@+id/btn_donate"
                             style="@style/TextButton.Medium"
                             android:layout_gravity="center"
-                            android:text="@string/label_send_donate"
+                            android:text="@string/txt_donate"
                             android:textAllCaps="true" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_data_policy"
-                    style="@style/MaterialCardView"
+                    style="@style/MaterialCardView.Settings"
                     app:layout_constraintTop_toBottomOf="@+id/card_donation_request">
 
                 <TextView
-                        style="@style/TextViewInformation"
+                        style="@style/TvInformation"
+                        android:textColor="@android:color/black"
                         android:text="@string/data_load_policy"
                         android:textStyle="normal" />
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_developer"
-                    style="@style/MaterialCardView"
+                    style="@style/MaterialCardView.Settings"
                     app:layout_constraintTop_toBottomOf="@+id/card_data_policy">
 
                 <LinearLayout
@@ -75,7 +77,8 @@
                     android:orientation="vertical">
 
                     <TextView
-                            style="@style/TextViewInformation"
+                            style="@style/TvInformation"
+                            android:textColor="@android:color/black"
                             android:text="@string/dev_team"/>
 
                     <LinearLayout

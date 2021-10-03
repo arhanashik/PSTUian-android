@@ -19,4 +19,5 @@ package com.workfort.pstuian.app.ui.home.intent
 sealed class HomeIntent {
     object GetSliders : HomeIntent()
     object GetFaculties : HomeIntent()
+    object DeleteAllData : HomeIntent()
 }
