@@ -32,5 +32,5 @@ interface SliderDao {
     fun delete(slider: SliderEntity)
 
     @Query("DELETE FROM " + TableNames.SLIDER)
-    fun deleteAll()
+    suspend fun deleteAll()
 }

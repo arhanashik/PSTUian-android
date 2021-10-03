@@ -32,6 +32,8 @@ object Const {
     object Key{
         const val FACULTY = "FACULTY"
         const val BATCH = "BATCH"
+        const val STUDENT = "STUDENT"
+        const val TEACHER = "TEACHER"
     }
 
     object Remote {

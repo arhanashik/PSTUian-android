@@ -32,5 +32,8 @@ data class StudentEntity(
     val facultyId: Int,
     @ColumnInfo(name = ColumnNames.Student.IMAGE_URL)
     @SerializedName("image_url")
-    val imageUrl: String?
+    val imageUrl: String?,
+    @ColumnInfo(name = ColumnNames.Student.CV_LINK)
+    @SerializedName("cv_link")
+    val cvLink: String?
 ) : Parcelable

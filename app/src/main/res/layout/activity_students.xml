@@ -7,15 +7,37 @@
             android:layout_height="match_parent"
             tools:context=".app.ui.students.StudentsActivity">
 
-        <ProgressBar
-                android:id="@+id/loader"
-                android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_students"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:itemCount="5"
+                tools:listitem="@layout/row_student"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                android:animateLayoutChanges="true"
+                android:animationCache="true"
+                app:shimmer_repeat_mode="restart"
+                app:shimmer_shape="linear"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                <include layout="@layout/row_student_shimmer" />
+                <include layout="@layout/row_student_shimmer" />
+                <include layout="@layout/row_student_shimmer" />
+                <include layout="@layout/row_student_shimmer" />
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
         <TextView
                 android:id="@+id/tv_message"
@@ -23,18 +45,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/no_data_found_exception"
                 android:textAppearance="@android:style/TextAppearance.Medium"
-                android:visibility="invisible"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_students"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:itemCount="5"
-                tools:listitem="@layout/row_student"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

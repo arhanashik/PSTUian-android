@@ -8,6 +8,9 @@
     <dimen name="space_10dp">10dp</dimen>
     <dimen name="space_16dp">16dp</dimen>
 
+    <dimen name="avatar_height_64">64dp</dimen>
+    <dimen name="avatar_width_64">64dp</dimen>
+
     <dimen name="avatar_height_48">48dp</dimen>
     <dimen name="avatar_width_48">48dp</dimen>
 

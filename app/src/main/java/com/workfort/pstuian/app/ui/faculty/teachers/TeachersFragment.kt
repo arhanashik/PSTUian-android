@@ -1,15 +1,13 @@
 package com.workfort.pstuian.app.ui.faculty.teachers
 
-import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import com.workfort.pstuian.R
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.fragment.BaseFragment
@@ -18,9 +16,8 @@ import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.TeacherClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.faculty.viewstate.TeacherState
+import com.workfort.pstuian.app.ui.teacherprofile.TeacherProfileActivity
 import com.workfort.pstuian.databinding.FragmentTeachersBinding
-import com.workfort.pstuian.databinding.PromptTeacherDetailsBinding
-import com.workfort.pstuian.util.helper.LinkUtil
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -54,7 +51,10 @@ class TeachersFragment(private val faculty: FacultyEntity)
         mAdapter = TeachersAdapter()
         mAdapter.setListener(object: TeacherClickEvent {
             override fun onClickTeacher(teacher: TeacherEntity) {
-                showTeacherDetails(teacher)
+                val intent = Intent(context, TeacherProfileActivity::class.java)
+                intent.putExtra(Const.Key.FACULTY, faculty)
+                intent.putExtra(Const.Key.TEACHER, teacher)
+                startActivity(intent)
             }
         })
         binding.rvTeachers.layoutManager = LinearLayoutManager(context)
@@ -95,38 +95,5 @@ class TeachersFragment(private val faculty: FacultyEntity)
 
     fun filter(query: String) {
         mAdapter.filter.filter(query)
-    }
-
-    private fun showTeacherDetails(teacher: TeacherEntity) {
-        val binding = DataBindingUtil.inflate(layoutInflater,
-            R.layout.prompt_teacher_details, null, false) as PromptTeacherDetailsBinding
-
-        val linkUtil = LinkUtil(requireContext())
-        with(binding) {
-            imgProfile.load(teacher.imageUrl)
-            tvName.text = teacher.name
-            val designationStatus = teacher.designation + "  :  " + teacher.status
-            tvDesignationStatus.text = designationStatus
-            val department = "Department: " + teacher.department
-            tvDepartment.text = department
-            val faculty = "Faculty: " + teacher.facultyId
-            tvFaculty.text = faculty
-            val address = "Address: " + teacher.address
-            tvAddress.text = address
-            val phone = "Phone: " + teacher.phone
-            tvPhone.text = phone
-            val email = "Email: " + teacher.email
-            tvEmail.text = email
-
-            btnCall.setOnClickListener { linkUtil.callTo(teacher.phone?: "") }
-            btnEmail.setOnClickListener { linkUtil.sendEmail(teacher.email?: "") }
-            tvLinkedIn.setOnClickListener { linkUtil.openBrowser(teacher.linkedIn?: "") }
-            tvFbLink.setOnClickListener { linkUtil.openBrowser(teacher.fbLink?: "") }
-        }
-
-        val detailsDialog = AlertDialog.Builder(context)
-            .setView(binding.root).create()
-
-        detailsDialog.show()
     }
 }

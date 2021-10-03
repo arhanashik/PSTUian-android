@@ -10,5 +10,5 @@ class SliderService(private val sliderDao: SliderDao) {
     suspend fun insertAll(sliders: List<SliderEntity>) = sliderDao.insertAll(sliders)
     fun update(slider: SliderEntity) = sliderDao.update(slider)
     fun delete(slider: SliderEntity) = sliderDao.delete(slider)
-    fun deleteAll() = sliderDao.deleteAll()
+    suspend fun deleteAll() = sliderDao.deleteAll()
 }

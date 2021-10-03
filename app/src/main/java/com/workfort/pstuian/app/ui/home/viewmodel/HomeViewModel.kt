@@ -74,6 +74,7 @@ class HomeViewModel(
             _deleteAllDataState.value = DeleteAllState.Loading
             _deleteAllDataState.value = try {
                 Prefs.clear()
+                sliderRepo.deleteAll()
                 facultyRepo.deleteAll()
                 DeleteAllState.Success
             } catch (e: Exception) {

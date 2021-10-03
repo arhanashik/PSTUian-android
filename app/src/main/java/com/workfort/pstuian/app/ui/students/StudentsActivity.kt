@@ -1,12 +1,10 @@
 package com.workfort.pstuian.app.ui.students
 
-import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import coil.load
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
@@ -14,12 +12,11 @@ import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.faculty.listener.StudentClickEvent
+import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.app.ui.students.adapter.StudentsAdapter
 import com.workfort.pstuian.app.ui.students.intent.StudentsIntent
 import com.workfort.pstuian.app.ui.students.viewstate.StudentsState
 import com.workfort.pstuian.databinding.ActivityStudentsBinding
-import com.workfort.pstuian.databinding.PromptStudentDetailsBinding
-import com.workfort.pstuian.util.helper.LinkUtil
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -67,7 +64,11 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         mAdapter = StudentsAdapter()
         mAdapter.setListener(object: StudentClickEvent {
             override fun onClickStudent(student: StudentEntity) {
-                showStudentDetails(student)
+                val intent = Intent(this@StudentsActivity, StudentProfileActivity::class.java)
+                intent.putExtra(Const.Key.FACULTY, mFaculty)
+                intent.putExtra(Const.Key.BATCH, mBatch)
+                intent.putExtra(Const.Key.STUDENT, student)
+                startActivity(intent)
             }
         })
 
@@ -82,14 +83,16 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
                     }
                     is StudentsState.Loading -> {
                         with(binding) {
-                            loader.visibility = View.VISIBLE
-                            rvStudents.visibility = View.INVISIBLE
-                            tvMessage.visibility = View.INVISIBLE
+                            shimmerLayout.visibility = View.VISIBLE
+                            shimmerLayout.startShimmer()
+                            rvStudents.visibility = View.GONE
+                            tvMessage.visibility = View.GONE
                         }
                     }
                     is StudentsState.Students -> {
                         with(binding) {
-                            loader.visibility = View.GONE
+                            shimmerLayout.stopShimmer()
+                            shimmerLayout.visibility = View.GONE
                             rvStudents.visibility = View.VISIBLE
                             tvMessage.visibility = View.GONE
                         }
@@ -97,7 +100,8 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
                     }
                     is StudentsState.Error -> {
                         with(binding) {
-                            loader.visibility = View.GONE
+                            shimmerLayout.stopShimmer()
+                            shimmerLayout.visibility = View.GONE
                             rvStudents.visibility = View.GONE
                             tvMessage.visibility = View.VISIBLE
                         }
@@ -110,40 +114,5 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
 
     private fun renderStudents(data: List<StudentEntity>) {
         mAdapter.setStudents(data.toMutableList())
-    }
-
-    private fun showStudentDetails(student: StudentEntity) {
-        val binding = DataBindingUtil.inflate(layoutInflater,
-            R.layout.prompt_student_details, null, false) as PromptStudentDetailsBinding
-
-        val linkUtil = LinkUtil(this)
-        with(binding) {
-            imgProfile.load(student.imageUrl)
-            tvName.text = student.name
-            val batchDetails = student.facultyId.toString() + " " + student.batchId
-            tvBatchFaculty.text = batchDetails
-            val id = "Id: " + student.id
-            tvId.text = id
-            val reg = "Reg: " + student.reg
-            tvReg.text = reg
-            val blood = "Blood group: " + student.blood
-            tvBlood.text = blood
-            val address = "Address: " + student.address
-            tvAddress.text = address
-            val phone = "Phone: " + student.phone
-            tvPhone.text = phone
-            val email = "Email: " + student.email
-            tvEmail.text = email
-
-            btnCall.setOnClickListener { linkUtil.callTo(student.phone?: "") }
-            btnEmail.setOnClickListener { linkUtil.sendEmail(student.email?: "") }
-            tvLinkedIn.setOnClickListener { linkUtil.openBrowser(student.linkedIn?: "") }
-            tvFbLink.setOnClickListener { linkUtil.openBrowser(student.fbLink?: "") }
-        }
-
-        val detailsDialog = AlertDialog.Builder(this)
-            .setView(binding.root).create()
-
-        detailsDialog.show()
     }
 }

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/teacher_card_height"
+            android:layout_marginStart="@dimen/space_16dp"
+            android:layout_marginTop="@dimen/space_8dp"
+            android:layout_marginEnd="@dimen/space_16dp"
+            android:layout_marginBottom="@dimen/space_8dp"
+            app:cardElevation="@dimen/space_5dp"
+            app:cardCornerRadius="@dimen/space_8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient10">
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/img_avatar"
+                    android:layout_width="@dimen/avatar_width_42"
+                    android:layout_height="@dimen/avatar_height_42"
+                    android:layout_marginStart="@dimen/space_16dp"
+                    android:layout_marginTop="@dimen/space_16dp"
+                    android:src="@drawable/img_placeholder_profile"
+                    app:civ_border_width="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_10dp"
+                    android:layout_marginEnd="@dimen/space_16dp"
+                    android:background="#B3B3B3"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/img_avatar"
+                    app:layout_constraintTop_toTopOf="@id/img_avatar"
+                    app:layout_constraintBottom_toBottomOf="@id/img_avatar"
+                    app:layout_constraintEnd_toStartOf="@id/vertical_guide"/>
+
+            <TextView
+                    android:id="@+id/label_id"
+                    style="@style/TvStyleStudentInfoLabel"
+                    android:layout_width="25dp"
+                    android:background="#B3B3B3"
+                    android:layout_marginBottom="1dp"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="@id/img_avatar"
+                    app:layout_constraintEnd_toStartOf="@id/label_reg"
+                    app:layout_constraintBottom_toTopOf="@id/tv_id"/>
+
+            <TextView
+                    android:id="@+id/tv_id"
+                    style="@style/TvStyleStudentInfo"
+                    android:layout_width="50dp"
+                    android:background="#B3B3B3"
+                    app:layout_constraintStart_toStartOf="@id/label_id"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                    android:id="@+id/label_reg"
+                    style="@style/TvStyleStudentInfoLabel"
+                    android:layout_width="30dp"
+                    android:background="#B3B3B3"
+                    android:layout_marginBottom="1dp"
+                    app:layout_constraintStart_toEndOf="@id/label_id"
+                    app:layout_constraintEnd_toStartOf="@id/label_blood_group"
+                    app:layout_constraintBottom_toTopOf="@id/tv_reg"/>
+
+            <TextView
+                    android:id="@+id/tv_reg"
+                    style="@style/TvStyleStudentInfo"
+                    android:layout_width="50dp"
+                    android:background="#B3B3B3"
+                    app:layout_constraintStart_toStartOf="@id/label_reg"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                    android:id="@+id/label_blood_group"
+                    style="@style/TvStyleStudentInfoLabel"
+                    android:layout_width="40dp"
+                    android:background="#B3B3B3"
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginEnd="@dimen/space_16dp"
+                    app:layout_constraintStart_toEndOf="@id/label_reg"
+                    app:layout_constraintEnd_toStartOf="@id/vertical_guide"
+                    app:layout_constraintBottom_toTopOf="@id/tv_blood_group"/>
+
+            <TextView
+                    android:id="@+id/tv_blood_group"
+                    style="@style/TvStyleStudentInfo"
+                    android:layout_width="20dp"
+                    android:background="#B3B3B3"
+                    app:layout_constraintStart_toStartOf="@id/label_blood_group"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <View
+                    android:id="@+id/divider"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toStartOf="@id/vertical_guide"
+                    android:background="@color/colorLightGray"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vertical_guide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.75"/>
+
+            <ImageView
+                    android:id="@+id/btn_call"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    app:srcCompat="@drawable/ic_call"
+                    app:tint="#B3B3B3"
+                    android:contentDescription="@string/description_ic_call"
+                    app:layout_constraintStart_toStartOf="@id/vertical_guide"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

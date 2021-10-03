@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbarThumbVertical="@null">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/space_16dp">
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/img_avatar"
+                android:layout_width="@dimen/avatar_width_64"
+                android:layout_height="@dimen/avatar_height_64"
+                android:layout_marginStart="@dimen/space_16dp"
+                android:layout_marginTop="@dimen/space_16dp"
+                tools:src="@drawable/img_placeholder_profile"
+                app:civ_border_width="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_16dp"
+                android:layout_marginEnd="@dimen/space_16dp"
+                tools:text="Teacher Name"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:singleLine="true"
+                app:layout_constraintStart_toEndOf="@id/img_avatar"
+                app:layout_constraintTop_toTopOf="@id/img_avatar"
+                app:layout_constraintBottom_toBottomOf="@id/img_avatar"
+                app:layout_constraintEnd_toStartOf="@id/btn_call"/>
+
+        <ImageView
+                android:id="@+id/btn_call"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="@dimen/space_16dp"
+                app:srcCompat="@drawable/ic_call"
+                app:tint="@color/colorPrimary"
+                android:contentDescription="@string/description_ic_call"
+                app:layout_constraintTop_toTopOf="@id/img_avatar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/img_avatar"/>
+
+        <TextView
+                android:id="@+id/tv_title_academic_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView.TitleSmall2"
+                android:text="@string/txt_academic_info"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_avatar"/>
+
+        <TextView
+                android:id="@+id/label_designation"
+                style="@style/TvStyleStudentProfileInfoLabel"
+                android:text="@string/txt_designation"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="@id/img_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_academic_info"/>
+
+        <TextView
+                android:id="@+id/tv_designation"
+                style="@style/TvStyleStudentProfileInfo"
+                tools:text="Assistance Professor"
+                app:layout_constraintStart_toStartOf="@id/label_designation"
+                app:layout_constraintTop_toBottomOf="@id/label_designation"/>
+
+        <TextView
+                android:id="@+id/label_department"
+                style="@style/TvStyleStudentProfileInfoLabel"
+                android:text="@string/txt_department"
+                android:layout_marginTop="@dimen/space_10dp"
+                app:layout_constraintStart_toStartOf="@id/img_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_designation"/>
+
+        <TextView
+                android:id="@+id/tv_department"
+                style="@style/TvStyleStudentProfileInfo"
+                tools:text="Mathematics"
+                app:layout_constraintStart_toStartOf="@id/label_department"
+                app:layout_constraintTop_toBottomOf="@id/label_department"/>
+
+        <TextView
+                android:id="@+id/label_faculty"
+                style="@style/TvStyleStudentProfileInfoLabel"
+                android:text="@string/txt_faculty"
+                android:layout_marginTop="@dimen/space_10dp"
+                app:layout_constraintStart_toStartOf="@id/img_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_department"/>
+
+        <TextView
+                android:id="@+id/tv_faculty"
+                style="@style/TvStyleStudentProfileInfo"
+                tools:text="Computer Science and Engineering"
+                app:layout_constraintStart_toStartOf="@id/label_faculty"
+                app:layout_constraintTop_toBottomOf="@id/label_faculty"/>
+
+        <TextView
+                android:id="@+id/tv_title_connection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView.TitleSmall2"
+                android:text="@string/text_connect"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_faculty"/>
+
+        <TextView
+                android:id="@+id/label_address"
+                style="@style/TvStyleStudentProfileInfoLabel"
+                android:text="@string/txt_address"
+                app:layout_constraintStart_toStartOf="@id/img_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_connection"/>
+
+        <TextView
+                android:id="@+id/tv_address"
+                style="@style/TvStyleStudentProfileInfo"
+                android:layout_width="0dp"
+                android:layout_marginEnd="@dimen/space_16dp"
+                tools:text="Tokyo, Japan"
+                app:layout_constraintStart_toStartOf="@id/label_address"
+                app:layout_constraintTop_toBottomOf="@id/label_address"
+                app:layout_constraintEnd_toStartOf="@id/btn_email"/>
+
+        <TextView
+                android:id="@+id/label_phone"
+                style="@style/TvStyleStudentProfileInfoLabel"
+                android:text="@string/txt_phone"
+                android:layout_marginTop="@dimen/space_10dp"
+                app:layout_constraintStart_toStartOf="@id/img_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_address"/>
+
+        <TextView
+                android:id="@+id/tv_phone"
+                style="@style/TvStyleStudentProfileInfo"
+                tools:text="012345678"
+                app:layout_constraintStart_toStartOf="@id/label_phone"
+                app:layout_constraintTop_toBottomOf="@id/label_phone"/>
+
+        <TextView
+                android:id="@+id/label_email"
+                style="@style/TvStyleStudentProfileInfoLabel"
+                android:text="@string/txt_email"
+                android:layout_marginTop="@dimen/space_10dp"
+                app:layout_constraintStart_toStartOf="@id/img_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_phone"/>
+
+        <TextView
+                android:id="@+id/tv_email"
+                style="@style/TvStyleStudentProfileInfo"
+                android:layout_width="0dp"
+                android:layout_marginEnd="@dimen/space_16dp"
+                tools:text="abc@gmail.com"
+                app:layout_constraintStart_toStartOf="@id/label_email"
+                app:layout_constraintTop_toBottomOf="@id/label_email"
+                app:layout_constraintEnd_toStartOf="@id/btn_email"/>
+
+        <ImageView
+                android:id="@+id/btn_email"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="@dimen/space_16dp"
+                app:srcCompat="@drawable/ic_email"
+                app:tint="@color/colorPrimary"
+                android:contentDescription="@string/description_ic_call"
+                app:layout_constraintTop_toTopOf="@id/label_email"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/tv_email"/>
+
+        <TextView
+                android:id="@+id/label_linked_in"
+                style="@style/TvStyleStudentProfileInfoLabel"
+                android:text="@string/txt_linked_in"
+                android:layout_marginTop="@dimen/space_10dp"
+                app:layout_constraintStart_toStartOf="@id/img_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_email"/>
+
+        <TextView
+                android:id="@+id/tv_linked_in"
+                style="@style/TvStyleStudentProfileInfo"
+                android:layout_width="0dp"
+                android:layout_marginEnd="@dimen/space_16dp"
+                tools:text="https://www.linkedin.com/in/md-hasnain-407444141/"
+                app:layout_constraintStart_toStartOf="@id/label_linked_in"
+                app:layout_constraintTop_toBottomOf="@id/label_linked_in"
+                app:layout_constraintEnd_toStartOf="@id/btn_email"/>
+
+        <TextView
+                android:id="@+id/label_facebook"
+                style="@style/TvStyleStudentProfileInfoLabel"
+                android:text="@string/txt_facebook"
+                android:layout_marginTop="@dimen/space_10dp"
+                app:layout_constraintStart_toStartOf="@id/img_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_linked_in"/>
+
+        <TextView
+                android:id="@+id/tv_facebook"
+                style="@style/TvStyleStudentProfileInfo"
+                android:layout_width="0dp"
+                android:layout_marginEnd="@dimen/space_16dp"
+                tools:text="https://www.facebook.com/arhan.ashik"
+                app:layout_constraintStart_toStartOf="@id/label_facebook"
+                app:layout_constraintTop_toBottomOf="@id/label_facebook"
+                app:layout_constraintEnd_toStartOf="@id/btn_email"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

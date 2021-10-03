@@ -29,6 +29,7 @@ public interface ColumnNames {
         String SESSION = "session";
         String FACULTY_ID = "faculty_id";
         String IMAGE_URL = "image_url";
+        String CV_LINK = "cv_link";
     }
 
     interface Teacher {

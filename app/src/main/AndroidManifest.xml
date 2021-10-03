@@ -71,6 +71,14 @@
                     android:resource="@xml/searchable" />
         </activity>
         <activity
+                android:name=".app.ui.studentprofile.StudentProfileActivity"
+                android:launchMode="singleTop">
+        </activity>
+        <activity
+                android:name=".app.ui.teacherprofile.TeacherProfileActivity"
+                android:launchMode="singleTop">
+        </activity>
+        <activity
                 android:name=".app.ui.settings.SettingsActivity"
                 android:label="@string/title_activity_settings"
                 android:parentActivityName=".app.ui.home.HomeActivity"

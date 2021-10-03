@@ -148,4 +148,14 @@
     <string name="txt_id">ID</string>
     <string name="txt_registration_number">Reg</string>
     <string name="txt_blood_group">Blood Group</string>
+    <string name="txt_faculty">Faculty</string>
+    <string name="txt_batch">Batch</string>
+    <string name="txt_address">Address</string>
+    <string name="txt_phone">Phone</string>
+    <string name="txt_email">Email</string>
+    <string name="txt_linked_in">LinkedIn</string>
+    <string name="txt_facebook">Facebook</string>
+    <string name="text_connect">Connect</string>
+    <string name="txt_academic_info">Academic Info</string>
+    <string name="txt_cv">CV</string>
 </resources>

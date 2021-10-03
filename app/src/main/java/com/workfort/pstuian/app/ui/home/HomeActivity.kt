@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -47,6 +49,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
+
 
 @ExperimentalCoroutinesApi
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
@@ -158,7 +161,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     is SliderState.Error -> {
                         binding.sliderLoader.visibility = View.GONE
                         binding.imageSlider.visibility = View.INVISIBLE
-                        Timber.e(it.error?: "Can't load sliders")
+                        Timber.e(it.error ?: "Can't load sliders")
                     }
                 }
             }
@@ -170,27 +173,57 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     private fun observeFaculties() {
+        val constraintLayout = findViewById<ConstraintLayout>(R.id.root_layout)
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(constraintLayout)
         lifecycleScope.launch {
-            //observe faculties
             mViewModel.facultyState.collect {
                 when (it) {
                     is FacultyState.Idle -> {
                     }
                     is FacultyState.Loading -> {
-                        binding.loader.visibility = View.VISIBLE
-                        binding.rvFaculties.visibility = View.INVISIBLE
+                        constraintSet.connect(
+                            R.id.tv_information_title,
+                            ConstraintSet.TOP,
+                            R.id.shimmer_layout,
+                            ConstraintSet.BOTTOM,
+                            0
+                        )
+                        constraintSet.applyTo(constraintLayout)
+                        binding.shimmerLayout.visibility = View.VISIBLE
+                        binding.shimmerLayout.startShimmer()
+                        binding.rvFaculties.visibility = View.GONE
+                        binding.tvMessage.visibility = View.GONE
                     }
-                    is FacultyState.Faculties ->
-                    {
-                        binding.loader.visibility = View.GONE
+                    is FacultyState.Faculties -> {
+                        constraintSet.connect(
+                            R.id.tv_information_title,
+                            ConstraintSet.TOP,
+                            R.id.rv_faculties,
+                            ConstraintSet.BOTTOM,
+                            0
+                        )
+                        constraintSet.applyTo(constraintLayout)
+                        binding.shimmerLayout.stopShimmer()
+                        binding.shimmerLayout.visibility = View.GONE
+                        binding.tvMessage.visibility = View.GONE
                         binding.rvFaculties.visibility = View.VISIBLE
                         renderFaculties(it.faculties)
                     }
-                    is FacultyState.Error ->
-                    {
-                        binding.loader.visibility = View.GONE
-                        binding.rvFaculties.visibility = View.INVISIBLE
-                        Timber.e("Can't load faculties")
+                    is FacultyState.Error -> {
+                        constraintSet.connect(
+                            R.id.tv_information_title,
+                            ConstraintSet.TOP,
+                            R.id.tv_message,
+                            ConstraintSet.BOTTOM,
+                            0
+                        )
+                        constraintSet.applyTo(constraintLayout)
+                        binding.tvMessage.visibility = View.VISIBLE
+                        binding.shimmerLayout.stopShimmer()
+                        binding.shimmerLayout.visibility = View.GONE
+                        binding.rvFaculties.visibility = View.GONE
+                        Timber.e("Can't load data")
                     }
                 }
             }
@@ -205,8 +238,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         val dialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.label_grading_system))
             .setMessage(getString(R.string.grading_system))
-            .setPositiveButton(getString(R.string.label_got_it)){
-                dialog, _ -> dialog.dismiss()
+            .setPositiveButton(getString(R.string.label_got_it)){ dialog, _ -> dialog.dismiss()
             }
             .create()
 
@@ -215,7 +247,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     private fun donate() {
         val donationMessage = DataBindingUtil.inflate<PromptDonationMessageBinding>(
-            layoutInflater, R.layout.prompt_donation_message, null, false)
+            layoutInflater, R.layout.prompt_donation_message, null, false
+        )
 
         val alertDialog = AlertDialog.Builder(this)
             .setView(donationMessage.root)
@@ -231,11 +264,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     private fun showDonationOption() {
         val donationView = DataBindingUtil.inflate<PromptDonateBinding>(
-            layoutInflater, R.layout.prompt_donate, null, false)
+            layoutInflater, R.layout.prompt_donate, null, false
+        )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            donationView.tvDonationInfo.text = Html.fromHtml(Prefs.donateOption,
-                Html.FROM_HTML_MODE_LEGACY)
+            donationView.tvDonationInfo.text = Html.fromHtml(
+                Prefs.donateOption,
+                Html.FROM_HTML_MODE_LEGACY
+            )
         } else {
             donationView.tvDonationInfo.text = Html.fromHtml(Prefs.donateOption)
         }
@@ -278,7 +314,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     }
                     is DonationState.Error -> {
                         donationDialog?.dismiss()
-                        Toaster.show(it.error?: "Donation failed!")
+                        Toaster.show(it.error ?: "Donation failed!")
                     }
                 }
             }
@@ -289,15 +325,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         val alertDialog = MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.label_are_you_sure))
             .setMessage(getString(R.string.data_clear_message))
-            .setPositiveButton(getString(R.string.label_clear_data)) {
-                    dialog, _ ->
+            .setPositiveButton(getString(R.string.label_clear_data)) { dialog, _ ->
                 dialog.dismiss()
                 lifecycleScope.launch {
                     mViewModel.intent.send(HomeIntent.DeleteAllData)
                 }
             }
-            .setNegativeButton(getString(R.string.label_cancel)) {
-                    dialog, _ -> dialog.dismiss()
+            .setNegativeButton(getString(R.string.label_cancel)) { dialog, _ -> dialog.dismiss()
             }
             .create()
 
@@ -315,12 +349,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     }
                     is DeleteAllState.Success -> {
                         finishAffinity()
-                        startActivity(Intent(this@HomeActivity,
-                            SplashActivity::class.java))
+                        startActivity(
+                            Intent(
+                                this@HomeActivity,
+                                SplashActivity::class.java
+                            )
+                        )
                     }
                     is DeleteAllState.Error -> {
                         donationDialog?.dismiss()
-                        Toaster.show(it.error?: "Deletion failed!")
+                        Toaster.show(it.error ?: "Deletion failed!")
                     }
                 }
             }

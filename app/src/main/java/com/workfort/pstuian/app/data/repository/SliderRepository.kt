@@ -33,4 +33,8 @@ class SliderRepository(
 
         return existingData
     }
+
+    suspend fun deleteAll() {
+        dbService.deleteAll()
+    }
 }
