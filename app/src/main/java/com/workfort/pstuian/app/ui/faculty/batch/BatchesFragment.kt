@@ -66,19 +66,22 @@ class BatchesFragment(private val faculty: FacultyEntity)
                     is BatchState.Idle -> {
                     }
                     is BatchState.Loading -> {
-                        binding.tvMessage.visibility = View.INVISIBLE
-                        binding.loader.visibility = View.VISIBLE
+                        binding.tvMessage.visibility = View.GONE
+                        binding.shimmerLayout.visibility = View.VISIBLE
+                        binding.shimmerLayout.startShimmer()
                         binding.rvBatches.visibility = View.INVISIBLE
                     }
                     is BatchState.Batches -> {
-                        binding.tvMessage.visibility = View.INVISIBLE
-                        binding.loader.visibility = View.GONE
+                        binding.tvMessage.visibility = View.GONE
+                        binding.shimmerLayout.visibility = View.GONE
+                        binding.shimmerLayout.stopShimmer()
                         binding.rvBatches.visibility = View.VISIBLE
                         renderBatches(it.batches)
                     }
                     is BatchState.Error -> {
                         binding.tvMessage.visibility = View.VISIBLE
-                        binding.loader.visibility = View.GONE
+                        binding.shimmerLayout.visibility = View.GONE
+                        binding.shimmerLayout.stopShimmer()
                         binding.rvBatches.visibility = View.INVISIBLE
                         Timber.e(it.error?: "Can't load data")
                     }

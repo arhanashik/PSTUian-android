@@ -112,6 +112,9 @@ dependencies {
 
     //image slider
     implementation "com.github.smarteist:autoimageslider:$autoimageslider"
+
+    //facebook shimmer layout.
+    implementation "com.facebook.shimmer:shimmer:$shimmer"
 }
 
 //testing libs
