@@ -37,8 +37,9 @@ object Const {
     }
 
     object Remote {
-        private const val DEV_SERVER_URL = "http://192.168.1.101:8888/PSTUian-web/api/mobile/v1/"
-        private const val LIVE_SERVER_URL = ""
-        val BASE_URL = if(BuildConfig.DEBUG) DEV_SERVER_URL else LIVE_SERVER_URL
+        private const val LOCAL_SERVER = "http://192.168.1.100:8888/PSTUian-web/api/mobile/v1/"
+        private const val DEV_SERVER = "https://api-dev.pstuian.com/mobile/v1/"
+        private const val LIVE_SERVER = "https://api.pstuian.com/mobile/v1/"
+        val BASE_URL = if(BuildConfig.DEBUG) DEV_SERVER else LIVE_SERVER
     }
 }

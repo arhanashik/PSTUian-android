@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.donor.DonorEntity
-import com.workfort.pstuian.databinding.RowDonorBinding
 import com.workfort.pstuian.app.ui.donors.viewholder.DonorsViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.DonorClickEvent
+import com.workfort.pstuian.databinding.RowDonorBinding
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
 
@@ -36,12 +36,12 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
                 val result: ArrayList<DonorEntity> = ArrayList()
                 if(TextUtils.isEmpty(query)) {
                     result.addAll(donors)
-                }else {
-                    val q = query.toString().toLowerCase()
+                } else {
+                    val q = query.toString().toLowerCase(Locale.ROOT)
                     donors.forEach {
-                        if(it.name!!.toLowerCase().contains(q)
-                            || it.info!!.toLowerCase().contains(q)
-                            || it.reference!!.toLowerCase().contains(q))
+                        if((it.name?: "").toLowerCase(Locale.ROOT).contains(q)
+                            || (it.info?: "").toLowerCase(Locale.ROOT).contains(q)
+                            || it.reference.toLowerCase(Locale.ROOT).contains(q))
                             result.add(it)
                     }
                 }
@@ -55,6 +55,7 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
 
             override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
                 filteredDonors.clear()
+                @Suppress("UNCHECKED_CAST")
                 filteredDonors.addAll(filteredResult?.values as ArrayList<DonorEntity>)
 
                 notifyDataSetChanged()
@@ -68,8 +69,7 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DonorsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil.inflate(inflater, R.layout.row_donor, parent, false)
-                as RowDonorBinding
+        val binding = RowDonorBinding.inflate(inflater, parent, false)
         return DonorsViewHolder(binding)
     }
 
@@ -77,9 +77,9 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
         val batch = filteredDonors[position]
 
         holder.bind(batch)
-        holder.binding.root.setOnClickListener { view ->
+        holder.binding.root.setOnClickListener {
             run {
-                if(listener != null) listener?.onClickDonor(batch)
+                listener?.onClickDonor(batch)
             }
         }
     }

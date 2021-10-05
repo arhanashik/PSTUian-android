@@ -22,7 +22,8 @@ class StudentsViewHolder (val binding: RowStudentBinding) :
             tvName.text = student.name
             tvId.text = student.id.toString()
             tvReg.text = student.reg
-            tvBloodGroup.text = student.blood
+            val blood = if(student.blood.isNullOrEmpty()) "~" else student.blood
+            tvBloodGroup.text = blood
         }
     }
 }

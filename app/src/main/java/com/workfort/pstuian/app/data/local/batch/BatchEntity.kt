@@ -13,7 +13,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = TableNames.BATCH)
 data class BatchEntity (
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = ColumnNames.Batch.NAME) val name: String?,
+    @ColumnInfo(name = ColumnNames.Batch.NAME) val name: String,
     @ColumnInfo(name = ColumnNames.Batch.TITLE) val title: String?,
     @ColumnInfo(name = ColumnNames.Batch.SESSION) val session: String,
     @ColumnInfo(name = ColumnNames.Batch.FACULTY_ID)
