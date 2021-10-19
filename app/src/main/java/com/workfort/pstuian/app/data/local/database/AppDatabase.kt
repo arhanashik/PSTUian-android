@@ -7,6 +7,8 @@ import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchDao
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
+import com.workfort.pstuian.app.data.local.config.ConfigDao
+import com.workfort.pstuian.app.data.local.config.ConfigEntity
 import com.workfort.pstuian.app.data.local.course.CourseDao
 import com.workfort.pstuian.app.data.local.course.CourseEntity
 import com.workfort.pstuian.app.data.local.employee.EmployeeDao
@@ -21,6 +23,7 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherDao
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 
 @Database(entities = [
+    ConfigEntity::class,
     SliderEntity::class,
     FacultyEntity::class,
     StudentEntity::class,
@@ -47,6 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 
+    abstract fun configDao(): ConfigDao
     abstract fun sliderDao(): SliderDao
     abstract fun facultyDao(): FacultyDao
     abstract fun studentDao(): StudentDao

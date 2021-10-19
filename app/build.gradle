@@ -4,11 +4,12 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion target_sdk
+    compileSdkVersion compile_sdk
     defaultConfig {
         applicationId 'com.workfort.pstuian'
         minSdkVersion min_sdk
         targetSdkVersion target_sdk
+        versionCode version_code
         versionName version_name
 
         multiDexEnabled true
@@ -77,10 +78,17 @@ dependencies {
 
     //multiDex
     implementation "androidx.multidex:multidex:$multidex"
+
+    //data-store
+    implementation("androidx.datastore:datastore-preferences:$datastorePreferences")
+
+    //work manager
+    implementation "androidx.work:work-runtime-ktx:$workManager"
 }
 
 //google
 dependencies {
+    implementation 'com.google.android.play:core-ktx:1.8.1'
     implementation("com.google.android.gms:play-services-location:$playServicesLocation")
 }
 
@@ -124,6 +132,9 @@ dependencies {
 
     // optional - Test helpers
     testImplementation("androidx.room:room-testing:$room")
+
+    // optional - Test helpers
+    androidTestImplementation("androidx.work:work-testing:$workManager")
 
     testImplementation "junit:junit:$rootProject.junit"
     androidTestImplementation "androidx.test:runner:$rootProject.runner"

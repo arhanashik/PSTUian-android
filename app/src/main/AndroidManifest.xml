@@ -7,6 +7,15 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+<!--    <queries>-->
+<!--        <intent>-->
+<!--            <action android:name="android.intent.action.PICK" />-->
+<!--            <data android:mimeType="image/jpeg" />-->
+<!--        </intent>-->
+<!--    </queries>-->
+
     <application
             android:name=".PstuianApp"
             android:icon="@mipmap/ic_launcher"
@@ -16,6 +25,7 @@
             android:networkSecurityConfig="@xml/network_security_config"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+
         <provider
                 android:name=".app.ui.base.BaseSuggestionProvider"
                 android:authorities="com.workfort.pstuian.BaseSuggestionProvider"
@@ -38,7 +48,8 @@
         <activity
                 android:name=".app.ui.faculty.FacultyActivity"
                 android:parentActivityName=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop">
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.home.HomeActivity"/>
@@ -56,10 +67,11 @@
                 android:name=".app.ui.students.StudentsActivity"
                 android:label="@string/title_activity_students"
                 android:parentActivityName=".app.ui.faculty.FacultyActivity"
-                android:launchMode="singleTop">
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.workfort.pstuian.app.ui.faculty.FacultyActivity"/>
+                    android:value=".app.ui.faculty.FacultyActivity"/>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -72,11 +84,33 @@
         </activity>
         <activity
                 android:name=".app.ui.studentprofile.StudentProfileActivity"
-                android:launchMode="singleTop">
+                android:parentActivityName=".app.ui.students.StudentsActivity"
+                android:label="@string/title_activity_student_profile"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.students.StudentsActivity"/>
         </activity>
         <activity
                 android:name=".app.ui.teacherprofile.TeacherProfileActivity"
-                android:launchMode="singleTop">
+                android:parentActivityName=".app.ui.faculty.FacultyActivity"
+                android:label="@string/title_activity_teacher_profile"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.faculty.FacultyActivity"/>
+        </activity>
+        <activity
+                android:name=".app.ui.employeeprofile.EmployeeProfileActivity"
+                android:parentActivityName=".app.ui.faculty.FacultyActivity"
+                android:label="@string/title_activity_employee_profile"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.faculty.FacultyActivity"/>
         </activity>
         <activity
                 android:name=".app.ui.settings.SettingsActivity"
@@ -105,6 +139,36 @@
             <meta-data
                     android:name="android.app.searchable"
                     android:resource="@xml/searchable" />
+        </activity>
+        <activity
+                android:name=".app.ui.signin.SignInActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_sign_in_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.home.HomeActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.home.HomeActivity"/>
+        </activity>
+        <activity
+                android:name=".app.ui.signup.SignUpActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_sign_up_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.signin.SignInActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.signin.SignInActivity"/>
+        </activity>
+        <activity
+                android:name=".app.ui.forgotpassword.ForgotPasswordActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_forgot_password_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.signin.SignInActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.signin.SignInActivity"/>
         </activity>
     </application>
 

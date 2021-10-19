@@ -12,6 +12,8 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.databinding.RowTeacherBinding
 import com.workfort.pstuian.app.ui.faculty.viewholder.TeachersViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.TeacherClickEvent
+import java.util.*
+import kotlin.collections.ArrayList
 
 class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
 
@@ -36,14 +38,14 @@ class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
                 val result: ArrayList<TeacherEntity> = ArrayList()
                 if(TextUtils.isEmpty(query)) {
                     result.addAll(teachers)
-                }else {
-                    val q = query.toString().toLowerCase()
+                } else {
+                    val q = query.toString().toLowerCase(Locale.ROOT)
                     teachers.forEach {
-                        if(it.name!!.toLowerCase().contains(q)
-                            || it.department!!.toLowerCase().contains(q)
-                            || it.designation!!.toLowerCase().contains(q)
-                            || it.email!!.toLowerCase().contains(q)
-                            || it.status!!.toLowerCase().contains(q))
+                        if(it.name.toLowerCase(Locale.ROOT).contains(q)
+                            || it.department.toLowerCase(Locale.ROOT).contains(q)
+                            || it.designation.toLowerCase(Locale.ROOT).contains(q)
+                            || (it.email?: "").toLowerCase(Locale.ROOT).contains(q)
+                            || (it.status?: "").toLowerCase(Locale.ROOT).contains(q))
                             result.add(it)
                     }
                 }

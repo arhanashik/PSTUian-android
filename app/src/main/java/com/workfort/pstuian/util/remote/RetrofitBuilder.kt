@@ -66,6 +66,10 @@ object RetrofitBuilder {
         .baseUrl(baseUrl)
         .build()
 
+    //auth api service
+    fun createAuthApiService(): AuthApiService = retrofit(Const.Remote.BASE_URL)
+        .create(AuthApiService::class.java)
+
     //slider api service
     fun createSliderApiService(): SliderApiService = retrofit(Const.Remote.BASE_URL)
         .create(SliderApiService::class.java)
@@ -74,7 +78,15 @@ object RetrofitBuilder {
     fun createFacultyApiService(): FacultyApiService = retrofit(Const.Remote.BASE_URL)
         .create(FacultyApiService::class.java)
 
+    // student api service
+    fun createStudentApiService(): StudentApiService = retrofit(Const.Remote.BASE_URL)
+        .create(StudentApiService::class.java)
+
     //donation api service
     fun createDonationApiService(): DonationApiService = retrofit(Const.Remote.BASE_URL)
         .create(DonationApiService::class.java)
+
+    // file uploader api service
+    fun createFileHandlerApiService(): FileHandlerApiService = retrofit(Const.Remote.BASE_URL)
+        .create(FileHandlerApiService::class.java)
 }

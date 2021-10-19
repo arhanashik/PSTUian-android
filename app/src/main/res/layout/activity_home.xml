@@ -22,16 +22,31 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
-        <ImageView
-                android:id="@+id/btn_about"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+        <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/btn_account"
+                android:layout_width="@dimen/avatar_width_32"
+                android:layout_height="@dimen/avatar_height_32"
                 android:layout_marginEnd="@dimen/space_16dp"
-                app:srcCompat="@drawable/ic_help_fill"
+                android:src="@drawable/img_placeholder_profile"
+                android:visibility="invisible"
                 app:layout_constraintTop_toTopOf="@id/tv_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/tv_title"
                 tools:ignore="ContentDescription" />
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sign_in_sign_up"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_5dp"
+                android:src="@drawable/img_placeholder_profile"
+                android:text="@string/txt_sign_in"
+                android:textColor="@android:color/black"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toTopOf="@id/tv_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/tv_title" />
 
         <com.google.android.material.card.MaterialCardView
                 android:id="@+id/image_slider_container"

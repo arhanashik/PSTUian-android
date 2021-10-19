@@ -3,6 +3,19 @@ package com.workfort.pstuian.app.data.local.database;
 public interface ColumnNames {
     String SL = "sl";
 
+    interface Config {
+        String ID = "id";
+        String ANDROID_VERSION = "android_version";
+        String IOS_VERSION = "ios_version";
+        String DATA_REFRESH_VERSION = "data_refresh_version";
+        String API_VERSION = "api_version";
+        String ADMIN_API_VERSION = "admin_api_version";
+        String FORCE_REFRESH = "force_refresh";
+        String FORCE_UPDATE = "force_update";
+        String FORCE_REFRESH_DONE = "force_refresh_done";
+        String FORCE_UPDATE_DONE = "force_update_done";
+    }
+
     interface Slider {
         String ID = "id";
         String TITLE = "title";

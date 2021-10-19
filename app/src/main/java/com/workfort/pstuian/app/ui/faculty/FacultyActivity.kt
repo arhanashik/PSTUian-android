@@ -2,7 +2,8 @@ package com.workfort.pstuian.app.ui.faculty
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
@@ -14,11 +15,11 @@ import com.workfort.pstuian.app.ui.faculty.employee.EmployeeFragment
 import com.workfort.pstuian.app.ui.faculty.teachers.TeachersFragment
 import com.workfort.pstuian.databinding.ActivityFacultyBinding
 
-
 class FacultyActivity : BaseActivity<ActivityFacultyBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityFacultyBinding
         = ActivityFacultyBinding::inflate
 
+    override fun getToolbarId(): Int = R.id.toolbar
     override fun getMenuId(): Int = R.menu.menu_search
     override fun getSearchMenuItemId(): Int = R.id.action_search
 
@@ -28,13 +29,13 @@ class FacultyActivity : BaseActivity<ActivityFacultyBinding>() {
     var mSelectedTabPosition = 0
 
     override fun afterOnCreate(savedInstanceState: Bundle?) {
+        setHomeEnabled()
         if(savedInstanceState != null) return
 
         val faculty = intent.getParcelableExtra<FacultyEntity>(Const.Key.FACULTY)
         if(faculty == null) finish()
         else mFaculty = faculty
 
-        setHomeEnabled()
         title = mFaculty.shortTitle
 
         initTabs()
@@ -50,22 +51,14 @@ class FacultyActivity : BaseActivity<ActivityFacultyBinding>() {
     }
 
     private fun initTabs() {
-        pagerAdapter = PagerAdapter(supportFragmentManager)
-        pagerAdapter.addItem(getString(R.string.label_batch), BatchesFragment.newInstance(mFaculty))
-        pagerAdapter.addItem(getString(R.string.label_teacher), TeachersFragment.newInstance(mFaculty))
-        pagerAdapter.addItem(getString(R.string.label_course_schedule), CourseFragment.newInstance(mFaculty))
-        pagerAdapter.addItem(getString(R.string.label_employee), EmployeeFragment.newInstance(mFaculty))
-        //pagerAdapter.addItem(getString(R.string.label_other), OthersFragment.newInstance())
-
+        pagerAdapter = PagerAdapter(this)
+        pagerAdapter.addItem(BatchesFragment.newInstance(mFaculty))
+        pagerAdapter.addItem(TeachersFragment.newInstance(mFaculty))
+        pagerAdapter.addItem(CourseFragment.newInstance(mFaculty))
+        pagerAdapter.addItem(EmployeeFragment.newInstance(mFaculty))
         binding.viewPager.adapter = pagerAdapter
-        binding.tabs.setupWithViewPager(binding.viewPager)
-        binding.viewPager.offscreenPageLimit = pagerAdapter.count
-
-        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {}
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-
+        binding.viewPager.offscreenPageLimit = pagerAdapter.itemCount
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 mSelectedTabPosition = position
                 when(position) {
@@ -76,7 +69,16 @@ class FacultyActivity : BaseActivity<ActivityFacultyBinding>() {
                     else -> hindSearchView()
                 }
             }
-
         })
+
+        TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
+            tab.text = getString(when(position) {
+                0 -> R.string.label_batch
+                1 -> R.string.label_teacher
+                2 -> R.string.label_course_schedule
+                3 -> R.string.label_employee
+                else -> R.string.txt_unknown
+            })
+        }.attach()
     }
 }

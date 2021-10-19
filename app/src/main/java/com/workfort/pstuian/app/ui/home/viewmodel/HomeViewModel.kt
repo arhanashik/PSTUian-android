@@ -3,6 +3,7 @@ package com.workfort.pstuian.app.ui.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.app.data.local.pref.Prefs
+import com.workfort.pstuian.app.data.repository.AuthRepository
 import com.workfort.pstuian.app.data.repository.FacultyRepository
 import com.workfort.pstuian.app.data.repository.SliderRepository
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
@@ -17,10 +18,12 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
+    private val authRepo: AuthRepository,
     private val sliderRepo: SliderRepository,
     private val facultyRepo: FacultyRepository
 ) : ViewModel() {
     val intent = Channel<HomeIntent>(Channel.UNLIMITED)
+
     private val _sliderState = MutableStateFlow<SliderState>(SliderState.Idle)
     val sliderState: StateFlow<SliderState> get() = _sliderState
 
@@ -74,8 +77,10 @@ class HomeViewModel(
             _deleteAllDataState.value = DeleteAllState.Loading
             _deleteAllDataState.value = try {
                 Prefs.clear()
+                authRepo.deleteAll()
                 sliderRepo.deleteAll()
                 facultyRepo.deleteAll()
+                authRepo.updateDataRefreshState()
                 DeleteAllState.Success
             } catch (e: Exception) {
                 DeleteAllState.Error(e.message)

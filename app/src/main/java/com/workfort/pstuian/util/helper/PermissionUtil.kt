@@ -33,7 +33,6 @@ object PermissionUtil {
         requestCode: Int = REQUEST_CODE_PERMISSION_DEFAULT,
         vararg permissions: String
     ) {
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
 
         val finalArgs = ArrayList<String>()

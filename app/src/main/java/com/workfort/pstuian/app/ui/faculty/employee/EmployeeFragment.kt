@@ -1,26 +1,23 @@
 package com.workfort.pstuian.app.ui.faculty.employee
 
-import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import com.workfort.pstuian.R
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.employee.EmployeeEntity
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.fragment.BaseFragment
+import com.workfort.pstuian.app.ui.employeeprofile.EmployeeProfileActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.EmployeeAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.EmployeeClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.faculty.viewstate.EmployeeState
 import com.workfort.pstuian.databinding.FragmentEmployeesBinding
-import com.workfort.pstuian.databinding.PromptEmployeeDetailsBinding
-import com.workfort.pstuian.util.helper.LinkUtil
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -54,7 +51,10 @@ class EmployeeFragment(private val faculty: FacultyEntity)
         mAdapter = EmployeeAdapter()
         mAdapter.setListener(object: EmployeeClickEvent {
             override fun onClickEmployee(employee: EmployeeEntity) {
-                showEmployeeDetails(employee)
+                val intent = Intent(context, EmployeeProfileActivity::class.java)
+                intent.putExtra(Const.Key.FACULTY, faculty)
+                intent.putExtra(Const.Key.EMPLOYEE, employee)
+                startActivity(intent)
             }
         })
         binding.rvEmployees.layoutManager = LinearLayoutManager(context)
@@ -95,32 +95,5 @@ class EmployeeFragment(private val faculty: FacultyEntity)
 
     fun filter(query: String) {
         mAdapter.filter.filter(query)
-    }
-
-    private fun showEmployeeDetails(employee: EmployeeEntity) {
-        val binding = DataBindingUtil.inflate(layoutInflater,
-            R.layout.prompt_employee_details, null, false) as PromptEmployeeDetailsBinding
-
-        with(binding) {
-            imgProfile.load(employee.imageUrl)
-            tvName.text = employee.name
-            tvDesignation.text = employee.designation
-            val department = "Department: " + employee.department
-            tvDepartment.text = department
-            val faculty = "Faculty: " + employee.facultyId
-            tvFaculty.text = faculty
-            val address = "Address: " + employee.address
-            tvAddress.text = address
-            val phone = "Phone: " + employee.phone
-            tvPhone.text = phone
-        }
-
-        val linkUtil = LinkUtil(requireContext())
-        binding.btnCall.setOnClickListener { linkUtil.callTo(employee.phone!!) }
-
-        val detailsDialog = AlertDialog.Builder(context)
-            .setView(binding.root).create()
-
-        detailsDialog.show()
     }
 }

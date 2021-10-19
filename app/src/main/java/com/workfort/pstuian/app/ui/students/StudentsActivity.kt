@@ -26,6 +26,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityStudentsBinding
             = ActivityStudentsBinding::inflate
 
+    override fun getToolbarId(): Int = R.id.toolbar
     override fun getMenuId(): Int = R.menu.menu_search
     override fun getSearchMenuItemId(): Int = R.id.action_search
     override fun getSearchQueryHint(): String = getString(R.string.hint_search_student)
@@ -36,6 +37,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
     private lateinit var mBatch: BatchEntity
 
     override fun afterOnCreate(savedInstanceState: Bundle?) {
+        setHomeEnabled()
         val faculty = intent.getParcelableExtra<FacultyEntity>(Const.Key.FACULTY)
         if(faculty == null) finish()
         else mFaculty = faculty
@@ -44,8 +46,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         if(batch == null) finish()
         else mBatch = batch
 
-        setHomeEnabled()
-        title = mBatch.name
+        binding.toolbar.title = mBatch.name
         initStudentsList()
 
         observeStudents()

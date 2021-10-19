@@ -6,15 +6,8 @@ import com.workfort.pstuian.R
 object Const {
     object RequestCode {
         const val LOCATION = 111
-        const val GOOGLE_SIGN_IN = 222
-        const val CAPTURE_PHOTO = 333
-        const val PICK_SINGLE_PHOTO = 444
-        const val STORAGE_READ = 555
-        const val STORAGE_WRITE = 666
-        const val CREATE_POST = 777
-        const val CREATE_EVENT = 888
-        const val CREATE_INFO = 999
-        const val CREATE_STORY = 1111
+        const val IN_APP_UPDATE = 222
+        const val PICK_IMAGE = 333
     }
 
     val backgroundList = arrayListOf(
@@ -29,17 +22,27 @@ object Const {
         R.drawable.bg_gradient9,
     )
 
-    object Key{
+    object Key {
         const val FACULTY = "FACULTY"
         const val BATCH = "BATCH"
         const val STUDENT = "STUDENT"
         const val TEACHER = "TEACHER"
+        const val EMPLOYEE = "EMPLOYEE"
+        const val URL = "URL"
+        const val URI = "URI"
+        const val NAME = "NAME"
+        const val PATH = "PATH"
+        const val PROGRESS = "PROGRESS"
+    }
+
+    object Path {
+        const val ROOT_PUBLIC_PATH = "/"
     }
 
     object Remote {
         private const val LOCAL_SERVER = "http://192.168.1.100:8888/PSTUian-web/api/mobile/v1/"
         private const val DEV_SERVER = "https://api-dev.pstuian.com/mobile/v1/"
         private const val LIVE_SERVER = "https://api.pstuian.com/mobile/v1/"
-        val BASE_URL = if(BuildConfig.DEBUG) DEV_SERVER else LIVE_SERVER
+        val BASE_URL = if(BuildConfig.DEBUG) LOCAL_SERVER else LIVE_SERVER
     }
 }

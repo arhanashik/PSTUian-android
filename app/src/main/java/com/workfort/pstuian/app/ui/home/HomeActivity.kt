@@ -5,17 +5,16 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.SliderAnimations
-import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
@@ -34,29 +33,32 @@ import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
 import com.workfort.pstuian.app.ui.home.viewstate.FacultyState
+import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
-import com.workfort.pstuian.app.ui.settings.SettingsActivity
+import com.workfort.pstuian.app.ui.signin.SignInActivity
+import com.workfort.pstuian.app.ui.common.intent.AuthIntent
+import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.splash.SplashActivity
 import com.workfort.pstuian.databinding.ActivityHomeBinding
 import com.workfort.pstuian.databinding.PromptDonateBinding
 import com.workfort.pstuian.databinding.PromptDonationMessageBinding
+import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.NetworkUtil
 import com.workfort.pstuian.util.helper.PlayStoreUtil
 import com.workfort.pstuian.util.helper.Toaster
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-
-@ExperimentalCoroutinesApi
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityHomeBinding
             = ActivityHomeBinding::inflate
 
     private val mViewModel: HomeViewModel by viewModel()
+    private val mAuthViewModel: AuthViewModel by viewModel()
     private val mDonorsViewModel: DonorsViewModel by viewModel()
 
     private lateinit var mSliderAdapter: SliderAdapter
@@ -67,6 +69,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         initFacultyList()
         setClickEvents()
 
+        observeSignedInUser()
+        observeSignOut()
         observeSliders()
         observeFaculties()
         observeDonation()
@@ -78,13 +82,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_about -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-            }
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            mAuthViewModel.intent.send(AuthIntent.GetSignInUser)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun initSlider() {
@@ -117,14 +119,19 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private fun setClickEvents() {
         val linkUtil = LinkUtil(this)
         with(binding) {
-            btnAbout.setOnClickListener {
-                startActivity(Intent(this@HomeActivity, SettingsActivity::class.java))
+            btnSignInSignUp.setOnClickListener {
+                launchActivity<SignInActivity> {  }
+            }
+            btnAccount.setOnClickListener {
+                lifecycleScope.launch {
+                    mAuthViewModel.intent.send(AuthIntent.SignOut)
+                }
             }
             cardUniversityWebsite.setOnClickListener {
                 linkUtil.openBrowser(getString(R.string.link_pstu_website))
             }
             cardDonationList.setOnClickListener {
-                startActivity(Intent(this@HomeActivity, DonorsActivity::class.java))
+                launchActivity<DonorsActivity> {  }
             }
             cardGradingSystem.setOnClickListener { showGrading() }
             cardAdmissionSeatPlan.setOnClickListener {
@@ -135,16 +142,66 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             }
             btnDonate.setOnClickListener { donate() }
             btnRateApp.setOnClickListener {
-                PlayStoreUtil(this@HomeActivity)
-                    .rateMyApp(this@HomeActivity, BuildConfig.APPLICATION_ID)
+                PlayStoreUtil(this@HomeActivity).openStore()
             }
             btnClearData.setOnClickListener { clearData() }
         }
     }
 
+    private fun observeSignedInUser() {
+        lifecycleScope.launch {
+            mAuthViewModel.signInUserState.collect {
+                when (it) {
+                    is SignInUserState.Idle -> {
+                    }
+                    is SignInUserState.Loading -> {
+                        binding.btnSignInSignUp.visibility = View.INVISIBLE
+                        binding.btnAccount.visibility = View.INVISIBLE
+                    }
+                    is SignInUserState.User -> {
+                        binding.btnSignInSignUp.visibility = View.INVISIBLE
+                        binding.btnAccount.visibility = View.VISIBLE
+                        binding.btnAccount.load(it.user.imageUrl) {
+                            placeholder(R.drawable.img_placeholder_profile)
+                            error(R.drawable.img_placeholder_profile)
+                        }
+                    }
+                    is SignInUserState.Error -> {
+                        binding.btnSignInSignUp.visibility = View.VISIBLE
+                        binding.btnAccount.visibility = View.INVISIBLE
+                        Timber.e(it.error)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeSignOut() {
+        lifecycleScope.launch {
+            mAuthViewModel.signOutState.collect {
+                when (it) {
+                    is SignOutState.Idle -> {
+                    }
+                    is SignOutState.Loading -> {
+                        binding.btnSignInSignUp.visibility = View.INVISIBLE
+                        binding.btnAccount.visibility = View.INVISIBLE
+                    }
+                    is SignOutState.Success -> {
+                        binding.btnSignInSignUp.visibility = View.VISIBLE
+                        binding.btnAccount.visibility = View.INVISIBLE
+                    }
+                    is SignOutState.Error -> {
+                        binding.btnSignInSignUp.visibility = View.INVISIBLE
+                        binding.btnAccount.visibility = View.VISIBLE
+                        Timber.e(it.error)
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeSliders() {
         lifecycleScope.launch {
-            //observe sliders
             mViewModel.sliderState.collect {
                 when (it) {
                     is SliderState.Idle -> {

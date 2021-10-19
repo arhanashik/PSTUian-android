@@ -1,6 +1,7 @@
 package com.workfort.pstuian.util.lib.koin
 
 import com.workfort.pstuian.app.data.local.batch.BatchService
+import com.workfort.pstuian.app.data.local.config.ConfigService
 import com.workfort.pstuian.app.data.local.course.CourseService
 import com.workfort.pstuian.app.data.local.database.AppDatabase
 import com.workfort.pstuian.app.data.local.employee.EmployeeService
@@ -8,12 +9,8 @@ import com.workfort.pstuian.app.data.local.faculty.FacultyService
 import com.workfort.pstuian.app.data.local.slider.SliderService
 import com.workfort.pstuian.app.data.local.student.StudentService
 import com.workfort.pstuian.app.data.local.teacher.TeacherService
-import com.workfort.pstuian.app.data.remote.apihelper.DonationApiHelperImpl
-import com.workfort.pstuian.app.data.remote.apihelper.FacultyApiHelperImpl
-import com.workfort.pstuian.app.data.remote.apihelper.SliderApiHelper
-import com.workfort.pstuian.app.data.repository.DonationRepository
-import com.workfort.pstuian.app.data.repository.FacultyRepository
-import com.workfort.pstuian.app.data.repository.SliderRepository
+import com.workfort.pstuian.app.data.remote.apihelper.*
+import com.workfort.pstuian.app.data.repository.*
 import org.koin.dsl.module
 
 /**
@@ -35,6 +32,7 @@ import org.koin.dsl.module
 private val db = AppDatabase.getDatabase()
 val repositoryModule = module {
     //db services injection
+    single { ConfigService(db.configDao()) }
     single { SliderService(db.sliderDao()) }
     single { FacultyService(db.facultyDao()) }
     single { BatchService(db.batchDao()) }
@@ -43,6 +41,10 @@ val repositoryModule = module {
     single { CourseService(db.courseScheduleDao()) }
     single { EmployeeService(db.employeeDao()) }
 
+    //auth repository injections
+    single { AuthApiHelperImpl(get()) }
+    single { AuthRepository(get(), get()) }
+
     //slider repository injections
     single { SliderApiHelper(get()) }
     single { SliderRepository(get(), get()) }
@@ -50,6 +52,10 @@ val repositoryModule = module {
     //faculty repository injections
     single { FacultyApiHelperImpl(get()) }
     single { FacultyRepository(get(), get(), get(), get(), get(), get(), get()) }
+
+    //faculty repository injections
+    single { StudentApiHelperImpl(get()) }
+    single { StudentRepository(get()) }
 
     //donation repository injections
     single { DonationApiHelperImpl(get()) }

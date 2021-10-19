@@ -2,7 +2,10 @@ package com.workfort.pstuian.util.lib.koin
 
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
+import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
+import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.students.StudentsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -24,8 +27,11 @@ import org.koin.dsl.module
  */
 
 val viewModelModule = module {
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get()) }
     viewModel { DonorsViewModel(get()) }
     viewModel { FacultyViewModel(get()) }
     viewModel { StudentsViewModel(get()) }
+    viewModel { StudentProfileViewModel(get()) }
+    viewModel { AuthViewModel(get()) }
+    viewModel { FileHandlerViewModel() }
 }

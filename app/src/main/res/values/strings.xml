@@ -16,9 +16,10 @@
     <string name="hint_search_batch">Search batch</string>
     <string name="hint_search_employee">Search employee</string>
     <string name="hint_search_course_schedule">Search course schedule</string>
-    <string name="hint_name">Please insert your name</string>
+    <string name="hint_name">Name</string>
     <string name="hint_info">Please insert who you are</string>
-    <string name="hint_email">Please insert your email</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
     <string name="hint_reference">Please insert TrxID / TxnId</string>
     <string name="hint_save_donation">After sending donation</string>
     <string name="hint_search_donors">Search donors</string>
@@ -155,7 +156,70 @@
     <string name="txt_email">Email</string>
     <string name="txt_linked_in">LinkedIn</string>
     <string name="txt_facebook">Facebook</string>
-    <string name="text_connect">Connect</string>
-    <string name="txt_academic_info">Academic Info</string>
+    <string name="txt_connect">Connect</string>
+    <string name="txt_academic">Academic</string>
     <string name="txt_cv">CV</string>
+    <string name="txt_sign_in">Sign In</string>
+    <string name="txt_forgot_password">Forgot password?</string>
+    <string name="txt_or">Or</string>
+    <string name="hint_sign_up">Need a new account?</string>
+    <string name="txt_sign_up">Sign Up</string>
+    <string name="hint_remembered_password">Remembered password?</string>
+    <string name="hint_password_recovery">*Password reset instructions will be sent to your email address</string>
+    <string name="txt_send">Send</string>
+    <string name="txt_sign_up_conditions">By signing up you will automatically agree to the</string>
+    <string name="txt_and">and</string>
+    <string name="txt_privacy_policy">Privacy Policy</string>
+    <string name="txt_terms_and_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="hint_sign_in">Already have an account?</string>
+    <string name="helper_text_password">Minimum length is 6</string>
+    <string name="hint_id">Id</string>
+    <string name="hint_reg">Reg</string>
+    <string name="hint_session">Session</string>
+    <string name="label_sign_in_activity">Sign In</string>
+    <string name="label_sign_up_activity">Sign Up</string>
+    <string name="label_forgot_password_activity">Forgot Password</string>
+    <string name="txt_select_batch">Select Batch</string>
+    <string name="txt_select_faculty">Select Faculty</string>
+    <string name="example_session">Example: 2013–14</string>
+    <string name="txt_dismiss">Dismiss</string>
+    <string name="default_error_dialog_title">Opps, something went wrong!</string>
+    <string name="default_error_dialog_message">Please check if everything is alright and try again. Sorry for the inconvenience.</string>
+    <string name="error_msg_sign_in">If you are trying to login for the first time,
+        please try to use your student id as email and registration number as password.
+        If not, please check if the email and password is correct. Also, please check
+        if you have an active network connection. If the issue still remains please
+        make a query from the help option. We promise to check the issue ASAP.</string>
+    <string name="default_success_dialog_title">Success!</string>
+    <string name="default_success_dialog_message">Operation successful. Everything seems alright!</string>
+    <string name="success_msg_sign_up">You\'ve successfully signed up!</string>
+    <string name="warning_msg_sign_up">For the first time login, please use your student id
+        as email and registration number as password. We STRONGLY recommend to change your email
+        and password after first time sign in</string>
+    <string name="error_msg_server_issue">It seems there could be an issue with the server.
+        Or there might not be enough data available. In either case, please send us a complain
+        from the help option. We promise to check it ASAP. You might also check your network
+        connection. Or try to Clear Data from the home menu(You will need a active network
+        connection to reload the data).</string>
+    <string name="title_force_refresh_dialog">Refresh required</string>
+    <string name="message_force_refresh_dialog">The data between the app and the server must
+        need to be synchronized. Please keep your network connection on and click on refresh
+        button. Sorry for the inconvenience.
+    </string>
+    <string name="txt_refresh">Refresh</string>
+    <string name="txt_update">Update</string>
+    <string name="title_force_update_dialog">Update required</string>
+    <string name="message_force_update_dialog">There is a new version of the app is available on play store. Please update to the latest version and restart the app.</string>
+    <string name="title_flexible_update_dialog">Update Available!</string>
+    <string name="message_flexible_update_dialog">A new version is available in playstore with UI change, bug fix and many improvements.</string>
+    <string name="title_install_update_dialog">Ready To Install</string>
+    <string name="message_install_update_dialog">The new update is downloaded successfully! Please press the install button.</string>
+    <string name="txt_install">Install</string>
+    <string name="title_activity_student_profile">Profile</string>
+    <string name="title_activity_teacher_profile">Profile</string>
+    <string name="txt_unknown">Unknown</string>
+    <string name="title_activity_employee_profile">Profile</string>
+    <string name="txt_downloading">Downloading…</string>
+    <string name="txt_upload">Upload</string>
+    <string name="txt_change">Change</string>
 </resources>

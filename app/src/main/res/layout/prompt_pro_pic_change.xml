@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="?attr/backgroundColor">
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/img_avatar"
+            android:layout_width="@dimen/dp120"
+            android:layout_height="@dimen/dp120"
+            android:layout_marginTop="@dimen/default_space"
+            app:civ_border="false"
+            tools:src="@tools:sample/avatars"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="ContentDescription" />
+
+    <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/default_space"
+            app:layout_constraintTop_toBottomOf="@id/img_avatar"
+            android:background="?attr/customDividerColor"/>
+
+    <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_dismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintEnd_toStartOf="@id/btn_change"
+            android:text="@string/txt_dismiss"
+            android:textColor="?attr/customPrimaryTextColor"/>
+
+    <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintStart_toEndOf="@id/btn_dismiss"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintEnd_toStartOf="@id/btn_upload"
+            android:text="@string/txt_change"
+            android:textColor="?attr/customPrimaryTextColor"/>
+
+    <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintStart_toEndOf="@id/btn_change"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/txt_upload"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

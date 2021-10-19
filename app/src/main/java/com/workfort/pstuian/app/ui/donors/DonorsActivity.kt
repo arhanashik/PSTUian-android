@@ -12,24 +12,22 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.donor.DonorEntity
 import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.donors.adapter.DonorsAdapter
 import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
 import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.app.ui.donors.viewstate.DonorsState
-import com.workfort.pstuian.app.ui.donors.adapter.DonorsAdapter
 import com.workfort.pstuian.app.ui.faculty.listener.DonorClickEvent
 import com.workfort.pstuian.databinding.ActivityDonorsBinding
 import com.workfort.pstuian.databinding.PromptDonateBinding
 import com.workfort.pstuian.databinding.PromptDonationMessageBinding
 import com.workfort.pstuian.util.helper.NetworkUtil
 import com.workfort.pstuian.util.helper.Toaster
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-@ExperimentalCoroutinesApi
 class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityDonorsBinding
         = ActivityDonorsBinding::inflate

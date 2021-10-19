@@ -5,17 +5,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
-import com.workfort.pstuian.app.ui.faculty.viewholder.BatchesViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
+import com.workfort.pstuian.app.ui.faculty.viewholder.BatchesMinViewHolder
+import com.workfort.pstuian.app.ui.faculty.viewholder.BatchesViewHolder
 import com.workfort.pstuian.databinding.RowBatchBinding
+import com.workfort.pstuian.databinding.RowBatchMinBinding
 import java.util.*
 import kotlin.collections.ArrayList
 
-class BatchesAdapter : RecyclerView.Adapter<BatchesViewHolder>(), Filterable {
+class BatchesAdapter(
+    private val isExpandView: Boolean = true
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
     private val batches : MutableList<BatchEntity> = ArrayList()
     private val filteredBatches : MutableList<BatchEntity> = ArrayList()
@@ -41,8 +43,8 @@ class BatchesAdapter : RecyclerView.Adapter<BatchesViewHolder>(), Filterable {
                 } else {
                     val q = query.toString().toLowerCase(Locale.ROOT)
                     batches.forEach {
-                        if(it.name!!.toLowerCase(Locale.ROOT).contains(q)
-                            || it.title!!.toLowerCase(Locale.ROOT).contains(q)
+                        if(it.name.toLowerCase(Locale.ROOT).contains(q)
+                            || (it.title?: "").toLowerCase(Locale.ROOT).contains(q)
                             || it.session.toLowerCase(Locale.ROOT).contains(q))
                             result.add(it)
                     }
@@ -69,20 +71,35 @@ class BatchesAdapter : RecyclerView.Adapter<BatchesViewHolder>(), Filterable {
         return filteredBatches.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BatchesViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil.inflate(inflater, R.layout.row_batch, parent, false)
-                as RowBatchBinding
-        return BatchesViewHolder(binding)
+        if(isExpandView) {
+            return BatchesViewHolder(RowBatchBinding.inflate(inflater, parent, false))
+        }
+
+        return BatchesMinViewHolder(RowBatchMinBinding.inflate(inflater, parent, false))
     }
 
-    override fun onBindViewHolder(holder: BatchesViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val batch = filteredBatches[position]
 
-        holder.bind(batch)
-        holder.binding.root.setOnClickListener {
-            run {
-                if(listener != null) listener?.onClickBatch(batch)
+        if(isExpandView) {
+            (holder as BatchesViewHolder).apply {
+                bind(batch)
+                binding.root.setOnClickListener {
+                    run {
+                        if(listener != null) listener?.onClickBatch(batch)
+                    }
+                }
+            }
+        } else {
+            (holder as BatchesMinViewHolder).apply {
+                bind(batch)
+                binding.root.setOnClickListener {
+                    run {
+                        if(listener != null) listener?.onClickBatch(batch)
+                    }
+                }
             }
         }
     }

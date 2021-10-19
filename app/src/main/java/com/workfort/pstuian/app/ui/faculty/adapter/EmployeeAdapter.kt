@@ -12,6 +12,8 @@ import com.workfort.pstuian.app.data.local.employee.EmployeeEntity
 import com.workfort.pstuian.databinding.RowEmployeeBinding
 import com.workfort.pstuian.app.ui.faculty.viewholder.EmployeeViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.EmployeeClickEvent
+import java.util.*
+import kotlin.collections.ArrayList
 
 class EmployeeAdapter : RecyclerView.Adapter<EmployeeViewHolder>(), Filterable {
 
@@ -36,13 +38,13 @@ class EmployeeAdapter : RecyclerView.Adapter<EmployeeViewHolder>(), Filterable {
                 val result: ArrayList<EmployeeEntity> = ArrayList()
                 if(TextUtils.isEmpty(query)) {
                     result.addAll(employees)
-                }else {
-                    val q = query.toString().toLowerCase()
+                } else {
+                    val q = query.toString().toLowerCase(Locale.ROOT)
                     employees.forEach {
-                        if(it.name!!.toLowerCase().contains(q)
-                            || it.designation!!.toLowerCase().contains(q)
-                            || it.department!!.toLowerCase().contains(q)
-                            || it.phone!!.toLowerCase().contains(q))
+                        if(it.name.toLowerCase(Locale.ROOT).contains(q)
+                            || it.designation.toLowerCase(Locale.ROOT).contains(q)
+                            || (it.department?: "").toLowerCase(Locale.ROOT).contains(q)
+                            || (it.phone?:"").toLowerCase(Locale.ROOT).contains(q))
                             result.add(it)
                     }
                 }

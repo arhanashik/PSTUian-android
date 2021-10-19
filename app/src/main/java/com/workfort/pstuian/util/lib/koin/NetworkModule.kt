@@ -21,7 +21,10 @@ import org.koin.dsl.module
 
 // DI module
 val networkModule = module {
+    single { RetrofitBuilder.createAuthApiService() }
     single { RetrofitBuilder.createSliderApiService() }
     single { RetrofitBuilder.createFacultyApiService() }
+    single { RetrofitBuilder.createStudentApiService() }
     single { RetrofitBuilder.createDonationApiService() }
+    single { RetrofitBuilder.createFileHandlerApiService() }
 }
