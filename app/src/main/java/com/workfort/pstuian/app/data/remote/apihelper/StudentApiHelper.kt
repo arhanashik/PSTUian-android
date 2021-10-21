@@ -23,5 +23,7 @@ interface StudentApiHelper {
     suspend fun changeProfileImage(
         id: Int,
         imageUrl: String,
-    ): String
+    ): Boolean
+
+    suspend fun changeName(id: Int, name: String): Boolean
 }

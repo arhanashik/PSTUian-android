@@ -10,7 +10,8 @@ import com.workfort.pstuian.util.lib.koin.networkModule
 import com.workfort.pstuian.util.lib.koin.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.logger.Level
 import timber.log.Timber
 
 /**
@@ -53,7 +54,7 @@ class PstuianApp  : MultiDexApplication() {
     private fun triggerKoin() {
         startKoin {
             androidContext(this@PstuianApp)
-            androidLogger()
+            androidLogger(Level.DEBUG)
             modules(viewModelModule, networkModule, repositoryModule)
         }
     }

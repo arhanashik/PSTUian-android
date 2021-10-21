@@ -28,4 +28,11 @@ interface StudentApiService {
         @Field("id") id: Int,
         @Field("image_url") imageUrl: String,
     ): Response<String>
+
+    @FormUrlEncoded
+    @POST("student.php?call=updateName")
+    suspend fun changeName(
+        @Field("id") id: Int,
+        @Field("name") name: String
+    ): Response<String>
 }

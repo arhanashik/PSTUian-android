@@ -21,6 +21,10 @@ object Prefs : PrefProp {
         get() = prefs.getBoolean(keyFirstRun, false)
         set(value) = prefs.edit { it.putBoolean(keyFirstRun, value) }
 
+    var authToken: String?
+        get() = prefs.getString(keyAuthToken, "")
+        set(value) = prefs.edit { it.putString(keyAuthToken, value) }
+
     var donateOption: String?
         get() = prefs.getString(keyDonateOption, "")
         set(value) = prefs.edit { it.putString(keyDonateOption, value) }

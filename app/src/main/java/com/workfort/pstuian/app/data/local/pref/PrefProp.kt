@@ -7,6 +7,9 @@ interface PrefProp {
     val keyFirstRun: String
         get() = "first_run"
 
+    val keyAuthToken: String
+        get() = "auth_token"
+
     val keyDonateOption: String
         get() = "donation_option"
 

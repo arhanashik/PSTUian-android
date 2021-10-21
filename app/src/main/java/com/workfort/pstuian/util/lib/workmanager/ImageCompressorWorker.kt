@@ -40,16 +40,17 @@ class ImageCompressorWorker(
     override suspend fun doWork(): Result {
         val uriStr = inputData.getString(Const.Key.URI)
         val tempFile = inputData.getString(Const.Key.NAME)
-        if(uriStr.isNullOrEmpty() || tempFile.isNullOrEmpty()) {
+        val maxSize = inputData.getInt(Const.Key.MAX_SIZE, 200)
+        if(uriStr.isNullOrEmpty() || tempFile.isNullOrEmpty() || maxSize <= 0) {
             return Result.failure()
         }
 
         return withContext(Dispatchers.IO) {
-            compress(uriStr, tempFile)
+            compress(uriStr, tempFile, maxSize)
         }
     }
 
-    private fun compress(uriStr: String, tempFileName: String, ): Result {
+    private fun compress(uriStr: String, tempFileName: String, maxSize: Int): Result {
         val context = PstuianApp.getBaseApplicationContext()
         val contentResolver = context.contentResolver
         try {
@@ -57,7 +58,7 @@ class ImageCompressorWorker(
             val tempFile = File(context.cacheDir, tempFileName)
             contentResolver.openInputStream(uri)?.use { inputStream ->
                 val bitmap = BitmapFactory.decodeStream(inputStream)
-                val compressed = ImageUtil.compress(bitmap, 512)
+                val compressed = ImageUtil.compress(bitmap, maxSize)
                 FileOutputStream(tempFile).use { outputStream ->
                     outputStream.write(compressed)
                     outputStream.flush()

@@ -28,7 +28,11 @@ import com.workfort.pstuian.util.lib.workmanager.ImageCompressorWorker
 
 class FileHandlerViewModel : ViewModel() {
     fun compress(context: Context, uri: Uri, fileName: String): LiveData<WorkInfo> {
-        val data = workDataOf (Const.Key.URI to uri.toString(), Const.Key.NAME to fileName)
+        val data = workDataOf (
+            Const.Key.URI to uri.toString(),
+            Const.Key.NAME to fileName,
+            Const.Key.MAX_SIZE to 200, //200kb
+        )
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()

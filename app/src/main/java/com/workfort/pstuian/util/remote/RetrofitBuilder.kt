@@ -1,7 +1,11 @@
 package com.workfort.pstuian.util.remote
 
+import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.app.data.local.pref.Prefs
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -50,11 +54,28 @@ object RetrofitBuilder {
         redactHeader("Cookie")
     }
 
+    private val requestInterceptor = object : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val authToken = Prefs.authToken?: ""
+            val request =
+                chain.request().newBuilder()
+                    .header("x-auth-token", authToken)
+                    .build()
+            return chain.proceed(request)
+        }
+    }
+
     //build an OkHttp client
     private val client = OkHttpClient
         .Builder()
         .readTimeout(30, TimeUnit.SECONDS)
         .connectTimeout(30, TimeUnit.SECONDS)
+        .apply {
+            if(BuildConfig.DEBUG){
+                addInterceptor(logging)
+            }
+        }
+        .addInterceptor(requestInterceptor)
         .addInterceptor(logging)
         .build()
 

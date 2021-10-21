@@ -20,7 +20,10 @@ import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.data.local.slider.SliderEntity
+import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.common.intent.AuthIntent
+import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.donors.DonorsActivity
 import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
@@ -36,9 +39,6 @@ import com.workfort.pstuian.app.ui.home.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
 import com.workfort.pstuian.app.ui.signin.SignInActivity
-import com.workfort.pstuian.app.ui.common.intent.AuthIntent
-import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
-import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.splash.SplashActivity
 import com.workfort.pstuian.databinding.ActivityHomeBinding
 import com.workfort.pstuian.databinding.PromptDonateBinding
@@ -64,13 +64,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private lateinit var mSliderAdapter: SliderAdapter
     private lateinit var mAdapter: FacultyAdapter
 
+    private var mSignedInUser: StudentEntity? = null
+
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         initSlider()
         initFacultyList()
         setClickEvents()
 
         observeSignedInUser()
-        observeSignOut()
         observeSliders()
         observeFaculties()
         observeDonation()
@@ -122,11 +123,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             btnSignInSignUp.setOnClickListener {
                 launchActivity<SignInActivity> {  }
             }
-            btnAccount.setOnClickListener {
-                lifecycleScope.launch {
-                    mAuthViewModel.intent.send(AuthIntent.SignOut)
-                }
-            }
+            btnAccount.setOnClickListener {}
             cardUniversityWebsite.setOnClickListener {
                 linkUtil.openBrowser(getString(R.string.link_pstu_website))
             }
@@ -159,40 +156,23 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                         binding.btnAccount.visibility = View.INVISIBLE
                     }
                     is SignInUserState.User -> {
-                        binding.btnSignInSignUp.visibility = View.INVISIBLE
-                        binding.btnAccount.visibility = View.VISIBLE
-                        binding.btnAccount.load(it.user.imageUrl) {
-                            placeholder(R.drawable.img_placeholder_profile)
-                            error(R.drawable.img_placeholder_profile)
+                        with(binding) {
+                            mSignedInUser = it.user
+                            btnSignInSignUp.visibility = View.INVISIBLE
+                            btnAccount.visibility = View.VISIBLE
+                            if(it.user.imageUrl.isNullOrEmpty()) {
+                                btnAccount.load(R.drawable.img_placeholder_profile)
+                            } else {
+                                btnAccount.load(it.user.imageUrl) {
+                                    placeholder(R.drawable.img_placeholder_profile)
+                                    error(R.drawable.img_placeholder_profile)
+                                }
+                            }
                         }
                     }
                     is SignInUserState.Error -> {
                         binding.btnSignInSignUp.visibility = View.VISIBLE
                         binding.btnAccount.visibility = View.INVISIBLE
-                        Timber.e(it.error)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun observeSignOut() {
-        lifecycleScope.launch {
-            mAuthViewModel.signOutState.collect {
-                when (it) {
-                    is SignOutState.Idle -> {
-                    }
-                    is SignOutState.Loading -> {
-                        binding.btnSignInSignUp.visibility = View.INVISIBLE
-                        binding.btnAccount.visibility = View.INVISIBLE
-                    }
-                    is SignOutState.Success -> {
-                        binding.btnSignInSignUp.visibility = View.VISIBLE
-                        binding.btnAccount.visibility = View.INVISIBLE
-                    }
-                    is SignOutState.Error -> {
-                        binding.btnSignInSignUp.visibility = View.INVISIBLE
-                        binding.btnAccount.visibility = View.VISIBLE
                         Timber.e(it.error)
                     }
                 }

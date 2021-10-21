@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.data.repository
 
-import com.workfort.pstuian.app.data.remote.apihelper.DonationApiHelperImpl
+import com.workfort.pstuian.app.data.remote.apihelper.DonationApiHelper
 
 /**
  *  ****************************************************************************
@@ -18,7 +18,7 @@ import com.workfort.pstuian.app.data.remote.apihelper.DonationApiHelperImpl
  *  ****************************************************************************
  */
 
-class DonationRepository(private val helper: DonationApiHelperImpl) {
+class DonationRepository(private val helper: DonationApiHelper) {
     suspend fun getDonationOption() = helper.getDonationOption()
     suspend fun saveDonation(name: String, info: String, email: String, reference: String)
     = helper.saveDonation(name, info, email, reference)

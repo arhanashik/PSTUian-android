@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkInfo
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
@@ -30,8 +31,9 @@ import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
-import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileImageState
+import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.databinding.ActivityStudentProfileBinding
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
@@ -48,7 +50,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             = ActivityStudentProfileBinding::inflate
 
     private val mViewModel : StudentProfileViewModel by viewModel()
-    private val mAuthVM : AuthViewModel by viewModel()
+    private val mAuthViewModel : AuthViewModel by viewModel()
     private val mFileHandlerVM : FileHandlerViewModel by viewModel()
 
     override fun getToolbarId(): Int = R.id.toolbar
@@ -79,26 +81,12 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         setUiData()
         initTabs()
 
-        binding.btnCall.setOnClickListener {
-            mStudent.phone?.let {
-                mLinkUtil.callTo(it)
-            }
-        }
-
-        binding.btnEmail.setOnClickListener {
-            mStudent.email?.let {
-                mLinkUtil.sendEmail(it)
-            }
-        }
-
-        binding.btnCamera.setOnClickListener {
-            chooseImage()
-        }
-
         observeSignedInUser()
         observeProfileImageChange()
+        observeNameChange()
+        observeSignOut()
         lifecycleScope.launch {
-            mAuthVM.intent.send(AuthIntent.GetSignInUser)
+            mAuthViewModel.intent.send(AuthIntent.GetSignInUser)
         }
     }
 
@@ -114,6 +102,12 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                 }
             }
             tvName.text = mStudent.name
+
+            btnCall.setOnClickListener { promptCall(mStudent.phone) }
+            btnEmail.setOnClickListener { promptEmail(mStudent.email) }
+            btnCamera.setOnClickListener { chooseImage() }
+            btnEditName.setOnClickListener { promptChangeName(mStudent) }
+            btnSignOut.setOnClickListener { promptSignOut() }
         }
     }
 
@@ -137,23 +131,37 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
 
     private fun observeSignedInUser() {
         lifecycleScope.launch {
-            mAuthVM.signInUserState.collect {
+            mAuthViewModel.signInUserState.collect {
                 when (it) {
                     is SignInUserState.Idle -> {
-                        binding.btnCamera.visibility = View.GONE
+                        with(binding) {
+                            btnCamera.visibility = View.GONE
+                            btnEditName.visibility = View.GONE
+                            btnSignOut.visibility = View.GONE
+                            btnCall.visibility = View.GONE
+                            btnEmail.visibility = View.GONE
+                        }
                     }
                     is SignInUserState.Loading -> {
-                        binding.btnCamera.visibility = View.GONE
+                        setActionUiState(isActionRunning = true)
                     }
                     is SignInUserState.User -> {
-                        if(it.user.id == mStudent.id) {
-                            binding.btnCamera.visibility = View.VISIBLE
-                            binding.btnCall.visibility = View.GONE
-                            binding.btnEmail.visibility = View.GONE
+                        with(binding) {
+                            if(it.user.id == mStudent.id) {
+                                btnCamera.visibility = View.VISIBLE
+                                btnEditName.visibility = View.VISIBLE
+                                btnSignOut.visibility = View.VISIBLE
+                            } else {
+                                btnCall.visibility = View.VISIBLE
+                                btnEmail.visibility = View.VISIBLE
+                            }
                         }
                     }
                     is SignInUserState.Error -> {
-                        binding.btnCamera.visibility = View.GONE
+                        with(binding) {
+                            btnCall.visibility = View.VISIBLE
+                            btnEmail.visibility = View.VISIBLE
+                        }
                         Timber.e(it.error)
                     }
                 }
@@ -165,20 +173,13 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         object : ProfileInfoClickEvent() {
             override fun onAction(item: ProfileInfoItem) {
                 when (item.action) {
-                    ProfileInfoAction.CALL -> {
-                        mLinkUtil.callTo(item.actionData)
-                    }
-                    ProfileInfoAction.MAIL -> {
-                        mLinkUtil.sendEmail(item.actionData)
-                    }
-                    ProfileInfoAction.DOWNLOAD -> {
-                        requestFileCreatePermission()
-                    }
+                    ProfileInfoAction.CALL -> { promptCall(item.actionData) }
+                    ProfileInfoAction.MAIL -> { promptEmail(item.actionData) }
+                    ProfileInfoAction.DOWNLOAD -> { promptDownloadCv(item.actionData) }
                     ProfileInfoAction.OPEN_LINK -> {
-                        mLinkUtil.openBrowser(item.actionData)
+                        item.actionData?.let { mLinkUtil.openBrowser(it) }
                     }
-                    else -> {
-                    }
+                    else -> { }
                 }
             }
         })
@@ -199,23 +200,23 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             ProfileInfoItem(getString(R.string.txt_address), mStudent.address ?: "~"),
             ProfileInfoItem(
                 getString(R.string.txt_phone), mStudent.phone ?: "~",
-                R.drawable.ic_call, ProfileInfoAction.CALL, mStudent.phone ?: "~"
+                R.drawable.ic_call, ProfileInfoAction.CALL, mStudent.phone
             ),
             ProfileInfoItem(
                 getString(R.string.txt_email), mStudent.email ?: "~",
-                R.drawable.ic_email, ProfileInfoAction.MAIL, mStudent.email ?: "~"
+                R.drawable.ic_email, ProfileInfoAction.MAIL, mStudent.email
             ),
             ProfileInfoItem(
                 getString(R.string.txt_cv), mStudent.cvLink ?: "~",
-                R.drawable.ic_download, ProfileInfoAction.DOWNLOAD, mStudent.cvLink ?: "~"
+                R.drawable.ic_download, ProfileInfoAction.DOWNLOAD, mStudent.cvLink
             ),
             ProfileInfoItem(
                 getString(R.string.txt_linked_in), mStudent.linkedIn ?: "~",
-                R.drawable.ic_web, ProfileInfoAction.OPEN_LINK, mStudent.linkedIn ?: "~"
+                R.drawable.ic_web, ProfileInfoAction.OPEN_LINK, mStudent.linkedIn
             ),
             ProfileInfoItem(
                 getString(R.string.txt_facebook), mStudent.fbLink ?: "~",
-                R.drawable.ic_web, ProfileInfoAction.OPEN_LINK, mStudent.fbLink ?: "~"
+                R.drawable.ic_web, ProfileInfoAction.OPEN_LINK, mStudent.fbLink
             ),
         )
     }
@@ -327,13 +328,10 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             when (it.state) {
                 WorkInfo.State.ENQUEUED,
                 WorkInfo.State.RUNNING -> {
-                    binding.btnCamera.visibility = View.GONE
-                    binding.loaderProPicUpload.isIndeterminate = true
-                    binding.loaderProPicUpload.visibility = View.VISIBLE
+                    setActionUiState(isActionRunning = true)
                 }
                 WorkInfo.State.SUCCEEDED -> {
-                    binding.btnCamera.visibility = View.VISIBLE
-                    binding.loaderProPicUpload.visibility = View.GONE
+                    setActionUiState(isActionRunning = false)
                     val file = File(cacheDir, fileName)
                     if(file.exists()) {
                         uploadProfileImage(fileName)
@@ -342,13 +340,11 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     }
                 }
                 WorkInfo.State.FAILED -> {
-                    binding.btnCamera.visibility = View.VISIBLE
-                    binding.loaderProPicUpload.visibility = View.GONE
+                    setActionUiState(isActionRunning = false)
                     CommonDialog.error(this, "Failed to resize the image\"")
                 }
                 else -> {
-                    binding.btnCamera.visibility = View.VISIBLE
-                    binding.loaderProPicUpload.visibility = View.GONE
+                    setActionUiState(isActionRunning = false)
                 }
             }
         })
@@ -362,30 +358,25 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                 WorkInfo.State.RUNNING -> {
                     val progress = it.progress.getInt(Const.Key.PROGRESS, 0)
                     if (progress == 0) {
-                        binding.btnCamera.visibility = View.GONE
-                        binding.loaderProPicUpload.isIndeterminate = false
-                        binding.loaderProPicUpload.visibility = View.VISIBLE
+                        setActionUiState(isActionRunning = true, isLoaderIndeterminate = false)
                     }
-                    binding.loaderProPicUpload.progress = progress
+                    binding.loaderLarger.progress = progress
                 }
                 WorkInfo.State.SUCCEEDED -> {
-                    binding.btnCamera.visibility = View.GONE
-                    binding.loaderProPicUpload.visibility = View.GONE
+                    setActionUiState(isActionRunning = false)
                     val data = it.outputData.getString(Const.Key.URL)
                     if(data.isNullOrEmpty()) {
                         CommonDialog.error(this, message = "Failed to upload the image")
                     } else {
-                        mViewModel.changeProfileImage(mStudent.id, data)
+                        mViewModel.changeProfileImage(mStudent, data)
                     }
                 }
                 WorkInfo.State.FAILED -> {
-                    binding.btnCamera.visibility = View.VISIBLE
-                    binding.loaderProPicUpload.visibility = View.GONE
+                    setActionUiState(isActionRunning = false)
                     CommonDialog.error(this, "Failed to upload the image")
                 }
                 else -> {
-                    binding.btnCamera.visibility = View.VISIBLE
-                    binding.loaderProPicUpload.visibility = View.GONE
+                    setActionUiState(isActionRunning = false)
                 }
             }
         })
@@ -395,21 +386,17 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         lifecycleScope.launch {
             mViewModel.changeProfileImageState.collect {
                 when (it) {
-                    is ChangeProfileImageState.Idle -> {
+                    is ChangeProfileInfoState.Idle -> {
                     }
-                    is ChangeProfileImageState.Loading -> {
-                        binding.btnCamera.visibility = View.GONE
-                        binding.loaderProPicUpload.isIndeterminate = true
-                        binding.loaderProPicUpload.visibility = View.VISIBLE
+                    is ChangeProfileInfoState.Loading -> {
+                        setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileImageState.Success -> {
-                        binding.btnCamera.visibility = View.VISIBLE
-                        binding.loaderProPicUpload.visibility = View.GONE
+                    is ChangeProfileInfoState.Success -> {
+                        setActionUiState(isActionRunning = false)
                         CommonDialog.success(this@StudentProfileActivity)
                     }
-                    is ChangeProfileImageState.Error -> {
-                        binding.btnCamera.visibility = View.VISIBLE
-                        binding.loaderProPicUpload.visibility = View.GONE
+                    is ChangeProfileInfoState.Error -> {
+                        setActionUiState(isActionRunning = false)
                         setUiData()
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
                         CommonDialog.error(this@StudentProfileActivity, message = msg)
@@ -417,6 +404,154 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                 }
             }
         }
+    }
+
+    private var changeNameDialog: AlertDialog? = null
+    private fun promptChangeName(student: StudentEntity) {
+        changeNameDialog = CommonDialog.changeName(this, student.name, { newName ->
+            binding.tvName.text = newName
+            changeNameDialog?.dismiss()
+            mViewModel.changeName(student, newName)
+        })
+    }
+
+    private fun observeNameChange() {
+        lifecycleScope.launch {
+            mViewModel.changeNameState.collect {
+                when (it) {
+                    is ChangeProfileInfoState.Idle -> {
+                    }
+                    is ChangeProfileInfoState.Loading -> {
+                        setActionUiState(isActionRunning = true)
+                    }
+                    is ChangeProfileInfoState.Success -> {
+                        setActionUiState(isActionRunning = false)
+                        CommonDialog.success(this@StudentProfileActivity)
+                    }
+                    is ChangeProfileInfoState.Error -> {
+                        setActionUiState(isActionRunning = false)
+                        setUiData()
+                        val msg = it.error?: getString(R.string.default_error_dialog_message)
+                        CommonDialog.error(this@StudentProfileActivity, message = msg)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setActionUiState(isActionRunning: Boolean, isLoaderIndeterminate: Boolean = true) {
+        val viewVisibility = if(isActionRunning) View.GONE else View.VISIBLE
+        with(binding) {
+            btnSignOut.visibility = viewVisibility
+            btnCamera.visibility = viewVisibility
+            btnEditName.visibility = viewVisibility
+            loaderLarger.visibility = View.GONE
+            if(isActionRunning) {
+                loaderLarger.isIndeterminate = isLoaderIndeterminate
+                loaderLarger.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun promptSignOut() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.txt_sign_out)
+            .setMessage("Are you surely want to sign out?")
+            .setPositiveButton(R.string.txt_sign_out) { _,_ ->
+                lifecycleScope.launch {
+                    mAuthViewModel.intent.send(AuthIntent.SignOut)
+                }
+            }
+            .setNegativeButton(R.string.txt_dismiss) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun observeSignOut() {
+        lifecycleScope.launch {
+            mAuthViewModel.signOutState.collect {
+                when (it) {
+                    is SignOutState.Idle -> {
+                    }
+                    is SignOutState.Loading -> {
+                        setActionUiState(isActionRunning = true)
+                    }
+                    is SignOutState.Success -> {
+                        with(binding) {
+                            btnCamera.visibility = View.GONE
+                            btnEditName.visibility = View.GONE
+                            btnSignOut.visibility = View.GONE
+                            loaderLarger.visibility = View.GONE
+                        }
+                        Toaster.show(it.message)
+                    }
+                    is SignOutState.Error -> {
+                        setActionUiState(isActionRunning = false)
+                        val msg = it.error?: getString(R.string.default_error_dialog_message)
+                        CommonDialog.error(this@StudentProfileActivity, message = msg)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun promptCall(phoneNumber: String?) {
+        if(phoneNumber.isNullOrEmpty()) {
+            Toaster.show(R.string.txt_error_call)
+            return
+        }
+        val msg = "${getString(R.string.txt_msg_call)} $phoneNumber"
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.txt_title_call)
+            .setMessage(msg)
+            .setPositiveButton(R.string.txt_call) { _,_ ->
+                mLinkUtil.callTo(phoneNumber)
+            }
+            .setNegativeButton(R.string.txt_dismiss) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun promptEmail(email: String?) {
+        if(email.isNullOrEmpty()) {
+            Toaster.show(R.string.txt_error_email)
+            return
+        }
+        val msg = "${getString(R.string.txt_msg_email)} $email"
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.txt_title_email)
+            .setMessage(msg)
+            .setPositiveButton(R.string.txt_send) { _,_ ->
+                mLinkUtil.sendEmail(email)
+            }
+            .setNegativeButton(R.string.txt_dismiss) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun promptDownloadCv(link: String?) {
+        if(link.isNullOrEmpty()) {
+            Toaster.show(R.string.txt_error_download_cv)
+            return
+        }
+        val msg = "${getString(R.string.txt_msg_download_cv)} $link"
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.txt_title_downlaod_cv)
+            .setMessage(msg)
+            .setPositiveButton(R.string.txt_download) { _,_ ->
+                requestFileCreatePermission()
+            }
+            .setNegativeButton(R.string.txt_dismiss) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     //according to documentation this should work. But unfortunately nope :D

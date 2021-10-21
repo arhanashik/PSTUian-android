@@ -13,7 +13,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = TableNames.STUDENT)
 data class StudentEntity(
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = ColumnNames.Student.NAME) val name: String,
+    @ColumnInfo(name = ColumnNames.Student.NAME) var name: String,
     @ColumnInfo(name = ColumnNames.Student.REG) val reg: String,
     @ColumnInfo(name = ColumnNames.Student.PHONE) val phone: String?,
     @ColumnInfo(name = ColumnNames.Student.LINKED_IN)
@@ -32,7 +32,7 @@ data class StudentEntity(
     val facultyId: Int,
     @ColumnInfo(name = ColumnNames.Student.IMAGE_URL)
     @SerializedName("image_url")
-    val imageUrl: String?,
+    var imageUrl: String?,
     @ColumnInfo(name = ColumnNames.Student.CV_LINK)
     @SerializedName("cv_link")
     val cvLink: String?

@@ -1,8 +1,5 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
-import com.workfort.pstuian.app.data.local.config.ConfigEntity
-import com.workfort.pstuian.app.data.local.student.StudentEntity
-import com.workfort.pstuian.util.remote.AuthApiService
 import com.workfort.pstuian.util.remote.StudentApiService
 
 /**
@@ -22,9 +19,15 @@ import com.workfort.pstuian.util.remote.StudentApiService
  */
 
 class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiHelper {
-    override suspend fun changeProfileImage(id: Int, imageUrl: String): String {
+    override suspend fun changeProfileImage(id: Int, imageUrl: String): Boolean {
         val response = service.changeProfileImage(id, imageUrl)
         if(!response.success) throw Exception(response.message)
-        return response.message
+        return response.success
+    }
+
+    override suspend fun changeName(id: Int, name: String): Boolean {
+        val response = service.changeName(id, name)
+        if(!response.success) throw Exception(response.message)
+        return response.success
     }
 }

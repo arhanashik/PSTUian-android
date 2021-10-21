@@ -16,9 +16,9 @@ package com.workfort.pstuian.app.ui.studentprofile.viewstate
  *  ****************************************************************************
  */
 
-sealed class ChangeProfileImageState {
-    object Idle : ChangeProfileImageState()
-    object Loading : ChangeProfileImageState()
-    data class Success(val message: String) : ChangeProfileImageState()
-    data class Error(val error: String?) : ChangeProfileImageState()
+sealed class ChangeProfileInfoState {
+    object Idle : ChangeProfileInfoState()
+    object Loading : ChangeProfileInfoState()
+    object Success : ChangeProfileInfoState()
+    data class Error(val error: String?) : ChangeProfileInfoState()
 }

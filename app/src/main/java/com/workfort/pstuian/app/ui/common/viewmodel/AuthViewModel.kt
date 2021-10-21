@@ -9,6 +9,7 @@ import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.signup.viewstate.SignUpState
 import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
+import com.workfort.pstuian.util.helper.CoilUtil
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -111,6 +112,7 @@ class AuthViewModel(
             _signOutState.value = try {
                 val student = authRepo.getSignedInUserFlow().first()
                 val response = authRepo.signOut(student.id, "student")
+                CoilUtil.clearCache()
                 SignOutState.Success(response)
             } catch (e: Exception) {
                 SignOutState.Error(e.message)

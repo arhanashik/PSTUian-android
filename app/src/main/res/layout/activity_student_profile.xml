@@ -44,6 +44,16 @@
                         app:srcCompat="@drawable/ic_email"
                         app:tint="@color/colorPrimary"
                         android:contentDescription="@string/description_ic_call"/>
+
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_sign_out"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_sign_out"
+                        android:textColor="@android:color/black"
+                        android:textAllCaps="false"
+                        android:visibility="gone"/>
             </LinearLayout>
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
@@ -65,7 +75,7 @@
                 app:layout_constraintEnd_toEndOf="parent"/>
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/loader_pro_pic_upload"
+                android:id="@+id/loader_larger"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:progress="90"
@@ -91,7 +101,7 @@
 
         <TextView
                 android:id="@+id/tv_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_16dp"
                 android:layout_marginTop="@dimen/dp10"
@@ -102,7 +112,23 @@
                 android:textSize="22sp"
                 android:singleLine="true"
                 android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/img_avatar" />
+
+
+        <ImageView
+                android:id="@+id/btn_edit_name"
+                android:layout_width="@dimen/dp16"
+                android:layout_height="@dimen/dp16"
+                android:layout_marginStart="@dimen/dp5"
+                app:srcCompat="@drawable/ic_pencil_circular_outline"
+                app:tint="@color/md_grey_600"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:layout_constraintTop_toTopOf="@id/tv_name"
+                app:layout_constraintStart_toEndOf="@id/tv_name"
+                tools:ignore="ContentDescription" />
 
         <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"

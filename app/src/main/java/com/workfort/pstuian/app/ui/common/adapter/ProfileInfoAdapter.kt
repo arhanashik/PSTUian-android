@@ -43,7 +43,7 @@ data class ProfileInfoItem (
     @DrawableRes
     val actionIcon: Int = -1,
     val action: ProfileInfoAction = ProfileInfoAction.NONE,
-    val actionData: String = ""
+    val actionData: String? = ""
 )
 
 abstract class ProfileInfoClickEvent {

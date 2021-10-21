@@ -40,7 +40,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/space_5dp"
-                android:src="@drawable/img_placeholder_profile"
                 android:text="@string/txt_sign_in"
                 android:textColor="@android:color/black"
                 android:textAllCaps="false"

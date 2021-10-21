@@ -2,13 +2,16 @@ package com.workfort.pstuian.util.view.dialog
 
 import android.content.Context
 import android.net.Uri
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
+import com.workfort.pstuian.databinding.PromptChangeNameBinding
 import com.workfort.pstuian.databinding.PromptErrorBinding
 import com.workfort.pstuian.databinding.PromptProPicChangeBinding
 import com.workfort.pstuian.databinding.PromptSuccessBinding
@@ -52,7 +55,7 @@ object CommonDialog {
         val dialog = MaterialAlertDialogBuilder(context)
             .setView(binding.root)
             .setCancelable(cancelable)
-            .show()
+            .create()
 
         binding.btnDismiss.setOnClickListener {
             if(dismissOnBtnClick) dialog.dismiss()
@@ -87,7 +90,7 @@ object CommonDialog {
         val dialog = MaterialAlertDialogBuilder(context)
             .setView(binding.root)
             .setCancelable(cancelable)
-            .show()
+            .create()
 
         binding.btnDismiss.setOnClickListener {
             if(dismissOnBtnClick) dialog.dismiss()
@@ -117,7 +120,7 @@ object CommonDialog {
         val dialog = MaterialAlertDialogBuilder(context)
             .setView(binding.root)
             .setCancelable(cancelable)
-            .show()
+            .create()
 
         binding.btnDismiss.setOnClickListener {
             dialog.dismiss()
@@ -130,6 +133,59 @@ object CommonDialog {
         binding.btnUpload.setOnClickListener {
             onClickUpload()
         }
+        dialog.show()
+
+        return dialog
+    }
+
+    fun changeName(
+        context: Context,
+        oldName: String,
+        onClickChange: (newName: String) -> Unit = {},
+        cancelable: Boolean = false,
+    ): AlertDialog {
+        val inflater = LayoutInflater.from(context)
+        val binding = PromptChangeNameBinding.inflate(inflater, null, false)
+        binding.etName.setText(oldName)
+        binding.etName.setSelection(oldName.length)
+        binding.btnChange.isEnabled = false
+
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                when {
+                    p0.isNullOrEmpty() -> {
+                        binding.tilName.error = "Name cannot be empty"
+                        binding.btnChange.isEnabled = false
+                    }
+                    p0.toString() == oldName -> {
+                        binding.tilName.error = "Name cannot be same as old name"
+                        binding.btnChange.isEnabled = false
+                    }
+                    else -> {
+                        binding.tilName.error = null
+                        binding.btnChange.isEnabled = true
+                    }
+                }
+            }
+        }
+        binding.etName.addTextChangedListener(textWatcher)
+
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(binding.root)
+            .setCancelable(cancelable)
+            .create()
+
+        binding.btnDismiss.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        binding.btnChange.setOnClickListener {
+            val newName = binding.etName.text.toString()
+            onClickChange(newName)
+        }
+
         dialog.show()
 
         return dialog

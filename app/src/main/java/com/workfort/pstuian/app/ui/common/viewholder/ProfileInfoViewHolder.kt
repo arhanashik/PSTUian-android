@@ -12,7 +12,8 @@ class ProfileInfoViewHolder (val binding: RowProfileInfoBinding) :
     fun bind(item: ProfileInfoItem, callback: ProfileInfoClickEvent?) {
         with(binding) {
             labelInfo.text = item.label
-            tvInfo.text = item.title
+            val title = if(item.title.isEmpty()) "~" else item.title
+            tvInfo.text = title
             if(item.actionIcon == -1) {
                 btnAction.visibility = View.INVISIBLE
                 btnAction.setOnClickListener {  }

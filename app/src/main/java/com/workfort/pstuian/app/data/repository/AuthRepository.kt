@@ -9,13 +9,13 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.app.data.local.config.ConfigEntity
 import com.workfort.pstuian.app.data.local.config.ConfigService
+import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.data.local.student.StudentEntity
-import com.workfort.pstuian.app.data.remote.apihelper.AuthApiHelperImpl
+import com.workfort.pstuian.app.data.remote.apihelper.AuthApiHelper
 import com.workfort.pstuian.util.helper.GsonUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
-import java.lang.Exception
 
 /**
  *  ****************************************************************************
@@ -35,10 +35,10 @@ import java.lang.Exception
 
 class AuthRepository(
     private val dbService: ConfigService,
-    private val helper: AuthApiHelperImpl
+    private val helper: AuthApiHelper
 ) {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(AUTH_PREFERENCES)
+    private val Context.authStore: DataStore<Preferences> by preferencesDataStore(AUTH_PREFERENCES)
     companion object {
         private val USER = stringPreferencesKey("user")
         private val AUTH_TOKEN = stringPreferencesKey("auth_token")
@@ -66,20 +66,32 @@ class AuthRepository(
 
     fun getSignedInUserFlow(): Flow<StudentEntity> {
         val context = PstuianApp.getBaseApplicationContext()
-        return context.dataStore.data
+        return context.authStore.data
             .map { auth ->
                 val jsonStr = auth[USER]?: ""
                 GsonUtil.fromJson(jsonStr)
             }
     }
 
+    suspend fun storeSignInUser(student: StudentEntity) {
+        val context = PstuianApp.getBaseApplicationContext()
+        context.authStore.edit { auth ->
+            auth[USER] = GsonUtil.toJson(student)
+        }
+    }
+
+    suspend fun storeAuthToken(token: String) {
+        val context = PstuianApp.getBaseApplicationContext()
+        context.authStore.edit { auth ->
+            auth[AUTH_TOKEN] = token
+        }
+        Prefs.authToken = token
+    }
+
     suspend fun signIn(email: String, password: String, userType: String): StudentEntity {
         val data = helper.signIn(email, password, userType)
-        val context = PstuianApp.getBaseApplicationContext()
-        context.dataStore.edit { auth ->
-            auth[USER] = GsonUtil.toJson(data.first)
-            auth[AUTH_TOKEN] = GsonUtil.toJson(data.second)
-        }
+        storeSignInUser(data.first)
+        storeAuthToken(data.second)
 
         return data.first
     }
@@ -93,32 +105,26 @@ class AuthRepository(
         session: String
     ): StudentEntity {
         val data = helper.signUp(name, id, reg, facultyId, batchId, session)
-        val context = PstuianApp.getBaseApplicationContext()
-        context.dataStore.edit { auth ->
-            auth[USER] = GsonUtil.toJson(data.first)
-            auth[AUTH_TOKEN] = GsonUtil.toJson(data.second)
-        }
+        storeSignInUser(data.first)
+        storeAuthToken(data.second)
 
         return data.first
     }
 
     suspend fun signOut(id: Int, userType: String): String {
         val data = helper.signOut(id, userType)
-        val context = PstuianApp.getBaseApplicationContext()
-        context.dataStore.edit { auth ->
-            auth.remove(USER)
-            auth.remove(AUTH_TOKEN)
-        }
+        deleteAll()
 
         return data
     }
 
     suspend fun deleteAll() {
         val context = PstuianApp.getBaseApplicationContext()
-        context.dataStore.edit { auth ->
+        context.authStore.edit { auth ->
             auth.remove(USER)
             auth.remove(AUTH_TOKEN)
         }
+        Prefs.authToken = ""
     }
 
     suspend fun updateDataRefreshState() {

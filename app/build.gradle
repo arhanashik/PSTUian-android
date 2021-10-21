@@ -82,7 +82,7 @@ dependencies {
     //data-store
     implementation("androidx.datastore:datastore-preferences:$datastorePreferences")
 
-    //work manager
+    //work manager(if any issue occurs during apk build, downgrade the version to 2.6.0)
     implementation "androidx.work:work-runtime-ktx:$workManager"
 }
 

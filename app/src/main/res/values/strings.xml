@@ -108,7 +108,7 @@
          All data will be deleted. You\'ll need data connection for reloading. The app will restart after the process.
      </string>
 
-    <string name="grading_system">
+    <string name="grading_system" formatted="false">
         Numerical Grade  :  Letter Grade  :  Grade Point
         \n\n80% and Above  :  A+            :  4.00
         \n75% - 79%      :  A             :  3.75
@@ -222,4 +222,18 @@
     <string name="txt_downloading">Downloading…</string>
     <string name="txt_upload">Upload</string>
     <string name="txt_change">Change</string>
+    <string name="txt_sign_out">Sign Out</string>
+    <string name="txt_edit">Edit</string>
+    <string name="txt_title_call">Phone call</string>
+    <string name="txt_msg_call">Are you surely want to make a phone call?</string>
+    <string name="txt_error_call">Ops, no phone number found</string>
+    <string name="txt_error_email">Ops, no email address found!</string>
+    <string name="txt_title_email">Email</string>
+    <string name="txt_msg_email">Are you surely want to send an email?</string>
+    <string name="txt_call">Call</string>
+    <string name="txt_msg_download_cv">Are you surely want to download the cv?</string>
+    <string name="txt_error_download_cv">Ops, no link found to download the cv!</string>
+    <string name="txt_title_downlaod_cv">Download CV</string>
+    <string name="txt_download">Download</string>
+    <string name="txt_change_name">Change Name</string>
 </resources>

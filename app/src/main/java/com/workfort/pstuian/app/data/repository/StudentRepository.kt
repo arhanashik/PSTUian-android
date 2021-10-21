@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.data.repository
 
-import com.workfort.pstuian.app.data.remote.apihelper.StudentApiHelperImpl
+import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.remote.apihelper.StudentApiHelper
 
 /**
  *  ****************************************************************************
@@ -19,9 +20,24 @@ import com.workfort.pstuian.app.data.remote.apihelper.StudentApiHelperImpl
  */
 
 class StudentRepository(
-    private val helper: StudentApiHelperImpl
+    private val authRepo: AuthRepository,
+    private val helper: StudentApiHelper
 ) {
-    suspend fun changeProfileImage(id: Int, imageUrl: String): String {
-        return helper.changeProfileImage(id, imageUrl)
+    suspend fun changeProfileImage(student: StudentEntity, imageUrl: String): Boolean {
+        val isChanged = helper.changeProfileImage(student.id, imageUrl)
+        if(isChanged) {
+            student.imageUrl = imageUrl
+            authRepo.storeSignInUser(student)
+        }
+        return isChanged
+    }
+
+    suspend fun changeName(student: StudentEntity, name: String): Boolean {
+        val isChanged = helper.changeName(student.id, name)
+        if(isChanged) {
+            student.name = name
+            authRepo.storeSignInUser(student)
+        }
+        return isChanged
     }
 }

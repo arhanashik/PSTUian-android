@@ -33,7 +33,8 @@
 
         <activity
                 android:name=".app.ui.splash.SplashActivity"
-                android:theme="@style/AppTheme.Splash">
+                android:theme="@style/AppTheme.Splash"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -49,7 +50,8 @@
                 android:name=".app.ui.faculty.FacultyActivity"
                 android:parentActivityName=".app.ui.home.HomeActivity"
                 android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme.NoActionBar"
+                android:exported="false">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.home.HomeActivity"/>
@@ -68,7 +70,8 @@
                 android:label="@string/title_activity_students"
                 android:parentActivityName=".app.ui.faculty.FacultyActivity"
                 android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme.NoActionBar"
+                android:exported="false">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.faculty.FacultyActivity"/>
@@ -126,7 +129,8 @@
                 android:name=".app.ui.donors.DonorsActivity"
                 android:label="@string/title_activity_donors"
                 android:parentActivityName=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop">
+                android:launchMode="singleTop"
+                android:exported="false">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.home.HomeActivity"/>

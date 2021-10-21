@@ -31,7 +31,7 @@ object Const {
         const val URL = "URL"
         const val URI = "URI"
         const val NAME = "NAME"
-        const val PATH = "PATH"
+        const val MAX_SIZE = "MAX_SIZE"
         const val PROGRESS = "PROGRESS"
     }
 

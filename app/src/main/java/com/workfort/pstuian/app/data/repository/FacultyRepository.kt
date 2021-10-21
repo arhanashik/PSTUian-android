@@ -12,7 +12,7 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.local.student.StudentService
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherService
-import com.workfort.pstuian.app.data.remote.apihelper.FacultyApiHelperImpl
+import com.workfort.pstuian.app.data.remote.apihelper.FacultyApiHelper
 
 /**
  *  ****************************************************************************
@@ -37,7 +37,8 @@ class FacultyRepository(
     private val teacherDbService: TeacherService,
     private val courseDbService: CourseService,
     private val employeeDbService: EmployeeService,
-    private val helper: FacultyApiHelperImpl) {
+    private val helper: FacultyApiHelper
+) {
     suspend fun getFaculties() : List<FacultyEntity> {
         val existingData = facultyDbService.getAll()
         if(existingData.isNullOrEmpty()) {

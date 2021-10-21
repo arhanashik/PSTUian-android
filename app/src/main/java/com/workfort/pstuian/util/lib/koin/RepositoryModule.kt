@@ -42,7 +42,7 @@ val repositoryModule = module {
     single { EmployeeService(db.employeeDao()) }
 
     //auth repository injections
-    single { AuthApiHelperImpl(get()) }
+    single<AuthApiHelper> { AuthApiHelperImpl(get())}
     single { AuthRepository(get(), get()) }
 
     //slider repository injections
@@ -50,14 +50,14 @@ val repositoryModule = module {
     single { SliderRepository(get(), get()) }
 
     //faculty repository injections
-    single { FacultyApiHelperImpl(get()) }
+    single<FacultyApiHelper> { FacultyApiHelperImpl(get()) }
     single { FacultyRepository(get(), get(), get(), get(), get(), get(), get()) }
 
     //faculty repository injections
-    single { StudentApiHelperImpl(get()) }
-    single { StudentRepository(get()) }
+    single<StudentApiHelper> { StudentApiHelperImpl(get()) }
+    single { StudentRepository(get(), get()) }
 
     //donation repository injections
-    single { DonationApiHelperImpl(get()) }
+    single<DonationApiHelper> { DonationApiHelperImpl(get()) }
     single { DonationRepository(get()) }
 }
