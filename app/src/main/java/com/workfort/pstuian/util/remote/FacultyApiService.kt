@@ -18,6 +18,9 @@ interface FacultyApiService {
     suspend fun getBatches(@Query("faculty_id") facultyId: Int):
             Response<List<BatchEntity>>
 
+    @GET("batch.php?call=get")
+    suspend fun getBatch(@Query("id") id: Int): Response<BatchEntity>
+
     @GET("student.php?call=getAll")
     suspend fun getStudents(@Query("faculty_id") facultyId: Int,
                     @Query("batch_id") batchId: Int): Response<List<StudentEntity>>

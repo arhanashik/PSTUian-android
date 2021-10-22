@@ -1,6 +1,5 @@
 package com.workfort.pstuian.app.ui.home.viewstate
 
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.slider.SliderEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 
@@ -32,13 +31,6 @@ sealed class SliderState {
     object Loading : SliderState()
     data class Sliders(val sliders: List<SliderEntity>) : SliderState()
     data class Error(val error: String?) : SliderState()
-}
-
-sealed class FacultyState {
-    object Idle : FacultyState()
-    object Loading : FacultyState()
-    data class Faculties(val faculties: List<FacultyEntity>) : FacultyState()
-    data class Error(val error: String?) : FacultyState()
 }
 
 sealed class DeleteAllState {

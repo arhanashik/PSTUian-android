@@ -16,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.SliderAnimations
 import com.workfort.pstuian.R
+import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.pref.Prefs
@@ -30,16 +31,20 @@ import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
 import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.app.ui.faculty.FacultyActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
+import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
+import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
+import com.workfort.pstuian.app.ui.faculty.viewstate.BatchState
+import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.home.adapter.SliderAdapter
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
-import com.workfort.pstuian.app.ui.home.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
 import com.workfort.pstuian.app.ui.signin.SignInActivity
 import com.workfort.pstuian.app.ui.splash.SplashActivity
+import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.databinding.ActivityHomeBinding
 import com.workfort.pstuian.databinding.PromptDonateBinding
 import com.workfort.pstuian.databinding.PromptDonationMessageBinding
@@ -58,6 +63,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             = ActivityHomeBinding::inflate
 
     private val mViewModel: HomeViewModel by viewModel()
+    private val mFacultyViewModel: FacultyViewModel by viewModel()
     private val mAuthViewModel: AuthViewModel by viewModel()
     private val mDonorsViewModel: DonorsViewModel by viewModel()
 
@@ -78,13 +84,22 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         observeDeleteAllData()
         lifecycleScope.launch {
             mViewModel.intent.send(HomeIntent.GetSliders)
-            mViewModel.intent.send(HomeIntent.GetFaculties)
+            mFacultyViewModel.intent.send(FacultyIntent.GetFaculties)
             mDonorsViewModel.intent.send(DonorsIntent.GetDonationOptions)
         }
     }
 
     override fun onResume() {
         super.onResume()
+        /**
+         * For some weird reason, the sign in user gets loaded. But after the faculties are
+         * loaded the user is gone :D. So, for now, calling this function again after the
+         * faculties are loaded
+         * */
+        loadSignInUser()
+    }
+
+    private fun loadSignInUser() {
         lifecycleScope.launch {
             mAuthViewModel.intent.send(AuthIntent.GetSignInUser)
         }
@@ -123,7 +138,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             btnSignInSignUp.setOnClickListener {
                 launchActivity<SignInActivity> {  }
             }
-            btnAccount.setOnClickListener {}
+            btnAccount.setOnClickListener { loadBatch() }
             cardUniversityWebsite.setOnClickListener {
                 linkUtil.openBrowser(getString(R.string.link_pstu_website))
             }
@@ -152,13 +167,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     is SignInUserState.Idle -> {
                     }
                     is SignInUserState.Loading -> {
-                        binding.btnSignInSignUp.visibility = View.INVISIBLE
-                        binding.btnAccount.visibility = View.INVISIBLE
+                        binding.btnSignInSignUp.visibility = View.GONE
+                        binding.btnAccount.visibility = View.GONE
                     }
                     is SignInUserState.User -> {
                         with(binding) {
                             mSignedInUser = it.user
-                            btnSignInSignUp.visibility = View.INVISIBLE
+                            btnSignInSignUp.visibility = View.GONE
                             btnAccount.visibility = View.VISIBLE
                             if(it.user.imageUrl.isNullOrEmpty()) {
                                 btnAccount.load(R.drawable.img_placeholder_profile)
@@ -172,7 +187,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     }
                     is SignInUserState.Error -> {
                         binding.btnSignInSignUp.visibility = View.VISIBLE
-                        binding.btnAccount.visibility = View.INVISIBLE
+                        binding.btnAccount.visibility = View.GONE
                         Timber.e(it.error)
                     }
                 }
@@ -214,7 +229,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         val constraintSet = ConstraintSet()
         constraintSet.clone(constraintLayout)
         lifecycleScope.launch {
-            mViewModel.facultyState.collect {
+            mFacultyViewModel.facultyState.collect {
                 when (it) {
                     is FacultyState.Idle -> {
                     }
@@ -246,6 +261,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                         binding.tvMessage.visibility = View.GONE
                         binding.rvFaculties.visibility = View.VISIBLE
                         renderFaculties(it.faculties)
+                        /**
+                         * For some weird reason, the sign in user gets loaded. But after the
+                         * faculties are loaded the user is gone :D. So, for now, calling this
+                         * function again after the faculties are loaded
+                         * */
+                        loadSignInUser()
                     }
                     is FacultyState.Error -> {
                         constraintSet.connect(
@@ -399,6 +420,48 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun loadBatch() {
+        observeBatch()
+        mSignedInUser?.let { student ->
+            mFacultyViewModel.getBatch(student.batchId)
+        }
+    }
+
+    private fun observeBatch() {
+        lifecycleScope.launch {
+            mFacultyViewModel.batchState.collect {
+                when (it) {
+                    is BatchState.Idle -> {
+                    }
+                    is BatchState.Loading -> {
+                        Toaster.show("Getting batch....")
+                    }
+                    is BatchState.Batch -> {
+                        openProfile(it.batch)
+                    }
+                    is BatchState.Error -> {
+                        Toaster.show(it.error ?: "Failed to open profile!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openProfile(batch: BatchEntity) {
+        mSignedInUser?.let { student ->
+            var faculty: FacultyEntity? = null
+            mAdapter.getItems().filter { it.id == student.facultyId }.also {
+                if(!it.isNullOrEmpty()) faculty = it[0]
+            }
+            val intent = Intent(this, StudentProfileActivity::class.java).apply {
+                putExtra(Const.Key.FACULTY, faculty)
+                putExtra(Const.Key.BATCH, batch)
+                putExtra(Const.Key.STUDENT, student)
+            }
+            startActivity(intent)
         }
     }
 }

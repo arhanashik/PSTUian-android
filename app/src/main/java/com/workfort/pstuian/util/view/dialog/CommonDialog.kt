@@ -2,19 +2,14 @@ package com.workfort.pstuian.util.view.dialog
 
 import android.content.Context
 import android.net.Uri
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
+import android.text.*
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
-import com.workfort.pstuian.databinding.PromptChangeNameBinding
-import com.workfort.pstuian.databinding.PromptErrorBinding
-import com.workfort.pstuian.databinding.PromptProPicChangeBinding
-import com.workfort.pstuian.databinding.PromptSuccessBinding
+import com.workfort.pstuian.databinding.*
 
 /**
  *  ****************************************************************************
@@ -150,12 +145,26 @@ object CommonDialog {
         binding.etName.setSelection(oldName.length)
         binding.btnChange.isEnabled = false
 
+        val filter = InputFilter { source, start, end, _, _, _ ->
+            for(i in start until end) {
+                if (!Character.isLetter(source[i]) &&
+                    source[i].toString() != "_" &&
+                    source[i].toString() != "-" &&
+                    source[i].toString() != " "
+                ) {
+                    return@InputFilter ""
+                }
+            }
+            null
+        }
+        binding.etName.filters = arrayOf(filter)
+
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 when {
-                    p0.isNullOrEmpty() -> {
+                    p0.isNullOrEmpty() || p0.trim().isEmpty() -> {
                         binding.tilName.error = "Name cannot be empty"
                         binding.btnChange.isEnabled = false
                     }
@@ -182,10 +191,41 @@ object CommonDialog {
         }
 
         binding.btnChange.setOnClickListener {
-            val newName = binding.etName.text.toString()
+            val newName = binding.etName.text.toString().trim()
             onClickChange(newName)
         }
 
+        dialog.show()
+
+        return dialog
+    }
+
+    fun changeCV(
+        context: Context,
+        pdfUri: Uri,
+        onClickChange: () -> Unit = {},
+        onClickUpload: (pdfUri: Uri) -> Unit = {},
+        cancelable: Boolean = false,
+    ): AlertDialog {
+        val inflater = LayoutInflater.from(context)
+        val binding = PromptChangeCvBinding.inflate(inflater, null, false)
+
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(binding.root)
+            .setCancelable(cancelable)
+            .create()
+
+        binding.btnDismiss.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        binding.btnChange.setOnClickListener {
+            onClickChange()
+        }
+
+        binding.btnUpload.setOnClickListener {
+            onClickUpload(pdfUri)
+        }
         dialog.show()
 
         return dialog

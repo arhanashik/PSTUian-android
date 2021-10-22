@@ -26,11 +26,11 @@ interface BatchDao {
     suspend fun getAll(facultyId: Int): List<BatchEntity>
 
     @Query("SELECT * FROM " + TableNames.BATCH
-            + " WHERE " + ColumnNames.Batch.SESSION + "=:session LIMIT 1")
-    fun get(session: String): BatchEntity
+            + " WHERE " + ColumnNames.Batch.ID + "=:id")
+    suspend fun get(id: Int): BatchEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(batchEntity: BatchEntity)
+    suspend fun insert(batchEntity: BatchEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<BatchEntity>)

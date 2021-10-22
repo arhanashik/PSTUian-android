@@ -38,10 +38,8 @@ class EmployeeFragment(private val faculty: FacultyEntity)
     override fun afterOnViewCreated(view: View, savedInstanceState: Bundle?) {
         initEmployeeList()
 
-        //initialize the data flow
-        mViewModel.handleIntent(faculty.id)
-
         observeEmployees()
+        mViewModel.facultyId = faculty.id
         lifecycleScope.launch {
             mViewModel.intent.send(FacultyIntent.GetEmployees)
         }

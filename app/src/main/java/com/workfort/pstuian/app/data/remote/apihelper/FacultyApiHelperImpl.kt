@@ -38,6 +38,13 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         return response.data?: emptyList()
     }
 
+    override suspend fun getBatch(batchId: Int): BatchEntity {
+        val response = service.getBatch(batchId)
+        if(!response.success) throw Exception(response.message)
+
+        return response.data?: throw Exception("No DATA")
+    }
+
     override suspend fun getStudents(facultyId: Int, batchId: Int): List<StudentEntity> {
         val response = service.getStudents(facultyId, batchId)
         if(!response.success) throw Exception(response.message)

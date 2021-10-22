@@ -40,4 +40,39 @@ class StudentRepository(
         }
         return isChanged
     }
+
+    suspend fun changeAcademicInfo(
+        student: StudentEntity,
+        id: Int,
+        reg: String,
+        blood: String,
+        facultyId: Int,
+        session: String,
+        batchId: Int
+    ): StudentEntity {
+        helper.changeAcademicInfo(
+            student.id, id, reg, blood, facultyId, session, batchId
+        ).let { updatedStudent ->
+            authRepo.storeSignInUser(updatedStudent)
+            return updatedStudent
+        }
+    }
+
+    suspend fun changeConnectInfo(
+        student: StudentEntity,
+        address: String,
+        phone: String,
+        email: String,
+        cvLink: String,
+        linkedIn: String,
+        facebook: String
+    ): StudentEntity {
+        val oldEmail = student.email?: ""
+        helper.changeConnectInfo(
+            student.id, address, phone, email, oldEmail, cvLink, linkedIn, facebook
+        ).let { updatedStudent ->
+            authRepo.storeSignInUser(updatedStudent)
+            return updatedStudent
+        }
+    }
 }

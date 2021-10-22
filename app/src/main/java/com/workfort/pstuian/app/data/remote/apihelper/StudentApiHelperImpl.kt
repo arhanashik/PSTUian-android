@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
+import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.util.remote.StudentApiService
 
 /**
@@ -29,5 +30,36 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         val response = service.changeName(id, name)
         if(!response.success) throw Exception(response.message)
         return response.success
+    }
+
+    override suspend fun changeAcademicInfo(
+        oldId: Int,
+        id: Int,
+        reg: String,
+        blood: String,
+        facultyId: Int,
+        session: String,
+        batchId: Int
+    ): StudentEntity {
+        val response = service.changeAcademicInfo(oldId, id, reg, blood,
+            facultyId, session, batchId)
+        if(!response.success) throw Exception(response.message)
+        return response.data?: throw Exception("Empty data")
+    }
+
+    override suspend fun changeConnectInfo(
+        id: Int,
+        address: String,
+        phone: String,
+        email: String,
+        oldEmail: String,
+        cvLink: String,
+        linkedIn: String,
+        fbLink: String
+    ): StudentEntity {
+        val response = service.changeConnectInfo(id, address, phone,
+            email, oldEmail, cvLink, linkedIn, fbLink)
+        if(!response.success) throw Exception(response.message)
+        return response.data?: throw Exception("Empty data")
     }
 }

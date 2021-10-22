@@ -1,6 +1,5 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
-import com.workfort.pstuian.app.data.local.config.ConfigEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 
 /**
@@ -26,4 +25,25 @@ interface StudentApiHelper {
     ): Boolean
 
     suspend fun changeName(id: Int, name: String): Boolean
+
+    suspend fun changeAcademicInfo(
+        oldId: Int,
+        id: Int,
+        reg: String,
+        blood: String,
+        facultyId: Int,
+        session: String,
+        batchId: Int
+    ): StudentEntity
+
+    suspend fun changeConnectInfo(
+        id: Int,
+        address: String,
+        phone: String,
+        email: String,
+        oldEmail: String,
+        cvLink: String,
+        linkedIn: String,
+        fbLink: String
+    ): StudentEntity
 }

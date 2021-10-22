@@ -96,6 +96,16 @@
                     android:value=".app.ui.students.StudentsActivity"/>
         </activity>
         <activity
+                android:name=".app.ui.editprofile.EditProfileActivity"
+                android:parentActivityName=".app.ui.studentprofile.StudentProfileActivity"
+                android:label="@string/title_activity_edit_profile"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.studentprofile.StudentProfileActivity"/>
+        </activity>
+        <activity
                 android:name=".app.ui.teacherprofile.TeacherProfileActivity"
                 android:parentActivityName=".app.ui.faculty.FacultyActivity"
                 android:label="@string/title_activity_teacher_profile"

@@ -3,6 +3,7 @@ package com.workfort.pstuian.app.ui.faculty.viewstate
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.course.CourseEntity
 import com.workfort.pstuian.app.data.local.employee.EmployeeEntity
+import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 
 /**
@@ -21,10 +22,24 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
  *  ****************************************************************************
  */
 
+sealed class FacultyState {
+    object Idle : FacultyState()
+    object Loading : FacultyState()
+    data class Faculties(val faculties: List<FacultyEntity>) : FacultyState()
+    data class Error(val error: String?) : FacultyState()
+}
+
+sealed class BatchesState {
+    object Idle : BatchesState()
+    object Loading : BatchesState()
+    data class Batches(val batches: List<BatchEntity>) : BatchesState()
+    data class Error(val error: String?) : BatchesState()
+}
+
 sealed class BatchState {
     object Idle : BatchState()
     object Loading : BatchState()
-    data class Batches(val batches: List<BatchEntity>) : BatchState()
+    data class Batch(val batch: BatchEntity) : BatchState()
     data class Error(val error: String?) : BatchState()
 }
 
@@ -38,7 +53,7 @@ sealed class TeacherState {
 sealed class CourseState {
     object Idle : CourseState()
     object Loading : CourseState()
-    data class Courses(val cours: List<CourseEntity>) : CourseState()
+    data class Courses(val course: List<CourseEntity>) : CourseState()
     data class Error(val error: String?) : CourseState()
 }
 

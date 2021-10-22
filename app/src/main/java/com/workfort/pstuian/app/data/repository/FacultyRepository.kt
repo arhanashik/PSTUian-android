@@ -61,6 +61,17 @@ class FacultyRepository(
         return existingData
     }
 
+    suspend fun getBatch(batchId: Int) : BatchEntity {
+        val existingData = batchDbService.get(batchId)
+        if(existingData == null) {
+            val newData = helper.getBatch(batchId)
+//            batchDbService.insert(newData)
+            return newData
+        }
+
+        return existingData
+    }
+
     suspend fun getStudents(facultyId: Int, batchId: Int) : List<StudentEntity> {
         val existingData = studentDbService.getAll(facultyId, batchId)
         if(existingData.isNullOrEmpty()) {
@@ -108,7 +119,6 @@ class FacultyRepository(
     suspend fun deleteAll() {
         facultyDbService.deleteAll()
         batchDbService.deleteAll()
-        studentDbService.deleteAll()
         studentDbService.deleteAll()
         teacherDbService.deleteAll()
         courseDbService.deleteAll()

@@ -34,7 +34,7 @@ import java.io.File
  *  ****************************************************************************
  */
 
-class FileUploadWorker(
+class ImageUploadWorker(
     context: Context, workerParams: WorkerParameters
 ): CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -44,11 +44,11 @@ class FileUploadWorker(
         }
 
         return withContext(Dispatchers.IO) {
-            uploadFile(fileName)
+            upload(fileName)
         }
     }
 
-    private suspend fun uploadFile(fileName: String): Result {
+    private suspend fun upload(fileName: String): Result {
         val context = PstuianApp.getBaseApplicationContext()
         val file = File(context.cacheDir, fileName)
         if(!file.exists()) {
@@ -57,7 +57,6 @@ class FileUploadWorker(
         val fileRequestBody = file.asRequestBody("image/jpeg".toMediaType())
         val requestBody = ProgressRequestBody(fileRequestBody) { bytesWritten, contentLength ->
             val progress = 100 * bytesWritten / contentLength
-            Timber.e("progress : $progress")
             setProgressAsync(workDataOf(Const.Key.PROGRESS to progress))
             if (progress >= 1.0) {
                 return@ProgressRequestBody
@@ -65,7 +64,7 @@ class FileUploadWorker(
         }
 
         val service = RetrofitBuilder.createFileHandlerApiService()
-        val response = service.upload(
+        val response = service.uploadImage(
             filename = fileName.toPlainTextBody(),
             file = MultipartBody.Part.createFormData(
                 name = "file",
@@ -77,7 +76,10 @@ class FileUploadWorker(
         return if(response.success) {
             val data = workDataOf(Const.Key.URL to response.data)
             Result.success(data)
-        } else Result.failure()
+        } else {
+            val data = workDataOf(Const.Key.MESSAGE to response.message)
+            Result.failure(data)
+        }
     }
 
     private fun String.toPlainTextBody() = toRequestBody("text/plain".toMediaType())

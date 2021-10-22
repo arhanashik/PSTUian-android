@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkInfo
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
@@ -31,6 +32,7 @@ import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.editprofile.EditProfileActivity
 import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
@@ -39,6 +41,7 @@ import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
 import com.workfort.pstuian.util.helper.Toaster
 import com.workfort.pstuian.util.view.dialog.CommonDialog
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -108,6 +111,18 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             btnCamera.setOnClickListener { chooseImage() }
             btnEditName.setOnClickListener { promptChangeName(mStudent) }
             btnSignOut.setOnClickListener { promptSignOut() }
+            btnEdit.setOnClickListener {
+                val action = if(tabs.selectedTabPosition == 0) {
+                    Const.Key.EDIT_ACADEMIC
+                } else Const.Key.EDIT_CONNECT
+
+                val intent = Intent(this@StudentProfileActivity, EditProfileActivity::class.java)
+                    .apply {
+                    putExtra(Const.Key.STUDENT, mStudent)
+                    putExtra(Const.Key.EDIT_ACTION, action)
+                }
+                startActivity(intent)
+            }
         }
     }
 
@@ -127,6 +142,26 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                 }
             )
         }.attach()
+        binding.tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                if(binding.btnEdit.visibility == View.VISIBLE) {
+                    binding.btnEdit.setText(when (tab.position) {
+                        0 -> R.string.txt_edit_academic
+                        1 -> R.string.txt_edit_connect
+                        else -> R.string.txt_unknown
+                    })
+                    if(!binding.btnEdit.isExtended) {
+                        binding.btnEdit.extend()
+                        lifecycleScope.launch {
+                            delay(1000)
+                            binding.btnEdit.shrink()
+                        }
+                    }
+                }
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
     }
 
     private fun observeSignedInUser() {
@@ -140,17 +175,21 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                             btnSignOut.visibility = View.GONE
                             btnCall.visibility = View.GONE
                             btnEmail.visibility = View.GONE
+                            btnEdit.visibility = View.GONE
                         }
                     }
-                    is SignInUserState.Loading -> {
-                        setActionUiState(isActionRunning = true)
-                    }
+                    is SignInUserState.Loading -> { }
                     is SignInUserState.User -> {
                         with(binding) {
                             if(it.user.id == mStudent.id) {
                                 btnCamera.visibility = View.VISIBLE
                                 btnEditName.visibility = View.VISIBLE
                                 btnSignOut.visibility = View.VISIBLE
+                                btnEdit.visibility = View.VISIBLE
+                                lifecycleScope.launch {
+                                    delay(1000)
+                                    btnEdit.shrink()
+                                }
                             } else {
                                 btnCall.visibility = View.VISIBLE
                                 btnEmail.visibility = View.VISIBLE
@@ -324,7 +363,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
 
     private fun compressProfileImage(uri: Uri) {
         val fileName = "${mStudent.id}.jpeg"
-        mFileHandlerVM.compress(this, uri, fileName).observe(this, {
+        mFileHandlerVM.compressImage(this, uri, fileName).observe(this, {
             when (it.state) {
                 WorkInfo.State.ENQUEUED,
                 WorkInfo.State.RUNNING -> {
@@ -352,7 +391,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
 
     // The file should be exist in the cache directory
     private fun uploadProfileImage(fileName: String) {
-        mFileHandlerVM.upload(this, fileName).observe(this, {
+        mFileHandlerVM.uploadImage(this, fileName).observe(this, {
             when (it.state) {
                 WorkInfo.State.ENQUEUED,
                 WorkInfo.State.RUNNING -> {
@@ -373,7 +412,10 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                 }
                 WorkInfo.State.FAILED -> {
                     setActionUiState(isActionRunning = false)
-                    CommonDialog.error(this, "Failed to upload the image")
+                    val data = it.outputData.getString(Const.Key.MESSAGE)
+                    val message = if(data.isNullOrEmpty())
+                        getString(R.string.default_error_dialog_message) else data
+                    CommonDialog.error(this, "Upload Failed", message)
                 }
                 else -> {
                     setActionUiState(isActionRunning = false)
@@ -391,7 +433,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     is ChangeProfileInfoState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileInfoState.Success -> {
+                    is ChangeProfileInfoState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
                         CommonDialog.success(this@StudentProfileActivity)
                     }
@@ -424,7 +466,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     is ChangeProfileInfoState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileInfoState.Success -> {
+                    is ChangeProfileInfoState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
                         CommonDialog.success(this@StudentProfileActivity)
                     }
@@ -445,6 +487,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             btnSignOut.visibility = viewVisibility
             btnCamera.visibility = viewVisibility
             btnEditName.visibility = viewVisibility
+            btnEdit.visibility = viewVisibility
             loaderLarger.visibility = View.GONE
             if(isActionRunning) {
                 loaderLarger.isIndeterminate = isLoaderIndeterminate
@@ -483,6 +526,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                             btnCamera.visibility = View.GONE
                             btnEditName.visibility = View.GONE
                             btnSignOut.visibility = View.GONE
+                            btnEdit.visibility = View.GONE
                             loaderLarger.visibility = View.GONE
                         }
                         Toaster.show(it.message)
@@ -542,7 +586,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         }
         val msg = "${getString(R.string.txt_msg_download_cv)} $link"
         MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.txt_title_downlaod_cv)
+            .setTitle(R.string.txt_title_download_cv)
             .setMessage(msg)
             .setPositiveButton(R.string.txt_download) { _,_ ->
                 requestFileCreatePermission()

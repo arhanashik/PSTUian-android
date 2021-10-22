@@ -397,9 +397,7 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <!-- Circular progress indicator theme-->
     <style name="TextInputLayoutAppearance" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-        <!-- reference our hint & error styles -->
         <item name="hintTextAppearance">@style/TextAppearance.HintText</item>
         <item name="helperTextTextColor">?attr/customSecondaryTextColor</item>
         <item name="android:textColorHint">?attr/customSecondaryTextColor</item>
@@ -407,6 +405,15 @@
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.InputField</item>
     </style>
 
+    <style name="TextInputLayoutDropdown" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
+        <item name="hintTextAppearance">@style/TextAppearance.HintText</item>
+        <item name="helperTextTextColor">?attr/customSecondaryTextColor</item>
+        <item name="android:textColorHint">?attr/customSecondaryTextColor</item>
+        <item name="boxStrokeColor">@color/selector_search_field</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.InputField</item>
+    </style>
+
+    <!-- Circular progress indicator theme-->
     <style name="Widget.App.CircularProgressIndicator" parent="Widget.MaterialComponents.CircularProgressIndicator">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.CircularProgressIndicator</item>
         <item name="trackThickness">20dp</item>

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.signin
+package com.workfort.pstuian.app.ui.common.bottomsheet
 
 import android.app.Dialog
 import android.os.Bundle
@@ -10,18 +10,17 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.ui.faculty.adapter.BatchesAdapter
+import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
-import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
+import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.BatchState
-import com.workfort.pstuian.databinding.LayoutBatchSelectorBinding
+import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
+import com.workfort.pstuian.databinding.LayoutFacultySelectorBinding
 import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 /**
  *  ****************************************************************************
@@ -39,25 +38,23 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  *  ****************************************************************************
  */
 
-class BatchSelectorBottomSheet(
-    private val faculty: FacultyEntity,
-    private val callback: BatchClickEvent? = null
-) : BottomSheetDialogFragment() {
+class FacultySelectorBottomSheet(private val callback: FacultyClickEvent? = null)
+    : BottomSheetDialogFragment() {
 
-    private var _binding: LayoutBatchSelectorBinding? = null
+    private var _binding: LayoutFacultySelectorBinding? = null
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val mViewModel: FacultyViewModel by viewModel()
-    private lateinit var mAdapter: BatchesAdapter
+    private val mViewModel: FacultyViewModel by sharedViewModel()
+    private lateinit var mAdapter: FacultyAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = LayoutBatchSelectorBinding.inflate(inflater, container, false)
+        _binding = LayoutFacultySelectorBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -73,50 +70,47 @@ class BatchSelectorBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initBatchList()
-        observeBatches()
+        initFacultyList()
+        observeFaculties()
         lifecycleScope.launch {
-            //initialize the data flow
-            mViewModel.handleIntent(faculty.id)
-            mViewModel.intent.send(FacultyIntent.GetBatches)
+            mViewModel.intent.send(FacultyIntent.GetFaculties)
         }
     }
 
-    private fun initBatchList() {
-        mAdapter = BatchesAdapter(false)
-        mAdapter.setListener(object : BatchClickEvent {
-            override fun onClickBatch(batch: BatchEntity) {
+    private fun initFacultyList() {
+        mAdapter = FacultyAdapter()
+        mAdapter.setListener(object : FacultyClickEvent {
+            override fun onClickFaculty(faculty: FacultyEntity) {
                 dismiss()
-                callback?.onClickBatch(batch)
+                callback?.onClickFaculty(faculty)
             }
         })
 
-        binding.rvBatches.setHasFixedSize(true)
-        binding.rvBatches.adapter = mAdapter
+        binding.rvFaculties.setHasFixedSize(true)
+        binding.rvFaculties.adapter = mAdapter
     }
 
-    private fun observeBatches() {
+    private fun observeFaculties() {
         lifecycleScope.launch {
-            mViewModel.batchState.collect {
+            mViewModel.facultyState.collect {
                 when (it) {
-                    is BatchState.Idle -> {
+                    is FacultyState.Idle -> {
                     }
-                    is BatchState.Loading -> {
+                    is FacultyState.Loading -> {
                         binding.shimmerLayout.visibility = View.VISIBLE
                         binding.shimmerLayout.startShimmer()
-                        binding.rvBatches.visibility = View.GONE
+                        binding.rvFaculties.visibility = View.GONE
                     }
-                    is BatchState.Batches -> {
+                    is FacultyState.Faculties -> {
                         binding.shimmerLayout.stopShimmer()
                         binding.shimmerLayout.visibility = View.GONE
-                        binding.rvBatches.visibility = View.VISIBLE
-                        renderBatches(it.batches)
+                        binding.rvFaculties.visibility = View.VISIBLE
+                        renderFaculties(it.faculties)
                     }
-                    is BatchState.Error -> {
+                    is FacultyState.Error -> {
                         binding.shimmerLayout.stopShimmer()
                         binding.shimmerLayout.visibility = View.GONE
-                        binding.rvBatches.visibility = View.GONE
-                        dismiss()
+                        binding.rvFaculties.visibility = View.GONE
                         val title = it.error?: "Ops, No Data!"
                         val msg = getString(R.string.error_msg_server_issue)
                         CommonDialog.error(requireContext(), title, msg)
@@ -126,8 +120,8 @@ class BatchSelectorBottomSheet(
         }
     }
 
-    private fun renderBatches(list: List<BatchEntity>) {
-        mAdapter.setBatches(list.toMutableList())
+    private fun renderFaculties(faculties: List<FacultyEntity>) {
+        mAdapter.setFaculties(faculties.toMutableList())
     }
 
     override fun onDestroyView() {
@@ -136,6 +130,6 @@ class BatchSelectorBottomSheet(
     }
 
     companion object {
-        const val TAG = "BatchSelectorBottomSheet"
+        const val TAG = "FacultySelectorBottomSheet"
     }
 }

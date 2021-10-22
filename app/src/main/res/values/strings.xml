@@ -233,7 +233,34 @@
     <string name="txt_call">Call</string>
     <string name="txt_msg_download_cv">Are you surely want to download the cv?</string>
     <string name="txt_error_download_cv">Ops, no link found to download the cv!</string>
-    <string name="txt_title_downlaod_cv">Download CV</string>
+    <string name="txt_title_download_cv">Download CV</string>
     <string name="txt_download">Download</string>
     <string name="txt_change_name">Change Name</string>
+    <string name="txt_edit_academic">Edit Academic</string>
+    <string name="txt_edit_connect">Edit Connect</string>
+    <string name="txt_saving_changes">Saving changes…</string>
+    <string name="txt_save_changes">Save Changes</string>
+    <string name="hint_blood_group">Blood Group</string>
+    <string name="title_activity_edit_profile">Edit</string>
+    <string name="hint_faculty">Faculty</string>
+    <string name="hint_batch">Batch</string>
+    <string name="txt_retry">Retry</string>
+    <string name="hint_address">Address</string>
+    <string name="hint_phone">Phone</string>
+    <string name="hint_linked_in">LinkedIn</string>
+    <string name="hint_facebook">Facebook</string>
+    <string name="hint_cv">CV</string>
+    <string name="hint_upload_new_cv">Upload New CV</string>
+    <string name="msg_upload_new_cv">Are you sure to upload the selected file? It will be your new cv. Don\'t worry, you can always upload a new one whenever you wish.</string>
+    <string name="txt_please_wait">Please Wait…</string>
+    <array name="blood_group">
+        <item>A+</item>
+        <item>B+</item>
+        <item>AB+</item>
+        <item>O+</item>
+        <item>A-</item>
+        <item>B-</item>
+        <item>AB-</item>
+        <item>O-</item>
+    </array>
 </resources>

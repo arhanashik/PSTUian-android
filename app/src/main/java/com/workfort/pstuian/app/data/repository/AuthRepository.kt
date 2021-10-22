@@ -14,7 +14,9 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.remote.apihelper.AuthApiHelper
 import com.workfort.pstuian.util.helper.GsonUtil
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 /**
@@ -73,6 +75,15 @@ class AuthRepository(
             }
     }
 
+    fun getSignInUser(): StudentEntity {
+        val context = PstuianApp.getBaseApplicationContext()
+        val jsonStr = runBlocking {
+            context.authStore.data.first()
+        }[USER]?: throw Exception("No User Found!")
+
+        return GsonUtil.fromJson(jsonStr)
+    }
+
     suspend fun storeSignInUser(student: StudentEntity) {
         val context = PstuianApp.getBaseApplicationContext()
         context.authStore.edit { auth ->
@@ -80,7 +91,7 @@ class AuthRepository(
         }
     }
 
-    suspend fun storeAuthToken(token: String) {
+    private suspend fun storeAuthToken(token: String) {
         val context = PstuianApp.getBaseApplicationContext()
         context.authStore.edit { auth ->
             auth[AUTH_TOKEN] = token

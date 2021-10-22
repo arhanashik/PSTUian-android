@@ -26,6 +26,7 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 interface FacultyApiHelper {
     suspend fun getFaculties(): List<FacultyEntity>
     suspend fun getBatches(facultyId: Int): List<BatchEntity>
+    suspend fun getBatch(batchId: Int): BatchEntity
     suspend fun getStudents(facultyId: Int, batchId: Int): List<StudentEntity>
     suspend fun getTeachers(facultyId: Int): List<TeacherEntity>
     suspend fun getCourses(facultyId: Int): List<CourseEntity>

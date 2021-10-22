@@ -13,6 +13,7 @@ import com.workfort.pstuian.util.helper.CoilUtil
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class AuthViewModel(
     private val authRepo: AuthRepository
@@ -65,8 +66,9 @@ class AuthViewModel(
         viewModelScope.launch {
             _signInUserState.value = SignInUserState.Loading
             _signInUserState.value = try {
-                SignInUserState.User(authRepo.getSignedInUserFlow().first())
+                SignInUserState.User(authRepo.getSignInUser())
             } catch (e: Exception) {
+                Timber.e(e)
                 SignInUserState.Error(e.message)
             }
         }
@@ -110,7 +112,7 @@ class AuthViewModel(
         viewModelScope.launch {
             _signOutState.value = SignOutState.Loading
             _signOutState.value = try {
-                val student = authRepo.getSignedInUserFlow().first()
+                val student = authRepo.getSignInUser()
                 val response = authRepo.signOut(student.id, "student")
                 CoilUtil.clearCache()
                 SignOutState.Success(response)

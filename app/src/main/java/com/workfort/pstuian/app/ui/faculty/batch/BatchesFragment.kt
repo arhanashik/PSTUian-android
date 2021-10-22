@@ -15,7 +15,7 @@ import com.workfort.pstuian.app.ui.faculty.adapter.BatchesAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.BatchState
+import com.workfort.pstuian.app.ui.faculty.viewstate.BatchesState
 import com.workfort.pstuian.app.ui.students.StudentsActivity
 import com.workfort.pstuian.databinding.FragmentBatchesBinding
 import kotlinx.coroutines.flow.collect
@@ -38,9 +38,8 @@ class BatchesFragment(private val faculty: FacultyEntity)
     override fun afterOnViewCreated(view: View, savedInstanceState: Bundle?) {
         initBatchList()
         observeBatches()
+        mViewModel.facultyId = faculty.id
         lifecycleScope.launch {
-            //initialize the data flow
-            mViewModel.handleIntent(faculty.id)
             mViewModel.intent.send(FacultyIntent.GetBatches)
         }
     }
@@ -61,24 +60,24 @@ class BatchesFragment(private val faculty: FacultyEntity)
 
     private fun observeBatches() {
         lifecycleScope.launch {
-            mViewModel.batchState.collect {
+            mViewModel.batchesState.collect {
                 when (it) {
-                    is BatchState.Idle -> {
+                    is BatchesState.Idle -> {
                     }
-                    is BatchState.Loading -> {
+                    is BatchesState.Loading -> {
                         binding.tvMessage.visibility = View.GONE
                         binding.shimmerLayout.visibility = View.VISIBLE
                         binding.shimmerLayout.startShimmer()
                         binding.rvBatches.visibility = View.INVISIBLE
                     }
-                    is BatchState.Batches -> {
+                    is BatchesState.Batches -> {
                         binding.tvMessage.visibility = View.GONE
                         binding.shimmerLayout.visibility = View.GONE
                         binding.shimmerLayout.stopShimmer()
                         binding.rvBatches.visibility = View.VISIBLE
                         renderBatches(it.batches)
                     }
-                    is BatchState.Error -> {
+                    is BatchesState.Error -> {
                         binding.tvMessage.visibility = View.VISIBLE
                         binding.shimmerLayout.visibility = View.GONE
                         binding.shimmerLayout.stopShimmer()

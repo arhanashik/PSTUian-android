@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.ui.faculty.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,7 @@ class FacultyAdapter : RecyclerView.Adapter<FacultyViewHolder>() {
 
     private val backgroundIndexArr = arrayListOf(0,1,2,3,4,5,6,7,8)
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setFaculties(faculties: MutableList<FacultyEntity>) {
         this.faculties.clear()
         this.faculties.addAll(faculties)
@@ -31,6 +33,8 @@ class FacultyAdapter : RecyclerView.Adapter<FacultyViewHolder>() {
     override fun getItemCount(): Int {
         return faculties.size
     }
+
+    fun getItems() = faculties
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FacultyViewHolder {
         val inflater = LayoutInflater.from(parent.context)

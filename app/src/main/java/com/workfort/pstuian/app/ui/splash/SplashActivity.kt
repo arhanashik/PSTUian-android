@@ -34,6 +34,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivitySplashBinding
     private lateinit var mSetLeftIn: AnimatorSet
@@ -54,6 +55,7 @@ class SplashActivity : AppCompatActivity() {
         flipCard()
 
         observeConfig()
+        observeClearCache()
         observeDeleteAllData()
     }
 
@@ -100,10 +102,47 @@ class SplashActivity : AppCompatActivity() {
                 mBinding.tvTitle.animateText(getText(R.string.app_name))
                 lifecycleScope.launch {
                     delay(2500)
-                    checkForUpdate()
+                    clearCache()
                 }
             }
         })
+    }
+
+    private fun clearCache() {
+        lifecycleScope.launch {
+            mHomeViewModel.intent.send(HomeIntent.ClearCache)
+        }
+    }
+
+    private fun observeClearCache() {
+        lifecycleScope.launch {
+            mHomeViewModel.clearCache.collect {
+                when (it) {
+                    is DeleteAllState.Idle -> {
+                        mBinding.loader.visibility = View.INVISIBLE
+                    }
+                    is DeleteAllState.Loading -> {
+                        mBinding.loader.visibility = View.VISIBLE
+                    }
+                    is DeleteAllState.Success -> {
+                        mBinding.loader.visibility = View.INVISIBLE
+                        checkForUpdate()
+                    }
+                    is DeleteAllState.Error -> {
+                        mBinding.loader.visibility = View.INVISIBLE
+                        checkForUpdate()
+                        val msg = it.error?: "Couldn't clear cache"
+                        CommonDialog.error(
+                            this@SplashActivity,
+                            message = msg,
+                            btnText = getString(R.string.txt_retry),
+                            cancelable = false,
+                            onBtnClick = {clearCache()}
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun changeCameraDistance() {

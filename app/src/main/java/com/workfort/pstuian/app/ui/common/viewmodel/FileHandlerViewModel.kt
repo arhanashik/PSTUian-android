@@ -7,8 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.work.*
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.util.lib.workmanager.FileDownloadWorker
-import com.workfort.pstuian.util.lib.workmanager.FileUploadWorker
+import com.workfort.pstuian.util.lib.workmanager.ImageUploadWorker
 import com.workfort.pstuian.util.lib.workmanager.ImageCompressorWorker
+import com.workfort.pstuian.util.lib.workmanager.PdfUploadWorker
 
 /**
  *  ****************************************************************************
@@ -27,7 +28,7 @@ import com.workfort.pstuian.util.lib.workmanager.ImageCompressorWorker
  */
 
 class FileHandlerViewModel : ViewModel() {
-    fun compress(context: Context, uri: Uri, fileName: String): LiveData<WorkInfo> {
+    fun compressImage(context: Context, uri: Uri, fileName: String): LiveData<WorkInfo> {
         val data = workDataOf (
             Const.Key.URI to uri.toString(),
             Const.Key.NAME to fileName,
@@ -47,12 +48,32 @@ class FileHandlerViewModel : ViewModel() {
         return manager.getWorkInfoByIdLiveData(request.id)
     }
 
-    fun upload(context: Context, fileName: String): LiveData<WorkInfo> {
+    // the image should be inside the cache directory
+    fun uploadImage(context: Context, fileName: String): LiveData<WorkInfo> {
         val data = workDataOf (Const.Key.NAME to fileName)
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-        val request = OneTimeWorkRequestBuilder<FileUploadWorker>()
+        val request = OneTimeWorkRequestBuilder<ImageUploadWorker>()
+            .setInputData(data)
+            .setConstraints(constraints)
+            .build()
+
+        val manager = WorkManager.getInstance(context)
+        manager.enqueue(request)
+
+        return manager.getWorkInfoByIdLiveData(request.id)
+    }
+
+    fun uploadPdf(context: Context, pdfUri: Uri, fileName: String): LiveData<WorkInfo> {
+        val data = workDataOf (
+            Const.Key.URI to pdfUri.toString(),
+            Const.Key.NAME to fileName
+        )
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        val request = OneTimeWorkRequestBuilder<PdfUploadWorker>()
             .setInputData(data)
             .setConstraints(constraints)
             .build()

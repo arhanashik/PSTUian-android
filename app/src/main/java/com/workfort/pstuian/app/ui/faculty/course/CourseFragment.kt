@@ -35,10 +35,8 @@ class CourseFragment(private val faculty: FacultyEntity)
     override fun afterOnViewCreated(view: View, savedInstanceState: Bundle?) {
         initCourseList()
 
-        //initialize the data flow
-        mViewModel.handleIntent(faculty.id)
-
         observeCourses()
+        mViewModel.facultyId = faculty.id
         lifecycleScope.launch {
             mViewModel.intent.send(FacultyIntent.GetCourses)
         }
@@ -70,7 +68,7 @@ class CourseFragment(private val faculty: FacultyEntity)
                         binding.tvMessage.visibility = View.INVISIBLE
                         binding.loader.visibility = View.GONE
                         binding.rvCourses.visibility = View.VISIBLE
-                        renderCourses(it.cours)
+                        renderCourses(it.course)
                     }
                     is CourseState.Error -> {
                         binding.tvMessage.visibility = View.VISIBLE

@@ -8,6 +8,7 @@ object Const {
         const val LOCATION = 111
         const val IN_APP_UPDATE = 222
         const val PICK_IMAGE = 333
+        const val PICK_PDF = 444
     }
 
     val backgroundList = arrayListOf(
@@ -31,8 +32,12 @@ object Const {
         const val URL = "URL"
         const val URI = "URI"
         const val NAME = "NAME"
+        const val MESSAGE = "MESSAGE"
         const val MAX_SIZE = "MAX_SIZE"
         const val PROGRESS = "PROGRESS"
+        const val EDIT_ACTION = "EDIT_ACTION"
+        const val EDIT_ACADEMIC = "EDIT_ACADEMIC"
+        const val EDIT_CONNECT = "EDIT_CONNECT"
     }
 
     object Path {

@@ -8,7 +8,6 @@ import com.workfort.pstuian.app.data.repository.FacultyRepository
 import com.workfort.pstuian.app.data.repository.SliderRepository
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
-import com.workfort.pstuian.app.ui.home.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,11 +26,11 @@ class HomeViewModel(
     private val _sliderState = MutableStateFlow<SliderState>(SliderState.Idle)
     val sliderState: StateFlow<SliderState> get() = _sliderState
 
-    private val _facultyState = MutableStateFlow<FacultyState>(FacultyState.Idle)
-    val facultyState: StateFlow<FacultyState> get() = _facultyState
-
     private val _deleteAllDataState = MutableStateFlow<DeleteAllState>(DeleteAllState.Idle)
     val deleteAllDataState: StateFlow<DeleteAllState> get() = _deleteAllDataState
+
+    private val _clearCache = MutableStateFlow<DeleteAllState>(DeleteAllState.Idle)
+    val clearCache: StateFlow<DeleteAllState> get() = _clearCache
 
     init {
         handleIntent()
@@ -42,8 +41,8 @@ class HomeViewModel(
             intent.consumeAsFlow().collect {
                 when (it) {
                     is HomeIntent.GetSliders -> getSliders()
-                    is HomeIntent.GetFaculties -> getFaculties()
                     is HomeIntent.DeleteAllData -> clearAllData()
+                    is HomeIntent.ClearCache -> clearCache()
                 }
             }
         }
@@ -61,17 +60,6 @@ class HomeViewModel(
         }
     }
 
-    private fun getFaculties() {
-        viewModelScope.launch {
-            _facultyState.value = FacultyState.Loading
-            _facultyState.value = try {
-                FacultyState.Faculties(facultyRepo.getFaculties())
-            } catch (e: Exception) {
-                FacultyState.Error(e.message)
-            }
-        }
-    }
-
     private fun clearAllData() {
         viewModelScope.launch {
             _deleteAllDataState.value = DeleteAllState.Loading
@@ -81,6 +69,21 @@ class HomeViewModel(
                 sliderRepo.deleteAll()
                 facultyRepo.deleteAll()
                 authRepo.updateDataRefreshState()
+                DeleteAllState.Success
+            } catch (e: Exception) {
+                DeleteAllState.Error(e.message)
+            }
+        }
+    }
+
+    /**
+     * Clear stored faculty, batch, students, teachers, courses and employees
+     * */
+    private fun clearCache() {
+        viewModelScope.launch {
+            _clearCache.value = DeleteAllState.Loading
+            _clearCache.value = try {
+                facultyRepo.deleteAll()
                 DeleteAllState.Success
             } catch (e: Exception) {
                 DeleteAllState.Error(e.message)
