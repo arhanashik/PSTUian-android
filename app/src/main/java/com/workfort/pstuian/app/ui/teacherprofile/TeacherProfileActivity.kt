@@ -15,7 +15,9 @@ import com.workfort.pstuian.app.ui.common.fragment.ProfilePagerItemFragment
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoAction
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoItem
+import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityTeacherProfileBinding
+import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.Toaster
 
@@ -86,9 +88,7 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                 when(item.action) {
                     ProfileInfoAction.CALL -> { promptCall(item.actionData) }
                     ProfileInfoAction.MAIL -> { promptEmail(item.actionData) }
-                    ProfileInfoAction.OPEN_LINK -> {
-                        item.actionData?.let { mLinkUtil.openBrowser(it) }
-                    }
+                    ProfileInfoAction.OPEN_LINK -> item.actionData?.let { openLink(it) }
                     else -> {}
                 }
             }
@@ -152,5 +152,18 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
             }
             .create()
             .show()
+    }
+
+    private fun openLink(link: String) {
+        if(!link.startsWith("http://") || link.startsWith("https://")) {
+            Toaster.show("Invalid link")
+            return
+        }
+
+        if(link.contains("linkedin.com") || link.contains("facebook.com")) {
+            mLinkUtil.openBrowser(link)
+        } else {
+            launchActivity<WebViewActivity>(Pair(Const.Key.URL, link))
+        }
     }
 }

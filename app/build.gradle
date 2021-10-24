@@ -123,6 +123,12 @@ dependencies {
 
     //facebook shimmer layout.
     implementation "com.facebook.shimmer:shimmer:$shimmer"
+
+    //web view
+    implementation "com.github.Justson.AgentWeb:agentweb-core:$agentweb"
+
+    // animation loader
+    implementation "com.airbnb.android:lottie:$lottie"
 }
 
 //testing libs

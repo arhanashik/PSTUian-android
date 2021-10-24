@@ -21,12 +21,28 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import java.security.InvalidParameterException
 
 inline fun <reified T : Any> Activity.launchActivity(
     extra: Bundle? = null,
     noinline init: Intent.() -> Unit = {}) {
 
     startActivity(newIntent<T>(this, init), extra)
+}
+
+inline fun <reified T : Any> Activity.launchActivity(
+    vararg extras: Pair<String, Any>,
+    noinline init: Intent.() -> Unit = {}) {
+    val intent = newIntent<T>(this, init).apply {
+        extras.forEach {
+            when(val value = it.second) {
+                is String -> this.putExtra(it.first, value)
+                is Int -> this.putExtra(it.first, value)
+                else -> throw InvalidParameterException("Invalid type")
+            }
+        }
+    }
+    startActivity(intent)
 }
 
 inline fun <reified T : Any> Activity.launchActivity(

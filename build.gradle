@@ -21,6 +21,7 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
+        maven {url 'https://jitpack.io' }
     }
 }
 
@@ -70,6 +71,8 @@ ext{
     okhttp = '4.7.2'
     timber = '4.7.1'
     htextview_version = "0.1.6"
-    autoimageslider = '1.4.0-appcompat'
+    autoimageslider = '1.4.0'
     shimmer = '0.5.0'
+    agentweb = 'v4.1.9-androidx'
+    lottie = '3.4.0'
 }

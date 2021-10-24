@@ -12,7 +12,9 @@ import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.signup.viewstate.SignUpState
+import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivitySignUpBinding
+import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -51,12 +53,12 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>() {
     override fun onClick(v: View?) {
         super.onClick(v)
         when(v) {
-            binding.btnSignUp -> {
-                signUp()
-            }
-            binding.btnSignIn -> {
-                finish()
-            }
+            binding.btnSignUp -> signUp()
+            binding.btnSignIn -> finish()
+            binding.btnTermsAndConditions -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
+                Const.Remote.TERMS_AND_CONDITIONS))
+            binding.btnPrivacyPolicy -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
+                Const.Remote.PRIVACY_POLICY))
             else -> {
                 Timber.e("Who clicked me!")
             }

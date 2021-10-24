@@ -27,16 +27,18 @@ import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoAction
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoItem
 import com.workfort.pstuian.app.ui.common.fragment.ProfilePagerItemFragment
-import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
-import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
-import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
 import com.workfort.pstuian.app.ui.editprofile.EditProfileActivity
+import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
+import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
+import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityStudentProfileBinding
+import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
 import com.workfort.pstuian.util.helper.Toaster
@@ -215,9 +217,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     ProfileInfoAction.CALL -> { promptCall(item.actionData) }
                     ProfileInfoAction.MAIL -> { promptEmail(item.actionData) }
                     ProfileInfoAction.DOWNLOAD -> { promptDownloadCv(item.actionData) }
-                    ProfileInfoAction.OPEN_LINK -> {
-                        item.actionData?.let { mLinkUtil.openBrowser(it) }
-                    }
+                    ProfileInfoAction.OPEN_LINK -> item.actionData?.let { openLink(it) }
                     else -> { }
                 }
             }
@@ -596,6 +596,19 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             }
             .create()
             .show()
+    }
+
+    private fun openLink(link: String) {
+        if(!link.startsWith("http://") || link.startsWith("https://")) {
+            Toaster.show("Invalid link")
+            return
+        }
+
+        if(link.contains("linkedin.com") || link.contains("facebook.com")) {
+            mLinkUtil.openBrowser(link)
+        } else {
+            launchActivity<WebViewActivity>(Pair(Const.Key.URL, link))
+        }
     }
 
     //according to documentation this should work. But unfortunately nope :D

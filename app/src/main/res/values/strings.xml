@@ -253,6 +253,9 @@
     <string name="hint_upload_new_cv">Upload New CV</string>
     <string name="msg_upload_new_cv">Are you sure to upload the selected file? It will be your new cv. Don\'t worry, you can always upload a new one whenever you wish.</string>
     <string name="txt_please_wait">Please Wait…</string>
+    <string name="txt_reload">Reload</string>
+    <string name="msg_web_error">Ops, Something went wrong!</string>
+    <string name="msg_404_error">The requested page was not found</string>
     <array name="blood_group">
         <item>A+</item>
         <item>B+</item>
