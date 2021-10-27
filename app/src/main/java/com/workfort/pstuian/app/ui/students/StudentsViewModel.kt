@@ -2,7 +2,6 @@ package com.workfort.pstuian.app.ui.students
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.repository.FacultyRepository
 import com.workfort.pstuian.app.ui.students.intent.StudentsIntent
 import com.workfort.pstuian.app.ui.students.viewstate.StudentsState
@@ -34,20 +33,6 @@ class StudentsViewModel(private val facultyRepo: FacultyRepository) : ViewModel(
             _studentsState.value = StudentsState.Loading
             _studentsState.value = try {
                 StudentsState.Students(facultyRepo.getStudents(facultyId, batchId))
-            } catch (e: Exception) {
-                StudentsState.Error(e.message)
-            }
-        }
-    }
-
-    fun updateStudent(student: StudentEntity) {
-        viewModelScope.launch {
-            _studentsState.value = StudentsState.Loading
-            _studentsState.value = try {
-                facultyRepo.updateStudent(student)
-                StudentsState.Students(
-                    facultyRepo.getStudents(student.facultyId, student.batchId)
-                )
             } catch (e: Exception) {
                 StudentsState.Error(e.message)
             }

@@ -55,6 +55,6 @@ object Const {
         private const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/mobile/v1/"
         private const val DEV_API_SERVER = "https://api-dev.pstuian.com/mobile/v1/"
         private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
-        val BASE_API_URL = if(BuildConfig.DEBUG) LOCAL_API_SERVER else LIVE_API_SERVER
+        val BASE_API_URL = if(BuildConfig.DEBUG) DEV_API_SERVER else LIVE_API_SERVER
     }
 }

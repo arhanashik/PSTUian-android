@@ -72,10 +72,6 @@ class FacultyRepository(
         return existingData
     }
 
-    suspend fun updateStudent(student: StudentEntity) {
-        studentDbService.update(student)
-    }
-
     suspend fun getStudents(facultyId: Int, batchId: Int) : List<StudentEntity> {
         val existingData = studentDbService.getAll(facultyId, batchId)
         if(existingData.isNullOrEmpty()) {

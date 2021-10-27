@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.data.repository
 
 import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.student.StudentService
 import com.workfort.pstuian.app.data.remote.apihelper.StudentApiHelper
 
 /**
@@ -21,6 +22,7 @@ import com.workfort.pstuian.app.data.remote.apihelper.StudentApiHelper
 
 class StudentRepository(
     private val authRepo: AuthRepository,
+    private val studentDbService: StudentService,
     private val helper: StudentApiHelper
 ) {
     suspend fun changeProfileImage(student: StudentEntity, imageUrl: String): Boolean {
@@ -28,6 +30,7 @@ class StudentRepository(
         if(isChanged) {
             student.imageUrl = imageUrl
             authRepo.storeSignInUser(student)
+            studentDbService.update(student)
         }
         return isChanged
     }
@@ -37,6 +40,7 @@ class StudentRepository(
         if(isChanged) {
             student.name = name
             authRepo.storeSignInUser(student)
+            studentDbService.update(student)
         }
         return isChanged
     }
@@ -46,6 +50,7 @@ class StudentRepository(
         if(isChanged) {
             student.bio = bio
             authRepo.storeSignInUser(student)
+            studentDbService.update(student)
         }
         return isChanged
     }
@@ -64,6 +69,12 @@ class StudentRepository(
             name, student.id, id, reg, blood, facultyId, session, batchId
         ).let { updatedStudent ->
             authRepo.storeSignInUser(updatedStudent)
+            if(student.id != id) {
+                studentDbService.delete(student)
+                studentDbService.insert(updatedStudent)
+            } else {
+                studentDbService.update(updatedStudent)
+            }
             return updatedStudent
         }
     }
@@ -82,6 +93,7 @@ class StudentRepository(
             student.id, address, phone, email, oldEmail, cvLink, linkedIn, facebook
         ).let { updatedStudent ->
             authRepo.storeSignInUser(updatedStudent)
+            studentDbService.update(updatedStudent)
             return updatedStudent
         }
     }

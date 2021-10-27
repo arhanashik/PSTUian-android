@@ -133,7 +133,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         if(result.resultCode == Activity.RESULT_OK) {
             result?.data?.getParcelableExtra<StudentEntity>(Const.Key.STUDENT)?.let {
                 lifecycleScope.launch {
-                    mViewModel.updateStudent(it)
+                    mViewModel.intent.send(StudentsIntent.GetStudents)
                 }
             }
         }

@@ -41,7 +41,7 @@ interface StudentDao {
     suspend fun update(studentEntity: StudentEntity)
 
     @Delete
-    fun delete(studentEntity: StudentEntity)
+    suspend fun delete(studentEntity: StudentEntity)
 
     @Query("DELETE FROM " + TableNames.STUDENT
             + " WHERE " + ColumnNames.Student.FACULTY_ID + "=:faculty")

@@ -13,7 +13,7 @@ class StudentService(private val studentDao: StudentDao) {
     fun insert(studentEntity: StudentEntity) = studentDao.insert(studentEntity)
     suspend fun insertAll(entities: List<StudentEntity>) = studentDao.insertAll(entities)
     suspend fun update(studentEntity: StudentEntity) = studentDao.update(studentEntity)
-    fun delete(studentEntity: StudentEntity) = studentDao.delete(studentEntity)
+    suspend fun delete(studentEntity: StudentEntity) = studentDao.delete(studentEntity)
     fun deleteAll(faculty: String) = studentDao.deleteAll(faculty)
     suspend fun deleteAll(faculty: String, batch: String) = studentDao.deleteAll(faculty, batch)
     suspend fun deleteAll() = studentDao.deleteAll()
