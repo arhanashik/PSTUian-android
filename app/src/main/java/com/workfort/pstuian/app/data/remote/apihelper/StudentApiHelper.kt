@@ -26,7 +26,10 @@ interface StudentApiHelper {
 
     suspend fun changeName(id: Int, name: String): Boolean
 
+    suspend fun changeBio(id: Int, bio: String): Boolean
+
     suspend fun changeAcademicInfo(
+        name: String,
         oldId: Int,
         id: Int,
         reg: String,

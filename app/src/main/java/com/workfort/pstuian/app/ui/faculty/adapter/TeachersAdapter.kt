@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.ui.faculty.adapter
 
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -39,13 +40,13 @@ class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
                 if(TextUtils.isEmpty(query)) {
                     result.addAll(teachers)
                 } else {
-                    val q = query.toString().toLowerCase(Locale.ROOT)
+                    val q = query.toString().lowercase(Locale.ROOT)
                     teachers.forEach {
-                        if(it.name.toLowerCase(Locale.ROOT).contains(q)
-                            || it.department.toLowerCase(Locale.ROOT).contains(q)
-                            || it.designation.toLowerCase(Locale.ROOT).contains(q)
-                            || (it.email?: "").toLowerCase(Locale.ROOT).contains(q)
-                            || (it.status?: "").toLowerCase(Locale.ROOT).contains(q))
+                        if(it.name.lowercase(Locale.ROOT).contains(q)
+                            || it.department.lowercase(Locale.ROOT).contains(q)
+                            || it.designation.lowercase(Locale.ROOT).contains(q)
+                            || (it.email?: "").lowercase(Locale.ROOT).contains(q)
+                            || (it.bio?: "").lowercase(Locale.ROOT).contains(q))
                             result.add(it)
                     }
                 }
@@ -57,6 +58,7 @@ class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
                 return filteredResult
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
                 filteredTeachers.clear()
                 @Suppress("UNCHECKED_CAST")

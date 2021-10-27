@@ -38,6 +38,9 @@ class StudentProfileViewModel(
     private val _changeNameState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
     val changeNameState: StateFlow<ChangeProfileInfoState> get() = _changeNameState
 
+    private val _changeBioState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
+    val changeBioState: StateFlow<ChangeProfileInfoState> get() = _changeBioState
+
     private val _changeAcademicInfoState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
     val changeAcademicInfoState: StateFlow<ChangeProfileInfoState> get() = _changeAcademicInfoState
 
@@ -77,8 +80,24 @@ class StudentProfileViewModel(
         }
     }
 
+    fun changeBio(
+        student: StudentEntity,
+        newBio: String
+    ) {
+        viewModelScope.launch {
+            _changeBioState.value = ChangeProfileInfoState.Loading
+            _changeBioState.value = try {
+                studentRepo.changeBio(student, newBio)
+                ChangeProfileInfoState.Success(newBio)
+            } catch (e: Exception) {
+                ChangeProfileInfoState.Error(e.message)
+            }
+        }
+    }
+
     fun changeAcademicInfo(
         student: StudentEntity,
+        name: String,
         id: Int,
         reg: String,
         blood: String,
@@ -89,7 +108,7 @@ class StudentProfileViewModel(
         viewModelScope.launch {
             _changeAcademicInfoState.value = ChangeProfileInfoState.Loading
             _changeAcademicInfoState.value = try {
-                val newStudent = studentRepo.changeAcademicInfo(student, id, reg, blood,
+                val newStudent = studentRepo.changeAcademicInfo(student, name, id, reg, blood,
                     facultyId, session, batchId)
                 ChangeProfileInfoState.Success(newStudent)
             } catch (e: Exception) {

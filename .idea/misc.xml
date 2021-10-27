@@ -18,10 +18,12 @@
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_student_profile.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_students.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_teacher_profile.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_web_view.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/content_edit_profile.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/fragment_profile_pager_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_web_error.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_change_bio.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_change_cv.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_change_name.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_pro_pic_change.xml" value="0.1569078947368421" />

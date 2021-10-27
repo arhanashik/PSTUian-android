@@ -437,7 +437,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     is BatchState.Idle -> {
                     }
                     is BatchState.Loading -> {
-                        Toaster.show("Getting batch....")
+//                        Toaster.show("Getting batch....")
                     }
                     is BatchState.Batch -> {
                         openProfile(it.batch)

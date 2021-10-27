@@ -200,6 +200,63 @@ object CommonDialog {
         return dialog
     }
 
+    fun changeBio(
+        context: Context,
+        oldBio: String,
+        onClickChange: (newBio: String) -> Unit = {},
+        cancelable: Boolean = false,
+    ): AlertDialog {
+        val inflater = LayoutInflater.from(context)
+        val binding = PromptChangeBioBinding.inflate(inflater, null, false)
+        binding.etBio.setText(oldBio)
+        binding.etBio.setSelection(oldBio.length)
+        binding.btnChange.isEnabled = false
+
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                when {
+                    p0.isNullOrEmpty() || p0.trim().isEmpty() -> {
+                        binding.tilBio.error = "Bio cannot be empty"
+                        binding.btnChange.isEnabled = false
+                    }
+                    p0.trim().length > 150 -> {
+                        binding.tilBio.error = "Bio cannot be more than 150 character"
+                        binding.btnChange.isEnabled = false
+                    }
+                    p0.toString() == oldBio -> {
+                        binding.tilBio.error = "Bio cannot be same as old bio"
+                        binding.btnChange.isEnabled = false
+                    }
+                    else -> {
+                        binding.tilBio.error = null
+                        binding.btnChange.isEnabled = true
+                    }
+                }
+            }
+        }
+        binding.etBio.addTextChangedListener(textWatcher)
+
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(binding.root)
+            .setCancelable(cancelable)
+            .create()
+
+        binding.btnDismiss.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        binding.btnChange.setOnClickListener {
+            val newBio = binding.etBio.text.toString().trim()
+            onClickChange(newBio)
+        }
+
+        dialog.show()
+
+        return dialog
+    }
+
     fun changeCV(
         context: Context,
         pdfUri: Uri,

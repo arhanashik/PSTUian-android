@@ -2,6 +2,7 @@ package com.workfort.pstuian.app.ui.teacherprofile
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
@@ -49,7 +50,7 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
     }
 
     private fun setUiData() {
-        title = ""
+        title = mTeacher.name
         with(binding) {
             if(mTeacher.imageUrl.isNullOrEmpty()) {
                 imgAvatar.setImageResource(R.drawable.img_placeholder_profile)
@@ -59,7 +60,12 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                     error(R.drawable.img_placeholder_profile)
                 }
             }
-            tvName.text = mTeacher.name
+            if(mTeacher.bio.isNullOrEmpty()) {
+                tvBio.visibility = View.GONE
+            } else {
+                tvBio.visibility = View.VISIBLE
+                tvBio.text = mTeacher.bio
+            }
 
             btnCall.setOnClickListener { promptCall(mTeacher.phone) }
             btnEmail.setOnClickListener { promptEmail(mTeacher.email) }

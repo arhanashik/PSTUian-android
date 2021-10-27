@@ -38,8 +38,16 @@ interface StudentApiService {
     ): Response<String>
 
     @FormUrlEncoded
+    @POST("student.php?call=updateBio")
+    suspend fun changeBio(
+        @Field("id") id: Int,
+        @Field("bio") bio: String
+    ): Response<String>
+
+    @FormUrlEncoded
     @POST("student.php?call=updateAcademicInfo")
     suspend fun changeAcademicInfo(
+        @Field("name") name: String,
         @Field("old_id") oldId: Int,
         @Field("id") id: Int,
         @Field("reg") reg: String,

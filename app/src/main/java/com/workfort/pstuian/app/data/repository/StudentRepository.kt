@@ -41,8 +41,18 @@ class StudentRepository(
         return isChanged
     }
 
+    suspend fun changeBio(student: StudentEntity, bio: String): Boolean {
+        val isChanged = helper.changeBio(student.id, bio)
+        if(isChanged) {
+            student.bio = bio
+            authRepo.storeSignInUser(student)
+        }
+        return isChanged
+    }
+
     suspend fun changeAcademicInfo(
         student: StudentEntity,
+        name: String,
         id: Int,
         reg: String,
         blood: String,
@@ -51,7 +61,7 @@ class StudentRepository(
         batchId: Int
     ): StudentEntity {
         helper.changeAcademicInfo(
-            student.id, id, reg, blood, facultyId, session, batchId
+            name, student.id, id, reg, blood, facultyId, session, batchId
         ).let { updatedStudent ->
             authRepo.storeSignInUser(updatedStudent)
             return updatedStudent

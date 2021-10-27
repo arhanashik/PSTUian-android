@@ -256,6 +256,11 @@
     <string name="txt_reload">Reload</string>
     <string name="msg_web_error">Ops, Something went wrong!</string>
     <string name="msg_404_error">The requested page was not found</string>
+    <string name="txt_change_bio">Change Bio</string>
+    <string name="hint_bio">Bio</string>
+    <string name="hint_add_bio">No bio added yet</string>
+    <string name="hint_bio_max_length">Maximum length is 150 character</string>
+    <string name="txt_name">Name</string>
     <array name="blood_group">
         <item>A+</item>
         <item>B+</item>

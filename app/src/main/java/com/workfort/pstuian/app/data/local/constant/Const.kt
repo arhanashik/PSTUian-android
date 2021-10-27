@@ -38,6 +38,7 @@ object Const {
         const val EDIT_ACTION = "EDIT_ACTION"
         const val EDIT_ACADEMIC = "EDIT_ACADEMIC"
         const val EDIT_CONNECT = "EDIT_CONNECT"
+        const val UPDATED = "UPDATED"
     }
 
     object Path {

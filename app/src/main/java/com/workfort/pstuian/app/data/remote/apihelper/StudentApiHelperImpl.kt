@@ -32,7 +32,14 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         return response.success
     }
 
+    override suspend fun changeBio(id: Int, bio: String): Boolean {
+        val response = service.changeBio(id, bio)
+        if(!response.success) throw Exception(response.message)
+        return response.success
+    }
+
     override suspend fun changeAcademicInfo(
+        name: String,
         oldId: Int,
         id: Int,
         reg: String,
@@ -41,7 +48,7 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         session: String,
         batchId: Int
     ): StudentEntity {
-        val response = service.changeAcademicInfo(oldId, id, reg, blood,
+        val response = service.changeAcademicInfo(name, oldId, id, reg, blood,
             facultyId, session, batchId)
         if(!response.success) throw Exception(response.message)
         return response.data?: throw Exception("Empty data")

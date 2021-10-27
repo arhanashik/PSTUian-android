@@ -64,18 +64,19 @@
                 app:layout_constraintEnd_toEndOf="parent"/>
 
         <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/tv_bio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/space_16dp"
+                android:layout_marginStart="@dimen/dp32"
                 android:layout_marginTop="@dimen/dp10"
-                android:layout_marginEnd="@dimen/space_16dp"
-                tools:text="Md Hasnain"
+                android:layout_marginEnd="@dimen/dp32"
+                tools:text="@tools:sample/lorem/random"
                 android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:textSize="22sp"
-                android:singleLine="true"
+                android:textSize="16sp"
+                android:maxLines="3"
                 android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/img_avatar" />
 
         <com.google.android.material.tabs.TabLayout
@@ -86,7 +87,7 @@
                 app:tabMode="fixed"
                 app:tabIndicatorColor="@android:color/black"
                 app:tabSelectedTextColor="@android:color/black"
-                app:layout_constraintTop_toBottomOf="@id/tv_name"/>
+                app:layout_constraintTop_toBottomOf="@id/tv_bio"/>
 
         <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager"

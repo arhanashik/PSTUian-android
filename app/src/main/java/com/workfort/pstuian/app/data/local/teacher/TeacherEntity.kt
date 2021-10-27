@@ -16,7 +16,7 @@ data class TeacherEntity(
     @ColumnInfo(name = ColumnNames.Teacher.NAME) val name: String,
     @ColumnInfo(name = ColumnNames.Teacher.DESIGNATION)
     val designation: String,
-    @ColumnInfo(name = ColumnNames.Teacher.STATUS) val status: String?,
+    @ColumnInfo(name = ColumnNames.Teacher.BIO) val bio: String?,
     @ColumnInfo(name = ColumnNames.Teacher.PHONE) val phone: String?,
     @ColumnInfo(name = ColumnNames.Teacher.LINKED_IN)
     @SerializedName("linked_in")

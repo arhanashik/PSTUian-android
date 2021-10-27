@@ -41,9 +41,9 @@ data class ProfileInfoItem (
     val label: String,
     val title: String,
     @DrawableRes
-    val actionIcon: Int = -1,
-    val action: ProfileInfoAction = ProfileInfoAction.NONE,
-    val actionData: String? = ""
+    var actionIcon: Int = -1,
+    var action: ProfileInfoAction = ProfileInfoAction.NONE,
+    var actionData: String? = ""
 )
 
 abstract class ProfileInfoClickEvent {
@@ -52,6 +52,7 @@ abstract class ProfileInfoClickEvent {
 
 sealed class ProfileInfoAction {
     object NONE : ProfileInfoAction()
+    object EDIT : ProfileInfoAction()
     object CALL : ProfileInfoAction()
     object MAIL : ProfileInfoAction()
     object DOWNLOAD : ProfileInfoAction()

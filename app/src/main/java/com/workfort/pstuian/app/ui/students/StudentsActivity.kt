@@ -1,9 +1,11 @@
 package com.workfort.pstuian.app.ui.students
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
@@ -65,11 +67,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         mAdapter = StudentsAdapter()
         mAdapter.setListener(object: StudentClickEvent {
             override fun onClickStudent(student: StudentEntity) {
-                val intent = Intent(this@StudentsActivity, StudentProfileActivity::class.java)
-                intent.putExtra(Const.Key.FACULTY, mFaculty)
-                intent.putExtra(Const.Key.BATCH, mBatch)
-                intent.putExtra(Const.Key.STUDENT, student)
-                startActivity(intent)
+                gotToStudentProfile(mFaculty, mBatch, student)
             }
         })
 
@@ -115,5 +113,29 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
 
     private fun renderStudents(data: List<StudentEntity>) {
         mAdapter.setStudents(data.toMutableList())
+    }
+
+    private fun gotToStudentProfile(
+        faculty: FacultyEntity,
+        batch: BatchEntity,
+        student: StudentEntity
+    ) {
+        val intent = Intent(this@StudentsActivity,
+            StudentProfileActivity::class.java)
+        intent.putExtra(Const.Key.FACULTY, faculty)
+        intent.putExtra(Const.Key.BATCH, batch)
+        intent.putExtra(Const.Key.STUDENT, student)
+        startActivityForResult.launch(intent)
+    }
+
+    private val startActivityForResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if(result.resultCode == Activity.RESULT_OK) {
+            result?.data?.getParcelableExtra<StudentEntity>(Const.Key.STUDENT)?.let {
+                lifecycleScope.launch {
+                    mViewModel.updateStudent(it)
+                }
+            }
+        }
     }
 }

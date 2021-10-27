@@ -38,7 +38,7 @@ interface StudentDao {
     suspend fun insertAll(entities: List<StudentEntity>)
 
     @Update
-    fun update(studentEntity: StudentEntity)
+    suspend fun update(studentEntity: StudentEntity)
 
     @Delete
     fun delete(studentEntity: StudentEntity)

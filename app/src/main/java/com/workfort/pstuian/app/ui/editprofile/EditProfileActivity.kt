@@ -93,6 +93,7 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
             if(mEditAction == Const.Key.EDIT_ACADEMIC) {
                 groupAcademicInfo.visibility = View.VISIBLE
                 groupConnect.visibility = View.GONE
+                etName.setText(mStudent.name)
                 etId.setText(mStudent.id.toString())
                 etId.setSelection(mStudent.id.toString().length)
                 etReg.setText(mStudent.reg)
@@ -242,6 +243,13 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
 
     private fun updateAcademicInfo() {
         with(binding.content) {
+            val name = etName.text.toString()
+            if(TextUtils.isEmpty(name)) {
+                tilName.error = "*Required"
+                return
+            }
+            tilName.error = null
+
             val idStr = etId.text.toString()
             if(TextUtils.isEmpty(idStr)) {
                 tilId.error = "*Required"
@@ -311,7 +319,7 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
             }
 
             mStudentViewModel.changeAcademicInfo(
-                mStudent, id, reg, blood, facultyId, session, batchId
+                mStudent, name, id, reg, blood, facultyId, session, batchId
             )
         }
     }
@@ -328,6 +336,7 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
                     is ChangeProfileInfoState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
                         if(it.data is StudentEntity) mStudent = it.data
+                        setActivityResult()
                         CommonDialog.success(this@EditProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
@@ -372,6 +381,7 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
                     is ChangeProfileInfoState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
                         if(it.data is StudentEntity) mStudent = it.data
+                        setActivityResult()
                         CommonDialog.success(this@EditProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
@@ -453,5 +463,12 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
                 }
             }
         })
+    }
+
+    private fun setActivityResult(dataChanged: Boolean = true) {
+        val intent = Intent()
+        intent.putExtra(Const.Key.STUDENT, mStudent)
+        intent.putExtra(Const.Key.UPDATED, dataChanged)
+        setResult(Activity.RESULT_OK, intent)
     }
 }

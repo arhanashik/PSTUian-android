@@ -43,13 +43,14 @@ public interface ColumnNames {
         String FACULTY_ID = "faculty_id";
         String IMAGE_URL = "image_url";
         String CV_LINK = "cv_link";
+        String BIO = "bio";
     }
 
     interface Teacher {
         String ID = "id";
         String NAME = "name";
         String DESIGNATION = "designation";
-        String STATUS = "status";
+        String BIO = "bio";
         String PHONE = "phone";
         String LINKED_IN = "linked_in";
         String FB_LINK = "fb_link";

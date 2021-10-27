@@ -11,9 +11,9 @@
             android:id="@+id/group_academic_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="tilId, tilReg, tilBlood, tilFaculty, tilSession, tilBatch"
+            app:constraint_referenced_ids="tilName, tilId, tilReg, tilBlood, tilFaculty, tilSession, tilBatch"
             android:visibility="visible"
-            tools:visibility="gone"/>
+            tools:visibility="visible"/>
 
     <androidx.constraintlayout.widget.Group
             android:id="@+id/group_connect"
@@ -24,7 +24,7 @@
             tools:visibility="visible"/>
 
     <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilId"
+            android:id="@+id/tilName"
             style="@style/TextInputLayoutAppearance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,6 +32,31 @@
             android:layout_marginTop="@dimen/default_space"
             android:layout_marginEnd="@dimen/default_space"
             app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/default_space"
+                android:paddingEnd="@dimen/default_space"
+                android:hint="@string/hint_name"
+                tools:text="Md Hasnain"
+                android:textColor="?attr/customPrimaryTextColor"
+                android:textColorHint="?attr/customSecondaryTextColor"
+                android:textSize="18sp"
+                android:inputType="text">
+            <requestFocus/>
+        </com.google.android.material.textfield.TextInputEditText>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilId"
+            style="@style/TextInputLayoutAppearance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_space"
+            android:layout_marginTop="@dimen/default_space"
+            android:layout_marginEnd="@dimen/default_space"
+            app:layout_constraintTop_toBottomOf="@id/tilName">
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etId"
                 android:layout_width="match_parent"
@@ -43,9 +68,7 @@
                 android:textColor="?attr/customPrimaryTextColor"
                 android:textColorHint="?attr/customSecondaryTextColor"
                 android:textSize="18sp"
-                android:inputType="number">
-            <requestFocus/>
-        </com.google.android.material.textfield.TextInputEditText>
+                android:inputType="number"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
