@@ -7,7 +7,7 @@
     </string>
 
     <string name="title_activity_students">Students</string>
-    <string name="title_activity_settings">PSTUian</string>
+    <string name="title_activity_settings">Settings</string>
     <string name="title_activity_donors">Donors</string>
 
     <string name="hint_search">Search hint</string>
@@ -17,10 +17,10 @@
     <string name="hint_search_employee">Search employee</string>
     <string name="hint_search_course_schedule">Search course schedule</string>
     <string name="hint_name">Name</string>
-    <string name="hint_info">Please insert who you are</string>
+    <string name="hint_message">Message</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="hint_reference">Please insert TrxID / TxnId</string>
+    <string name="hint_reference">Reference(TrxID/TxnId)</string>
     <string name="hint_save_donation">After sending donation</string>
     <string name="hint_search_donors">Search donors</string>
 
@@ -65,11 +65,11 @@
     <string name="required_field_missing_exception">All fields are required</string>
 
     <string name="link_pstu_website" translatable="false">http://www.pstu.ac.bd/</string>
-    <string name="link_pstu_seat_plan" translatable="false">
-        https://play.google.com/store/apps/details?id=com.pstu.admissiontest
+    <string name="app_id_pstu_seat_plan" translatable="false">
+        com.pstu.admissiontest
     </string>
-    <string name="link_pstu_help_line" translatable="false">
-        https://play.google.com/store/apps/details?id=com.pstuhelpline.rickyislam.myapplication
+    <string name="app_id_pstu_help_line" translatable="false">
+        com.pstuhelpline.rickyislam.myapplication
     </string>
 
     <string name="install_google_play_store" translatable="false">Please install google play store and then try again.</string>
@@ -85,14 +85,14 @@
     <string name="text_similar_app">More app</string>
 
     <string name="about_it">
-        <b>PSTUian</b> is a small tribute to our beloved university. It\'s an step to connect every teacher,
-        students, employees and everything else in a single place.
+        <b>PSTUian</b> is a small tribute to our beloved university. It\'s an step to connect every
+        teacher, students, employees and everything else in a single place.
     </string>
 
     <string name="data_load_policy">
         All data are sync from our remote server.
-        So, for getting the data of any options(like faculty, student list etc) you will need to load with a live
-        internet connection for the first time. After that you can access everything without internet.
+        So, for getting the data of any options(like faculty, student list etc) you will need to
+        load with a live internet connection.
     </string>
 
     <string name="donation_request_message">
@@ -261,6 +261,18 @@
     <string name="hint_add_bio">No bio added yet</string>
     <string name="hint_bio_max_length">Maximum length is 150 character</string>
     <string name="txt_name">Name</string>
+    <string name="txt_open_profile">Open Profile</string>
+    <string name="helper_txt_max_length_donation_message">Maximum 250 characters</string>
+    <string name="title_activity_donate">Donate</string>
+    <string name="txt_donation_thanks">We are grateful for your support. No matter how small it is, for us it is an inspiration to continue our work.</string>
+    <string name="txt_save_donation">Save Donation</string>
+    <string name="helper_text_help_message_max_length">Maximum 500 characters</string>
+    <string name="title_activity_support">Support</string>
+    <string name="txt_home">Home</string>
+    <string name="label_others">Others</string>
+    <string name="txt_settings">Settings</string>
+    <string name="label_contact_us">Contact Us</string>
+    <string name="default_notification_channel_id">default-notification-channel</string>
     <array name="blood_group">
         <item>A+</item>
         <item>B+</item>

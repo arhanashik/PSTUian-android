@@ -30,7 +30,7 @@ inline fun <reified T : Any> Activity.launchActivity(
     startActivity(newIntent<T>(this, init), extra)
 }
 
-inline fun <reified T : Any> Activity.launchActivity(
+inline fun <reified T : Any> Context.launchActivity(
     vararg extras: Pair<String, Any>,
     noinline init: Intent.() -> Unit = {}) {
     val intent = newIntent<T>(this, init).apply {

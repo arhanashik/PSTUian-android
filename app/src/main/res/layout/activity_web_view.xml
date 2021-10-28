@@ -21,7 +21,17 @@
                 android:background="?attr/backgroundColor"
                 android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-                tools:title="Web View"/>
+                tools:title="Web View">
+
+            <ImageView
+                    android:id="@+id/btn_open_in_external_browser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_export"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="@dimen/default_space"
+                    tools:ignore="ContentDescription" />
+        </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

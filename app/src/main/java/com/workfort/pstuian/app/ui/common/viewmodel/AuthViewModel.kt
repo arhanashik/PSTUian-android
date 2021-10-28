@@ -9,7 +9,10 @@ import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.signup.viewstate.SignUpState
 import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
+import com.workfort.pstuian.app.ui.splash.viewstate.DeviceRegistrationState
 import com.workfort.pstuian.util.helper.CoilUtil
+import com.workfort.pstuian.util.lib.fcm.FcmUtil
+import com.workfort.pstuian.util.lib.fcm.callback.FcmTokenCallback
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -19,6 +22,9 @@ class AuthViewModel(
     private val authRepo: AuthRepository
 ) : ViewModel() {
     val intent = Channel<AuthIntent>(Channel.UNLIMITED)
+
+    private val _deviceRegistrationState = MutableStateFlow<DeviceRegistrationState>(DeviceRegistrationState.Idle)
+    val deviceRegistrationState: StateFlow<DeviceRegistrationState> get() = _deviceRegistrationState
 
     private val _configState = MutableStateFlow<ConfigState>(ConfigState.Idle)
     val configState: StateFlow<ConfigState> get() = _configState
@@ -43,12 +49,32 @@ class AuthViewModel(
         viewModelScope.launch {
             intent.consumeAsFlow().collect {
                 when (it) {
+                    is AuthIntent.RegisterDevice -> registerDevice()
                     is AuthIntent.GetConfig -> getConfig()
                     is AuthIntent.GetSignInUser -> getSignedInUser()
                     is AuthIntent.SignOut -> signOut()
                 }
             }
         }
+    }
+
+    private fun registerDevice() {
+        _deviceRegistrationState.value = DeviceRegistrationState.Loading
+        FcmUtil.getFcmToken(object: FcmTokenCallback {
+            override fun onResponse(token: String?, error: String?) {
+                if(error != null) {
+                    _deviceRegistrationState.value = DeviceRegistrationState.Error(error)
+                    return
+                }
+                viewModelScope.launch {
+                    _deviceRegistrationState.value = try {
+                        DeviceRegistrationState.Success(authRepo.registerDevice(token!!))
+                    } catch (e: Exception) {
+                        DeviceRegistrationState.Error(e.message)
+                    }
+                }
+            }
+        })
     }
 
     private fun getConfig() {

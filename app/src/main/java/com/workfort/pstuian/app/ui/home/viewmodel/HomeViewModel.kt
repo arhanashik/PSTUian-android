@@ -9,6 +9,7 @@ import com.workfort.pstuian.app.data.repository.SliderRepository
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
+import com.workfort.pstuian.app.ui.splash.viewstate.ClearCacheState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +30,8 @@ class HomeViewModel(
     private val _deleteAllDataState = MutableStateFlow<DeleteAllState>(DeleteAllState.Idle)
     val deleteAllDataState: StateFlow<DeleteAllState> get() = _deleteAllDataState
 
-    private val _clearCache = MutableStateFlow<DeleteAllState>(DeleteAllState.Idle)
-    val clearCache: StateFlow<DeleteAllState> get() = _clearCache
+    private val _clearCache = MutableStateFlow<ClearCacheState>(ClearCacheState.Idle)
+    val clearCache: StateFlow<ClearCacheState> get() = _clearCache
 
     init {
         handleIntent()
@@ -81,12 +82,12 @@ class HomeViewModel(
      * */
     private fun clearCache() {
         viewModelScope.launch {
-            _clearCache.value = DeleteAllState.Loading
+            _clearCache.value = ClearCacheState.Loading
             _clearCache.value = try {
                 facultyRepo.deleteAll()
-                DeleteAllState.Success
+                ClearCacheState.Success
             } catch (e: Exception) {
-                DeleteAllState.Error(e.message)
+                ClearCacheState.Error(e.message)
             }
         }
     }

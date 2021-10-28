@@ -13,6 +13,7 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseAgentWebActivity
 import com.workfort.pstuian.databinding.ActivityWebViewBinding
+import com.workfort.pstuian.util.helper.LinkUtil
 
 
 /**
@@ -49,6 +50,12 @@ class WebViewActivity : BaseAgentWebActivity() {
                 errorContainer.root.visibility = View.GONE
                 getAgentWeb()?.urlLoader?.reload()
             }
+
+            btnOpenInExternalBrowser.setOnClickListener {
+                getUrl()?.let { url ->
+                    LinkUtil(this@WebViewActivity).openBrowser(url)
+                }
+            }
         }
     }
 
@@ -63,9 +70,7 @@ class WebViewActivity : BaseAgentWebActivity() {
 
     override fun setTitle(view: WebView?, title: String?) {
         super.setTitle(view, title)
-        binding.toolbar.title = if (title.isNullOrEmpty()) "" else {
-            if (title.length < 20) title else "${title.substring(0, 20)}..."
-        }
+        binding.toolbar.title = if (title.isNullOrEmpty()) "" else title
     }
 
     override fun getIndicatorHeight(): Int = 3

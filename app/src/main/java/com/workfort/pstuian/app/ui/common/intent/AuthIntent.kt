@@ -16,6 +16,7 @@ package com.workfort.pstuian.app.ui.common.intent
  *  ****************************************************************************
  */
 sealed class AuthIntent {
+    object RegisterDevice : AuthIntent()
     object GetConfig : AuthIntent()
     object GetSignInUser : AuthIntent()
     object SignOut : AuthIntent()

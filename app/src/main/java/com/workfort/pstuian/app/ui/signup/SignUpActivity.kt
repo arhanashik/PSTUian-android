@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.ui.signup
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -9,9 +10,12 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
+import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.signin.SignInActivity
 import com.workfort.pstuian.app.ui.signup.viewstate.SignUpState
+import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivitySignUpBinding
 import com.workfort.pstuian.util.extension.launchActivity
@@ -54,7 +58,10 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>() {
         super.onClick(v)
         when(v) {
             binding.btnSignUp -> signUp()
-            binding.btnSignIn -> finish()
+            binding.btnSignIn -> {
+                launchActivity<SignInActivity>()
+                finish()
+            }
             binding.btnTermsAndConditions -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
                 Const.Remote.TERMS_AND_CONDITIONS))
             binding.btnPrivacyPolicy -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
@@ -111,7 +118,7 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>() {
                     }
                     is SignUpState.Success -> {
                         binding.loader.visibility = View.INVISIBLE
-                        doSuccessAction()
+                        doSuccessAction(it.student)
                     }
                     is SignUpState.Error -> {
                         binding.loader.visibility = View.INVISIBLE
@@ -125,15 +132,29 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>() {
         }
     }
 
-    private fun doSuccessAction() {
+    private fun doSuccessAction(student: StudentEntity) {
         val msg = getString(R.string.success_msg_sign_up)
+        val btnTxt = getString(R.string.txt_open_profile)
         val warning = getString(R.string.warning_msg_sign_up)
-        CommonDialog.success(this@SignUpActivity, message = msg,
+        CommonDialog.success(this@SignUpActivity, message = msg, btnText = btnTxt,
             warning = warning, cancelable = false,
             callback = object : CommonDialog.SuccessDialogCallback {
                 override fun onClickDismiss() {
+                    gotToStudentProfile(mFaculty, mBatch, student)
                     finish()
                 }
         })
+    }
+
+    private fun gotToStudentProfile(
+        faculty: FacultyEntity,
+        batch: BatchEntity,
+        student: StudentEntity
+    ) {
+        val intent = Intent(this, StudentProfileActivity::class.java)
+        intent.putExtra(Const.Key.FACULTY, faculty)
+        intent.putExtra(Const.Key.BATCH, batch)
+        intent.putExtra(Const.Key.STUDENT, student)
+        startActivity(intent)
     }
 }

@@ -15,13 +15,15 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.config.ConfigEntity
 import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.app.ui.common.intent.AuthIntent
+import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.home.HomeActivity
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
-import com.workfort.pstuian.app.ui.common.intent.AuthIntent
-import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.splash.viewstate.ClearCacheState
 import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
+import com.workfort.pstuian.app.ui.splash.viewstate.DeviceRegistrationState
 import com.workfort.pstuian.databinding.ActivitySplashBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.InAppUpdateUtil
@@ -33,10 +35,48 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
+/**
+ * Steps to follow in splash after "onCreate()"
+ * -> Run splash animation by "loadAnimations()" and observe the animation progress
+ *
+ * -> After splash animation end, register/update device by "registerDevice()" and observe
+ *    result in "observeDeviceRegistration()"
+ *    -> If successful, continue to the next step
+ *    -> If failed, show blocking dialog with retry option
+ *
+ * -> After that trigger "clearCache()" and observe progress in "observeClearCache()"
+ *      -> If cache data clear failed, show blocking error message.
+ *      -> If successful goto next step
+ *
+ * -> Check for app update "checkForUpdate()", and observe the result
+ *      -> If update available
+ *          -> If force update necessary, show blocking update option "requestForceUpdate()"
+ *          -> If flexible update, show cancelable update option "requestFlexibleUpdate()"
+ *               -> Check update result in "onActivityResult()".
+ *               -> If failed, check for update again "checkForUpdate()".
+ *               -> If successful, go to next step.
+ *      -> If no update available, (or failed to check update), go to next step
+ *
+ * -> After app update, request for app config "requestConfig()" and observe result
+ *    in "observeConfig()"
+ *      -> If failed, show blocking dialog with retry option.
+ *      -> If successful, check config in "handleConfig()"
+ *          -> If data refresh is not necessary, go to Home Page
+ *          -> If data refresh is necessary, show blocking dialog to refresh data in
+ *             "refreshData()", and observe in "observeDeleteAllData()"
+ *              -> If failed to refresh data, show blocking dialog to retry "refreshData()"
+ *              -> If successful restart the app
+ *
+ *
+ * Steps to follow in "onResume()"
+ * -> Check if there is any downloaded update pending
+ * -> If available, request to install the new update
+ * -> If download in progress(or paused), request to continue the download in background
+ * */
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
-    private lateinit var mBinding: ActivitySplashBinding
+    private lateinit var binding: ActivitySplashBinding
     private lateinit var mSetLeftIn: AnimatorSet
 
     private val mHomeViewModel: HomeViewModel by viewModel()
@@ -47,13 +87,14 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = ActivitySplashBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         loadAnimations()
         changeCameraDistance()
         flipCard()
 
+        observeDeviceRegistration()
         observeConfig()
         observeClearCache()
         observeDeleteAllData()
@@ -98,14 +139,45 @@ class SplashActivity : AppCompatActivity() {
             override fun onAnimationEnd(animation: Animator) {}
             override fun onAnimationCancel(animation: Animator) {}
             override fun onAnimationStart(animation: Animator) {
-                //mBinding.tvTitle.setAnimationListener { SimpleAnimationListener(this@SplashActivity) }
-                mBinding.tvTitle.animateText(getText(R.string.app_name))
+                binding.tvTitle.animateText(getText(R.string.app_name))
                 lifecycleScope.launch {
                     delay(2500)
-                    clearCache()
+                    registerDevice()
                 }
             }
         })
+    }
+
+    private fun registerDevice() {
+        lifecycleScope.launch {
+            mAuthViewModel.intent.send(AuthIntent.RegisterDevice)
+        }
+    }
+
+    private fun observeDeviceRegistration() {
+        lifecycleScope.launch {
+            mAuthViewModel.deviceRegistrationState.collect {
+                when (it) {
+                    is DeviceRegistrationState.Idle -> Unit
+                    is DeviceRegistrationState.Loading -> setActionUiState(true)
+                    is DeviceRegistrationState.Success -> {
+                        setActionUiState(false)
+                        clearCache()
+                    }
+                    is DeviceRegistrationState.Error -> {
+                        setActionUiState(false)
+                        val msg = it.error?: "Couldn't register the device"
+                        CommonDialog.error(
+                            this@SplashActivity,
+                            message = msg,
+                            btnText = getString(R.string.txt_retry),
+                            cancelable = false,
+                            onBtnClick = { registerDevice() }
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun clearCache() {
@@ -118,19 +190,16 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mHomeViewModel.clearCache.collect {
                 when (it) {
-                    is DeleteAllState.Idle -> {
-                        mBinding.loader.visibility = View.INVISIBLE
+                    is ClearCacheState.Idle -> Unit
+                    is ClearCacheState.Loading -> {
+                        binding.loader.visibility = View.VISIBLE
                     }
-                    is DeleteAllState.Loading -> {
-                        mBinding.loader.visibility = View.VISIBLE
-                    }
-                    is DeleteAllState.Success -> {
-                        mBinding.loader.visibility = View.INVISIBLE
+                    is ClearCacheState.Success -> {
+                        binding.loader.visibility = View.GONE
                         checkForUpdate()
                     }
-                    is DeleteAllState.Error -> {
-                        mBinding.loader.visibility = View.INVISIBLE
-                        checkForUpdate()
+                    is ClearCacheState.Error -> {
+                        binding.loader.visibility = View.GONE
                         val msg = it.error?: "Couldn't clear cache"
                         CommonDialog.error(
                             this@SplashActivity,
@@ -148,11 +217,11 @@ class SplashActivity : AppCompatActivity() {
     private fun changeCameraDistance() {
         val distance = 8000
         val scale = resources.displayMetrics.density * distance
-        mBinding.tvTitle.cameraDistance = scale
+        binding.tvTitle.cameraDistance = scale
     }
 
     private fun flipCard() {
-        mSetLeftIn.setTarget(mBinding.tvTitle)
+        mSetLeftIn.setTarget(binding.tvTitle)
         mSetLeftIn.start()
     }
 
@@ -161,18 +230,25 @@ class SplashActivity : AppCompatActivity() {
             mAuthViewModel.configState.collect {
                 when (it) {
                     is ConfigState.Idle -> {
-                        mBinding.loader.visibility = View.INVISIBLE
+                        binding.loader.visibility = View.INVISIBLE
                     }
                     is ConfigState.Loading -> {
-                        mBinding.loader.visibility = View.VISIBLE
+                        binding.loader.visibility = View.VISIBLE
                     }
                     is ConfigState.Success -> {
-                        mBinding.loader.visibility = View.INVISIBLE
+                        binding.loader.visibility = View.INVISIBLE
                         handleConfig(it.config)
                     }
                     is ConfigState.Error -> {
-                        mBinding.loader.visibility = View.INVISIBLE
-                        Timber.e(it.error?: "Can't load data")
+                        binding.loader.visibility = View.INVISIBLE
+                        val msg = it.error?: "Couldn't get app config"
+                        CommonDialog.error(
+                            this@SplashActivity,
+                            message = msg,
+                            btnText = getString(R.string.txt_retry),
+                            cancelable = false,
+                            onBtnClick = { requestConfig() }
+                        )
                     }
                 }
             }
@@ -202,6 +278,36 @@ class SplashActivity : AppCompatActivity() {
     private fun refreshData() {
         lifecycleScope.launch {
             mHomeViewModel.intent.send(HomeIntent.DeleteAllData)
+        }
+    }
+
+    private fun observeDeleteAllData() {
+        lifecycleScope.launch {
+            mHomeViewModel.deleteAllDataState.collect {
+                when (it) {
+                    is DeleteAllState.Idle -> {
+                    }
+                    is DeleteAllState.Loading -> {
+                        binding.loader.visibility = View.VISIBLE
+                    }
+                    is DeleteAllState.Success -> {
+                        binding.loader.visibility = View.INVISIBLE
+                        finishAffinity()
+                        launchActivity<SplashActivity> {}
+                    }
+                    is DeleteAllState.Error -> {
+                        binding.loader.visibility = View.INVISIBLE
+                        val msg = it.error?: "Couldn't refresh app data"
+                        CommonDialog.error(
+                            this@SplashActivity,
+                            message = msg,
+                            btnText = getString(R.string.txt_retry),
+                            cancelable = false,
+                            onBtnClick = { refreshData() }
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -248,13 +354,15 @@ class SplashActivity : AppCompatActivity() {
 //                    val bytesDownloaded = state.bytesDownloaded()
 //                    val totalBytesToDownload = state.totalBytesToDownload()
                     // Show update progress bar.
+                    binding.loader.visibility = View.VISIBLE
                 }
                 InstallStatus.DOWNLOADED -> {
+                    binding.loader.visibility = View.GONE
                     mUpdateListener?.let { mUpdateUtil.removeListener(it) }
                     requestUpdateInstallPermission()
                 }
                 else -> {
-
+                    binding.loader.visibility = View.GONE
                 }
             }
         }
@@ -304,33 +412,10 @@ class SplashActivity : AppCompatActivity() {
             })
     }
 
-    private fun observeDeleteAllData() {
-        lifecycleScope.launch {
-            mHomeViewModel.deleteAllDataState.collect {
-                when (it) {
-                    is DeleteAllState.Idle -> {
-                    }
-                    is DeleteAllState.Loading -> {
-                        mBinding.loader.visibility = View.VISIBLE
-                    }
-                    is DeleteAllState.Success -> {
-                        mBinding.loader.visibility = View.INVISIBLE
-                        finishAffinity()
-                        launchActivity<SplashActivity> {}
-                    }
-                    is DeleteAllState.Error -> {
-                        mBinding.loader.visibility = View.INVISIBLE
-                        Toaster.show(it.error ?: "Deletion failed!")
-                    }
-                }
-            }
+    private fun setActionUiState(isActionRunning: Boolean) {
+        val inverseVisibility = if(isActionRunning) View.VISIBLE else View.GONE
+        with(binding) {
+            loader.visibility = inverseVisibility
         }
     }
-
-//    class SimpleAnimationListener(val context: Context) : AnimationListener {
-//        override fun onAnimationEnd(hTextView: HTextView) {
-//            Timber.e("working...")
-//            Toast.makeText(context, "Animation finished", Toast.LENGTH_SHORT).show()
-//        }
-//    }
 }

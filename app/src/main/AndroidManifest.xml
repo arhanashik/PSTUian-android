@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 <!--    <queries>-->
 <!--        <intent>-->
@@ -31,6 +32,27 @@
                 android:name=".app.ui.base.BaseSuggestionProvider"
                 android:authorities="com.workfort.pstuian.BaseSuggestionProvider"
                 android:exported="false" />
+
+        <!--    Firebase service    -->
+        <service
+                android:name=".util.lib.fcm.FcmMessagingService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- Set custom default icon. -->
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/ic_email" />
+        <!-- Set color used with incoming notification messages. -->
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/colorAccent" />
+        <!--    Default notification channel    -->
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_channel_id"
+                android:value="@string/default_notification_channel_id" />
 
         <activity
                 android:name=".app.ui.splash.SplashActivity"
@@ -131,7 +153,7 @@
                 android:label="@string/title_activity_settings"
                 android:parentActivityName=".app.ui.home.HomeActivity"
                 android:launchMode="singleTop"
-                android:theme="@style/AppTheme">
+                android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.home.HomeActivity"/>
@@ -141,7 +163,8 @@
                 android:label="@string/title_activity_donors"
                 android:parentActivityName=".app.ui.home.HomeActivity"
                 android:launchMode="singleTop"
-                android:exported="false">
+                android:exported="false"
+                android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.home.HomeActivity"/>
@@ -154,6 +177,16 @@
             <meta-data
                     android:name="android.app.searchable"
                     android:resource="@xml/searchable" />
+        </activity>
+        <activity
+                android:name=".app.ui.donate.DonateActivity"
+                android:label="@string/title_activity_donate"
+                android:parentActivityName=".app.ui.home.HomeActivity"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.home.HomeActivity"/>
         </activity>
         <activity
                 android:name=".app.ui.signin.SignInActivity"
@@ -189,6 +222,16 @@
                 android:name=".app.ui.webview.WebViewActivity"
                 android:launchMode="singleTop"
                 android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+                android:name=".app.ui.support.SupportActivity"
+                android:label="@string/title_activity_support"
+                android:parentActivityName=".app.ui.home.HomeActivity"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.home.HomeActivity"/>
         </activity>
     </application>
 </manifest>

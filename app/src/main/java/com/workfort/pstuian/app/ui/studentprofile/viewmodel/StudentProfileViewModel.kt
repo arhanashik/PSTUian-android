@@ -47,9 +47,6 @@ class StudentProfileViewModel(
     private val _changeConnectInfoState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
     val changeConnectInfoState: StateFlow<ChangeProfileInfoState> get() = _changeConnectInfoState
 
-    private val _changeCvState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
-    val changeCvState: StateFlow<ChangeProfileInfoState> get() = _changeCvState
-
     fun changeProfileImage(
         student: StudentEntity,
         imageUrl: String

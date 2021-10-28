@@ -120,8 +120,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         batch: BatchEntity,
         student: StudentEntity
     ) {
-        val intent = Intent(this@StudentsActivity,
-            StudentProfileActivity::class.java)
+        val intent = Intent(this, StudentProfileActivity::class.java)
         intent.putExtra(Const.Key.FACULTY, faculty)
         intent.putExtra(Const.Key.BATCH, batch)
         intent.putExtra(Const.Key.STUDENT, student)

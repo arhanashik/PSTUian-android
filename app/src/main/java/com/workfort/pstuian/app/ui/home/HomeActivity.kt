@@ -1,15 +1,12 @@
 package com.workfort.pstuian.app.ui.home
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -19,16 +16,15 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.data.local.slider.SliderEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.donate.DonateActivity
 import com.workfort.pstuian.app.ui.donors.DonorsActivity
 import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
-import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.app.ui.faculty.FacultyActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
@@ -36,21 +32,20 @@ import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.faculty.viewstate.BatchState
 import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
+import com.workfort.pstuian.app.ui.support.SupportActivity
 import com.workfort.pstuian.app.ui.home.adapter.SliderAdapter
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
+import com.workfort.pstuian.app.ui.settings.SettingsActivity
 import com.workfort.pstuian.app.ui.signin.SignInActivity
 import com.workfort.pstuian.app.ui.splash.SplashActivity
 import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
+import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityHomeBinding
-import com.workfort.pstuian.databinding.PromptDonateBinding
-import com.workfort.pstuian.databinding.PromptDonationMessageBinding
 import com.workfort.pstuian.util.extension.launchActivity
-import com.workfort.pstuian.util.helper.LinkUtil
-import com.workfort.pstuian.util.helper.NetworkUtil
 import com.workfort.pstuian.util.helper.PlayStoreUtil
 import com.workfort.pstuian.util.helper.Toaster
 import kotlinx.coroutines.flow.collect
@@ -80,7 +75,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         observeSignedInUser()
         observeSliders()
         observeFaculties()
-        observeDonation()
         observeDeleteAllData()
         lifecycleScope.launch {
             mViewModel.intent.send(HomeIntent.GetSliders)
@@ -128,35 +122,37 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         })
 
         binding.rvFaculties.setHasFixedSize(true)
-//        binding.rvFaculties.layoutManager = GridLayoutManager(this, 2)
         binding.rvFaculties.adapter = mAdapter
     }
 
     private fun setClickEvents() {
-        val linkUtil = LinkUtil(this)
+        val playStoreUtil = PlayStoreUtil(this@HomeActivity)
         with(binding) {
             btnSignInSignUp.setOnClickListener {
                 launchActivity<SignInActivity> {  }
             }
             btnAccount.setOnClickListener { loadBatch() }
             cardUniversityWebsite.setOnClickListener {
-                linkUtil.openBrowser(getString(R.string.link_pstu_website))
+                launchActivity<WebViewActivity>(
+                    Pair(Const.Key.URL, getString(R.string.link_pstu_website)))
             }
             cardDonationList.setOnClickListener {
                 launchActivity<DonorsActivity> {  }
             }
             cardGradingSystem.setOnClickListener { showGrading() }
             cardAdmissionSeatPlan.setOnClickListener {
-                linkUtil.openBrowser(getString(R.string.link_pstu_seat_plan))
+                playStoreUtil.openStore(getString(R.string.app_id_pstu_seat_plan))
             }
             cardAdmissionHelp.setOnClickListener {
-                linkUtil.openBrowser(getString(R.string.link_pstu_help_line))
+                playStoreUtil.openStore(getString(R.string.app_id_pstu_help_line))
             }
-            btnDonate.setOnClickListener { donate() }
+            cardHelp.setOnClickListener { launchActivity<SupportActivity>() }
+            btnDonate.setOnClickListener { launchActivity<DonateActivity>() }
             btnRateApp.setOnClickListener {
-                PlayStoreUtil(this@HomeActivity).openStore()
+                playStoreUtil.openStore()
             }
             btnClearData.setOnClickListener { clearData() }
+            btnSettings.setOnClickListener { launchActivity<SettingsActivity>() }
         }
     }
 
@@ -303,82 +299,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         dialog.show()
     }
 
-    private fun donate() {
-        val donationMessage = DataBindingUtil.inflate<PromptDonationMessageBinding>(
-            layoutInflater, R.layout.prompt_donation_message, null, false
-        )
-
-        val alertDialog = AlertDialog.Builder(this)
-            .setView(donationMessage.root)
-            .create()
-
-        donationMessage.btnDonate.setOnClickListener {
-            alertDialog.dismiss()
-            showDonationOption()
-        }
-
-        alertDialog.show()
-    }
-
-    private fun showDonationOption() {
-        val donationView = DataBindingUtil.inflate<PromptDonateBinding>(
-            layoutInflater, R.layout.prompt_donate, null, false
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            donationView.tvDonationInfo.text = Html.fromHtml(
-                Prefs.donateOption,
-                Html.FROM_HTML_MODE_LEGACY
-            )
-        } else {
-            donationView.tvDonationInfo.text = Html.fromHtml(Prefs.donateOption)
-        }
-
-        donationView.btnSaveDonation.setOnClickListener { }
-
-        donationDialog = AlertDialog.Builder(this)
-            .setView(donationView.root)
-            .create()
-
-        donationView.btnSaveDonation.setOnClickListener {
-            if(NetworkUtil.isNetworkAvailable()) {
-                val name = donationView.donationName.text.toString()
-                val info = donationView.donationInfo.text.toString()
-                val email = donationView.donationEmail.text.toString()
-                val reference = donationView.donationReference.text.toString()
-
-                mDonorsViewModel.saveDonation(name, info, email, reference)
-            }else {
-                Toaster.show(getString(R.string.internet_not_available_exception))
-            }
-        }
-
-        donationDialog?.show()
-    }
-
-    private var donationDialog: AlertDialog? = null
-    private fun observeDonation() {
-        lifecycleScope.launch {
-            mDonorsViewModel.donationState.collect {
-                when (it) {
-                    is DonationState.Idle -> {
-                    }
-                    is DonationState.Loading -> {
-                        Toaster.show(getString(R.string.saving_donation_message))
-                    }
-                    is DonationState.Success -> {
-                        donationDialog?.dismiss()
-                        Toaster.show(it.message)
-                    }
-                    is DonationState.Error -> {
-                        donationDialog?.dismiss()
-                        Toaster.show(it.error ?: "Donation failed!")
-                    }
-                }
-            }
-        }
-    }
-
     private fun clearData() {
         val alertDialog = MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.label_are_you_sure))
@@ -400,11 +320,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         lifecycleScope.launch {
             mViewModel.deleteAllDataState.collect {
                 when (it) {
-                    is DeleteAllState.Idle -> {
-                    }
-                    is DeleteAllState.Loading -> {
-                        Toaster.show("Deleting please wait....")
-                    }
+                    is DeleteAllState.Idle -> Unit
+                    is DeleteAllState.Loading -> Unit
                     is DeleteAllState.Success -> {
                         finishAffinity()
                         startActivity(
@@ -415,7 +332,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                         )
                     }
                     is DeleteAllState.Error -> {
-                        donationDialog?.dismiss()
                         Toaster.show(it.error ?: "Deletion failed!")
                     }
                 }
@@ -434,8 +350,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         lifecycleScope.launch {
             mFacultyViewModel.batchState.collect {
                 when (it) {
-                    is BatchState.Idle -> {
-                    }
+                    is BatchState.Idle -> Unit
                     is BatchState.Loading -> {
 //                        Toaster.show("Getting batch....")
                     }

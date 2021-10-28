@@ -41,8 +41,28 @@ object Const {
         const val UPDATED = "UPDATED"
     }
 
-    object Path {
-        const val ROOT_PUBLIC_PATH = "/"
+    object Params {
+        const val ID = "id"
+        const val DEVICE_ID = "device_id"
+        const val FCM_TOKEN = "fcm_token"
+        const val MODEL = "model"
+        const val ANDROID_VERSION = "android_version"
+        const val APP_VERSION_CODE = "app_version_code"
+        const val APP_VERSION_NAME = "app_version_name"
+        const val IP_ADDRESS = "ip_address"
+        const val LAT = "lat"
+        const val LNG = "lng"
+        const val LOCALE = "locale"
+
+        const val EMAIL = "email"
+        const val PASSWORD = "password"
+        const val USER_TYPE = "user_type"
+
+        const val NAME = "name"
+        const val REG = "reg"
+        const val FACULTY_ID = "faculty_id"
+        const val BATCH_ID = "batch_id"
+        const val SESSION = "session"
     }
 
     object Remote {
@@ -55,6 +75,21 @@ object Const {
         private const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/mobile/v1/"
         private const val DEV_API_SERVER = "https://api-dev.pstuian.com/mobile/v1/"
         private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
-        val BASE_API_URL = if(BuildConfig.DEBUG) DEV_API_SERVER else LIVE_API_SERVER
+        val BASE_API_URL = if(BuildConfig.DEBUG) LOCAL_API_SERVER else LIVE_API_SERVER
+
+        private const val CONFIG_API_PATH = "config.php?call="
+        private const val DEVICE_API_PATH = "device.php?call="
+        private const val AUTH_API_PATH = "auth.php?call="
+        object Api {
+            const val GET_CONFIG =  "${CONFIG_API_PATH}getLatest"
+            const val REGISTER_DEVICE = "${DEVICE_API_PATH}register"
+            const val UPDATE_FCM_TOKEN = "${DEVICE_API_PATH}updateFcmToken"
+
+            object Auth {
+                const val SIGN_IN = "${AUTH_API_PATH}signIn"
+                const val SIGN_UP = "${AUTH_API_PATH}signUp"
+                const val SIGN_OUT = "${AUTH_API_PATH}signIn"
+            }
+        }
     }
 }

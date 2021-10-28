@@ -4,6 +4,12 @@ interface PrefProp {
     val prefName: String
         get() = "com.workfort.pstuian"
 
+    val keyDeviceId: String
+        get() = "device_id"
+
+    val keyFcmToken: String
+        get() = "fcm_token"
+
     val keyFirstRun: String
         get() = "first_run"
 

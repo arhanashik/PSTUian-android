@@ -3,6 +3,7 @@ package com.workfort.pstuian.app.data.local.database
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchDao
@@ -30,7 +31,7 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
     TeacherEntity::class,
     BatchEntity::class,
     EmployeeEntity::class,
-    CourseEntity::class], version = 1, exportSchema = false)
+    CourseEntity::class], version = BuildConfig.VERSION_CODE_DB, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile

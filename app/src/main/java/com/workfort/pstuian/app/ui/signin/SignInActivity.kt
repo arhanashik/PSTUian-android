@@ -13,12 +13,12 @@ import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.bottomsheet.BatchSelectorBottomSheet
 import com.workfort.pstuian.app.ui.common.bottomsheet.FacultySelectorBottomSheet
+import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.forgotpassword.ForgotPasswordActivity
 import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
 import com.workfort.pstuian.app.ui.signup.SignUpActivity
-import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.databinding.ActivitySignInBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.Toaster
@@ -134,6 +134,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                 intent.putExtra(Const.Key.FACULTY, faculty)
                 intent.putExtra(Const.Key.BATCH, batch)
                 startActivity(intent)
+                finish()
             }
         }).show(supportFragmentManager, BatchSelectorBottomSheet.TAG)
     }

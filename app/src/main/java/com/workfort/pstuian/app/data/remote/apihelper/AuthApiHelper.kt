@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
 import com.workfort.pstuian.app.data.local.config.ConfigEntity
+import com.workfort.pstuian.app.data.local.device.DeviceEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 
 /**
@@ -22,10 +23,18 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 interface AuthApiHelper {
     suspend fun getConfig(): ConfigEntity
 
+    suspend fun registerDevice(device: DeviceEntity): DeviceEntity
+
+    suspend fun updateFcmToken(
+        deviceId: String,
+        fcmToken: String
+    ): DeviceEntity
+
     suspend fun signIn(
         email: String,
         password: String,
-        userType: String
+        userType: String,
+        deviceId: String
     ): Pair<StudentEntity, String>
 
     suspend fun signUp(
@@ -34,7 +43,8 @@ interface AuthApiHelper {
         reg: String,
         facultyId: Int,
         batchId: Int,
-        session: String
+        session: String,
+        deviceId: String
     ): Pair<StudentEntity, String>
 
     suspend fun signOut(

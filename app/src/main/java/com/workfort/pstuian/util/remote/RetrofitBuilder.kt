@@ -110,4 +110,8 @@ object RetrofitBuilder {
     // file uploader api service
     fun createFileHandlerApiService(): FileHandlerApiService = retrofit(Const.Remote.BASE_API_URL)
         .create(FileHandlerApiService::class.java)
+
+    // support api service
+    fun createSupportApiService(): SupportApiService = retrofit(Const.Remote.BASE_API_URL)
+        .create(SupportApiService::class.java)
 }
