@@ -16,6 +16,7 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
+import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.data.local.slider.SliderEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
@@ -32,17 +33,18 @@ import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.faculty.viewstate.BatchState
 import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
-import com.workfort.pstuian.app.ui.support.SupportActivity
 import com.workfort.pstuian.app.ui.home.adapter.SliderAdapter
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
+import com.workfort.pstuian.app.ui.notification.NotificationActivity
 import com.workfort.pstuian.app.ui.settings.SettingsActivity
 import com.workfort.pstuian.app.ui.signin.SignInActivity
 import com.workfort.pstuian.app.ui.splash.SplashActivity
 import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
+import com.workfort.pstuian.app.ui.support.SupportActivity
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityHomeBinding
 import com.workfort.pstuian.util.extension.launchActivity
@@ -56,6 +58,12 @@ import timber.log.Timber
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityHomeBinding
             = ActivityHomeBinding::inflate
+
+    override fun observeBroadcast() = Const.IntentAction.NOTIFICATION
+    override fun onBroadcastReceived(intent: Intent) {
+        handleNotificationIntent(intent)
+        checkNewNotificationState()
+    }
 
     private val mViewModel: HomeViewModel by viewModel()
     private val mFacultyViewModel: FacultyViewModel by viewModel()
@@ -91,12 +99,24 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
          * faculties are loaded
          * */
         loadSignInUser()
+
+        /**
+         * Check if there is any new notification
+         * */
+        checkNewNotificationState()
     }
 
     private fun loadSignInUser() {
         lifecycleScope.launch {
             mAuthViewModel.intent.send(AuthIntent.GetSignInUser)
         }
+    }
+
+    private fun checkNewNotificationState() {
+        binding.btnNotification.setImageResource(
+            if(Prefs.hasNewNotification) R.drawable.ic_bell_badge_filled_primary
+            else R.drawable.ic_bell_filled
+        )
     }
 
     private fun initSlider() {
@@ -132,6 +152,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 launchActivity<SignInActivity> {  }
             }
             btnAccount.setOnClickListener { loadBatch() }
+            btnNotification.setOnClickListener { launchActivity<NotificationActivity>() }
             cardUniversityWebsite.setOnClickListener {
                 launchActivity<WebViewActivity>(
                     Pair(Const.Key.URL, getString(R.string.link_pstu_website)))

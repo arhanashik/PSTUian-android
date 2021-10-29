@@ -31,7 +31,7 @@ import org.koin.dsl.module
 
 private val db = AppDatabase.getDatabase()
 val repositoryModule = module {
-    //db services injection
+    // db services injection
     single { ConfigService(db.configDao()) }
     single { SliderService(db.sliderDao()) }
     single { FacultyService(db.facultyDao()) }
@@ -41,27 +41,31 @@ val repositoryModule = module {
     single { CourseService(db.courseScheduleDao()) }
     single { EmployeeService(db.employeeDao()) }
 
-    //auth repository injections
+    // auth repository injections
     single<AuthApiHelper> { AuthApiHelperImpl(get())}
     single { AuthRepository(get(), get()) }
 
-    //slider repository injections
+    // slider repository injections
     single { SliderApiHelper(get()) }
     single { SliderRepository(get(), get()) }
 
-    //faculty repository injections
+    // faculty repository injections
     single<FacultyApiHelper> { FacultyApiHelperImpl(get()) }
     single { FacultyRepository(get(), get(), get(), get(), get(), get(), get()) }
 
-    //student repository injections
+    // student repository injections
     single<StudentApiHelper> { StudentApiHelperImpl(get()) }
     single { StudentRepository(get(), get(), get()) }
 
-    //donation repository injections
+    // donation repository injections
     single<DonationApiHelper> { DonationApiHelperImpl(get()) }
     single { DonationRepository(get()) }
 
-    //support repository injections
+    // support repository injections
     single<SupportApiHelper> { SupportApiHelperImpl(get()) }
     single { SupportRepository(get()) }
+
+    // notification repository injections
+    single<NotificationApiHelper> { NotificationApiHelperImpl(get()) }
+    single { NotificationRepository(get()) }
 }

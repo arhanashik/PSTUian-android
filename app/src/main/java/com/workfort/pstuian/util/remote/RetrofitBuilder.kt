@@ -114,4 +114,8 @@ object RetrofitBuilder {
     // support api service
     fun createSupportApiService(): SupportApiService = retrofit(Const.Remote.BASE_API_URL)
         .create(SupportApiService::class.java)
+
+    // notification api service
+    fun createNotificationApiService(): NotificationApiService = retrofit(Const.Remote.BASE_API_URL)
+        .create(NotificationApiService::class.java)
 }

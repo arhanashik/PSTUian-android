@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.ui.faculty
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.viewpager2.widget.ViewPager2
@@ -22,6 +23,11 @@ class FacultyActivity : BaseActivity<ActivityFacultyBinding>() {
     override fun getToolbarId(): Int = R.id.toolbar
     override fun getMenuId(): Int = R.menu.menu_search
     override fun getSearchMenuItemId(): Int = R.id.action_search
+
+    override fun observeBroadcast() = Const.IntentAction.NOTIFICATION
+    override fun onBroadcastReceived(intent: Intent) {
+        handleNotificationIntent(intent)
+    }
 
     private lateinit var pagerAdapter: PagerAdapter
 

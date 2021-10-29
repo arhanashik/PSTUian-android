@@ -22,7 +22,6 @@ import com.workfort.pstuian.databinding.ActivityStudentsBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityStudentsBinding
@@ -32,6 +31,11 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
     override fun getMenuId(): Int = R.menu.menu_search
     override fun getSearchMenuItemId(): Int = R.id.action_search
     override fun getSearchQueryHint(): String = getString(R.string.hint_search_student)
+
+    override fun observeBroadcast() = Const.IntentAction.NOTIFICATION
+    override fun onBroadcastReceived(intent: Intent) {
+        handleNotificationIntent(intent)
+    }
 
     private val mViewModel: StudentsViewModel by viewModel()
     private lateinit var mAdapter: StudentsAdapter
@@ -78,40 +82,44 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         lifecycleScope.launch {
             mViewModel.studentsState.collect {
                 when (it) {
-                    is StudentsState.Idle -> {
-                    }
+                    is StudentsState.Idle -> Unit
                     is StudentsState.Loading -> {
-                        with(binding) {
-                            shimmerLayout.visibility = View.VISIBLE
-                            shimmerLayout.startShimmer()
-                            rvStudents.visibility = View.GONE
-                            tvMessage.visibility = View.GONE
-                        }
+                        setActionUiState(true)
                     }
                     is StudentsState.Students -> {
-                        with(binding) {
-                            shimmerLayout.stopShimmer()
-                            shimmerLayout.visibility = View.GONE
-                            rvStudents.visibility = View.VISIBLE
-                            tvMessage.visibility = View.GONE
-                        }
+                        setActionUiState(false)
                         renderStudents(it.students)
                     }
                     is StudentsState.Error -> {
-                        with(binding) {
-                            shimmerLayout.stopShimmer()
-                            shimmerLayout.visibility = View.GONE
-                            rvStudents.visibility = View.GONE
-                            tvMessage.visibility = View.VISIBLE
-                        }
-                        Timber.e(it.error?: "Can't load data")
+                        setActionUiState(false)
+                        binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
             }
         }
     }
 
+    private fun setActionUiState(isLoading: Boolean) {
+        val visibility = if(isLoading) View.GONE else View.VISIBLE
+        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        with(binding) {
+            rvStudents.visibility = visibility
+            lavError.visibility = visibility
+            tvMessage.visibility = visibility
+            shimmerLayout.visibility = inverseVisibility
+            if(isLoading) shimmerLayout.startShimmer()
+            else shimmerLayout.stopShimmer()
+        }
+    }
+
     private fun renderStudents(data: List<StudentEntity>) {
+        val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
+        with(binding) {
+            rvStudents.visibility = visibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+        }
         mAdapter.setStudents(data.toMutableList())
     }
 

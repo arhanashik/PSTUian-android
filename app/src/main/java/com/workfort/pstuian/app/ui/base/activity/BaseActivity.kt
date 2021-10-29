@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -16,6 +17,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewbinding.ViewBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -23,8 +25,13 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.BaseSuggestionProvider
 import com.workfort.pstuian.app.ui.base.callback.BaseLocationCallback
+import com.workfort.pstuian.app.ui.common.broadcastreceiver.BroadcastReceiver
+import com.workfort.pstuian.app.ui.common.broadcastreceiver.BroadcastReceiverCallback
+import com.workfort.pstuian.app.ui.notification.NotificationActivity
+import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.NetworkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
+import com.workfort.pstuian.util.view.dialog.CommonDialog
 
 
 /**
@@ -120,6 +127,19 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
 
     open fun onConnectivityChanged(connected: Boolean) { }
 
+    /**
+     * Local broadcast receiver
+     * If observeBroadcast returns IntentFilter's action string, then register.
+     * */
+    open fun observeBroadcast() : String? = null
+    open fun onBroadcastReceived(intent: Intent) = Unit
+    private val broadcastManager by lazy { LocalBroadcastManager.getInstance(this) }
+    private val broadcastReceiver = BroadcastReceiver(object : BroadcastReceiverCallback {
+        override fun onReceived(intent: Intent?) {
+            intent?.let { onBroadcastReceived(it) }
+        }
+    })
+
     override fun onCreate(savedInstanceState: Bundle?) {
         changeTheme()
 
@@ -145,6 +165,23 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
          * So, onResume() just refresh the state
          */
         NetworkUtil.refresh()
+
+        /**
+         * Register notification broadcast receiver
+         * */
+        observeBroadcast()?.let {
+            broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(it))
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        /**
+         * Unregister notification broadcast receiver
+         * */
+        observeBroadcast()?.let {
+            broadcastManager.unregisterReceiver(broadcastReceiver)
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -323,5 +360,35 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
         _binding = null
         clearSearchQueryHistory()
         NetworkUtil.unregister(this)
+    }
+
+    /**
+     * Project specific implementations:
+     * This part of code is not part of Base Project and could vary from project to project
+     * */
+    fun handleNotificationIntent(
+        intent: Intent,
+        btnTxt: String = "Open Notification",
+        btnAction: () -> Unit = { launchActivity<NotificationActivity>() }
+    ) {
+        val iconRes = when(intent.getStringExtra(Const.Fcm.DataKey.TYPE)) {
+            Const.NotificationType.DEFAULT -> R.drawable.ic_bell_filled
+            Const.NotificationType.BLOOD_DONATION -> R.drawable.ic_blood_drop
+            Const.NotificationType.NEWS -> R.drawable.ic_newspaper
+            Const.NotificationType.HELP -> R.drawable.ic_hand_heart
+            else -> R.drawable.ic_bell_badge_filled
+        }
+        val title = intent.getStringExtra(Const.Fcm.DataKey.TITLE)
+            ?: getString(R.string.default_success_dialog_title)
+        val message = intent.getStringExtra(Const.Fcm.DataKey.MESSAGE)
+            ?: "New notification received!"
+        CommonDialog.success(
+            this,
+            title,
+            message,
+            btnTxt,
+            onBtnClick = { btnAction() },
+            icon = iconRes
+        )
     }
 }

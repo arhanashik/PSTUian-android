@@ -1,7 +1,12 @@
 package com.workfort.pstuian.util.lib.fcm
 
+import android.content.Intent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.workfort.pstuian.PstuianApp
+import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.data.repository.AuthRepository
 import com.workfort.pstuian.util.helper.AndroidUtil
 import kotlinx.coroutines.runBlocking
@@ -27,22 +32,35 @@ import timber.log.Timber
 class FcmMessagingService: FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Timber.e("From: ${remoteMessage.from}")
+        Timber.e("Notification From: ${remoteMessage.from}")
+
+        // update prefs to add new notification state
+        Prefs.hasNewNotification = true
+
         AndroidUtil.vibrate()
-        remoteMessage.data.let {
-            Timber.e("Message data payload: $it")
 
-//            val dataType = it[Const.FcmMessaging.DataKey.TYPE]
-//            if(dataType == Const.FcmMessaging.DataType.MESSAGE) {
-//                val msgId = it[Const.FcmMessaging.DataKey.MESSAGE_ID]?: ""
-//                if(TextUtils.isDigitsOnly(msgId)) {
-//                    ApiHelper(ApiService.createDeviceApiService()).updateMessageStatus(msgId.toInt())
-//                }
-//            }
-        }
-
+        // notification data
+        var action : String? = null
         remoteMessage.notification?.let {
-            Timber.e("Message Notification Body: ${it.body}")
+            Timber.e("Notification body: ${it.body}")
+            action = it.clickAction
+        }
+        remoteMessage.data.let {
+            Timber.e("Notification payload: $it")
+
+            val type = it[Const.Fcm.DataKey.TYPE]
+            val title = it[Const.Fcm.DataKey.TITLE]
+            val message = it[Const.Fcm.DataKey.MESSAGE]
+            val context = PstuianApp.getBaseApplicationContext()
+            val broadcastManager = LocalBroadcastManager.getInstance(context)
+
+            val intent = Intent(Const.IntentAction.NOTIFICATION).apply {
+                putExtra(Const.Fcm.DataKey.TYPE, type)
+                putExtra(Const.Fcm.DataKey.TITLE, title)
+                putExtra(Const.Fcm.DataKey.MESSAGE, message)
+                putExtra(Const.Fcm.DataKey.ACTION, action)
+            }
+            broadcastManager.sendBroadcast(intent)
         }
     }
 

@@ -21,4 +21,7 @@ interface PrefProp {
 
     val keyDonationId: String
         get() = "donation_id"
+
+    val keyHasNewNotification: String
+        get() = "has_new_notification"
 }

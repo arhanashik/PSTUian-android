@@ -21,7 +21,6 @@ import com.workfort.pstuian.databinding.FragmentBatchesBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class BatchesFragment(private val faculty: FacultyEntity)
     : BaseFragment<FragmentBatchesBinding>() {
@@ -62,34 +61,44 @@ class BatchesFragment(private val faculty: FacultyEntity)
         lifecycleScope.launch {
             mViewModel.batchesState.collect {
                 when (it) {
-                    is BatchesState.Idle -> {
-                    }
+                    is BatchesState.Idle -> Unit
                     is BatchesState.Loading -> {
-                        binding.tvMessage.visibility = View.GONE
-                        binding.shimmerLayout.visibility = View.VISIBLE
-                        binding.shimmerLayout.startShimmer()
-                        binding.rvBatches.visibility = View.INVISIBLE
+                        setActionUiState(true)
                     }
                     is BatchesState.Batches -> {
-                        binding.tvMessage.visibility = View.GONE
-                        binding.shimmerLayout.visibility = View.GONE
-                        binding.shimmerLayout.stopShimmer()
-                        binding.rvBatches.visibility = View.VISIBLE
+                        setActionUiState(false)
                         renderBatches(it.batches)
                     }
                     is BatchesState.Error -> {
-                        binding.tvMessage.visibility = View.VISIBLE
-                        binding.shimmerLayout.visibility = View.GONE
-                        binding.shimmerLayout.stopShimmer()
-                        binding.rvBatches.visibility = View.INVISIBLE
-                        Timber.e(it.error?: "Can't load data")
+                        setActionUiState(false)
+                        binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
             }
         }
     }
 
+    private fun setActionUiState(isLoading: Boolean) {
+        val visibility = if(isLoading) View.GONE else View.VISIBLE
+        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        with(binding) {
+            rvBatches.visibility = visibility
+            lavError.visibility = visibility
+            tvMessage.visibility = visibility
+            shimmerLayout.visibility = inverseVisibility
+            if(isLoading) shimmerLayout.startShimmer()
+            else shimmerLayout.stopShimmer()
+        }
+    }
+
     private fun renderBatches(batches: List<BatchEntity>) {
+        val visibility = if(batches.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(batches.isEmpty()) View.VISIBLE else View.GONE
+        with(binding) {
+            rvBatches.visibility = visibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+        }
         mAdapter.setBatches(batches.toMutableList())
     }
 

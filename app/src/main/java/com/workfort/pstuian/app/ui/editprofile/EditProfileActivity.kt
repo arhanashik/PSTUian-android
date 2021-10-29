@@ -94,8 +94,8 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
                 groupAcademicInfo.visibility = View.VISIBLE
                 groupConnect.visibility = View.GONE
                 etName.setText(mStudent.name)
+                etName.setSelection(mStudent.name.length)
                 etId.setText(mStudent.id.toString())
-                etId.setSelection(mStudent.id.toString().length)
                 etReg.setText(mStudent.reg)
                 etSession.setText(mStudent.session)
                 //set blood group dropdown

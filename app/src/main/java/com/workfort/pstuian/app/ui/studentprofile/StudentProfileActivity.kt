@@ -60,6 +60,11 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
 
     override fun getToolbarId(): Int = R.id.toolbar
 
+    override fun observeBroadcast() = Const.IntentAction.NOTIFICATION
+    override fun onBroadcastReceived(intent: Intent) {
+        handleNotificationIntent(intent)
+    }
+
     private lateinit var mFaculty: FacultyEntity
     private lateinit var mBatch: BatchEntity
     private lateinit var mStudent: StudentEntity

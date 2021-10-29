@@ -233,5 +233,15 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.home.HomeActivity"/>
         </activity>
+        <activity
+                android:name=".app.ui.notification.NotificationActivity"
+                android:label="@string/title_activity_notification"
+                android:parentActivityName=".app.ui.home.HomeActivity"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.home.HomeActivity"/>
+        </activity>
     </application>
 </manifest>

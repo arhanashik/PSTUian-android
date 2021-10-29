@@ -43,6 +43,8 @@ object Const {
 
     object Params {
         const val ID = "id"
+        const val USER_ID = "user_id"
+
         const val DEVICE_ID = "device_id"
         const val FCM_TOKEN = "fcm_token"
         const val MODEL = "model"
@@ -63,6 +65,8 @@ object Const {
         const val FACULTY_ID = "faculty_id"
         const val BATCH_ID = "batch_id"
         const val SESSION = "session"
+
+        const val CREATED_AT = "created_at"
     }
 
     object Remote {
@@ -80,6 +84,7 @@ object Const {
         private const val CONFIG_API_PATH = "config.php?call="
         private const val DEVICE_API_PATH = "device.php?call="
         private const val AUTH_API_PATH = "auth.php?call="
+        private const val NOTIFICATION_API_PATH = "notification.php?call="
         object Api {
             const val GET_CONFIG =  "${CONFIG_API_PATH}getLatest"
             const val REGISTER_DEVICE = "${DEVICE_API_PATH}register"
@@ -88,8 +93,33 @@ object Const {
             object Auth {
                 const val SIGN_IN = "${AUTH_API_PATH}signIn"
                 const val SIGN_UP = "${AUTH_API_PATH}signUp"
-                const val SIGN_OUT = "${AUTH_API_PATH}signIn"
+                const val SIGN_OUT = "${AUTH_API_PATH}signOut"
+            }
+
+            object Notification {
+                const val GET_ALL = "${NOTIFICATION_API_PATH}getAll"
             }
         }
+    }
+
+    object Fcm {
+        object DataKey {
+            const val TYPE ="type"
+            const val TITLE ="title"
+            const val MESSAGE ="message"
+            const val ACTION ="action"
+        }
+    }
+
+    object IntentAction {
+        private const val APP_ID = BuildConfig.APPLICATION_ID
+        const val NOTIFICATION = "${APP_ID}.NOTIFICATION"
+    }
+
+    object NotificationType {
+        const val DEFAULT = "default"
+        const val BLOOD_DONATION = "blood_donation"
+        const val NEWS = "news"
+        const val HELP = "help"
     }
 }

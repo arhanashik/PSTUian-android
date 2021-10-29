@@ -21,7 +21,6 @@ import com.workfort.pstuian.databinding.FragmentTeachersBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class TeachersFragment(private val faculty: FacultyEntity)
     : BaseFragment<FragmentTeachersBinding>() {
@@ -63,31 +62,42 @@ class TeachersFragment(private val faculty: FacultyEntity)
         lifecycleScope.launch {
             mViewModel.teacherState.collect {
                 when (it) {
-                    is TeacherState.Idle -> {
-                    }
+                    is TeacherState.Idle -> Unit
                     is TeacherState.Loading -> {
-                        binding.tvMessage.visibility = View.INVISIBLE
-                        binding.loader.visibility = View.VISIBLE
-                        binding.rvTeachers.visibility = View.INVISIBLE
+                        setActionUiState(true)
                     }
                     is TeacherState.Teachers -> {
-                        binding.tvMessage.visibility = View.INVISIBLE
-                        binding.loader.visibility = View.GONE
-                        binding.rvTeachers.visibility = View.VISIBLE
+                        setActionUiState(false)
                         renderTeachers(it.teachers)
                     }
                     is TeacherState.Error -> {
-                        binding.tvMessage.visibility = View.VISIBLE
-                        binding.loader.visibility = View.GONE
-                        binding.rvTeachers.visibility = View.INVISIBLE
-                        Timber.e(it.error?: "Can't load data")
+                        setActionUiState(false)
+                        binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
             }
         }
     }
 
+    private fun setActionUiState(isLoading: Boolean) {
+        val visibility = if(isLoading) View.GONE else View.VISIBLE
+        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        with(binding) {
+            rvTeachers.visibility = visibility
+            lavError.visibility = visibility
+            tvMessage.visibility = visibility
+            loader.visibility = inverseVisibility
+        }
+    }
+
     private fun renderTeachers(teachers: List<TeacherEntity>) {
+        val visibility = if(teachers.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(teachers.isEmpty()) View.VISIBLE else View.GONE
+        with(binding) {
+            rvTeachers.visibility = visibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+        }
         mAdapter.setTeachers(teachers.toMutableList())
     }
 

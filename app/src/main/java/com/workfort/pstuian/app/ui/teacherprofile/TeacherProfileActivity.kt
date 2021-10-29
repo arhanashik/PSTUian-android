@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.ui.teacherprofile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,11 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
             = ActivityTeacherProfileBinding::inflate
 
     override fun getToolbarId(): Int = R.id.toolbar
+
+    override fun observeBroadcast() = Const.IntentAction.NOTIFICATION
+    override fun onBroadcastReceived(intent: Intent) {
+        handleNotificationIntent(intent)
+    }
 
     private lateinit var mFaculty: FacultyEntity
     private lateinit var mTeacher: TeacherEntity

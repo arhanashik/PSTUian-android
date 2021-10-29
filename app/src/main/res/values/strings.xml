@@ -273,6 +273,7 @@
     <string name="txt_settings">Settings</string>
     <string name="label_contact_us">Contact Us</string>
     <string name="default_notification_channel_id">default-notification-channel</string>
+    <string name="title_activity_notification">Notification</string>
     <array name="blood_group">
         <item>A+</item>
         <item>B+</item>

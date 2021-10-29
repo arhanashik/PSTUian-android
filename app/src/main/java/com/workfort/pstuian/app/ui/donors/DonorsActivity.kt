@@ -1,11 +1,13 @@
 package com.workfort.pstuian.app.ui.donors
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.R
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.donor.DonorEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.donate.DonateActivity
@@ -30,6 +32,11 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
     override fun getMenuId(): Int = R.menu.menu_search
     override fun getSearchMenuItemId(): Int = R.id.action_search
     override fun getSearchQueryHint(): String = getString(R.string.hint_search_donors)
+
+    override fun observeBroadcast() = Const.IntentAction.NOTIFICATION
+    override fun onBroadcastReceived(intent: Intent) {
+        handleNotificationIntent(intent)
+    }
 
     private val mViewModel: DonorsViewModel by viewModel()
     private lateinit var mAdapter: DonorsAdapter

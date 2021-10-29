@@ -28,4 +28,5 @@ val networkModule = module {
     single { RetrofitBuilder.createDonationApiService() }
     single { RetrofitBuilder.createFileHandlerApiService() }
     single { RetrofitBuilder.createSupportApiService() }
+    single { RetrofitBuilder.createNotificationApiService() }
 }

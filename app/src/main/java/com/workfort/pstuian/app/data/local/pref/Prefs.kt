@@ -41,6 +41,10 @@ object Prefs : PrefProp {
         get() = prefs.getString(keyDonationId, "")
         set(value) = prefs.edit { it.putString(keyDonationId, value) }
 
+    var hasNewNotification: Boolean
+        get() = prefs.getBoolean(keyHasNewNotification, false)
+        set(value) = prefs.edit { it.putBoolean(keyHasNewNotification, value) }
+
     fun clear() {
         prefs.edit().clear().apply()
     }

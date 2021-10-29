@@ -5,6 +5,7 @@ import android.net.Uri
 import android.text.*
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -37,15 +38,19 @@ object CommonDialog {
         cancelable: Boolean = true,
         onBtnClick: () -> Unit = {},
         dismissOnBtnClick: Boolean = true,
-        callback: SuccessDialogCallback? = null
+        callback: SuccessDialogCallback? = null,
+        @DrawableRes icon: Int = R.drawable.ic_check_circle_fill
     ): AlertDialog {
         val inflater = LayoutInflater.from(context)
         val binding = PromptSuccessBinding.inflate(inflater, null, false)
-        binding.tvTitle.text = title
-        binding.tvWarning.text = warning
-        binding.tvMessage.text = message
-        binding.btnDismiss.text = btnText
-        if(TextUtils.isEmpty(warning)) binding.tvWarning.visibility = View.GONE
+        with(binding) {
+            ivIcon.setImageResource(icon)
+            tvTitle.text = title
+            tvWarning.text = warning
+            tvMessage.text = message
+            btnDismiss.text = btnText
+            if(TextUtils.isEmpty(warning)) tvWarning.visibility = View.GONE
+        }
 
         val dialog = MaterialAlertDialogBuilder(context)
             .setView(binding.root)

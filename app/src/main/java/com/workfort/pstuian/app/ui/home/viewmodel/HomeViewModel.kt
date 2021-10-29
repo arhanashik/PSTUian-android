@@ -49,8 +49,7 @@ class HomeViewModel(
         }
     }
 
-    private fun getSliders()
-    {
+    private fun getSliders() {
         viewModelScope.launch {
             _sliderState.value = SliderState.Loading
             _sliderState.value = try {

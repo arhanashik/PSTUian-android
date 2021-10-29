@@ -18,7 +18,6 @@ import com.workfort.pstuian.databinding.FragmentCourseScheduleBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class CourseFragment(private val faculty: FacultyEntity)
     : BaseFragment<FragmentCourseScheduleBinding>() {
@@ -57,32 +56,43 @@ class CourseFragment(private val faculty: FacultyEntity)
         lifecycleScope.launch {
             mViewModel.courseState.collect {
                 when (it) {
-                    is CourseState.Idle -> {
-                    }
+                    is CourseState.Idle -> Unit
                     is CourseState.Loading -> {
-                        binding.tvMessage.visibility = View.INVISIBLE
-                        binding.loader.visibility = View.VISIBLE
-                        binding.rvCourses.visibility = View.INVISIBLE
+                        setActionUiState(true)
                     }
                     is CourseState.Courses -> {
-                        binding.tvMessage.visibility = View.INVISIBLE
-                        binding.loader.visibility = View.GONE
-                        binding.rvCourses.visibility = View.VISIBLE
+                        setActionUiState(false)
                         renderCourses(it.course)
                     }
                     is CourseState.Error -> {
-                        binding.tvMessage.visibility = View.VISIBLE
-                        binding.loader.visibility = View.GONE
-                        binding.rvCourses.visibility = View.INVISIBLE
-                        Timber.e(it.error?: "Can't load data")
+                        setActionUiState(false)
+                        binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
             }
         }
     }
 
-    private fun renderCourses(cours: List<CourseEntity>) {
-        mAdapter.setCourseSchedules(cours.toMutableList())
+    private fun setActionUiState(isLoading: Boolean) {
+        val visibility = if(isLoading) View.GONE else View.VISIBLE
+        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        with(binding) {
+            rvCourses.visibility = visibility
+            lavError.visibility = visibility
+            tvMessage.visibility = visibility
+            loader.visibility = inverseVisibility
+        }
+    }
+
+    private fun renderCourses(courses: List<CourseEntity>) {
+        val visibility = if(courses.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(courses.isEmpty()) View.VISIBLE else View.GONE
+        with(binding) {
+            rvCourses.visibility = visibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+        }
+        mAdapter.setCourseSchedules(courses.toMutableList())
     }
 
     fun filter(query: String) {

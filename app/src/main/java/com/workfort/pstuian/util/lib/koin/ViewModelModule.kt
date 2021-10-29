@@ -5,6 +5,7 @@ import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
+import com.workfort.pstuian.app.ui.notification.viewmodel.NotificationViewModel
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.students.StudentsViewModel
 import com.workfort.pstuian.app.ui.support.viewmodel.SupportViewModel
@@ -36,4 +37,5 @@ val viewModelModule = module {
     viewModel { AuthViewModel(get()) }
     viewModel { FileHandlerViewModel() }
     viewModel { SupportViewModel(get()) }
+    viewModel { NotificationViewModel(get()) }
 }

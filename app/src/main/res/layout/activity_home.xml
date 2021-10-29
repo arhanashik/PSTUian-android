@@ -11,7 +11,7 @@
             android:id="@+id/root_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/space_10dp">
+            android:paddingBottom="@dimen/default_space">
 
         <TextView
                 android:id="@+id/tv_title"
@@ -22,6 +22,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
+        <ImageView
+                android:id="@+id/btn_notification"
+                android:layout_width="@dimen/avatar_width_32"
+                android:layout_height="@dimen/avatar_height_32"
+                android:layout_marginEnd="@dimen/space_16dp"
+                app:srcCompat="@drawable/ic_bell_filled"
+                android:scaleType="centerInside"
+                android:background="@drawable/bg_circle"
+                android:padding="@dimen/dp5"
+                app:layout_constraintTop_toTopOf="@id/tv_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/tv_title"
+                tools:ignore="ContentDescription" />
+
         <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/btn_account"
                 android:layout_width="@dimen/avatar_width_32"
@@ -30,7 +44,7 @@
                 android:src="@drawable/img_placeholder_profile"
                 android:visibility="invisible"
                 app:layout_constraintTop_toTopOf="@id/tv_title"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_notification"
                 app:layout_constraintBottom_toBottomOf="@id/tv_title"
                 tools:ignore="ContentDescription" />
 
@@ -44,7 +58,7 @@
                 android:textColor="@android:color/black"
                 android:textAllCaps="false"
                 app:layout_constraintTop_toTopOf="@id/tv_title"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_notification"
                 app:layout_constraintBottom_toBottomOf="@id/tv_title" />
 
         <com.google.android.material.card.MaterialCardView
@@ -324,7 +338,6 @@
                 style="@style/MaterialCardView"
                 app:title="@string/txt_settings"
                 app:icon="@drawable/ic_settings"
-                app:background="@drawable/bg_gradient4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title_others">
 

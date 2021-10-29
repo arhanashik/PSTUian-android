@@ -21,7 +21,6 @@ import com.workfort.pstuian.databinding.FragmentEmployeesBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class EmployeeFragment(private val faculty: FacultyEntity)
     : BaseFragment<FragmentEmployeesBinding>() {
@@ -63,31 +62,42 @@ class EmployeeFragment(private val faculty: FacultyEntity)
         lifecycleScope.launch {
             mViewModel.employeeState.collect {
                 when (it) {
-                    is EmployeeState.Idle -> {
-                    }
+                    is EmployeeState.Idle -> Unit
                     is EmployeeState.Loading -> {
-                        binding.tvMessage.visibility = View.INVISIBLE
-                        binding.loader.visibility = View.VISIBLE
-                        binding.rvEmployees.visibility = View.INVISIBLE
+                        setActionUiState(true)
                     }
                     is EmployeeState.Employees -> {
-                        binding.tvMessage.visibility = View.INVISIBLE
-                        binding.loader.visibility = View.GONE
-                        binding.rvEmployees.visibility = View.VISIBLE
+                        setActionUiState(false)
                         renderEmployees(it.employees)
                     }
                     is EmployeeState.Error -> {
-                        binding.tvMessage.visibility = View.VISIBLE
-                        binding.loader.visibility = View.GONE
-                        binding.rvEmployees.visibility = View.INVISIBLE
-                        Timber.e(it.error?: "Can't load data")
+                        setActionUiState(false)
+                        binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
             }
         }
     }
 
+    private fun setActionUiState(isLoading: Boolean) {
+        val visibility = if(isLoading) View.GONE else View.VISIBLE
+        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        with(binding) {
+            rvEmployees.visibility = visibility
+            lavError.visibility = visibility
+            tvMessage.visibility = visibility
+            loader.visibility = inverseVisibility
+        }
+    }
+
     private fun renderEmployees(data: List<EmployeeEntity>) {
+        val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
+        with(binding) {
+            rvEmployees.visibility = visibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+        }
         mAdapter.setEmployees(data.toMutableList())
     }
 

@@ -8,7 +8,7 @@
         android:background="?attr/backgroundColor">
 
     <ImageView
-            android:id="@+id/ic_error"
+            android:id="@+id/iv_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginTop="@dimen/default_space"
@@ -26,7 +26,7 @@
             android:layout_marginStart="@dimen/default_space"
             android:layout_marginTop="@dimen/dp10"
             android:layout_marginEnd="@dimen/default_space"
-            app:layout_constraintTop_toBottomOf="@id/ic_error"
+            app:layout_constraintTop_toBottomOf="@id/iv_icon"
             tools:text="@tools:sample/lorem/random"
             android:textSize="16sp"
             android:textColor="?attr/customPrimaryTextColor"
