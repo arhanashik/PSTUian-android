@@ -17,9 +17,9 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
  *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
-sealed class SignUpState {
-    object Idle : SignUpState()
-    object Loading : SignUpState()
-    data class Success(val student: StudentEntity) : SignUpState()
-    data class Error(val error: String?) : SignUpState()
+sealed class StudentSignUpState {
+    object Idle : StudentSignUpState()
+    object Loading : StudentSignUpState()
+    data class Success(val student: StudentEntity) : StudentSignUpState()
+    data class Error(val error: String?) : StudentSignUpState()
 }

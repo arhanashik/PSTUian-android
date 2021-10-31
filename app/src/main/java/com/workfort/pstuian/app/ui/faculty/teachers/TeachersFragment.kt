@@ -1,10 +1,12 @@
 package com.workfort.pstuian.app.ui.faculty.teachers
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.app.data.local.constant.Const
@@ -48,10 +50,7 @@ class TeachersFragment(private val faculty: FacultyEntity)
         mAdapter = TeachersAdapter()
         mAdapter.setListener(object: TeacherClickEvent {
             override fun onClickTeacher(teacher: TeacherEntity) {
-                val intent = Intent(context, TeacherProfileActivity::class.java)
-                intent.putExtra(Const.Key.FACULTY, faculty)
-                intent.putExtra(Const.Key.TEACHER, teacher)
-                startActivity(intent)
+                gotToTeacherProfile(faculty, teacher)
             }
         })
         binding.rvTeachers.layoutManager = LinearLayoutManager(context)
@@ -72,6 +71,7 @@ class TeachersFragment(private val faculty: FacultyEntity)
                     }
                     is TeacherState.Error -> {
                         setActionUiState(false)
+                        renderTeachers(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
@@ -103,5 +103,27 @@ class TeachersFragment(private val faculty: FacultyEntity)
 
     fun filter(query: String) {
         mAdapter.filter.filter(query)
+    }
+
+    private fun gotToTeacherProfile(
+        faculty: FacultyEntity,
+        teacher: TeacherEntity
+    ) {
+        val intent = Intent(requireContext(), TeacherProfileActivity::class.java)
+        intent.putExtra(Const.Key.FACULTY, faculty)
+        intent.putExtra(Const.Key.TEACHER, teacher)
+        startActivityForResult.launch(intent)
+    }
+
+    private val startActivityForResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if(result.resultCode == Activity.RESULT_OK) {
+            result?.data?.also {
+                lifecycleScope.launch {
+                    mViewModel.intent.send(FacultyIntent.GetTeachers)
+                }
+            }
+        }
     }
 }

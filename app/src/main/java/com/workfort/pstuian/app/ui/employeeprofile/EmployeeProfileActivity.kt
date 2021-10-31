@@ -92,7 +92,7 @@ class EmployeeProfileActivity : BaseActivity<ActivityEmployeeProfileBinding>() {
         object: ProfileInfoClickEvent() {
             override fun onAction(item: ProfileInfoItem) {
                 when(item.action) {
-                    ProfileInfoAction.OPEN_LINK -> {
+                    ProfileInfoAction.LINK -> {
                         item.actionData?.let { mLinkUtil.openBrowser(it) }
                     }
                     else -> {}

@@ -9,9 +9,11 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.app.data.local.config.ConfigEntity
 import com.workfort.pstuian.app.data.local.config.ConfigService
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.device.DeviceEntity
 import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.remote.apihelper.AuthApiHelper
 import com.workfort.pstuian.util.helper.AndroidUtil
 import com.workfort.pstuian.util.helper.GsonUtil
@@ -44,6 +46,7 @@ class AuthRepository(
     private val Context.authStore: DataStore<Preferences> by preferencesDataStore(AUTH_PREFERENCES)
     companion object {
         private val USER = stringPreferencesKey("user")
+        private val USER_TYPE = stringPreferencesKey("user_type")
         private val DEVICE = stringPreferencesKey("device")
         private val AUTH_TOKEN = stringPreferencesKey("auth_token")
         private const val AUTH_PREFERENCES = "auth_preferences"
@@ -139,19 +142,43 @@ class AuthRepository(
 //            }
 //    }
 
-    fun getSignInUser(): StudentEntity {
+    fun getSignInUserType(): String {
         val context = PstuianApp.getBaseApplicationContext()
-        val jsonStr = runBlocking {
-            context.authStore.data.first()
-        }[USER]?: throw Exception("No User Found!")
-
-        return GsonUtil.fromJson(jsonStr)
+        return runBlocking { context.authStore.data.first() }[USER_TYPE]
+            ?: throw Exception("Unknown user type")
     }
 
-    suspend fun storeSignInUser(student: StudentEntity) {
+    fun getSignInUser(): Any {
+        val context = PstuianApp.getBaseApplicationContext()
+        val userType = getSignInUserType()
+        val jsonStr = runBlocking {
+            context.authStore.data.first()
+        }[USER] ?: throw Exception("No User Found!")
+
+        return when (userType) {
+            Const.Params.UserType.STUDENT -> {
+                GsonUtil.fromJson<StudentEntity>(jsonStr)
+            }
+            Const.Params.UserType.TEACHER -> {
+                GsonUtil.fromJson<TeacherEntity>(jsonStr)
+            }
+            else -> throw Exception("No User Found!")
+        }
+    }
+
+    suspend fun storeSignInStudent(student: StudentEntity) {
         val context = PstuianApp.getBaseApplicationContext()
         context.authStore.edit { auth ->
             auth[USER] = GsonUtil.toJson(student)
+            auth[USER_TYPE] = Const.Params.UserType.STUDENT
+        }
+    }
+
+    suspend fun storeSignInTeacher(teacher: TeacherEntity) {
+        val context = PstuianApp.getBaseApplicationContext()
+        context.authStore.edit { auth ->
+            auth[USER] = GsonUtil.toJson(teacher)
+            auth[USER_TYPE] = Const.Params.UserType.TEACHER
         }
     }
 
@@ -163,44 +190,102 @@ class AuthRepository(
         Prefs.authToken = token
     }
 
-    suspend fun signIn(email: String, password: String, userType: String): StudentEntity {
+    suspend fun signIn(email: String, password: String, userType: String): Any {
         val deviceId = Prefs.deviceId
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        val data = helper.signIn(email, password, userType, deviceId)
-        storeSignInUser(data.first)
+        val data = when(userType) {
+            Const.Params.UserType.STUDENT -> helper.signInStudent(email, password, deviceId)
+            Const.Params.UserType.TEACHER -> helper.signInTeacher(email, password, deviceId)
+            else -> throw Exception("Invalid User Type!")
+        }
+        data.first.let { user ->
+            when (user) {
+                is StudentEntity -> storeSignInStudent(user)
+                is TeacherEntity -> storeSignInTeacher(user)
+                else -> throw Exception("Invalid User Type!")
+            }
+        }
         storeAuthToken(data.second)
 
         return data.first
     }
 
-    suspend fun signUp(
+    suspend fun signUpStudent(
         name: String,
         id: String,
         reg: String,
         facultyId: Int,
         batchId: Int,
-        session: String
+        session: String,
+        email: String
     ): StudentEntity {
         val deviceId = Prefs.deviceId
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        val data = helper.signUp(name, id, reg, facultyId, batchId, session, deviceId)
-        storeSignInUser(data.first)
+        val data = helper.signUpStudent(name, id, reg, facultyId, batchId, session,
+            email, deviceId)
+        storeSignInStudent(data.first)
         storeAuthToken(data.second)
 
         return data.first
     }
 
-    suspend fun signOut(id: Int, userType: String): String {
+    suspend fun signUpTeacher(
+        name: String,
+        designation: String,
+        department: String,
+        email: String,
+        password: String,
+        facultyId: Int,
+    ): TeacherEntity {
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        val data = helper.signUpTeacher(name, designation, department, email, password,
+            facultyId, deviceId)
+        storeSignInTeacher(data.first)
+        storeAuthToken(data.second)
+
+        return data.first
+    }
+
+    suspend fun signOut(): String {
+        val userType = getSignInUserType()
+        val id = when(val user = getSignInUser()) {
+            is StudentEntity -> user.id
+            is TeacherEntity -> user.id
+            else -> throw Exception("Invalid account")
+        }
         val data = helper.signOut(id, userType)
         deleteAll()
 
         return data
     }
 
+    suspend fun changePassword(oldPassword: String, newPassword: String): String {
+        val userType = getSignInUserType()
+        val id = when(val user = getSignInUser()) {
+            is StudentEntity -> user.id
+            is TeacherEntity -> user.id
+            else -> throw Exception("Invalid account")
+        }
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        helper.changePassword(id, userType, oldPassword, newPassword, deviceId).also {
+            it.second?.let { newAuthToken ->
+                storeAuthToken(newAuthToken)
+            }
+            return it.first
+        }
+    }
+
+    suspend fun forgotPassword(email: String): String {
+        return helper.forgotPassword(email)
+    }
+
     suspend fun deleteAll() {
         val context = PstuianApp.getBaseApplicationContext()
         context.authStore.edit { auth ->
             auth.remove(USER)
+            auth.remove(USER_TYPE)
             auth.remove(AUTH_TOKEN)
         }
         Prefs.authToken = ""

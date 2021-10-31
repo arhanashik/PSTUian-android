@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
@@ -18,8 +19,10 @@ import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.forgotpassword.ForgotPasswordActivity
 import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
-import com.workfort.pstuian.app.ui.signup.SignUpActivity
+import com.workfort.pstuian.app.ui.signup.StudentSignUpActivity
+import com.workfort.pstuian.app.ui.signup.TeacherSignUpActivity
 import com.workfort.pstuian.databinding.ActivitySignInBinding
+import com.workfort.pstuian.databinding.PromptSelectUserTypeBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.Toaster
 import com.workfort.pstuian.util.view.dialog.CommonDialog
@@ -36,10 +39,17 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     override fun getToolbarId(): Int = R.id.toolbar
 
+    private var selectedUserType : String = Const.Params.UserType.STUDENT
+
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         setHomeEnabled()
 
-        with(binding) {
+        with(binding.content) {
+            tbUserType.addOnButtonCheckedListener { _, checkedId, _ ->
+                selectedUserType = if(checkedId == R.id.btn_student)
+                    Const.Params.UserType.STUDENT else Const.Params.UserType.TEACHER
+            }
+
             setClickListener(btnSignIn, btnSignUp, btnForgetPassword)
         }
 
@@ -48,24 +58,18 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     override fun onClick(v: View?) {
         super.onClick(v)
-        when(v) {
-            binding.btnSignIn -> {
-                signIn()
-            }
-            binding.btnSignUp -> {
-                selectFaculty()
-            }
-            binding.btnForgetPassword -> {
-                launchActivity<ForgotPasswordActivity>()
-            }
-            else -> {
-                Timber.e("Who clicked me!")
+        with(binding.content) {
+            when(v) {
+                btnSignIn -> signIn()
+                btnSignUp -> selectUserTypeAndSignUp()
+                btnForgetPassword -> launchActivity<ForgotPasswordActivity>()
+                else -> Timber.e("Who clicked me!")
             }
         }
     }
 
     private fun signIn() {
-        with(binding) {
+        with(binding.content) {
             val email = etEmail.text.toString()
             if(TextUtils.isEmpty(email)) {
                 tilEmail.error = "*Required"
@@ -84,7 +88,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             }
             tilPassword.error = null
 
-            mViewModel.signIn(email, pass)
+            mViewModel.signIn(email, pass, selectedUserType)
         }
     }
 
@@ -92,26 +96,18 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         lifecycleScope.launch {
             mViewModel.signInState.collect {
                 when (it) {
-                    is SignInState.Idle -> {
-                    }
-                    is SignInState.Loading -> {
-                        binding.loader.visibility = View.VISIBLE
-                        binding.btnSignIn.isEnabled = false
-                        binding.btnSignUp.isEnabled = false
-                        binding.btnForgetPassword.isEnabled = false
-                    }
+                    is SignInState.Idle -> Unit
+                    is SignInState.Loading -> setActionUiState(true)
                     is SignInState.Success -> {
-                        binding.loader.visibility = View.INVISIBLE
+                        setActionUiState(false)
                         Toaster.show("Successfully signed in!")
                         finish()
                     }
                     is SignInState.Error -> {
-                        binding.loader.visibility = View.INVISIBLE
-                        binding.btnSignIn.isEnabled = true
-                        binding.btnSignUp.isEnabled = true
-                        binding.btnForgetPassword.isEnabled = true
+                        setActionUiState(false)
                         val title = it.error?: "Failed to Sign in"
-                        val msg = getString(R.string.error_msg_sign_in)
+                        val msg = getString(if(selectedUserType == Const.Params.UserType.STUDENT)
+                            R.string.error_msg_sign_in else R.string.default_error_dialog_message)
                         CommonDialog.error(this@SignInActivity, title, msg)
                     }
                 }
@@ -119,10 +115,47 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         }
     }
 
-    private fun selectFaculty() {
+    private fun setActionUiState(isLoading: Boolean) {
+        val visibility = if(isLoading) View.VISIBLE else View.GONE
+        with(binding.content) {
+            loader.visibility = visibility
+
+            btnSignIn.isEnabled = !isLoading
+            btnSignUp.isEnabled = !isLoading
+            btnForgetPassword.isEnabled = !isLoading
+        }
+    }
+
+    private fun selectUserTypeAndSignUp() {
+        val binding = PromptSelectUserTypeBinding.inflate(layoutInflater,
+            null, false)
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(binding.root)
+            .create()
+
+        var userType = Const.Params.UserType.STUDENT
+        binding.tbUserType.addOnButtonCheckedListener { _, checkedId, _ ->
+            userType = if(checkedId == R.id.btn_student)
+                Const.Params.UserType.STUDENT else Const.Params.UserType.TEACHER
+        }
+        binding.btnSelect.setOnClickListener {
+            dialog.dismiss()
+            selectFaculty(userType)
+        }
+        binding.btnDismiss.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+    }
+
+    private fun selectFaculty(userType: String) {
         FacultySelectorBottomSheet(object : FacultyClickEvent {
             override fun onClickFaculty(faculty: FacultyEntity) {
-                selectBatch(faculty)
+                if(userType == Const.Params.UserType.STUDENT) {
+                    selectBatch(faculty)
+                } else {
+                    gotoTeacherSignUp(faculty)
+                    finish()
+                }
             }
         }).show(supportFragmentManager, FacultySelectorBottomSheet.TAG)
     }
@@ -130,12 +163,24 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     private fun selectBatch(faculty: FacultyEntity) {
         BatchSelectorBottomSheet(faculty, object : BatchClickEvent {
             override fun onClickBatch(batch: BatchEntity) {
-                val intent = Intent(this@SignInActivity, SignUpActivity::class.java)
-                intent.putExtra(Const.Key.FACULTY, faculty)
-                intent.putExtra(Const.Key.BATCH, batch)
-                startActivity(intent)
+                gotoStudentSignUp(faculty, batch)
                 finish()
             }
         }).show(supportFragmentManager, BatchSelectorBottomSheet.TAG)
+    }
+
+    private fun gotoStudentSignUp(faculty: FacultyEntity, batch: BatchEntity) {
+        val intent = Intent(this, StudentSignUpActivity::class.java).apply {
+            putExtra(Const.Key.FACULTY, faculty)
+            putExtra(Const.Key.BATCH, batch)
+        }
+        startActivity(intent)
+    }
+
+    private fun gotoTeacherSignUp(faculty: FacultyEntity) {
+        val intent = Intent(this, TeacherSignUpActivity::class.java).apply {
+            putExtra(Const.Key.FACULTY, faculty)
+        }
+        startActivity(intent)
     }
 }

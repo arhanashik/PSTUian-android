@@ -13,24 +13,32 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = TableNames.TEACHER)
 data class TeacherEntity(
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = ColumnNames.Teacher.NAME) val name: String,
+    @ColumnInfo(name = ColumnNames.Teacher.NAME)
+    var name: String,
     @ColumnInfo(name = ColumnNames.Teacher.DESIGNATION)
     val designation: String,
-    @ColumnInfo(name = ColumnNames.Teacher.BIO) val bio: String?,
-    @ColumnInfo(name = ColumnNames.Teacher.PHONE) val phone: String?,
+    @ColumnInfo(name = ColumnNames.Teacher.BIO)
+    var bio: String?,
+    @ColumnInfo(name = ColumnNames.Teacher.PHONE)
+    var phone: String?,
     @ColumnInfo(name = ColumnNames.Teacher.LINKED_IN)
     @SerializedName("linked_in")
-    val linkedIn: String?,
+    var linkedIn: String?,
     @ColumnInfo(name = ColumnNames.Teacher.FB_LINK)
     @SerializedName("fb_link")
-    val fbLink: String?,
-    @ColumnInfo(name = ColumnNames.Teacher.ADDRESS) val address: String?,
-    @ColumnInfo(name = ColumnNames.Teacher.EMAIL) val email: String?,
-    @ColumnInfo(name = ColumnNames.Teacher.DEPARTMENT) val department: String,
+    var fbLink: String?,
+    @ColumnInfo(name = ColumnNames.Teacher.ADDRESS)
+    var address: String?,
+    @ColumnInfo(name = ColumnNames.Teacher.EMAIL)
+    var email: String?,
+    @ColumnInfo(name = ColumnNames.Teacher.DEPARTMENT)
+    var department: String,
+    @ColumnInfo(name = ColumnNames.Teacher.BLOOD)
+    var blood: String?,
     @ColumnInfo(name = ColumnNames.Teacher.FACULTY_ID)
     @SerializedName("faculty_id")
-    val facultyId: Int,
+    var facultyId: Int,
     @ColumnInfo(name = ColumnNames.Teacher.IMAGE_URL)
     @SerializedName("image_url")
-    val imageUrl: String?
+    var imageUrl: String?
 ) : Parcelable

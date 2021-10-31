@@ -292,4 +292,52 @@ object CommonDialog {
 
         return dialog
     }
+
+    fun changePassword(
+        context: Context,
+        onClickChange: (oldPassword: String, newPassword: String) -> Unit,
+        cancelable: Boolean = false,
+    ): AlertDialog {
+        val inflater = LayoutInflater.from(context)
+        val binding = PromptChangePasswordBinding.inflate(inflater, null, false)
+
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(binding.root)
+            .setCancelable(cancelable)
+            .create()
+
+        binding.btnDismiss.setOnClickListener { dialog.dismiss() }
+        binding.btnChange.setOnClickListener {
+            val oldPassword = binding.etOldPassword.text.toString()
+            if(oldPassword.isEmpty()) {
+                binding.tilOldPassword.error = "*Required"
+                return@setOnClickListener
+            }
+            if(oldPassword.length < 6) {
+                binding.tilOldPassword.error = "Minimum length is 6"
+                return@setOnClickListener
+            }
+            binding.tilOldPassword.error = null
+
+            val newPassword = binding.etNewPassword.text.toString()
+            if(newPassword.isEmpty()) {
+                binding.tilNewPassword.error = "*Required"
+                return@setOnClickListener
+            }
+            if(newPassword.length < 6) {
+                binding.tilNewPassword.error = "Minimum length is 6"
+                return@setOnClickListener
+            }
+            if(oldPassword == newPassword) {
+                binding.tilNewPassword.error = "Passwords cannot be same."
+                return@setOnClickListener
+            }
+            binding.tilNewPassword.error = null
+            onClickChange(oldPassword, newPassword)
+            dialog.dismiss()
+        }
+        dialog.show()
+
+        return dialog
+    }
 }

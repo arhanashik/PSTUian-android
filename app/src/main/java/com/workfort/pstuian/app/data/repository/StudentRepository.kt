@@ -29,7 +29,7 @@ class StudentRepository(
         val isChanged = helper.changeProfileImage(student.id, imageUrl)
         if(isChanged) {
             student.imageUrl = imageUrl
-            authRepo.storeSignInUser(student)
+            authRepo.storeSignInStudent(student)
             studentDbService.update(student)
         }
         return isChanged
@@ -39,7 +39,7 @@ class StudentRepository(
         val isChanged = helper.changeName(student.id, name)
         if(isChanged) {
             student.name = name
-            authRepo.storeSignInUser(student)
+            authRepo.storeSignInStudent(student)
             studentDbService.update(student)
         }
         return isChanged
@@ -49,7 +49,7 @@ class StudentRepository(
         val isChanged = helper.changeBio(student.id, bio)
         if(isChanged) {
             student.bio = bio
-            authRepo.storeSignInUser(student)
+            authRepo.storeSignInStudent(student)
             studentDbService.update(student)
         }
         return isChanged
@@ -68,7 +68,7 @@ class StudentRepository(
         helper.changeAcademicInfo(
             name, student.id, id, reg, blood, facultyId, session, batchId
         ).let { updatedStudent ->
-            authRepo.storeSignInUser(updatedStudent)
+            authRepo.storeSignInStudent(updatedStudent)
             if(student.id != id) {
                 studentDbService.delete(student)
                 studentDbService.insert(updatedStudent)
@@ -92,7 +92,7 @@ class StudentRepository(
         helper.changeConnectInfo(
             student.id, address, phone, email, oldEmail, cvLink, linkedIn, facebook
         ).let { updatedStudent ->
-            authRepo.storeSignInUser(updatedStudent)
+            authRepo.storeSignInStudent(updatedStudent)
             studentDbService.update(updatedStudent)
             return updatedStudent
         }

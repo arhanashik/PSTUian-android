@@ -3,18 +3,24 @@ package com.workfort.pstuian.app.ui.common.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.app.data.repository.AuthRepository
+import com.workfort.pstuian.app.ui.common.intent.AuthIntent
+import com.workfort.pstuian.app.ui.forgotpassword.viewstate.ForgotPasswordState
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
-import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
-import com.workfort.pstuian.app.ui.signup.viewstate.SignUpState
+import com.workfort.pstuian.app.ui.signup.viewstate.StudentSignUpState
+import com.workfort.pstuian.app.ui.signup.viewstate.TeacherSignUpState
 import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
 import com.workfort.pstuian.app.ui.splash.viewstate.DeviceRegistrationState
+import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.util.helper.CoilUtil
 import com.workfort.pstuian.util.lib.fcm.FcmUtil
 import com.workfort.pstuian.util.lib.fcm.callback.FcmTokenCallback
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -35,11 +41,20 @@ class AuthViewModel(
     private val _signInState = MutableStateFlow<SignInState>(SignInState.Idle)
     val signInState: StateFlow<SignInState> get() = _signInState
 
-    private val _signUpState = MutableStateFlow<SignUpState>(SignUpState.Idle)
-    val signUpState: StateFlow<SignUpState> get() = _signUpState
+    private val _studentSignUpState = MutableStateFlow<StudentSignUpState>(StudentSignUpState.Idle)
+    val studentSignUpState: StateFlow<StudentSignUpState> get() = _studentSignUpState
+
+    private val _teacherSignUpState = MutableStateFlow<TeacherSignUpState>(TeacherSignUpState.Idle)
+    val teacherSignUpState: StateFlow<TeacherSignUpState> get() = _teacherSignUpState
 
     private val _signOutState = MutableStateFlow<SignOutState>(SignOutState.Idle)
     val signOutState: StateFlow<SignOutState> get() = _signOutState
+
+    private val _changePasswordState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
+    val changePasswordState: StateFlow<ChangeProfileInfoState> get() = _changePasswordState
+
+    private val _forgotPasswordState = MutableStateFlow<ForgotPasswordState>(ForgotPasswordState.Idle)
+    val forgotPasswordState: StateFlow<ForgotPasswordState> get() = _forgotPasswordState
 
     init {
         handleIntent()
@@ -102,12 +117,13 @@ class AuthViewModel(
 
     fun signIn(
         email: String,
-        password: String
+        password: String,
+        userType: String
     ) {
         viewModelScope.launch {
             _signInState.value = SignInState.Loading
             _signInState.value = try {
-                val response = authRepo.signIn(email, password, "student")
+                val response = authRepo.signIn(email, password, userType)
                 SignInState.Success(response)
             } catch (e: Exception) {
                 SignInState.Error(e.message)
@@ -115,21 +131,43 @@ class AuthViewModel(
         }
     }
 
-    fun signUp(
+    fun signUpStudent(
         name: String,
         id: String,
         reg: String,
         facultyId: Int,
         batchId: Int,
-        session: String
+        session: String,
+        email: String,
     ) {
         viewModelScope.launch {
-            _signUpState.value = SignUpState.Loading
-            _signUpState.value = try {
-                val response = authRepo.signUp(name, id, reg, facultyId, batchId, session)
-                SignUpState.Success(response)
+            _studentSignUpState.value = StudentSignUpState.Loading
+            _studentSignUpState.value = try {
+                val response = authRepo.signUpStudent(name, id, reg, facultyId, batchId,
+                    session, email)
+                StudentSignUpState.Success(response)
             } catch (e: Exception) {
-                SignUpState.Error(e.message)
+                StudentSignUpState.Error(e.message)
+            }
+        }
+    }
+
+    fun signUpTeacher(
+        name: String,
+        designation: String,
+        department: String,
+        email: String,
+        password: String,
+        facultyId: Int,
+    ) {
+        viewModelScope.launch {
+            _teacherSignUpState.value = TeacherSignUpState.Loading
+            _teacherSignUpState.value = try {
+                val response = authRepo.signUpTeacher(name, designation, department, email,
+                    password, facultyId)
+                TeacherSignUpState.Success(response)
+            } catch (e: Exception) {
+                TeacherSignUpState.Error(e.message)
             }
         }
     }
@@ -138,12 +176,35 @@ class AuthViewModel(
         viewModelScope.launch {
             _signOutState.value = SignOutState.Loading
             _signOutState.value = try {
-                val student = authRepo.getSignInUser()
-                val response = authRepo.signOut(student.id, "student")
+                val response = authRepo.signOut()
                 CoilUtil.clearCache()
                 SignOutState.Success(response)
             } catch (e: Exception) {
                 SignOutState.Error(e.message)
+            }
+        }
+    }
+
+    fun changePassword(oldPassword: String, newPassword: String) {
+        viewModelScope.launch {
+            _changePasswordState.value = ChangeProfileInfoState.Loading
+            _changePasswordState.value = try {
+                val response = authRepo.changePassword(oldPassword, newPassword)
+                ChangeProfileInfoState.Success(response)
+            } catch (e: Exception) {
+                ChangeProfileInfoState.Error(e.message)
+            }
+        }
+    }
+
+    fun forgotPassword(email: String) {
+        viewModelScope.launch {
+            _forgotPasswordState.value = ForgotPasswordState.Loading
+            _forgotPasswordState.value = try {
+                val response = authRepo.forgotPassword(email)
+                ForgotPasswordState.Success(response)
+            } catch (e: Exception) {
+                ForgotPasswordState.Error(e.message)
             }
         }
     }

@@ -119,7 +119,7 @@
                     android:value=".app.ui.students.StudentsActivity"/>
         </activity>
         <activity
-                android:name=".app.ui.editprofile.EditProfileActivity"
+                android:name=".app.ui.editprofile.EditStudentProfileActivity"
                 android:parentActivityName=".app.ui.studentprofile.StudentProfileActivity"
                 android:label="@string/title_activity_edit_profile"
                 android:launchMode="singleTop"
@@ -127,6 +127,16 @@
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.studentprofile.StudentProfileActivity"/>
+        </activity>
+        <activity
+                android:name=".app.ui.editprofile.EditTeacherProfileActivity"
+                android:parentActivityName=".app.ui.teacherprofile.TeacherProfileActivity"
+                android:label="@string/title_activity_edit_profile"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.teacherprofile.TeacherProfileActivity"/>
         </activity>
         <activity
                 android:name=".app.ui.teacherprofile.TeacherProfileActivity"
@@ -199,7 +209,17 @@
                     android:value=".app.ui.home.HomeActivity"/>
         </activity>
         <activity
-                android:name=".app.ui.signup.SignUpActivity"
+                android:name=".app.ui.signup.StudentSignUpActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_sign_up_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.signin.SignInActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.signin.SignInActivity"/>
+        </activity>
+        <activity
+                android:name=".app.ui.signup.TeacherSignUpActivity"
                 android:launchMode="singleTop"
                 android:label="@string/label_sign_up_activity"
                 android:theme="@style/AppTheme.NoActionBar"

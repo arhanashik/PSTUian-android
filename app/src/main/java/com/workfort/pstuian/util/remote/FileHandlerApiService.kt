@@ -12,6 +12,7 @@ interface FileHandlerApiService {
     @Multipart
     @POST("file_handler.php?call=uploadImage")
     suspend fun uploadImage(
+        @Part("user_type") userType: RequestBody,
         @Part("name") filename: RequestBody,
         @Part file: MultipartBody.Part
     ): Response<String>

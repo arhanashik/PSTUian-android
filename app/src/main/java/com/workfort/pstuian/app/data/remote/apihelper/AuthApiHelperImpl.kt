@@ -3,6 +3,7 @@ package com.workfort.pstuian.app.data.remote.apihelper
 import com.workfort.pstuian.app.data.local.config.ConfigEntity
 import com.workfort.pstuian.app.data.local.device.DeviceEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.util.remote.AuthApiService
 
 /**
@@ -51,33 +52,77 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         return response.data?: throw Exception("No data found")
     }
 
-    override suspend fun signIn(
+    override suspend fun signInStudent(
         email: String,
         password: String,
-        userType: String,
         deviceId: String
     ): Pair<StudentEntity, String> {
-        val response = service.signIn(email, password, userType, deviceId)
+        val response = service.signInStudent(email, password, deviceId)
         if(!response.success) throw Exception(response.message)
         return Pair(response.data!!, response.authToken!!)
     }
 
-    override suspend fun signUp(
+    override suspend fun signInTeacher(
+        email: String,
+        password: String,
+        deviceId: String
+    ): Pair<TeacherEntity, String> {
+        val response = service.signInTeacher(email, password, deviceId)
+        if(!response.success) throw Exception(response.message)
+        return Pair(response.data!!, response.authToken!!)
+    }
+
+    override suspend fun signUpStudent(
         name: String,
         id: String,
         reg: String,
         facultyId: Int,
         batchId: Int,
         session: String,
+        email: String,
         deviceId: String
     ): Pair<StudentEntity, String> {
-        val response = service.signUp(name, id, reg, facultyId, batchId, session, deviceId)
+        val response = service.signUpStudent(name, id, reg, facultyId, batchId,
+            session, email, deviceId)
+        if(!response.success) throw Exception(response.message)
+        return Pair(response.data!!, response.authToken!!)
+    }
+
+    override suspend fun signUpTeacher(
+        name: String,
+        designation: String,
+        department: String,
+        email: String,
+        password: String,
+        facultyId: Int,
+        deviceId: String
+    ): Pair<TeacherEntity, String> {
+        val response = service.signUpTeacher(name, designation, department, email,
+            password, facultyId, deviceId)
         if(!response.success) throw Exception(response.message)
         return Pair(response.data!!, response.authToken!!)
     }
 
     override suspend fun signOut(id: Int, userType: String): String {
         val response = service.signOut(id, userType)
+        if(!response.success) throw Exception(response.message)
+        return response.message
+    }
+
+    override suspend fun changePassword(
+        userId: Int,
+        userType: String,
+        oldPassword: String,
+        newPassword: String,
+        deviceId: String
+    ): Pair<String, String?> {
+        val response = service.changePassword(userId, userType, oldPassword, newPassword, deviceId)
+        if(!response.success) throw Exception(response.message)
+        return Pair(response.message, response.authToken)
+    }
+
+    override suspend fun forgotPassword(email: String): String {
+        val response = service.forgotPassword(email)
         if(!response.success) throw Exception(response.message)
         return response.message
     }

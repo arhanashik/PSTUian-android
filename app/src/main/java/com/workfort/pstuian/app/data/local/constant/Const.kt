@@ -39,10 +39,12 @@ object Const {
         const val EDIT_ACADEMIC = "EDIT_ACADEMIC"
         const val EDIT_CONNECT = "EDIT_CONNECT"
         const val UPDATED = "UPDATED"
+        const val USER_TYPE = "USER_TYPE"
     }
 
     object Params {
         const val ID = "id"
+        const val OLD_ID = "old_id"
         const val USER_ID = "user_id"
 
         const val DEVICE_ID = "device_id"
@@ -57,7 +59,10 @@ object Const {
         const val LOCALE = "locale"
 
         const val EMAIL = "email"
+        const val OLD_EMAIL = "old_email"
         const val PASSWORD = "password"
+        const val OLD_PASSWORD = "old_password"
+        const val NEW_PASSWORD = "new_password"
         const val USER_TYPE = "user_type"
 
         const val NAME = "name"
@@ -66,7 +71,24 @@ object Const {
         const val BATCH_ID = "batch_id"
         const val SESSION = "session"
 
+        const val DESIGNATION = "designation"
+        const val DEPARTMENT = "department"
+
+        const val IMAGE_URL = "image_url"
+        const val BIO = "bio"
+        const val BLOOD = "blood"
+        const val ADDRESS = "address"
+        const val PHONE = "phone"
+        const val CV_LINK = "cv_link"
+        const val LINKED_IN = "linked_in"
+        const val FB_LINK = "fb_link"
+
         const val CREATED_AT = "created_at"
+
+        object UserType {
+            const val STUDENT = "student"
+            const val TEACHER = "teacher"
+        }
     }
 
     object Remote {
@@ -84,6 +106,8 @@ object Const {
         private const val CONFIG_API_PATH = "config.php?call="
         private const val DEVICE_API_PATH = "device.php?call="
         private const val AUTH_API_PATH = "auth.php?call="
+        private const val STUDENT_API_PATH = "student.php?call="
+        private const val TEACHER_API_PATH = "teacher.php?call="
         private const val NOTIFICATION_API_PATH = "notification.php?call="
         object Api {
             const val GET_CONFIG =  "${CONFIG_API_PATH}getLatest"
@@ -92,8 +116,27 @@ object Const {
 
             object Auth {
                 const val SIGN_IN = "${AUTH_API_PATH}signIn"
-                const val SIGN_UP = "${AUTH_API_PATH}signUp"
+                const val SIGN_UP_STUDENT = "${AUTH_API_PATH}signUpStudent"
+                const val SIGN_UP_TEACHER = "${AUTH_API_PATH}signUpTeacher"
                 const val SIGN_OUT = "${AUTH_API_PATH}signOut"
+                const val CHANGE_PASSWORD = "${AUTH_API_PATH}changePassword"
+                const val FORGOT_PASSWORD = "${AUTH_API_PATH}forgotPassword"
+            }
+
+            object Student {
+                const val CHANGE_PROFILE_IMAGE = "${STUDENT_API_PATH}updateImageUrl"
+                const val UPDATE_NAME = "${STUDENT_API_PATH}updateName"
+                const val UPDATE_BIO= "${STUDENT_API_PATH}updateBio"
+                const val UPDATE_ACADEMIC_INFO= "${STUDENT_API_PATH}updateAcademicInfo"
+                const val UPDATE_CONNECT_INFO= "${STUDENT_API_PATH}updateConnectInfo"
+            }
+
+            object Teacher {
+                const val CHANGE_PROFILE_IMAGE = "${TEACHER_API_PATH}updateImageUrl"
+                const val UPDATE_NAME = "${TEACHER_API_PATH}updateName"
+                const val UPDATE_BIO= "${TEACHER_API_PATH}updateBio"
+                const val UPDATE_ACADEMIC_INFO= "${TEACHER_API_PATH}updateAcademicInfo"
+                const val UPDATE_CONNECT_INFO= "${TEACHER_API_PATH}updateConnectInfo"
             }
 
             object Notification {

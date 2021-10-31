@@ -25,6 +25,7 @@ val networkModule = module {
     single { RetrofitBuilder.createSliderApiService() }
     single { RetrofitBuilder.createFacultyApiService() }
     single { RetrofitBuilder.createStudentApiService() }
+    single { RetrofitBuilder.createTeacherApiService() }
     single { RetrofitBuilder.createDonationApiService() }
     single { RetrofitBuilder.createFileHandlerApiService() }
     single { RetrofitBuilder.createSupportApiService() }

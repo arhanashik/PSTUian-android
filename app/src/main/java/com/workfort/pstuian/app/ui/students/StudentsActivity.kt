@@ -17,6 +17,7 @@ import com.workfort.pstuian.app.ui.faculty.listener.StudentClickEvent
 import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.app.ui.students.adapter.StudentsAdapter
 import com.workfort.pstuian.app.ui.students.intent.StudentsIntent
+import com.workfort.pstuian.app.ui.students.viewmodel.StudentsViewModel
 import com.workfort.pstuian.app.ui.students.viewstate.StudentsState
 import com.workfort.pstuian.databinding.ActivityStudentsBinding
 import kotlinx.coroutines.flow.collect
@@ -92,6 +93,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
                     }
                     is StudentsState.Error -> {
                         setActionUiState(false)
+                        renderStudents(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }

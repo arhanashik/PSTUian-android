@@ -56,5 +56,6 @@ sealed class ProfileInfoAction {
     object CALL : ProfileInfoAction()
     object MAIL : ProfileInfoAction()
     object DOWNLOAD : ProfileInfoAction()
-    object OPEN_LINK : ProfileInfoAction()
+    object LINK : ProfileInfoAction()
+    object PASSWORD : ProfileInfoAction()
 }

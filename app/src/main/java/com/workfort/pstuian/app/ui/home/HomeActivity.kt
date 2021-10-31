@@ -19,6 +19,7 @@ import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.data.local.slider.SliderEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
@@ -45,6 +46,7 @@ import com.workfort.pstuian.app.ui.signin.SignInActivity
 import com.workfort.pstuian.app.ui.splash.SplashActivity
 import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.app.ui.support.SupportActivity
+import com.workfort.pstuian.app.ui.teacherprofile.TeacherProfileActivity
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityHomeBinding
 import com.workfort.pstuian.util.extension.launchActivity
@@ -73,7 +75,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private lateinit var mSliderAdapter: SliderAdapter
     private lateinit var mAdapter: FacultyAdapter
 
-    private var mSignedInUser: StudentEntity? = null
+    // mSignedInUser should be student or teacher
+    private var mSignedInUser: Any? = null
 
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         initSlider()
@@ -151,7 +154,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             btnSignInSignUp.setOnClickListener {
                 launchActivity<SignInActivity> {  }
             }
-            btnAccount.setOnClickListener { loadBatch() }
+            btnAccount.setOnClickListener { mSignedInUser?.let { gotoUserProfile(it) }}
             btnNotification.setOnClickListener { launchActivity<NotificationActivity>() }
             cardUniversityWebsite.setOnClickListener {
                 launchActivity<WebViewActivity>(
@@ -192,10 +195,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                             mSignedInUser = it.user
                             btnSignInSignUp.visibility = View.GONE
                             btnAccount.visibility = View.VISIBLE
-                            if(it.user.imageUrl.isNullOrEmpty()) {
+                            val imageUrl = when(it.user) {
+                                is StudentEntity -> it.user.imageUrl
+                                is TeacherEntity -> it.user.imageUrl
+                                else -> null
+                            }
+                            if(imageUrl.isNullOrEmpty()) {
                                 btnAccount.load(R.drawable.img_placeholder_profile)
                             } else {
-                                btnAccount.load(it.user.imageUrl) {
+                                btnAccount.load(imageUrl) {
                                     placeholder(R.drawable.img_placeholder_profile)
                                     error(R.drawable.img_placeholder_profile)
                                 }
@@ -360,23 +368,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
     }
 
-    private fun loadBatch() {
-        observeBatch()
-        mSignedInUser?.let { student ->
-            mFacultyViewModel.getBatch(student.batchId)
+    private fun gotoUserProfile(user: Any) {
+        when(user) {
+            is StudentEntity -> loadBatch(user)
+            is TeacherEntity -> openTeacherProfile(user)
         }
     }
 
-    private fun observeBatch() {
+    private fun loadBatch(student: StudentEntity) {
+        observeBatch(student)
+        mFacultyViewModel.getBatch(student.batchId)
+    }
+
+    private fun observeBatch(student: StudentEntity) {
         lifecycleScope.launch {
             mFacultyViewModel.batchState.collect {
                 when (it) {
                     is BatchState.Idle -> Unit
-                    is BatchState.Loading -> {
-//                        Toaster.show("Getting batch....")
-                    }
+                    is BatchState.Loading -> Unit
                     is BatchState.Batch -> {
-                        openProfile(it.batch)
+                        openStudentProfile(it.batch, student)
                     }
                     is BatchState.Error -> {
                         Toaster.show(it.error ?: "Failed to open profile!")
@@ -386,18 +397,28 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
     }
 
-    private fun openProfile(batch: BatchEntity) {
-        mSignedInUser?.let { student ->
-            var faculty: FacultyEntity? = null
-            mAdapter.getItems().filter { it.id == student.facultyId }.also {
-                if(!it.isNullOrEmpty()) faculty = it[0]
-            }
-            val intent = Intent(this, StudentProfileActivity::class.java).apply {
-                putExtra(Const.Key.FACULTY, faculty)
-                putExtra(Const.Key.BATCH, batch)
-                putExtra(Const.Key.STUDENT, student)
-            }
-            startActivity(intent)
+    private fun openStudentProfile(batch: BatchEntity, student: StudentEntity) {
+        var faculty: FacultyEntity? = null
+        mAdapter.getItems().filter { it.id == student.facultyId }.also {
+            if(!it.isNullOrEmpty()) faculty = it[0]
         }
+        val intent = Intent(this, StudentProfileActivity::class.java).apply {
+            putExtra(Const.Key.FACULTY, faculty)
+            putExtra(Const.Key.BATCH, batch)
+            putExtra(Const.Key.STUDENT, student)
+        }
+        startActivity(intent)
+    }
+
+    private fun openTeacherProfile(teacher: TeacherEntity) {
+        var faculty: FacultyEntity? = null
+        mAdapter.getItems().filter { it.id == teacher.facultyId }.also {
+            if(!it.isNullOrEmpty()) faculty = it[0]
+        }
+        val intent = Intent(this, TeacherProfileActivity::class.java).apply {
+            putExtra(Const.Key.FACULTY, faculty)
+            putExtra(Const.Key.TEACHER, teacher)
+        }
+        startActivity(intent)
     }
 }

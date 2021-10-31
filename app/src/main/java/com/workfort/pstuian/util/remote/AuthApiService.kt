@@ -4,6 +4,7 @@ import com.workfort.pstuian.app.data.local.config.ConfigEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.device.DeviceEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.remote.AuthResponse
 import com.workfort.pstuian.app.data.remote.Response
 import retrofit2.http.Field
@@ -55,29 +56,67 @@ interface AuthApiService {
 
     @FormUrlEncoded
     @POST(Const.Remote.Api.Auth.SIGN_IN)
-    suspend fun signIn(
+    suspend fun signInStudent(
         @Field(Const.Params.EMAIL) email: String,
         @Field(Const.Params.PASSWORD) password: String,
-        @Field(Const.Params.USER_TYPE) userType: String,
-        @Field(Const.Params.DEVICE_ID) deviceId: String
+        @Field(Const.Params.DEVICE_ID) deviceId: String,
+        @Field(Const.Params.USER_TYPE) userType: String = Const.Params.UserType.STUDENT,
     ): AuthResponse<StudentEntity>
 
     @FormUrlEncoded
-    @POST(Const.Remote.Api.Auth.SIGN_UP)
-    suspend fun signUp(
+    @POST(Const.Remote.Api.Auth.SIGN_IN)
+    suspend fun signInTeacher(
+        @Field(Const.Params.EMAIL) email: String,
+        @Field(Const.Params.PASSWORD) password: String,
+        @Field(Const.Params.DEVICE_ID) deviceId: String,
+        @Field(Const.Params.USER_TYPE) userType: String = Const.Params.UserType.TEACHER,
+    ): AuthResponse<TeacherEntity>
+
+    @FormUrlEncoded
+    @POST(Const.Remote.Api.Auth.SIGN_UP_STUDENT)
+    suspend fun signUpStudent(
         @Field(Const.Params.NAME) name: String,
         @Field(Const.Params.ID) id: String,
         @Field(Const.Params.REG) reg: String,
         @Field(Const.Params.FACULTY_ID) facultyId: Int,
         @Field(Const.Params.BATCH_ID) batchId: Int,
         @Field(Const.Params.SESSION) session: String,
+        @Field(Const.Params.EMAIL) email: String,
         @Field(Const.Params.DEVICE_ID) deviceId: String
     ): AuthResponse<StudentEntity>
+
+    @FormUrlEncoded
+    @POST(Const.Remote.Api.Auth.SIGN_UP_TEACHER)
+    suspend fun signUpTeacher(
+        @Field(Const.Params.NAME) name: String,
+        @Field(Const.Params.DESIGNATION) designation: String,
+        @Field(Const.Params.DEPARTMENT) department: String,
+        @Field(Const.Params.EMAIL) email: String,
+        @Field(Const.Params.PASSWORD) password: String,
+        @Field(Const.Params.FACULTY_ID) facultyId: Int,
+        @Field(Const.Params.DEVICE_ID) deviceId: String
+    ): AuthResponse<TeacherEntity>
 
     @FormUrlEncoded
     @POST(Const.Remote.Api.Auth.SIGN_OUT)
     suspend fun signOut(
         @Field(Const.Params.ID) id: Int,
         @Field(Const.Params.USER_TYPE) userType: String,
+    ): AuthResponse<String>
+
+    @FormUrlEncoded
+    @POST(Const.Remote.Api.Auth.CHANGE_PASSWORD)
+    suspend fun changePassword(
+        @Field(Const.Params.USER_ID) userId: Int,
+        @Field(Const.Params.USER_TYPE) userType: String,
+        @Field(Const.Params.OLD_PASSWORD) oldPassword: String,
+        @Field(Const.Params.NEW_PASSWORD) newPassword: String,
+        @Field(Const.Params.DEVICE_ID) deviceId: String,
+    ): AuthResponse<String>
+
+    @FormUrlEncoded
+    @POST(Const.Remote.Api.Auth.FORGOT_PASSWORD)
+    suspend fun forgotPassword(
+        @Field(Const.Params.EMAIL) email: String,
     ): AuthResponse<String>
 }

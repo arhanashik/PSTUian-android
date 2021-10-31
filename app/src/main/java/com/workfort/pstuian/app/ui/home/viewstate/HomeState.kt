@@ -1,7 +1,6 @@
 package com.workfort.pstuian.app.ui.home.viewstate
 
 import com.workfort.pstuian.app.data.local.slider.SliderEntity
-import com.workfort.pstuian.app.data.local.student.StudentEntity
 
 /**
  *  ****************************************************************************
@@ -22,7 +21,7 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 sealed class SignInUserState {
     object Idle : SignInUserState()
     object Loading : SignInUserState()
-    data class User(val user: StudentEntity) : SignInUserState()
+    data class User(val user: Any) : SignInUserState()
     data class Error(val error: String?) : SignInUserState()
 }
 

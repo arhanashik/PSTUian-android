@@ -57,6 +57,10 @@ val repositoryModule = module {
     single<StudentApiHelper> { StudentApiHelperImpl(get()) }
     single { StudentRepository(get(), get(), get()) }
 
+    // teacher repository injections
+    single<TeacherApiHelper> { TeacherApiHelperImpl(get()) }
+    single { TeacherRepository(get(), get(), get()) }
+
     // donation repository injections
     single<DonationApiHelper> { DonationApiHelperImpl(get()) }
     single { DonationRepository(get()) }

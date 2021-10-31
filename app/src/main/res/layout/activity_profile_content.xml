@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/img_avatar"
+            android:layout_width="@dimen/avatar_width_84"
+            android:layout_height="@dimen/avatar_height_84"
+            android:layout_marginTop="6dp"
+            tools:src="@tools:sample/avatars"
+            app:civ_border_width="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loader_larger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progress="90"
+            app:indicatorSize="90dp"
+            app:trackThickness="6dp"
+            app:trackCornerRadius="4dp"
+            app:trackColor="@color/md_grey_300"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+            android:id="@+id/btn_camera"
+            android:layout_width="@dimen/dp28"
+            android:layout_height="@dimen/dp28"
+            app:srcCompat="@drawable/ic_camera"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/img_avatar"
+            app:layout_constraintEnd_toEndOf="@id/img_avatar"
+            tools:ignore="ContentDescription" />
+
+    <TextView
+            android:id="@+id/tv_bio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp32"
+            android:layout_marginTop="@dimen/dp10"
+            android:layout_marginEnd="@dimen/dp32"
+            tools:text="@tools:sample/lorem/random"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:maxLines="3"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img_avatar" />
+
+    <ImageView
+            android:id="@+id/btn_edit_bio"
+            android:layout_width="@dimen/dp16"
+            android:layout_height="@dimen/dp16"
+            android:layout_marginStart="@dimen/dp5"
+            app:srcCompat="@drawable/ic_pencil_circular_outline"
+            app:tint="@color/md_grey_600"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toTopOf="@id/tv_bio"
+            app:layout_constraintStart_toEndOf="@id/tv_bio"
+            tools:ignore="ContentDescription" />
+
+    <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_space"
+            app:tabMode="fixed"
+            app:tabIndicatorColor="@android:color/black"
+            app:tabSelectedTextColor="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/tv_bio"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/tabs"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_space"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/txt_edit_academic"
+            app:icon="@drawable/ic_pencil_circular_outline"
+            app:backgroundTint="?attr/backgroundColor"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

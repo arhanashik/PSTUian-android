@@ -1,7 +1,5 @@
 package com.workfort.pstuian.app.ui.signin.viewstate
 
-import com.workfort.pstuian.app.data.local.student.StudentEntity
-
 /**
  *  ****************************************************************************
  *  * Created by : arhan on 14 Oct, 2021 at 12:11 PM.
@@ -21,6 +19,7 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 sealed class SignInState {
     object Idle : SignInState()
     object Loading : SignInState()
-    data class Success(val student: StudentEntity) : SignInState()
+    // user should be student or teacher
+    data class Success(val user: Any) : SignInState()
     data class Error(val error: String?) : SignInState()
 }

@@ -14,7 +14,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
 import java.io.File
 
 
@@ -38,17 +37,18 @@ class ImageUploadWorker(
     context: Context, workerParams: WorkerParameters
 ): CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
+        val userType = inputData.getString(Const.Key.USER_TYPE)
         val fileName = inputData.getString(Const.Key.NAME)
-        if(fileName.isNullOrEmpty()) {
+        if(userType.isNullOrEmpty() || fileName.isNullOrEmpty()) {
             return Result.failure()
         }
 
         return withContext(Dispatchers.IO) {
-            upload(fileName)
+            upload(userType, fileName)
         }
     }
 
-    private suspend fun upload(fileName: String): Result {
+    private suspend fun upload(userType: String, fileName: String): Result {
         val context = PstuianApp.getBaseApplicationContext()
         val file = File(context.cacheDir, fileName)
         if(!file.exists()) {
@@ -65,6 +65,7 @@ class ImageUploadWorker(
 
         val service = RetrofitBuilder.createFileHandlerApiService()
         val response = service.uploadImage(
+            userType = userType.toPlainTextBody(),
             filename = fileName.toPlainTextBody(),
             file = MultipartBody.Part.createFormData(
                 name = "file",

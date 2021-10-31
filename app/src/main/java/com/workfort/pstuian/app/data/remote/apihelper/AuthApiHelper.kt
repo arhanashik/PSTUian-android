@@ -3,6 +3,7 @@ package com.workfort.pstuian.app.data.remote.apihelper
 import com.workfort.pstuian.app.data.local.config.ConfigEntity
 import com.workfort.pstuian.app.data.local.device.DeviceEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 
 /**
  *  ****************************************************************************
@@ -30,25 +31,56 @@ interface AuthApiHelper {
         fcmToken: String
     ): DeviceEntity
 
-    suspend fun signIn(
+    suspend fun signInStudent(
         email: String,
         password: String,
-        userType: String,
         deviceId: String
     ): Pair<StudentEntity, String>
 
-    suspend fun signUp(
+    suspend fun signInTeacher(
+        email: String,
+        password: String,
+        deviceId: String
+    ): Pair<TeacherEntity, String>
+
+    suspend fun signUpStudent(
         name: String,
         id: String,
         reg: String,
         facultyId: Int,
         batchId: Int,
         session: String,
+        email: String,
         deviceId: String
     ): Pair<StudentEntity, String>
+
+    suspend fun signUpTeacher(
+        name: String,
+        designation: String,
+        department: String,
+        email: String,
+        password: String,
+        facultyId: Int,
+        deviceId: String,
+    ): Pair<TeacherEntity, String>
 
     suspend fun signOut(
         id: Int,
         userType: String
     ): String
+
+    /**
+     * Inside the response pair,
+     * 1st value should be message and
+     * 2nd one should be auth token
+     * */
+    suspend fun changePassword(
+        userId: Int,
+        userType: String,
+        oldPassword: String,
+        newPassword: String,
+        deviceId: String
+    ): Pair<String, String?>
+
+    suspend fun forgotPassword(email: String): String
 }

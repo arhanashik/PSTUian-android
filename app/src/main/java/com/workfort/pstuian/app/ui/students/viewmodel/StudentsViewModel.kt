@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.students
+package com.workfort.pstuian.app.ui.students.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

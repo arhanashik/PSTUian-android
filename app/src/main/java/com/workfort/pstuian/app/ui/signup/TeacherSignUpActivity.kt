@@ -7,17 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.signin.SignInActivity
-import com.workfort.pstuian.app.ui.signup.viewstate.SignUpState
-import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
+import com.workfort.pstuian.app.ui.signup.viewstate.TeacherSignUpState
+import com.workfort.pstuian.app.ui.teacherprofile.TeacherProfileActivity
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
-import com.workfort.pstuian.databinding.ActivitySignUpBinding
+import com.workfort.pstuian.databinding.ActivityTeacherSignUpBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.flow.collect
@@ -25,13 +24,12 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-class SignUpActivity : BaseActivity<ActivitySignUpBinding>() {
-    override val bindingInflater: (LayoutInflater) -> ActivitySignUpBinding
-            = ActivitySignUpBinding::inflate
+class TeacherSignUpActivity : BaseActivity<ActivityTeacherSignUpBinding>() {
+    override val bindingInflater: (LayoutInflater) -> ActivityTeacherSignUpBinding
+            = ActivityTeacherSignUpBinding::inflate
 
     private val mViewModel: AuthViewModel by viewModel()
     private lateinit var mFaculty: FacultyEntity
-    private lateinit var mBatch: BatchEntity
 
     override fun getToolbarId(): Int = R.id.toolbar
 
@@ -42,12 +40,8 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>() {
         if(faculty == null) finish()
         else mFaculty = faculty
 
-        val batch = intent.getParcelableExtra<BatchEntity>(Const.Key.BATCH)
-        if(batch == null) finish()
-        else mBatch = batch
-
         with(binding) {
-            tvBatch.text = mBatch.name
+            tvFaculty.text = mFaculty.title
             setClickListener(btnSignUp, btnSignIn, btnTermsAndConditions, btnPrivacyPolicy)
         }
 
@@ -66,9 +60,7 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>() {
                 Const.Remote.TERMS_AND_CONDITIONS))
             binding.btnPrivacyPolicy -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
                 Const.Remote.PRIVACY_POLICY))
-            else -> {
-                Timber.e("Who clicked me!")
-            }
+            else -> Timber.e("Who clicked me!")
         }
     }
 
@@ -81,80 +73,93 @@ class SignUpActivity : BaseActivity<ActivitySignUpBinding>() {
             }
             tilName.error = null
 
-            val id = etId.text.toString()
-            if(TextUtils.isEmpty(id)) {
-                tilId.error = "*Required"
+            val designation = etDesignation.text.toString()
+            if(TextUtils.isEmpty(designation)) {
+                tilDesignation.error = "*Required"
                 return
             }
-            tilId.error = null
+            tilDesignation.error = null
 
-            val reg = etReg.text.toString()
-            if(TextUtils.isEmpty(reg)) {
-                tilReg.error = "*Required"
+            val department = etDepartment.text.toString()
+            if(TextUtils.isEmpty(department)) {
+                tilDepartment.error = "*Required"
                 return
             }
-            tilReg.error = null
+            tilDepartment.error = null
 
-            val session = etSession.text.toString()
-            if(TextUtils.isEmpty(session)) {
-                tilSession.error = "*Required"
+            val email = etEmail.text.toString()
+            if(TextUtils.isEmpty(email)) {
+                tilEmail.error = "*Required"
                 return
             }
-            tilSession.error = null
+            tilEmail.error = null
 
-            mViewModel.signUp(name, id, reg, mFaculty.id, mBatch.id, session)
+            val password = etPassword.text.toString()
+            if(TextUtils.isEmpty(password) || password.length < 6) {
+                tilPassword.error = "*Required"
+                return
+            }
+            tilPassword.error = null
+
+
+
+            mViewModel.signUpTeacher(name, designation, department, email, password, mFaculty.id)
         }
     }
 
     private fun observeSignUp() {
         lifecycleScope.launch {
-            mViewModel.signUpState.collect {
+            mViewModel.teacherSignUpState.collect {
                 when (it) {
-                    is SignUpState.Idle -> {
+                    is TeacherSignUpState.Idle -> Unit
+                    is TeacherSignUpState.Loading -> setActionUiState(true)
+                    is TeacherSignUpState.Success -> {
+                        setActionUiState(false)
+                        doSuccessAction(it.teacher)
                     }
-                    is SignUpState.Loading -> {
-                        binding.loader.visibility = View.VISIBLE
-                        binding.btnSignUp.isEnabled = false
-                    }
-                    is SignUpState.Success -> {
-                        binding.loader.visibility = View.INVISIBLE
-                        doSuccessAction(it.student)
-                    }
-                    is SignUpState.Error -> {
-                        binding.loader.visibility = View.INVISIBLE
-                        binding.btnSignUp.isEnabled = true
+                    is TeacherSignUpState.Error -> {
+                        setActionUiState(false)
                         val title = "Sign up failed!"
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
-                        CommonDialog.error(this@SignUpActivity, title, msg)
+                        CommonDialog.error(this@TeacherSignUpActivity, title, msg)
                     }
                 }
             }
         }
     }
 
-    private fun doSuccessAction(student: StudentEntity) {
+    private fun setActionUiState(isLoading: Boolean) {
+        val visibility = if(isLoading) View.VISIBLE else View.GONE
+        with(binding) {
+            loader.visibility = visibility
+
+            btnSignIn.isEnabled = !isLoading
+            btnSignUp.isEnabled = !isLoading
+            btnTermsAndConditions.isEnabled = !isLoading
+            btnPrivacyPolicy.isEnabled = !isLoading
+        }
+    }
+
+    private fun doSuccessAction(teacher: TeacherEntity) {
         val msg = getString(R.string.success_msg_sign_up)
         val btnTxt = getString(R.string.txt_open_profile)
-        val warning = getString(R.string.warning_msg_sign_up)
-        CommonDialog.success(this@SignUpActivity, message = msg, btnText = btnTxt,
-            warning = warning, cancelable = false,
+        CommonDialog.success(this@TeacherSignUpActivity, message = msg, btnText = btnTxt,
+            cancelable = false,
             callback = object : CommonDialog.SuccessDialogCallback {
                 override fun onClickDismiss() {
-                    gotToStudentProfile(mFaculty, mBatch, student)
+                    gotToTeacherProfile(mFaculty, teacher)
                     finish()
                 }
         })
     }
 
-    private fun gotToStudentProfile(
+    private fun gotToTeacherProfile(
         faculty: FacultyEntity,
-        batch: BatchEntity,
-        student: StudentEntity
+        teacher: TeacherEntity
     ) {
-        val intent = Intent(this, StudentProfileActivity::class.java)
+        val intent = Intent(this, TeacherProfileActivity::class.java)
         intent.putExtra(Const.Key.FACULTY, faculty)
-        intent.putExtra(Const.Key.BATCH, batch)
-        intent.putExtra(Const.Key.STUDENT, student)
+        intent.putExtra(Const.Key.TEACHER, teacher)
         startActivity(intent)
     }
 }

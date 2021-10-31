@@ -27,19 +27,19 @@ interface TeacherDao {
 
     @Query("SELECT * FROM " + TableNames.TEACHER
             + " WHERE " + ColumnNames.Teacher.ID + "=:id LIMIT 1")
-    fun get(id: String): TeacherEntity
+    suspend fun get(id: String): TeacherEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(teacherEntity: TeacherEntity)
+    suspend fun insert(teacherEntity: TeacherEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<TeacherEntity>)
 
     @Update
-    fun update(teacherEntity: TeacherEntity)
+    suspend fun update(teacherEntity: TeacherEntity)
 
     @Delete
-    fun delete(teacherEntity: TeacherEntity)
+    suspend fun delete(teacherEntity: TeacherEntity)
 
     @Query("DELETE FROM " + TableNames.TEACHER
             + " WHERE " + ColumnNames.Teacher.FACULTY_ID + "=:faculty")

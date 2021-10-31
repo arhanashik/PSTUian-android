@@ -49,8 +49,11 @@ class FileHandlerViewModel : ViewModel() {
     }
 
     // the image should be inside the cache directory
-    fun uploadImage(context: Context, fileName: String): LiveData<WorkInfo> {
-        val data = workDataOf (Const.Key.NAME to fileName)
+    fun uploadImage(context: Context, userType: String, fileName: String): LiveData<WorkInfo> {
+        val data = workDataOf (
+            Const.Key.USER_TYPE to  userType,
+            Const.Key.NAME to fileName
+        )
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()

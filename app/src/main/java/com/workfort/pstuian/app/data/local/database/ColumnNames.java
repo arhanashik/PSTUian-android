@@ -57,6 +57,7 @@ public interface ColumnNames {
         String ADDRESS = "address";
         String EMAIL = "email";
         String DEPARTMENT = "department";
+        String BLOOD = "blood";
         String FACULTY_ID = "faculty_id";
         String IMAGE_URL = "image_url";
     }

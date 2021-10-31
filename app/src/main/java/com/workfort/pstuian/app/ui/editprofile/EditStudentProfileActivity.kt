@@ -29,7 +29,7 @@ import com.workfort.pstuian.app.ui.faculty.viewstate.BatchesState
 import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
-import com.workfort.pstuian.databinding.ActivityEditProfileBinding
+import com.workfort.pstuian.databinding.ActivityEditStudentProfileBinding
 import com.workfort.pstuian.util.helper.PermissionUtil
 import com.workfort.pstuian.util.helper.Toaster
 import com.workfort.pstuian.util.view.dialog.CommonDialog
@@ -39,9 +39,9 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
-    override val bindingInflater: (LayoutInflater) -> ActivityEditProfileBinding
-            = ActivityEditProfileBinding::inflate
+class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding>() {
+    override val bindingInflater: (LayoutInflater) -> ActivityEditStudentProfileBinding
+            = ActivityEditStudentProfileBinding::inflate
 
     override fun getToolbarId(): Int = R.id.toolbar
 
@@ -100,7 +100,7 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
                 etSession.setText(mStudent.session)
                 //set blood group dropdown
                 val groups = resources.getStringArray(R.array.blood_group)
-                val bloodGroupAdapter = ArrayAdapter(this@EditProfileActivity,
+                val bloodGroupAdapter = ArrayAdapter(this@EditStudentProfileActivity,
                     R.layout.row_dropdown_item, groups)
                 etBlood.setAdapter(bloodGroupAdapter)
                 if(!mStudent.blood.isNullOrEmpty()) {
@@ -181,7 +181,7 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
             if(it.isNotEmpty()) selectedFaculty = it[0].shortTitle
         }
         val faculties = items.map { faculty -> faculty.shortTitle }
-        val facultyAdapter = ArrayAdapter(this@EditProfileActivity,
+        val facultyAdapter = ArrayAdapter(this@EditStudentProfileActivity,
             R.layout.row_dropdown_item, faculties)
         with(binding.content) {
             etFaculty.setAdapter(facultyAdapter)
@@ -220,7 +220,7 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
             if(it.isNotEmpty()) selectedBatch = it[0].name
         }
         val batches = items.map { batch -> batch.name }
-        val adapter = ArrayAdapter(this@EditProfileActivity,
+        val adapter = ArrayAdapter(this@EditStudentProfileActivity,
             R.layout.row_dropdown_item, batches)
         with(binding.content) {
             etBatch.setAdapter(adapter)
@@ -337,12 +337,12 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
                         setActionUiState(isActionRunning = false)
                         if(it.data is StudentEntity) mStudent = it.data
                         setActivityResult()
-                        CommonDialog.success(this@EditProfileActivity)
+                        CommonDialog.success(this@EditStudentProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
                         setActionUiState(isActionRunning = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
-                        CommonDialog.error(this@EditProfileActivity, message = msg)
+                        CommonDialog.error(this@EditStudentProfileActivity, message = msg)
                     }
                 }
             }
@@ -382,12 +382,12 @@ class EditProfileActivity: BaseActivity<ActivityEditProfileBinding>() {
                         setActionUiState(isActionRunning = false)
                         if(it.data is StudentEntity) mStudent = it.data
                         setActivityResult()
-                        CommonDialog.success(this@EditProfileActivity)
+                        CommonDialog.success(this@EditStudentProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
                         setActionUiState(isActionRunning = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
-                        CommonDialog.error(this@EditProfileActivity, message = msg)
+                        CommonDialog.error(this@EditStudentProfileActivity, message = msg)
                     }
                 }
             }
