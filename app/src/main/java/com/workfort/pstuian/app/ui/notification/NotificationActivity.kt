@@ -118,7 +118,7 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
             lavError.visibility = inverseVisibility
             tvMessage.visibility = inverseVisibility
         }
-        mAdapter.setItems(data.reversed().toMutableList())
+        mAdapter.setItems(data.toMutableList())
     }
 
     private fun showDetails(data: NotificationEntity) {

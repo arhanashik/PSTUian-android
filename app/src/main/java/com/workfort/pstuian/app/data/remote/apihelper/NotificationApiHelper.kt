@@ -17,4 +17,6 @@ import com.workfort.pstuian.app.data.local.notification.NotificationEntity
  *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
-interface NotificationApiHelper : ApiHelper<NotificationEntity>
+interface NotificationApiHelper {
+    suspend fun getAll(userId: Int, userType: String): List<NotificationEntity>
+}

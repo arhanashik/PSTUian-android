@@ -1,6 +1,8 @@
 package com.workfort.pstuian.app.data.repository
 
 import com.workfort.pstuian.app.data.local.notification.NotificationEntity
+import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.remote.apihelper.NotificationApiHelper
 
 /**
@@ -20,9 +22,22 @@ import com.workfort.pstuian.app.data.remote.apihelper.NotificationApiHelper
  */
 
 class NotificationRepository(
-    private val helper: NotificationApiHelper
+    private val helper: NotificationApiHelper,
+    private val authRepo: AuthRepository
 ) {
     suspend fun getAll(): List<NotificationEntity> {
-        return helper.getAll()
+        var userId = -1
+        var userType = ""
+        try {
+            userId = when(val user = authRepo.getSignInUser()) {
+                is StudentEntity -> user.id
+                is TeacherEntity -> user.id
+                else -> -1
+            }
+            userType = authRepo.getSignInUserType()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return helper.getAll(userId, userType)
     }
 }

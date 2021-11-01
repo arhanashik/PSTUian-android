@@ -25,6 +25,7 @@ import retrofit2.http.Query
 interface NotificationApiService {
     @GET(Const.Remote.Api.Notification.GET_ALL)
     suspend fun getAll(
-        @Query(Const.Params.USER_ID) userId: Int = 0
+        @Query(Const.Params.USER_ID) userId: Int = -1,
+        @Query(Const.Params.USER_TYPE) userType: String = ""
     ): Response<List<NotificationEntity>>
 }

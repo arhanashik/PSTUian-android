@@ -71,5 +71,5 @@ val repositoryModule = module {
 
     // notification repository injections
     single<NotificationApiHelper> { NotificationApiHelperImpl(get()) }
-    single { NotificationRepository(get()) }
+    single { NotificationRepository(get(), get()) }
 }
