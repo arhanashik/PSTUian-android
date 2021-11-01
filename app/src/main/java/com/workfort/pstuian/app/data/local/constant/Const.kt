@@ -40,6 +40,7 @@ object Const {
         const val EDIT_CONNECT = "EDIT_CONNECT"
         const val UPDATED = "UPDATED"
         const val USER_TYPE = "USER_TYPE"
+        const val EXTRA_IMAGE_TRANSITION_NAME = "EXTRA_IMAGE_TRANSITION_NAME"
     }
 
     object Params {

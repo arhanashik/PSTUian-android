@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.ui.employeeprofile
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import coil.load
@@ -15,6 +16,7 @@ import com.workfort.pstuian.app.ui.common.fragment.ProfilePagerItemFragment
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoAction
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoItem
+import com.workfort.pstuian.app.ui.imagepreview.ImagePreviewActivity
 import com.workfort.pstuian.databinding.ActivityEmployeeProfileBinding
 import com.workfort.pstuian.util.helper.LinkUtil
 
@@ -65,6 +67,16 @@ class EmployeeProfileActivity : BaseActivity<ActivityEmployeeProfileBinding>() {
                 imgAvatar.load(mEmployee.imageUrl) {
                     placeholder(R.drawable.img_placeholder_profile)
                     error(R.drawable.img_placeholder_profile)
+                }
+                imgAvatar.setOnClickListener {
+                    val intent = Intent(this@EmployeeProfileActivity,
+                        ImagePreviewActivity::class.java)
+                    intent.putExtra(Const.Key.URL, mEmployee.imageUrl)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                            imgAvatar.transitionName)
+                    }
+                    startActivity(intent)
                 }
             }
 

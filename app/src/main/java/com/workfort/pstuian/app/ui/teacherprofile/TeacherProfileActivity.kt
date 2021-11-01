@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -31,6 +32,7 @@ import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
 import com.workfort.pstuian.app.ui.editprofile.EditTeacherProfileActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
+import com.workfort.pstuian.app.ui.imagepreview.ImagePreviewActivity
 import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.app.ui.teacherprofile.viewmodel.TeacherProfileViewModel
@@ -109,6 +111,16 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                 imgAvatar.load(mTeacher.imageUrl) {
                     placeholder(R.drawable.img_placeholder_profile)
                     error(R.drawable.img_placeholder_profile)
+                }
+                imgAvatar.setOnClickListener {
+                    val intent = Intent(this@TeacherProfileActivity,
+                        ImagePreviewActivity::class.java)
+                    intent.putExtra(Const.Key.URL, mTeacher.imageUrl)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                            imgAvatar.transitionName)
+                    }
+                    startActivity(intent)
                 }
             }
             if(mTeacher.bio.isNullOrEmpty()) {

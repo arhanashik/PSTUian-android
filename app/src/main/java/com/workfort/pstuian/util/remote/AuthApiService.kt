@@ -117,6 +117,7 @@ interface AuthApiService {
     @FormUrlEncoded
     @POST(Const.Remote.Api.Auth.FORGOT_PASSWORD)
     suspend fun forgotPassword(
+        @Field(Const.Params.USER_TYPE) userType: String,
         @Field(Const.Params.EMAIL) email: String,
     ): AuthResponse<String>
 }

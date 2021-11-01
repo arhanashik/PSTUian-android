@@ -263,5 +263,9 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.home.HomeActivity"/>
         </activity>
+        <activity
+                android:name=".app.ui.imagepreview.ImagePreviewActivity"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 </manifest>

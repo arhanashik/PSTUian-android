@@ -121,10 +121,9 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         return Pair(response.message, response.authToken)
     }
 
-    override suspend fun forgotPassword(email: String): String {
-        val response = service.forgotPassword(email)
+    override suspend fun forgotPassword(userType: String, email: String): String {
+        val response = service.forgotPassword(userType, email)
         if(!response.success) throw Exception(response.message)
         return response.message
     }
-
 }

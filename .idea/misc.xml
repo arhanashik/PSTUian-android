@@ -8,6 +8,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.27076923076923076" />
         <entry key="app/src/main/res/drawable/bg_circle.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/bg_divider_txt.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/btn_bg_default.xml" value="0.16547231270358306" />
@@ -20,6 +21,7 @@
         <entry key="app/src/main/res/drawable/ic_bell_filled_primary.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_blood_drop.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_check_circuler_outline.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_close.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_export.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_hand_heart.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_hand_heart_primary.xml" value="0.16547231270358306" />
@@ -32,6 +34,7 @@
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/shape_rectangle.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/slider_bg_overlay.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/layout-v21/activity_profile_content.xml" value="0.2484375" />
         <entry key="app/src/main/res/layout/activity_donate.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_donate_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_donors.xml" value="0.15537459283387622" />
@@ -46,6 +49,7 @@
         <entry key="app/src/main/res/layout/activity_forgot_password_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_help.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_image_preview.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_notification.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_profile_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.15537459283387622" />
@@ -68,6 +72,7 @@
         <entry key="app/src/main/res/layout/fragment_profile_pager_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_teachers.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/item_information.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/item_slider.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/layout_appbar_profile.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/layout_loader_overlay.xml" value="0.1569078947368421" />

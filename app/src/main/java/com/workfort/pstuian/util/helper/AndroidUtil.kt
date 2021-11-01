@@ -3,11 +3,14 @@ package com.workfort.pstuian.util.helper
 import android.content.Context.VIBRATOR_MANAGER_SERVICE
 import android.content.Context.VIBRATOR_SERVICE
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.TransitionDrawable
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.view.View
 import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.PstuianApp
 import java.net.Inet4Address
@@ -130,6 +133,24 @@ object AndroidUtil {
     ): GradientDrawable {
         return GradientDrawable(orientation, colors).apply {
             cornerRadius = 0f
+        }
+    }
+
+    fun setBackgroundAnimated(
+        root: View,
+        newBackground: Drawable,
+        durationMills: Int = 250
+    ) {
+        val currentBG: Drawable? = root.background
+
+        if (currentBG == null) {
+            root.background = newBackground
+        } else {
+            val transitionDrawable = TransitionDrawable(arrayOf(currentBG, newBackground))
+//            transitionDrawable.isCrossFadeEnabled = true
+
+            root.background = transitionDrawable
+            transitionDrawable.startTransition(durationMills)
         }
     }
 }

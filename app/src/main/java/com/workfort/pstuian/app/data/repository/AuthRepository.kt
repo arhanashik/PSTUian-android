@@ -277,8 +277,8 @@ class AuthRepository(
         }
     }
 
-    suspend fun forgotPassword(email: String): String {
-        return helper.forgotPassword(email)
+    suspend fun forgotPassword(userType: String, email: String): String {
+        return helper.forgotPassword(userType, email)
     }
 
     suspend fun deleteAll() {

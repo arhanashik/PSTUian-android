@@ -286,6 +286,7 @@
     <string name="txt_change_password">Change Password</string>
     <string name="hint_old_password">Old Password</string>
     <string name="hint_new_password">New Password</string>
+    <string name="transition_image_preview">transition_image_preview</string>
     <array name="blood_group">
         <item>A+</item>
         <item>B+</item>

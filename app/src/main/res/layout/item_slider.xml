@@ -9,8 +9,9 @@
             android:id="@+id/iv_auto_image_slider"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:transitionName="@string/transition_image_preview"
             android:scaleType="centerCrop"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription,UnusedAttribute" />
 
     <FrameLayout
             android:id="@+id/fl_shadow_container"

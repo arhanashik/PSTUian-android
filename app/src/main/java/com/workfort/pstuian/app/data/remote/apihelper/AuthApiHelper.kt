@@ -82,5 +82,5 @@ interface AuthApiHelper {
         deviceId: String
     ): Pair<String, String?>
 
-    suspend fun forgotPassword(email: String): String
+    suspend fun forgotPassword(userType: String, email: String): String
 }

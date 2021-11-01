@@ -197,11 +197,11 @@ class AuthViewModel(
         }
     }
 
-    fun forgotPassword(email: String) {
+    fun forgotPassword(userType: String, email: String) {
         viewModelScope.launch {
             _forgotPasswordState.value = ForgotPasswordState.Loading
             _forgotPasswordState.value = try {
-                val response = authRepo.forgotPassword(email)
+                val response = authRepo.forgotPassword(userType, email)
                 ForgotPasswordState.Success(response)
             } catch (e: Exception) {
                 ForgotPasswordState.Error(e.message)

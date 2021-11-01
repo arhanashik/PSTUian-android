@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.ui.home
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import com.workfort.pstuian.app.data.local.slider.SliderEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.donate.DonateActivity
@@ -40,6 +42,7 @@ import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.home.viewstate.SliderState
+import com.workfort.pstuian.app.ui.imagepreview.ImagePreviewActivity
 import com.workfort.pstuian.app.ui.notification.NotificationActivity
 import com.workfort.pstuian.app.ui.settings.SettingsActivity
 import com.workfort.pstuian.app.ui.signin.SignInActivity
@@ -123,7 +126,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     private fun initSlider() {
-        mSliderAdapter = SliderAdapter()
+        mSliderAdapter = SliderAdapter(object : ItemClickEvent<SliderEntity> {
+            override fun onClickItem(item: SliderEntity) {
+                if(!item.imageUrl.isNullOrEmpty()) {
+                    val intent = Intent(this@HomeActivity,
+                        ImagePreviewActivity::class.java)
+                    intent.putExtra(Const.Key.URL, item.imageUrl)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                            getString(R.string.transition_image_preview))
+                    }
+                    startActivity(intent)
+                }
+            }
+        })
         with(binding.imageSlider) {
             setSliderAdapter(mSliderAdapter)
             //set indicator animation by using SliderLayout.IndicatorAnimations.

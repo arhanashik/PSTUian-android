@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import coil.load
 import com.smarteist.autoimageslider.SliderViewAdapter
 import com.workfort.pstuian.app.data.local.slider.SliderEntity
+import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
 import com.workfort.pstuian.databinding.ItemSliderBinding
 
 
@@ -24,7 +25,9 @@ import com.workfort.pstuian.databinding.ItemSliderBinding
  *  ****************************************************************************
  */
 
-class SliderAdapter : SliderViewAdapter<SliderAdapter.SliderAdapterVH>() {
+class SliderAdapter(
+    private val listener: ItemClickEvent<SliderEntity>? = null
+) : SliderViewAdapter<SliderAdapter.SliderAdapterVH>() {
     private var sliders: MutableList<SliderEntity> = ArrayList()
 
     fun setSliders(sliderItems: MutableList<SliderEntity>) {
@@ -48,6 +51,7 @@ class SliderAdapter : SliderViewAdapter<SliderAdapter.SliderAdapterVH>() {
         val binding = ItemSliderBinding.inflate(inflater, null, false)
         return SliderAdapterVH(binding)
     }
+
     override fun onBindViewHolder(viewHolder: SliderAdapterVH, position: Int) {
         val slider = sliders[position]
         viewHolder.bind(slider)
@@ -62,6 +66,9 @@ class SliderAdapter : SliderViewAdapter<SliderAdapter.SliderAdapterVH>() {
             with(binding) {
                 tvAutoImageSlider.text = slider.title
                 ivAutoImageSlider.load(slider.imageUrl)
+                ivAutoImageSlider.setOnClickListener {
+                    listener?.onClickItem(slider)
+                }
             }
         }
     }
