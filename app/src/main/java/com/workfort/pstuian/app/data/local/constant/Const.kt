@@ -100,8 +100,8 @@ object Const {
         private const val DEV_API_SERVER = "https://api-dev.pstuian.com/mobile/v1/"
         private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
 
-        private val BASE_URL = if(BuildConfig.DEBUG) LOCAL_SERVER else LIVE_SERVER
-        val BASE_API_URL = if(BuildConfig.DEBUG) LOCAL_API_SERVER else LIVE_API_SERVER
+        private val BASE_URL = if(BuildConfig.DEBUG) DEV_SERVER else LIVE_SERVER
+        val BASE_API_URL = if(BuildConfig.DEBUG) DEV_API_SERVER else LIVE_API_SERVER
         val TERMS_AND_CONDITIONS = "${BASE_URL}terms_and_conditions.php"
         val PRIVACY_POLICY = "${BASE_URL}privacy_policy.php"
         val ADMISSION_SUPPORT = "${BASE_URL}admission_support.php"
