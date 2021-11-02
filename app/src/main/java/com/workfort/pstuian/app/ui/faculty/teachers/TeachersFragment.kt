@@ -38,11 +38,12 @@ class TeachersFragment(private val faculty: FacultyEntity)
 
     override fun afterOnViewCreated(view: View, savedInstanceState: Bundle?) {
         initTeacherList()
-
         observeTeachers()
         mViewModel.facultyId = faculty.id
-        lifecycleScope.launch {
-            mViewModel.intent.send(FacultyIntent.GetTeachers)
+        loadData()
+        with(binding) {
+            srlReloadData.setOnRefreshListener { loadData(true) }
+            btnRefresh.setOnClickListener { loadData(true) }
         }
     }
 
@@ -53,8 +54,14 @@ class TeachersFragment(private val faculty: FacultyEntity)
                 gotToTeacherProfile(faculty, teacher)
             }
         })
-        binding.rvTeachers.layoutManager = LinearLayoutManager(context)
-        binding.rvTeachers.adapter = mAdapter
+        binding.rvData.adapter = mAdapter
+    }
+
+    private fun loadData(forceRefresh: Boolean = false) {
+        mViewModel.teacherStateForceRefresh = forceRefresh
+        lifecycleScope.launch {
+            mViewModel.intent.send(FacultyIntent.GetTeachers)
+        }
     }
 
     private fun observeTeachers() {
@@ -62,9 +69,7 @@ class TeachersFragment(private val faculty: FacultyEntity)
             mViewModel.teacherState.collect {
                 when (it) {
                     is TeacherState.Idle -> Unit
-                    is TeacherState.Loading -> {
-                        setActionUiState(true)
-                    }
+                    is TeacherState.Loading -> setActionUiState(true)
                     is TeacherState.Teachers -> {
                         setActionUiState(false)
                         renderTeachers(it.teachers)
@@ -80,25 +85,29 @@ class TeachersFragment(private val faculty: FacultyEntity)
     }
 
     private fun setActionUiState(isLoading: Boolean) {
-        val visibility = if(isLoading) View.GONE else View.VISIBLE
-        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        val inverseVisibility = if(isLoading) View.GONE else View.VISIBLE
         with(binding) {
-            rvTeachers.visibility = visibility
-            lavError.visibility = visibility
-            tvMessage.visibility = visibility
-            loader.visibility = inverseVisibility
+            srlReloadData.isRefreshing = isLoading
+
+            rvData.visibility = inverseVisibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
     }
 
-    private fun renderTeachers(teachers: List<TeacherEntity>) {
-        val visibility = if(teachers.isEmpty()) View.GONE else View.VISIBLE
-        val inverseVisibility = if(teachers.isEmpty()) View.VISIBLE else View.GONE
+    private fun renderTeachers(data: List<TeacherEntity>) {
+        val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
         with(binding) {
-            rvTeachers.visibility = visibility
+            rvData.visibility = visibility
+            srlReloadData.visibility = visibility
             lavError.visibility = inverseVisibility
+            if(data.isEmpty()) lavError.playAnimation()
             tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.setTeachers(teachers.toMutableList())
+        mAdapter.setTeachers(data.toMutableList())
     }
 
     fun filter(query: String) {
@@ -119,11 +128,7 @@ class TeachersFragment(private val faculty: FacultyEntity)
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if(result.resultCode == Activity.RESULT_OK) {
-            result?.data?.also {
-                lifecycleScope.launch {
-                    mViewModel.intent.send(FacultyIntent.GetTeachers)
-                }
-            }
+            loadData()
         }
     }
 }

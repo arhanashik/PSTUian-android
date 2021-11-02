@@ -14,6 +14,7 @@
         <entry key="app/src/main/res/drawable/btn_bg_default.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/btn_bg_pressed.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/btn_bg_selector.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_account_heart_outline.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_arrow_up.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_bell_badge_filled.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_bell_badge_filled_primary_color.xml" value="0.16547231270358306" />
@@ -37,7 +38,7 @@
         <entry key="app/src/main/res/layout-v21/activity_profile_content.xml" value="0.2484375" />
         <entry key="app/src/main/res/layout/activity_donate.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_donate_content.xml" value="0.1569078947368421" />
-        <entry key="app/src/main/res/layout/activity_donors.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/activity_donors.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_edit_profile_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_edit_teacher_profile.xml" value="0.1569078947368421" />

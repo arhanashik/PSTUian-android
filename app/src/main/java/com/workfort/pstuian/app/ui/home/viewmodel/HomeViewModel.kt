@@ -24,6 +24,7 @@ class HomeViewModel(
 ) : ViewModel() {
     val intent = Channel<HomeIntent>(Channel.UNLIMITED)
 
+    var sliderStateForceRefresh = false
     private val _sliderState = MutableStateFlow<SliderState>(SliderState.Idle)
     val sliderState: StateFlow<SliderState> get() = _sliderState
 
@@ -53,7 +54,7 @@ class HomeViewModel(
         viewModelScope.launch {
             _sliderState.value = SliderState.Loading
             _sliderState.value = try {
-                SliderState.Sliders(sliderRepo.getSliders())
+                SliderState.Sliders(sliderRepo.getSliders(sliderStateForceRefresh))
             } catch (e: Exception) {
                 SliderState.Error(e.message)
             }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+        android:id="@+id/container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical">
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
             android:id="@+id/iv_auto_image_slider"
@@ -11,7 +13,26 @@
             android:layout_height="match_parent"
             android:transitionName="@string/transition_image_preview"
             android:scaleType="centerCrop"
+            tools:src="@tools:sample/backgrounds/scenic"
             tools:ignore="ContentDescription,UnusedAttribute" />
+
+    <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_image_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_rawRes="@raw/image_placeholder"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            android:visibility="gone"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_rawRes="@raw/error_cat"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            android:visibility="gone"/>
 
     <FrameLayout
             android:id="@+id/fl_shadow_container"
@@ -27,10 +48,9 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:padding="6dp"
+                tools:text="Happy slider"
                 android:textColor="#FFF"
                 android:textSize="18sp"
                 android:gravity="center_horizontal"/>
-
     </FrameLayout>
-
 </FrameLayout>

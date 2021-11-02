@@ -57,10 +57,11 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         setHomeEnabled()
         initList()
-
         observeStudents()
-        lifecycleScope.launch {
-            mViewModel.intent.send(NotificationIntent.GetAll)
+        loadData()
+        with(binding) {
+            srlReloadData.setOnRefreshListener { loadData() }
+            btnRefresh.setOnClickListener { loadData() }
         }
     }
 
@@ -71,8 +72,13 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
                 showDetails(item)
             }
         })
+        binding.rvData.adapter = mAdapter
+    }
 
-        binding.rvNotification.adapter = mAdapter
+    private fun loadData() {
+        lifecycleScope.launch {
+            mViewModel.intent.send(NotificationIntent.GetAll)
+        }
     }
 
     private fun observeStudents() {
@@ -80,9 +86,7 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
             mViewModel.notificationsState.collect {
                 when (it) {
                     is NotificationsState.Idle -> Unit
-                    is NotificationsState.Loading -> {
-                        setActionUiState(true)
-                    }
+                    is NotificationsState.Loading -> setActionUiState(true)
                     is NotificationsState.Notifications -> {
                         setActionUiState(false)
                         Prefs.hasNewNotification = false
@@ -90,6 +94,7 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
                     }
                     is NotificationsState.Error -> {
                         setActionUiState(false)
+                        renderNotifications(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
@@ -98,15 +103,18 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
     }
 
     private fun setActionUiState(isLoading: Boolean) {
-        val visibility = if(isLoading) View.GONE else View.VISIBLE
-        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        val visibility = if(isLoading) View.VISIBLE else View.GONE
+        val inverseVisibility = if(isLoading) View.GONE else View.VISIBLE
         with(binding) {
-            rvNotification.visibility = visibility
-            lavError.visibility = visibility
-            tvMessage.visibility = visibility
-            shimmerLayout.visibility = inverseVisibility
+            srlReloadData.isRefreshing = isLoading
+            shimmerLayout.visibility = visibility
             if(isLoading) shimmerLayout.startShimmer()
             else shimmerLayout.stopShimmer()
+
+            rvData.visibility = inverseVisibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
     }
 
@@ -114,9 +122,12 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
         val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
         val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
         with(binding) {
-            rvNotification.visibility = visibility
+            rvData.visibility = visibility
+            srlReloadData.visibility = visibility
             lavError.visibility = inverseVisibility
+            if(data.isEmpty()) lavError.playAnimation()
             tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
         mAdapter.setItems(data.toMutableList())
     }

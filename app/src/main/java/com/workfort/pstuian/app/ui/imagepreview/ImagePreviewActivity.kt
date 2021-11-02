@@ -3,9 +3,8 @@ package com.workfort.pstuian.app.ui.imagepreview
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import coil.load
-import coil.request.ImageRequest
-import coil.request.ImageResult
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.databinding.ActivityImagePreviewBinding
@@ -39,7 +38,7 @@ class ImagePreviewActivity : BaseActivity<ActivityImagePreviewBinding>() {
         //get shared image view transition name
         intent?.getStringExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME)?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                binding.imgPreview.transitionName = it
+                binding.ivPreview.transitionName = it
             }
         }
 
@@ -50,14 +49,18 @@ class ImagePreviewActivity : BaseActivity<ActivityImagePreviewBinding>() {
     }
 
     private fun loadImage(imageUrl: String) {
-        binding.imgPreview.load(imageUrl) {
-            crossfade(true)
-            listener(object : ImageRequest.Listener {
-                override fun onSuccess(request: ImageRequest, metadata: ImageResult.Metadata) {
+        with(binding) {
+            ivPreview.load(imageUrl) {
+                crossfade(true)
+                listener(onError = { _, _->
+                    lavImagePlaceholder.visibility = View.GONE
+                    lavError.visibility = View.VISIBLE
+                }, onSuccess = { _, _->
+                    lavImagePlaceholder.visibility = View.GONE
                     //execute postponed shared item transition
                     supportStartPostponedEnterTransition()
-                }
-            })
+                })
+            }
         }
     }
 }

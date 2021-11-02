@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
@@ -38,8 +37,10 @@ class BatchesFragment(private val faculty: FacultyEntity)
         initBatchList()
         observeBatches()
         mViewModel.facultyId = faculty.id
-        lifecycleScope.launch {
-            mViewModel.intent.send(FacultyIntent.GetBatches)
+        loadData()
+        with(binding) {
+            srlReloadData.setOnRefreshListener { loadData(true) }
+            btnRefresh.setOnClickListener { loadData(true) }
         }
     }
 
@@ -53,8 +54,14 @@ class BatchesFragment(private val faculty: FacultyEntity)
                 startActivity(intent)
             }
         })
-        binding.rvBatches.layoutManager = LinearLayoutManager(context)
-        binding.rvBatches.adapter = mAdapter
+        binding.rvData.adapter = mAdapter
+    }
+
+    private fun loadData(forceRefresh: Boolean = false) {
+        mViewModel.batchesStateForceRefresh = forceRefresh
+        lifecycleScope.launch {
+            mViewModel.intent.send(FacultyIntent.GetBatches)
+        }
     }
 
     private fun observeBatches() {
@@ -62,15 +69,14 @@ class BatchesFragment(private val faculty: FacultyEntity)
             mViewModel.batchesState.collect {
                 when (it) {
                     is BatchesState.Idle -> Unit
-                    is BatchesState.Loading -> {
-                        setActionUiState(true)
-                    }
+                    is BatchesState.Loading -> setActionUiState(true)
                     is BatchesState.Batches -> {
                         setActionUiState(false)
                         renderBatches(it.batches)
                     }
                     is BatchesState.Error -> {
                         setActionUiState(false)
+                        renderBatches(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
@@ -79,27 +85,33 @@ class BatchesFragment(private val faculty: FacultyEntity)
     }
 
     private fun setActionUiState(isLoading: Boolean) {
-        val visibility = if(isLoading) View.GONE else View.VISIBLE
-        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        val visibility = if(isLoading) View.VISIBLE else View.GONE
+        val inverseVisibility = if(isLoading) View.GONE else View.VISIBLE
         with(binding) {
-            rvBatches.visibility = visibility
-            lavError.visibility = visibility
-            tvMessage.visibility = visibility
-            shimmerLayout.visibility = inverseVisibility
+            srlReloadData.isRefreshing = isLoading
+            shimmerLayout.visibility = visibility
             if(isLoading) shimmerLayout.startShimmer()
             else shimmerLayout.stopShimmer()
+
+            rvData.visibility = inverseVisibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
     }
 
-    private fun renderBatches(batches: List<BatchEntity>) {
-        val visibility = if(batches.isEmpty()) View.GONE else View.VISIBLE
-        val inverseVisibility = if(batches.isEmpty()) View.VISIBLE else View.GONE
+    private fun renderBatches(data: List<BatchEntity>) {
+        val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
         with(binding) {
-            rvBatches.visibility = visibility
+            rvData.visibility = visibility
+            srlReloadData.visibility = visibility
             lavError.visibility = inverseVisibility
+            if(data.isEmpty()) lavError.playAnimation()
             tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.setBatches(batches.toMutableList())
+        mAdapter.setBatches(data.toMutableList())
     }
 
     fun filter(query: String) {

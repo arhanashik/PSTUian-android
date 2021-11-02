@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/txt_donate"
-                    app:icon="@drawable/ic_donate"
+                    app:icon="@drawable/ic_hand_heart"
                     app:iconSize="@dimen/dp24"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

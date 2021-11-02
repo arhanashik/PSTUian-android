@@ -22,9 +22,10 @@ import com.workfort.pstuian.app.data.remote.apihelper.SliderApiHelper
 
 class SliderRepository(
     private val dbService: SliderService,
-    private val helper: SliderApiHelper) {
-    suspend fun getSliders() : List<SliderEntity> {
-        val existingData = dbService.getAll()
+    private val helper: SliderApiHelper
+) {
+    suspend fun getSliders(forceRefresh: Boolean = false) : List<SliderEntity> {
+        val existingData = if(forceRefresh) emptyList() else dbService.getAll()
         if(existingData.isNullOrEmpty()) {
             val newData = helper.getAll()
             dbService.insertAll(newData)

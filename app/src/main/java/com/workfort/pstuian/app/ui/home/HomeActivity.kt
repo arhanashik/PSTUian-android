@@ -262,7 +262,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     private fun renderSliders(sliders: List<SliderEntity>) {
-        mSliderAdapter.setSliders(sliders.toMutableList())
+        mSliderAdapter.setItems(sliders.toMutableList())
     }
 
     private fun observeFaculties() {

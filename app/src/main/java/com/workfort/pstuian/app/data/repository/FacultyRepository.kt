@@ -39,8 +39,8 @@ class FacultyRepository(
     private val employeeDbService: EmployeeService,
     private val helper: FacultyApiHelper
 ) {
-    suspend fun getFaculties() : List<FacultyEntity> {
-        val existingData = facultyDbService.getAll()
+    suspend fun getFaculties(forceRefresh: Boolean = false) : List<FacultyEntity> {
+        val existingData = if(forceRefresh) emptyList() else facultyDbService.getAll()
         if(existingData.isNullOrEmpty()) {
             val newData = helper.getFaculties()
             facultyDbService.insertAll(newData)
@@ -50,8 +50,8 @@ class FacultyRepository(
         return existingData
     }
 
-    suspend fun getBatches(facultyId: Int) : List<BatchEntity> {
-        val existingData = batchDbService.getAll(facultyId)
+    suspend fun getBatches(facultyId: Int, forceRefresh: Boolean = false) : List<BatchEntity> {
+        val existingData = if(forceRefresh) emptyList() else batchDbService.getAll(facultyId)
         if(existingData.isNullOrEmpty()) {
             val newData = helper.getBatches(facultyId)
             batchDbService.insertAll(newData)
@@ -61,19 +61,16 @@ class FacultyRepository(
         return existingData
     }
 
-    suspend fun getBatch(batchId: Int) : BatchEntity {
-        val existingData = batchDbService.get(batchId)
-        if(existingData == null) {
-            val newData = helper.getBatch(batchId)
-//            batchDbService.insert(newData)
-            return newData
-        }
-
-        return existingData
+    suspend fun getBatch(batchId: Int): BatchEntity {
+        return batchDbService.get(batchId) ?: return helper.getBatch(batchId)
     }
 
-    suspend fun getStudents(facultyId: Int, batchId: Int) : List<StudentEntity> {
-        val existingData = studentDbService.getAll(facultyId, batchId)
+    suspend fun getStudents(
+        facultyId: Int,
+        batchId: Int,
+        forceRefresh: Boolean = false
+    ) : List<StudentEntity> {
+        val existingData = if(forceRefresh) emptyList() else studentDbService.getAll(facultyId, batchId)
         if(existingData.isNullOrEmpty()) {
             val newData = helper.getStudents(facultyId, batchId)
             studentDbService.insertAll(newData)
@@ -83,8 +80,8 @@ class FacultyRepository(
         return existingData
     }
 
-    suspend fun getTeachers(facultyId: Int) : List<TeacherEntity> {
-        val existingData = teacherDbService.getAll(facultyId)
+    suspend fun getTeachers(facultyId: Int, forceRefresh: Boolean = false) : List<TeacherEntity> {
+        val existingData = if(forceRefresh) emptyList() else teacherDbService.getAll(facultyId)
         if(existingData.isNullOrEmpty()) {
             val newData = helper.getTeachers(facultyId)
             teacherDbService.insertAll(newData)
@@ -94,8 +91,8 @@ class FacultyRepository(
         return existingData
     }
 
-    suspend fun getCourses(facultyId: Int) : List<CourseEntity> {
-        val existingData = courseDbService.getAll(facultyId)
+    suspend fun getCourses(facultyId: Int, forceRefresh: Boolean = false) : List<CourseEntity> {
+        val existingData = if(forceRefresh) emptyList() else courseDbService.getAll(facultyId)
         if(existingData.isNullOrEmpty()) {
             val newData = helper.getCourses(facultyId)
             courseDbService.insertAll(newData)
@@ -105,8 +102,8 @@ class FacultyRepository(
         return existingData
     }
 
-    suspend fun getEmployees(facultyId: Int) : List<EmployeeEntity> {
-        val existingData = employeeDbService.getAll(facultyId)
+    suspend fun getEmployees(facultyId: Int, forceRefresh: Boolean = false) : List<EmployeeEntity> {
+        val existingData = if(forceRefresh) emptyList() else employeeDbService.getAll(facultyId)
         if(existingData.isNullOrEmpty()) {
             val newData = helper.getEmployees(facultyId)
             employeeDbService.insertAll(newData)

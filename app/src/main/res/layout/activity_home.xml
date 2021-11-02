@@ -288,7 +288,7 @@
                 android:layout_width="0dp"
                 style="@style/MaterialCardView"
                 app:title="@string/txt_donate"
-                app:icon="@drawable/ic_account_heart_outline"
+                app:icon="@drawable/ic_hand_heart"
                 app:background="@drawable/bg_gradient4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title_options"

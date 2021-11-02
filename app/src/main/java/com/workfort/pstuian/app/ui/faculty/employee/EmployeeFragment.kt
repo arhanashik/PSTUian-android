@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.employee.EmployeeEntity
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
@@ -36,11 +35,12 @@ class EmployeeFragment(private val faculty: FacultyEntity)
 
     override fun afterOnViewCreated(view: View, savedInstanceState: Bundle?) {
         initEmployeeList()
-
         observeEmployees()
         mViewModel.facultyId = faculty.id
-        lifecycleScope.launch {
-            mViewModel.intent.send(FacultyIntent.GetEmployees)
+        loadData()
+        with(binding) {
+            srlReloadData.setOnRefreshListener { loadData(true) }
+            btnRefresh.setOnClickListener { loadData(true) }
         }
     }
 
@@ -54,8 +54,14 @@ class EmployeeFragment(private val faculty: FacultyEntity)
                 startActivity(intent)
             }
         })
-        binding.rvEmployees.layoutManager = LinearLayoutManager(context)
-        binding.rvEmployees.adapter = mAdapter
+        binding.rvData.adapter = mAdapter
+    }
+
+    private fun loadData(forceRefresh: Boolean = false) {
+        mViewModel.employeeStateForceRefresh = forceRefresh
+        lifecycleScope.launch {
+            mViewModel.intent.send(FacultyIntent.GetEmployees)
+        }
     }
 
     private fun observeEmployees() {
@@ -63,15 +69,14 @@ class EmployeeFragment(private val faculty: FacultyEntity)
             mViewModel.employeeState.collect {
                 when (it) {
                     is EmployeeState.Idle -> Unit
-                    is EmployeeState.Loading -> {
-                        setActionUiState(true)
-                    }
+                    is EmployeeState.Loading ->  setActionUiState(true)
                     is EmployeeState.Employees -> {
                         setActionUiState(false)
                         renderEmployees(it.employees)
                     }
                     is EmployeeState.Error -> {
                         setActionUiState(false)
+                        renderEmployees(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
@@ -80,13 +85,13 @@ class EmployeeFragment(private val faculty: FacultyEntity)
     }
 
     private fun setActionUiState(isLoading: Boolean) {
-        val visibility = if(isLoading) View.GONE else View.VISIBLE
-        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        val inverseVisibility = if(isLoading) View.GONE else View.VISIBLE
         with(binding) {
-            rvEmployees.visibility = visibility
-            lavError.visibility = visibility
-            tvMessage.visibility = visibility
-            loader.visibility = inverseVisibility
+            srlReloadData.isRefreshing = isLoading
+            rvData.visibility = inverseVisibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
     }
 
@@ -94,9 +99,12 @@ class EmployeeFragment(private val faculty: FacultyEntity)
         val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
         val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
         with(binding) {
-            rvEmployees.visibility = visibility
+            rvData.visibility = visibility
+            srlReloadData.visibility = visibility
             lavError.visibility = inverseVisibility
+            if(data.isEmpty()) lavError.playAnimation()
             tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
         mAdapter.setEmployees(data.toMutableList())
     }

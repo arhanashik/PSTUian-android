@@ -13,11 +13,11 @@ import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.StudentClickEvent
+import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.app.ui.students.adapter.StudentsAdapter
-import com.workfort.pstuian.app.ui.students.intent.StudentsIntent
-import com.workfort.pstuian.app.ui.students.viewmodel.StudentsViewModel
 import com.workfort.pstuian.app.ui.students.viewstate.StudentsState
 import com.workfort.pstuian.databinding.ActivityStudentsBinding
 import kotlinx.coroutines.flow.collect
@@ -38,7 +38,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         handleNotificationIntent(intent)
     }
 
-    private val mViewModel: StudentsViewModel by viewModel()
+    private val mViewModel: FacultyViewModel by viewModel()
     private lateinit var mAdapter: StudentsAdapter
     private lateinit var mFaculty: FacultyEntity
     private lateinit var mBatch: BatchEntity
@@ -55,12 +55,14 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
 
         binding.toolbar.title = mBatch.name
         initStudentsList()
-
         observeStudents()
-        lifecycleScope.launch {
-            //initialize the data flow
-            mViewModel.handleIntent(mFaculty.id, mBatch.id)
-            mViewModel.intent.send(StudentsIntent.GetStudents)
+        //initialize the data flow
+        mViewModel.facultyId = mFaculty.id
+        mViewModel.batchId = mBatch.id
+        loadData()
+        with(binding) {
+            srlReloadData.setOnRefreshListener { loadData() }
+            btnRefresh.setOnClickListener { loadData() }
         }
     }
 
@@ -75,8 +77,14 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
                 gotToStudentProfile(mFaculty, mBatch, student)
             }
         })
+        binding.rvData.adapter = mAdapter
+    }
 
-        binding.rvStudents.adapter = mAdapter
+    private fun loadData(forceRefresh: Boolean = false) {
+        mViewModel.studentsStateForceRefresh = forceRefresh
+        lifecycleScope.launch {
+            mViewModel.intent.send(FacultyIntent.GetStudents)
+        }
     }
 
     private fun observeStudents() {
@@ -84,9 +92,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
             mViewModel.studentsState.collect {
                 when (it) {
                     is StudentsState.Idle -> Unit
-                    is StudentsState.Loading -> {
-                        setActionUiState(true)
-                    }
+                    is StudentsState.Loading -> setActionUiState(true)
                     is StudentsState.Students -> {
                         setActionUiState(false)
                         renderStudents(it.students)
@@ -102,15 +108,18 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
     }
 
     private fun setActionUiState(isLoading: Boolean) {
-        val visibility = if(isLoading) View.GONE else View.VISIBLE
-        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        val visibility = if(isLoading) View.VISIBLE else View.GONE
+        val inverseVisibility = if(isLoading) View.GONE else View.VISIBLE
         with(binding) {
-            rvStudents.visibility = visibility
-            lavError.visibility = visibility
-            tvMessage.visibility = visibility
-            shimmerLayout.visibility = inverseVisibility
+            srlReloadData.isRefreshing = isLoading
+            shimmerLayout.visibility = visibility
             if(isLoading) shimmerLayout.startShimmer()
             else shimmerLayout.stopShimmer()
+
+            rvData.visibility = inverseVisibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
     }
 
@@ -118,9 +127,12 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
         val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
         with(binding) {
-            rvStudents.visibility = visibility
+            rvData.visibility = visibility
+            srlReloadData.visibility = visibility
             lavError.visibility = inverseVisibility
+            if(data.isEmpty()) lavError.playAnimation()
             tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
         mAdapter.setStudents(data.toMutableList())
     }
@@ -140,11 +152,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
     private val startActivityForResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
         if(result.resultCode == Activity.RESULT_OK) {
-            result?.data?.getParcelableExtra<StudentEntity>(Const.Key.STUDENT)?.let {
-                lifecycleScope.launch {
-                    mViewModel.intent.send(StudentsIntent.GetStudents)
-                }
-            }
+            loadData()
         }
     }
 }

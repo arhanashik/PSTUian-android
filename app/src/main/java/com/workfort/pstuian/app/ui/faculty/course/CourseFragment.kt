@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.app.data.local.course.CourseEntity
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.fragment.BaseFragment
@@ -33,11 +32,12 @@ class CourseFragment(private val faculty: FacultyEntity)
 
     override fun afterOnViewCreated(view: View, savedInstanceState: Bundle?) {
         initCourseList()
-
         observeCourses()
         mViewModel.facultyId = faculty.id
-        lifecycleScope.launch {
-            mViewModel.intent.send(FacultyIntent.GetCourses)
+        loadData()
+        with(binding) {
+            srlReloadData.setOnRefreshListener { loadData(true) }
+            btnRefresh.setOnClickListener { loadData(true) }
         }
     }
 
@@ -48,8 +48,14 @@ class CourseFragment(private val faculty: FacultyEntity)
 
             }
         })
-        binding.rvCourses.layoutManager = LinearLayoutManager(context)
-        binding.rvCourses.adapter = mAdapter
+        binding.rvData.adapter = mAdapter
+    }
+
+    private fun loadData(forceRefresh: Boolean = false) {
+        mViewModel.courseStateForceRefresh = forceRefresh
+        lifecycleScope.launch {
+            mViewModel.intent.send(FacultyIntent.GetCourses)
+        }
     }
 
     private fun observeCourses() {
@@ -57,15 +63,14 @@ class CourseFragment(private val faculty: FacultyEntity)
             mViewModel.courseState.collect {
                 when (it) {
                     is CourseState.Idle -> Unit
-                    is CourseState.Loading -> {
-                        setActionUiState(true)
-                    }
+                    is CourseState.Loading -> setActionUiState(true)
                     is CourseState.Courses -> {
                         setActionUiState(false)
                         renderCourses(it.course)
                     }
                     is CourseState.Error -> {
                         setActionUiState(false)
+                        renderCourses(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
@@ -74,25 +79,28 @@ class CourseFragment(private val faculty: FacultyEntity)
     }
 
     private fun setActionUiState(isLoading: Boolean) {
-        val visibility = if(isLoading) View.GONE else View.VISIBLE
-        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+        val inverseVisibility = if(isLoading) View.GONE else View.VISIBLE
         with(binding) {
-            rvCourses.visibility = visibility
-            lavError.visibility = visibility
-            tvMessage.visibility = visibility
-            loader.visibility = inverseVisibility
+            srlReloadData.isRefreshing = isLoading
+            rvData.visibility = inverseVisibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
     }
 
-    private fun renderCourses(courses: List<CourseEntity>) {
-        val visibility = if(courses.isEmpty()) View.GONE else View.VISIBLE
-        val inverseVisibility = if(courses.isEmpty()) View.VISIBLE else View.GONE
+    private fun renderCourses(data: List<CourseEntity>) {
+        val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
         with(binding) {
-            rvCourses.visibility = visibility
+            rvData.visibility = visibility
+            srlReloadData.visibility = visibility
             lavError.visibility = inverseVisibility
+            if(data.isEmpty()) lavError.playAnimation()
             tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.setCourseSchedules(courses.toMutableList())
+        mAdapter.setCourseSchedules(data.toMutableList())
     }
 
     fun filter(query: String) {

@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.ui.home.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import coil.load
 import com.smarteist.autoimageslider.SliderViewAdapter
@@ -30,18 +31,18 @@ class SliderAdapter(
 ) : SliderViewAdapter<SliderAdapter.SliderAdapterVH>() {
     private var sliders: MutableList<SliderEntity> = ArrayList()
 
-    fun setSliders(sliderItems: MutableList<SliderEntity>) {
+    fun setItems(sliderItems: MutableList<SliderEntity>) {
         sliders.clear()
         sliders.addAll(sliderItems)
         notifyDataSetChanged()
     }
 
-    fun deleteSlider(position: Int) {
+    fun delete(position: Int) {
         sliders.removeAt(position)
         notifyDataSetChanged()
     }
 
-    fun addSlider(slider: SliderEntity) {
+    fun add(slider: SliderEntity) {
         sliders.add(slider)
         notifyDataSetChanged()
     }
@@ -65,7 +66,16 @@ class SliderAdapter(
         fun bind(slider: SliderEntity) {
             with(binding) {
                 tvAutoImageSlider.text = slider.title
-                ivAutoImageSlider.load(slider.imageUrl)
+                lavImagePlaceholder.visibility =View.VISIBLE
+                lavError.visibility =View.GONE
+                ivAutoImageSlider.load(slider.imageUrl) {
+                    listener(onError = { _, _->
+                            lavImagePlaceholder.visibility =View.GONE
+                            lavError.visibility =View.VISIBLE
+                        }, onSuccess = { _, _->
+                            lavImagePlaceholder.visibility =View.GONE
+                        })
+                }
                 ivAutoImageSlider.setOnClickListener {
                     listener?.onClickItem(slider)
                 }

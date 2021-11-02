@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.donor.DonorEntity
@@ -44,15 +43,17 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         setHomeEnabled()
         initDonorsList()
-
-        binding.btnFirstDonor.setOnClickListener { donate() }
-        binding.fabDonate.setOnClickListener { donate() }
-
         observeDonors()
-        lifecycleScope.launch {
-            mViewModel.intent.send(DonorsIntent.GetDonors)
-            delay(1500)
-            binding.fabDonate.shrink()
+        loadData()
+        with(binding) {
+            srlReloadData.setOnRefreshListener { loadData() }
+            btnRefresh.setOnClickListener { loadData() }
+            fabDonate.setOnClickListener { donate() }
+            btnFirstDonor.setOnClickListener { donate() }
+            lifecycleScope.launch {
+                delay(1500)
+                fabDonate.shrink()
+            }
         }
     }
 
@@ -67,9 +68,13 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
 
             }
         })
+        binding.rvData.adapter = mAdapter
+    }
 
-        binding.rvDonors.layoutManager = LinearLayoutManager(this)
-        binding.rvDonors.adapter = mAdapter
+    private fun loadData() {
+        lifecycleScope.launch {
+            mViewModel.intent.send(DonorsIntent.GetDonors)
+        }
     }
 
     private fun observeDonors() {
@@ -83,7 +88,8 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
                         renderDonors(it.donors)
                     }
                     is DonorsState.Error -> {
-                        setActionUi(isLoading = false, isError = true)
+                        setActionUi(isLoading = false)
+                        renderDonors(emptyList())
                         Timber.e(it.error?: "Can't load data")
                     }
                 }
@@ -91,39 +97,37 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
         }
     }
 
-    private fun setActionUi(isLoading: Boolean, isError: Boolean = false) {
-        val visibility = if(isLoading) View.GONE else View.VISIBLE
-        val inverseVisibility = if(isLoading) View.VISIBLE else View.GONE
+    private fun setActionUi(isLoading: Boolean) {
+        val visibility = if(isLoading) View.VISIBLE else View.GONE
+        val inverseVisibility = if(isLoading) View.GONE else View.VISIBLE
         with(binding) {
-            rvDonors.visibility = visibility
-            lavError.visibility = visibility
-            tvMessage.visibility = visibility
-
-            shimmerLayout.visibility = inverseVisibility
+            srlReloadData.isRefreshing = isLoading
+            shimmerLayout.visibility = visibility
             if(isLoading) shimmerLayout.startShimmer()
             else shimmerLayout.stopShimmer()
 
-            if(isError) {
-                rvDonors.visibility = View.GONE
-                lavError.visibility = View.VISIBLE
-                tvMessage.visibility = View.VISIBLE
-            }
+            rvData.visibility = inverseVisibility
+            lavError.visibility = inverseVisibility
+            tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
     }
 
-    private fun renderDonors(donors: List<DonorEntity>) {
+    private fun renderDonors(data: List<DonorEntity>) {
+        val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
+        val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
         with(binding) {
-            val visibility = if(donors.isEmpty()) View.GONE else View.VISIBLE
-            val inverseVisibility = if(donors.isEmpty()) View.VISIBLE else View.GONE
-            rvDonors.visibility = visibility
+            rvData.visibility = visibility
+            srlReloadData.visibility = visibility
             lavError.visibility = inverseVisibility
+            if(data.isEmpty()) lavError.playAnimation()
             tvMessage.visibility = inverseVisibility
-            btnFirstDonor.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.setDonors(donors.toMutableList())
+        mAdapter.setDonors(data.toMutableList())
     }
 
     private fun donate() {
-        launchActivity<DonateActivity> {  }
+        launchActivity<DonateActivity>()
     }
 }
