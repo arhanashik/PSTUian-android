@@ -3,130 +3,145 @@ package com.workfort.pstuian.app.ui.home
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.text.Html
-import android.text.TextUtils
-import android.view.Menu
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.smarteist.autoimageslider.SliderLayout
-import com.smarteist.autoimageslider.SliderView
-import com.workfort.pstuian.BuildConfig
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.lifecycle.lifecycleScope
+import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
+import com.smarteist.autoimageslider.SliderAnimations
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.appconst.AppConst
+import com.workfort.pstuian.app.data.local.batch.BatchEntity
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.pref.Prefs
-import com.workfort.pstuian.databinding.ActivityHomeBinding
-import com.workfort.pstuian.databinding.PromptDonateBinding
-import com.workfort.pstuian.databinding.PromptDonationMessageBinding
-import com.workfort.pstuian.app.ui.home.donors.DonorsActivity
-import com.workfort.pstuian.app.ui.home.faculty.FacultyActivity
-import com.workfort.pstuian.app.ui.home.faculty.adapter.FacultyAdapter
-import com.workfort.pstuian.app.ui.home.faculty.listener.FacultyClickEvent
+import com.workfort.pstuian.app.data.local.slider.SliderEntity
+import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
+import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
+import com.workfort.pstuian.app.ui.common.intent.AuthIntent
+import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.donate.DonateActivity
+import com.workfort.pstuian.app.ui.donors.DonorsActivity
+import com.workfort.pstuian.app.ui.faculty.FacultyActivity
+import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
+import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
+import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
+import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
+import com.workfort.pstuian.app.ui.faculty.viewstate.BatchState
+import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
+import com.workfort.pstuian.app.ui.home.adapter.SliderAdapter
+import com.workfort.pstuian.app.ui.home.intent.HomeIntent
+import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
+import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
+import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
+import com.workfort.pstuian.app.ui.home.viewstate.SliderState
+import com.workfort.pstuian.app.ui.imagepreview.ImagePreviewActivity
+import com.workfort.pstuian.app.ui.notification.NotificationActivity
 import com.workfort.pstuian.app.ui.settings.SettingsActivity
+import com.workfort.pstuian.app.ui.signin.SignInActivity
 import com.workfort.pstuian.app.ui.splash.SplashActivity
-import com.workfort.pstuian.util.helper.LinkUtil
-import com.workfort.pstuian.util.helper.NetworkUtil
+import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
+import com.workfort.pstuian.app.ui.support.SupportActivity
+import com.workfort.pstuian.app.ui.teacherprofile.TeacherProfileActivity
+import com.workfort.pstuian.app.ui.webview.WebViewActivity
+import com.workfort.pstuian.databinding.ActivityHomeBinding
+import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.PlayStoreUtil
-import com.workfort.pstuian.util.remote.ApiClient
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import com.workfort.pstuian.util.helper.Toaster
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-class HomeActivity : AppCompatActivity() {
-    private lateinit var mBinding: ActivityHomeBinding
-    private lateinit var mViewModel: HomeViewModel
+class HomeActivity : BaseActivity<ActivityHomeBinding>() {
+    override val bindingInflater: (LayoutInflater) -> ActivityHomeBinding
+            = ActivityHomeBinding::inflate
 
-    private var disposable = CompositeDisposable()
-    private val apiService by lazy {
-        ApiClient.create()
+    override fun observeBroadcast() = Const.IntentAction.NOTIFICATION
+    override fun onBroadcastReceived(intent: Intent) {
+        handleNotificationIntent(intent)
+        checkNewNotificationState()
     }
 
+    private val mViewModel: HomeViewModel by viewModel()
+    private val mFacultyViewModel: FacultyViewModel by viewModel()
+    private val mAuthViewModel: AuthViewModel by viewModel()
+
+    private lateinit var mSliderAdapter: SliderAdapter
     private lateinit var mAdapter: FacultyAdapter
-    private var triggeredLoading = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    // mSignedInUser should be student or teacher
+    private var mSignedInUser: Any? = null
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
-        mViewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
-
+    override fun afterOnCreate(savedInstanceState: Bundle?) {
         initSlider()
         initFacultyList()
-        if(NetworkUtil.isNetworkAvailable()) loadDonationOptions()
+        setClickEvents()
 
-        val linkUtil = LinkUtil(this)
-        mBinding.tvUniversityWebsite.setOnClickListener {
-            linkUtil.openBrowser(getString(R.string.link_pstu_website))
+        observeSignedInUser()
+        observeSliders()
+        observeFaculties()
+        observeDeleteAllData()
+        lifecycleScope.launch {
+            mViewModel.intent.send(HomeIntent.GetSliders)
+            mFacultyViewModel.intent.send(FacultyIntent.GetFaculties)
         }
-        mBinding.tvDonationList.setOnClickListener {
-            startActivity(Intent(this, DonorsActivity::class.java))
-        }
-        mBinding.tvGradingSystem.setOnClickListener { showGrading() }
-        mBinding.tvAdmissionSeatPlan.setOnClickListener {
-            linkUtil.openBrowser(getString(R.string.link_pstu_seat_plan))
-        }
-        mBinding.tvAdmissionHelp.setOnClickListener {
-            linkUtil.openBrowser(getString(R.string.link_pstu_help_line))
-        }
-        mBinding.btnDonate.setOnClickListener { donate() }
-        mBinding.btnRateApp.setOnClickListener {
-            PlayStoreUtil(this).rateMyApp(this, BuildConfig.APPLICATION_ID)
-        }
-        mBinding.btnClearData.setOnClickListener { clearData() }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_home, menu)
+    override fun onResume() {
+        super.onResume()
+        /**
+         * For some weird reason, the sign in user gets loaded. But after the faculties are
+         * loaded the user is gone :D. So, for now, calling this function again after the
+         * faculties are loaded
+         * */
+        loadSignInUser()
 
-        return super.onCreateOptionsMenu(menu)
+        /**
+         * Check if there is any new notification
+         * */
+        checkNewNotificationState()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            R.id.action_about -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-            }
+    private fun loadSignInUser() {
+        lifecycleScope.launch {
+            mAuthViewModel.intent.send(AuthIntent.GetSignInUser)
         }
+    }
 
-        return super.onOptionsItemSelected(item)
+    private fun checkNewNotificationState() {
+        binding.btnNotification.setImageResource(
+            if(Prefs.hasNewNotification) R.drawable.ic_bell_badge_filled_primary
+            else R.drawable.ic_bell_filled
+        )
     }
 
     private fun initSlider() {
-        if(mViewModel.getSliders().isEmpty()) {
-            if(NetworkUtil.isNetworkAvailable()) loadSliders(true)
-        }else {
-            mBinding.imageSlider.setIndicatorAnimation(SliderLayout.Animations.DROP)
-            //set indicator animation by using SliderLayout.Animations. :WORM or THIN_WORM
-            // or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-            mBinding.imageSlider.scrollTimeInSec = 2
-
-            mViewModel.getSliders().forEach {
-                    slider ->
-                val sliderView = SliderView(this)
-
-                sliderView.imageUrl = slider.imageUrl
-                sliderView.setImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                sliderView.setDescription(slider.title)
-
-                sliderView.setOnSliderClickListener {
-                    Toast.makeText(
-                        this@HomeActivity, slider.title, Toast.LENGTH_SHORT
-                    ).show()
+        mSliderAdapter = SliderAdapter(object : ItemClickEvent<SliderEntity> {
+            override fun onClickItem(item: SliderEntity) {
+                if(!item.imageUrl.isNullOrEmpty()) {
+                    val intent = Intent(this@HomeActivity,
+                        ImagePreviewActivity::class.java)
+                    intent.putExtra(Const.Key.URL, item.imageUrl)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                            getString(R.string.transition_image_preview))
+                    }
+                    startActivity(intent)
                 }
-
-                mBinding.imageSlider.addSliderView(sliderView)
             }
-
-            if(NetworkUtil.isNetworkAvailable()) loadSliders(false)
+        })
+        with(binding.imageSlider) {
+            setSliderAdapter(mSliderAdapter)
+            //set indicator animation by using SliderLayout.IndicatorAnimations.
+            //WORM/THIN_WORM/COLOR/DROP/FILL/NONE/SCALE/SCALE_DOWN/SLIDE/SWAP
+            setIndicatorAnimation(IndicatorAnimationType.FILL)
+            setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
+            startAutoCycle()
         }
     }
 
@@ -135,213 +150,270 @@ class HomeActivity : AppCompatActivity() {
         mAdapter.setListener(object : FacultyClickEvent {
             override fun onClickFaculty(faculty: FacultyEntity) {
                 val intent = Intent(this@HomeActivity, FacultyActivity::class.java)
-                intent.putExtra(AppConst.Key.FACULTY, faculty)
+                intent.putExtra(Const.Key.FACULTY, faculty)
                 startActivity(intent)
             }
         })
 
-        mBinding.rvFaculties.setHasFixedSize(true)
-        mBinding.rvFaculties.layoutManager = LinearLayoutManager(this)
-        mBinding.rvFaculties.adapter = mAdapter
+        binding.rvFaculties.setHasFixedSize(true)
+        binding.rvFaculties.adapter = mAdapter
+    }
 
-        mViewModel.getFaculties().observe(this, Observer {
-            if (it.isEmpty()) {
-                if(NetworkUtil.isNetworkAvailable()) loadFaculties(true)
-                else showToast(getString(R.string.internet_not_available_exception))
-            } else {
-                mAdapter.setFaculties(it.toMutableList())
-                if (!triggeredLoading && NetworkUtil.isNetworkAvailable()) {
-                    triggeredLoading = true
-                    loadFaculties(false)
-                }
+    private fun setClickEvents() {
+        val playStoreUtil = PlayStoreUtil(this@HomeActivity)
+        with(binding) {
+            btnSignInSignUp.setOnClickListener {
+                launchActivity<SignInActivity> {  }
             }
-        })
-    }
-
-    private fun loadSliders(loadFresh: Boolean) {
-        disposable.add(apiService.loadSliders()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                if (it.success) {
-                    mViewModel.insertSliders(it.sliders)
-                    if(loadFresh) initSlider()
-                } else {
-                    if(loadFresh)
-                        Toast.makeText(
-                            this@HomeActivity, it.message, Toast.LENGTH_SHORT
-                        ).show()
-                }
-            }, {
-                Timber.e(it)
-            })
-        )
-    }
-
-    private fun loadFaculties(loadFresh: Boolean) {
-        if (loadFresh) {
-            mBinding.loader.visibility = View.VISIBLE
-            mBinding.rvFaculties.visibility = View.INVISIBLE
-            mBinding.tvMessage.visibility = View.INVISIBLE
+            btnAccount.setOnClickListener { mSignedInUser?.let { gotoUserProfile(it) }}
+            btnNotification.setOnClickListener { launchActivity<NotificationActivity>() }
+            cardUniversityWebsite.setOnClickListener {
+                launchActivity<WebViewActivity>(
+                    Pair(Const.Key.URL, getString(R.string.link_pstu_website)))
+            }
+            cardDonationList.setOnClickListener { launchActivity<DonorsActivity> {  } }
+            cardAdmissionSupport.setOnClickListener {
+                launchActivity<WebViewActivity>(
+                    Pair(Const.Key.URL, Const.Remote.ADMISSION_SUPPORT))
+            }
+            cardHelp.setOnClickListener { launchActivity<SupportActivity>() }
+            btnDonate.setOnClickListener { launchActivity<DonateActivity>() }
+            btnRateApp.setOnClickListener { playStoreUtil.openStore() }
+            btnClearData.setOnClickListener { clearData() }
+            btnBlood.setOnClickListener { Toaster.show(getString(R.string.txt_coming_soon)) }
+            btnCheckIn.setOnClickListener { Toaster.show(getString(R.string.txt_coming_soon)) }
+            btnSettings.setOnClickListener { launchActivity<SettingsActivity>() }
         }
+    }
 
-        disposable.add(
-            apiService.loadFaculties()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (loadFresh) mBinding.loader.visibility = View.INVISIBLE
-                    if (it.success) {
-                        if (it.faculties.isNotEmpty()) {
-                            if (loadFresh) mBinding.rvFaculties.visibility = View.VISIBLE
-                            mViewModel.insertFaculties(it.faculties)
-                        } else {
-                            if (loadFresh) mBinding.tvMessage.visibility = View.VISIBLE
+    private fun observeSignedInUser() {
+        lifecycleScope.launch {
+            mAuthViewModel.signInUserState.collect {
+                when (it) {
+                    is SignInUserState.Idle -> {
+                    }
+                    is SignInUserState.Loading -> {
+                        binding.btnSignInSignUp.visibility = View.GONE
+                        binding.btnAccount.visibility = View.GONE
+                    }
+                    is SignInUserState.User -> {
+                        with(binding) {
+                            mSignedInUser = it.user
+                            btnSignInSignUp.visibility = View.GONE
+                            btnAccount.visibility = View.VISIBLE
+                            val imageUrl = when(it.user) {
+                                is StudentEntity -> it.user.imageUrl
+                                is TeacherEntity -> it.user.imageUrl
+                                else -> null
+                            }
+                            if(imageUrl.isNullOrEmpty()) {
+                                btnAccount.load(R.drawable.img_placeholder_profile)
+                            } else {
+                                btnAccount.load(imageUrl) {
+                                    placeholder(R.drawable.img_placeholder_profile)
+                                    error(R.drawable.img_placeholder_profile)
+                                }
+                            }
                         }
-                    }else {
-                        if(loadFresh) mBinding.tvMessage.visibility = View.VISIBLE
                     }
-                }, {
-                    Timber.e(it)
-                    if (loadFresh) {
-                        mBinding.loader.visibility = View.INVISIBLE
-                        mBinding.tvMessage.visibility = View.VISIBLE
-                        showToast(it.message.toString())
+                    is SignInUserState.Error -> {
+                        binding.btnSignInSignUp.visibility = View.VISIBLE
+                        binding.btnAccount.visibility = View.GONE
+                        Timber.e(it.error)
                     }
-                })
-        )
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showGrading() {
-        val dialog = AlertDialog.Builder(this)
-            .setTitle(getString(R.string.label_grading_system))
-            .setMessage(getString(R.string.grading_system))
-            .setPositiveButton(getString(R.string.label_got_it)){
-                dialog, _ -> dialog.dismiss()
-            }
-            .create()
-
-        dialog.show()
-    }
-
-    private fun donate() {
-        val donationMessage = DataBindingUtil.inflate<PromptDonationMessageBinding>(
-            layoutInflater, R.layout.prompt_donation_message, null, false)
-
-        val alertDialog = AlertDialog.Builder(this)
-            .setView(donationMessage.root)
-            .create()
-
-        donationMessage.btnDonate.setOnClickListener {
-            alertDialog.dismiss()
-            showDonationOption()
-        }
-
-        alertDialog.show()
-    }
-
-    private fun showDonationOption() {
-        val donationView = DataBindingUtil.inflate<PromptDonateBinding>(
-            layoutInflater, R.layout.prompt_donate, null, false)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            donationView.tvDonationInfo.text = Html.fromHtml(Prefs.donateOption,
-                Html.FROM_HTML_MODE_LEGACY)
-        } else {
-            donationView.tvDonationInfo.text = Html.fromHtml(Prefs.donateOption)
-        }
-
-        donationView.btnSaveDonation.setOnClickListener { }
-
-        val alertDialog = AlertDialog.Builder(this)
-            .setView(donationView.root)
-            .create()
-
-        donationView.btnSaveDonation.setOnClickListener {
-            if(NetworkUtil.isNetworkAvailable()) {
-                val name = donationView.donationName.text.toString()
-                val info = donationView.donationInfo.text.toString()
-                val email = donationView.donationEmail.text.toString()
-                val reference = donationView.donationReference.text.toString()
-
-                saveDonation(name, info, email, reference, alertDialog)
-            }else {
-                showToast(getString(R.string.internet_not_available_exception))
+                }
             }
         }
-
-        alertDialog.show()
     }
 
-    private fun loadDonationOptions() {
-        disposable.add(
-            apiService.loadDonationOption()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (it.success) {
-                        Prefs.donateOption = it.donationOption
+    private fun observeSliders() {
+        lifecycleScope.launch {
+            mViewModel.sliderState.collect {
+                when (it) {
+                    is SliderState.Idle -> {
                     }
-                }, {
-                    Timber.e(it)
-                })
-        )
-    }
-
-    private fun saveDonation(name: String, info: String, email: String, reference: String,
-                             dialog: AlertDialog) {
-        if(TextUtils.isEmpty(name) || TextUtils.isEmpty(info) || TextUtils.isEmpty(email)
-            || TextUtils.isEmpty(reference)) {
-            showToast(getString(R.string.required_field_missing_exception))
-            return
-        }else {
-            showToast(getString(R.string.saving_donation_message))
+                    is SliderState.Loading -> {
+                        binding.sliderLoader.visibility = View.VISIBLE
+                        binding.imageSlider.visibility = View.INVISIBLE
+                    }
+                    is SliderState.Sliders -> {
+                        binding.sliderLoader.visibility = View.GONE
+                        binding.imageSlider.visibility = View.VISIBLE
+                        renderSliders(it.sliders)
+                    }
+                    is SliderState.Error -> {
+                        binding.sliderLoader.visibility = View.GONE
+                        binding.imageSlider.visibility = View.INVISIBLE
+                        Timber.e(it.error ?: "Can't load sliders")
+                    }
+                }
+            }
         }
+    }
 
-        disposable.add(
-            apiService.saveDonation(name, info, email, reference)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    dialog.dismiss()
-                    showToast(it.message)
-                    if (it.success) {
-                        Prefs.donationId = it.donationId
+    private fun renderSliders(sliders: List<SliderEntity>) {
+        mSliderAdapter.setItems(sliders.toMutableList())
+    }
+
+    private fun observeFaculties() {
+        val constraintLayout = findViewById<ConstraintLayout>(R.id.root_layout)
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(constraintLayout)
+        lifecycleScope.launch {
+            mFacultyViewModel.facultyState.collect {
+                when (it) {
+                    is FacultyState.Idle -> {
                     }
-                }, {
-                    Timber.e(it)
-                    dialog.dismiss()
-                    showToast(it.message.toString())
-                })
-        )
+                    is FacultyState.Loading -> {
+                        constraintSet.connect(
+                            R.id.tv_information_title,
+                            ConstraintSet.TOP,
+                            R.id.shimmer_layout,
+                            ConstraintSet.BOTTOM,
+                            0
+                        )
+                        constraintSet.applyTo(constraintLayout)
+                        binding.shimmerLayout.visibility = View.VISIBLE
+                        binding.shimmerLayout.startShimmer()
+                        binding.rvFaculties.visibility = View.GONE
+                        binding.tvMessage.visibility = View.GONE
+                    }
+                    is FacultyState.Faculties -> {
+                        constraintSet.connect(
+                            R.id.tv_information_title,
+                            ConstraintSet.TOP,
+                            R.id.rv_faculties,
+                            ConstraintSet.BOTTOM,
+                            0
+                        )
+                        constraintSet.applyTo(constraintLayout)
+                        binding.shimmerLayout.stopShimmer()
+                        binding.shimmerLayout.visibility = View.GONE
+                        binding.tvMessage.visibility = View.GONE
+                        binding.rvFaculties.visibility = View.VISIBLE
+                        renderFaculties(it.faculties)
+                        /**
+                         * For some weird reason, the sign in user gets loaded. But after the
+                         * faculties are loaded the user is gone :D. So, for now, calling this
+                         * function again after the faculties are loaded
+                         * */
+                        loadSignInUser()
+                    }
+                    is FacultyState.Error -> {
+                        constraintSet.connect(
+                            R.id.tv_information_title,
+                            ConstraintSet.TOP,
+                            R.id.tv_message,
+                            ConstraintSet.BOTTOM,
+                            0
+                        )
+                        constraintSet.applyTo(constraintLayout)
+                        binding.tvMessage.visibility = View.VISIBLE
+                        binding.shimmerLayout.stopShimmer()
+                        binding.shimmerLayout.visibility = View.GONE
+                        binding.rvFaculties.visibility = View.GONE
+                        Timber.e("Can't load data")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun renderFaculties(faculties: List<FacultyEntity>) {
+        mAdapter.setFaculties(faculties.toMutableList())
     }
 
     private fun clearData() {
-        val alertDialog = AlertDialog.Builder(this)
+        val alertDialog = MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.label_are_you_sure))
             .setMessage(getString(R.string.data_clear_message))
-            .setPositiveButton(getString(R.string.label_clear_data)) {
-                    dialog, _ ->
+            .setPositiveButton(getString(R.string.label_clear_data)) { dialog, _ ->
                 dialog.dismiss()
-                if(mViewModel.clearAllData()) {
-                    finishAffinity()
-                    startActivity(Intent(this, SplashActivity::class.java))
+                lifecycleScope.launch {
+                    mViewModel.intent.send(HomeIntent.DeleteAllData)
                 }
             }
-            .setNegativeButton(getString(R.string.label_cancel)) {
-                    dialog, _ -> dialog.dismiss()
+            .setNegativeButton(getString(R.string.label_cancel)) { dialog, _ -> dialog.dismiss()
             }
             .create()
 
         alertDialog.show()
     }
 
-    override fun onDestroy() {
-        disposable.dispose()
-        super.onDestroy()
+    private fun observeDeleteAllData() {
+        lifecycleScope.launch {
+            mViewModel.deleteAllDataState.collect {
+                when (it) {
+                    is DeleteAllState.Idle -> Unit
+                    is DeleteAllState.Loading -> Unit
+                    is DeleteAllState.Success -> {
+                        finishAffinity()
+                        startActivity(
+                            Intent(
+                                this@HomeActivity,
+                                SplashActivity::class.java
+                            )
+                        )
+                    }
+                    is DeleteAllState.Error -> {
+                        Toaster.show(it.error ?: "Deletion failed!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun gotoUserProfile(user: Any) {
+        when(user) {
+            is StudentEntity -> loadBatch(user)
+            is TeacherEntity -> openTeacherProfile(user)
+        }
+    }
+
+    private fun loadBatch(student: StudentEntity) {
+        observeBatch(student)
+        mFacultyViewModel.getBatch(student.batchId)
+    }
+
+    private fun observeBatch(student: StudentEntity) {
+        lifecycleScope.launch {
+            mFacultyViewModel.batchState.collect {
+                when (it) {
+                    is BatchState.Idle -> Unit
+                    is BatchState.Loading -> Unit
+                    is BatchState.Batch -> {
+                        openStudentProfile(it.batch, student)
+                    }
+                    is BatchState.Error -> {
+                        Toaster.show(it.error ?: "Failed to open profile!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openStudentProfile(batch: BatchEntity, student: StudentEntity) {
+        var faculty: FacultyEntity? = null
+        mAdapter.getItems().filter { it.id == student.facultyId }.also {
+            if(!it.isNullOrEmpty()) faculty = it[0]
+        }
+        val intent = Intent(this, StudentProfileActivity::class.java).apply {
+            putExtra(Const.Key.FACULTY, faculty)
+            putExtra(Const.Key.BATCH, batch)
+            putExtra(Const.Key.STUDENT, student)
+        }
+        startActivity(intent)
+    }
+
+    private fun openTeacherProfile(teacher: TeacherEntity) {
+        var faculty: FacultyEntity? = null
+        mAdapter.getItems().filter { it.id == teacher.facultyId }.also {
+            if(!it.isNullOrEmpty()) faculty = it[0]
+        }
+        val intent = Intent(this, TeacherProfileActivity::class.java).apply {
+            putExtra(Const.Key.FACULTY, faculty)
+            putExtra(Const.Key.TEACHER, teacher)
+        }
+        startActivity(intent)
     }
 }

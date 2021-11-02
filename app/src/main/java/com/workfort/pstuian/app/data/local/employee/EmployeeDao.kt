@@ -12,18 +12,18 @@ interface EmployeeDao {
     fun getAllLive(): LiveData<List<EmployeeEntity>>
 
     @Query("SELECT * FROM " + TableNames.EMPLOYEE
-            + " WHERE " + ColumnNames.Employee.FACULTY + "=:faculty"
+            + " WHERE " + ColumnNames.Employee.FACULTY_ID + "=:facultyId"
             + " ORDER BY " + ColumnNames.Employee.NAME + " ASC")
-    fun getAllLive(faculty: String): LiveData<List<EmployeeEntity>>
+    fun getAllLive(facultyId: Int): LiveData<List<EmployeeEntity>>
 
     @Query("SELECT * FROM " + TableNames.EMPLOYEE
             + " ORDER BY " + ColumnNames.Employee.NAME + " ASC")
     fun getAll(): List<EmployeeEntity>
 
     @Query("SELECT * FROM " + TableNames.EMPLOYEE
-            + " WHERE " + ColumnNames.Employee.FACULTY + "=:faculty"
+            + " WHERE " + ColumnNames.Employee.FACULTY_ID + "=:facultyId"
             + " ORDER BY " + ColumnNames.Employee.NAME + " ASC")
-    fun getAll(faculty: String): List<EmployeeEntity>
+    suspend fun getAll(facultyId: Int): List<EmployeeEntity>
 
     @Query("SELECT * FROM " + TableNames.EMPLOYEE
             + " WHERE " + ColumnNames.Employee.ID + "=:id LIMIT 1")
@@ -33,7 +33,7 @@ interface EmployeeDao {
     fun insert(employeeEntity: EmployeeEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(employeeEntities: List<EmployeeEntity>)
+    suspend fun insertAll(entities: List<EmployeeEntity>)
 
     @Update
     fun update(employeeEntity: EmployeeEntity)
@@ -42,9 +42,9 @@ interface EmployeeDao {
     fun delete(employeeEntity: EmployeeEntity)
 
     @Query("DELETE FROM " + TableNames.EMPLOYEE
-            + " WHERE " + ColumnNames.Employee.FACULTY + "=:faculty")
-    fun deleteAll(faculty: String)
+            + " WHERE " + ColumnNames.Employee.FACULTY_ID + "=:faculty")
+    suspend fun deleteAll(faculty: String)
 
     @Query("DELETE FROM " + TableNames.EMPLOYEE)
-    fun deleteAll()
+    suspend fun deleteAll()
 }

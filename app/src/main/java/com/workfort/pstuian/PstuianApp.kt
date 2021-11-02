@@ -5,18 +5,25 @@ import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import com.workfort.pstuian.app.data.local.database.AppDatabase
 import com.workfort.pstuian.app.data.local.pref.Prefs
+import com.workfort.pstuian.util.lib.koin.repositoryModule
+import com.workfort.pstuian.util.lib.koin.networkModule
+import com.workfort.pstuian.util.lib.koin.viewModelModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.logger.Level
 import timber.log.Timber
 
-/*
-*  ****************************************************************************
-*  * Created by : Arhan Ashik on 12/11/2018 at 4:18 PM.
-*  * Email : ashik.pstu.cse@gmail.com
-*  * 
-*  * Last edited by : Arhan Ashik on 12/11/2018.
-*  * 
-*  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>  
-*  ****************************************************************************
-*/
+/**
+ *  ****************************************************************************
+ *  * Created by : Arhan Ashik on 12/11/2018 at 4:18 PM.
+ *  * Email : ashik.pstu.cse@gmail.com
+ *  *
+ *  * Last edited by : Arhan Ashik on 12/11/2018.
+ *  *
+ *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
+ *  ****************************************************************************
+ */
 
 class PstuianApp  : MultiDexApplication() {
     init {
@@ -33,15 +40,26 @@ class PstuianApp  : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+        triggerKoin()
         if (applicationContext != null) {
             if (BuildConfig.DEBUG) {
-                initiateOnlyInDebugMode()
+                plantTimber()
             }
-            initiate(applicationContext)
+            initDb(applicationContext)
         }
     }
 
-    private fun initiateOnlyInDebugMode() {
+    //trigger di library koin
+    private fun triggerKoin() {
+        startKoin {
+            androidContext(this@PstuianApp)
+            androidLogger(Level.DEBUG)
+            modules(viewModelModule, networkModule, repositoryModule)
+        }
+    }
+
+    private fun plantTimber() {
         Timber.plant(object : Timber.DebugTree() {
             override fun createStackElementTag(element: StackTraceElement): String? {
                 return super.createStackElementTag(element) +
@@ -50,7 +68,7 @@ class PstuianApp  : MultiDexApplication() {
         })
     }
 
-    private fun initiate(context: Context) {
+    private fun initDb(context: Context) {
         Prefs.init(context)
         AppDatabase.getDatabase()
     }

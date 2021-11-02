@@ -12,39 +12,39 @@ interface TeacherDao {
     fun getAllLive(): LiveData<List<TeacherEntity>>
 
     @Query("SELECT * FROM " + TableNames.TEACHER
-            + " WHERE " + ColumnNames.Teacher.FACULTY + "=:faculty"
+            + " WHERE " + ColumnNames.Teacher.FACULTY_ID + "=:faculty"
             + " ORDER BY " + ColumnNames.Teacher.NAME + " ASC")
     fun getAllLive(faculty: String): LiveData<List<TeacherEntity>>
 
     @Query("SELECT * FROM " + TableNames.TEACHER
             + " ORDER BY " + ColumnNames.Teacher.NAME + " ASC")
-    fun getAll(): List<TeacherEntity>
+    suspend fun getAll(): List<TeacherEntity>
 
     @Query("SELECT * FROM " + TableNames.TEACHER
-            + " WHERE " + ColumnNames.Teacher.FACULTY + "=:faculty"
+            + " WHERE " + ColumnNames.Teacher.FACULTY_ID + "=:facultyId"
             + " ORDER BY " + ColumnNames.Teacher.NAME + " ASC")
-    fun getAll(faculty: String): List<TeacherEntity>
+    suspend fun getAll(facultyId: Int): List<TeacherEntity>
 
     @Query("SELECT * FROM " + TableNames.TEACHER
             + " WHERE " + ColumnNames.Teacher.ID + "=:id LIMIT 1")
-    fun get(id: String): TeacherEntity
+    suspend fun get(id: String): TeacherEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(teacherEntity: TeacherEntity)
+    suspend fun insert(teacherEntity: TeacherEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(teacherEntities: List<TeacherEntity>)
+    suspend fun insertAll(entities: List<TeacherEntity>)
 
     @Update
-    fun update(teacherEntity: TeacherEntity)
+    suspend fun update(teacherEntity: TeacherEntity)
 
     @Delete
-    fun delete(teacherEntity: TeacherEntity)
+    suspend fun delete(teacherEntity: TeacherEntity)
 
     @Query("DELETE FROM " + TableNames.TEACHER
-            + " WHERE " + ColumnNames.Teacher.FACULTY + "=:faculty")
-    fun deleteAll(faculty: String)
+            + " WHERE " + ColumnNames.Teacher.FACULTY_ID + "=:faculty")
+    suspend fun deleteAll(faculty: String)
 
     @Query("DELETE FROM " + TableNames.TEACHER)
-    fun deleteAll()
+    suspend fun deleteAll()
 }

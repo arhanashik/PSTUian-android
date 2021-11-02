@@ -21,6 +21,18 @@ object Prefs : PrefProp {
         get() = prefs.getBoolean(keyFirstRun, false)
         set(value) = prefs.edit { it.putBoolean(keyFirstRun, value) }
 
+    var deviceId: String?
+        get() = prefs.getString(keyDeviceId, "")
+        set(value) = prefs.edit { it.putString(keyDeviceId, value) }
+
+    var fcmToken: String?
+        get() = prefs.getString(keyFcmToken, "")
+        set(value) = prefs.edit { it.putString(keyFcmToken, value) }
+
+    var authToken: String?
+        get() = prefs.getString(keyAuthToken, "")
+        set(value) = prefs.edit { it.putString(keyAuthToken, value) }
+
     var donateOption: String?
         get() = prefs.getString(keyDonateOption, "")
         set(value) = prefs.edit { it.putString(keyDonateOption, value) }
@@ -28,6 +40,10 @@ object Prefs : PrefProp {
     var donationId: String?
         get() = prefs.getString(keyDonationId, "")
         set(value) = prefs.edit { it.putString(keyDonationId, value) }
+
+    var hasNewNotification: Boolean
+        get() = prefs.getBoolean(keyHasNewNotification, false)
+        set(value) = prefs.edit { it.putBoolean(keyHasNewNotification, value) }
 
     fun clear() {
         prefs.edit().clear().apply()

@@ -12,28 +12,28 @@ interface BatchDao {
     fun getAllLive(): LiveData<List<BatchEntity>>
 
     @Query("SELECT * FROM " + TableNames.BATCH
-            + " WHERE " + ColumnNames.Batch.FACULTY + "=:faculty"
+            + " WHERE " + ColumnNames.Batch.FACULTY_ID + "=:facultyId"
             + " ORDER BY " + ColumnNames.Batch.SESSION + " ASC")
-    fun getAllLive(faculty: String): LiveData<List<BatchEntity>>
+    fun getAllLive(facultyId: Int): LiveData<List<BatchEntity>>
 
     @Query("SELECT * FROM " + TableNames.BATCH
             + " ORDER BY " + ColumnNames.Batch.SESSION + " ASC")
-    fun getAll(): List<BatchEntity>
+    suspend fun getAll(): List<BatchEntity>
 
     @Query("SELECT * FROM " + TableNames.BATCH
-            + " WHERE " + ColumnNames.Batch.FACULTY + "=:faculty"
+            + " WHERE " + ColumnNames.Batch.FACULTY_ID + "=:facultyId"
             + " ORDER BY " + ColumnNames.Batch.SESSION + " ASC")
-    fun getAll(faculty: String): List<BatchEntity>
+    suspend fun getAll(facultyId: Int): List<BatchEntity>
 
     @Query("SELECT * FROM " + TableNames.BATCH
-            + " WHERE " + ColumnNames.Batch.SESSION + "=:session LIMIT 1")
-    fun get(session: String): BatchEntity
+            + " WHERE " + ColumnNames.Batch.ID + "=:id")
+    suspend fun get(id: Int): BatchEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(batchEntity: BatchEntity)
+    suspend fun insert(batchEntity: BatchEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(batchEntities: List<BatchEntity>)
+    suspend fun insertAll(entities: List<BatchEntity>)
 
     @Update
     fun update(batchEntity: BatchEntity)
@@ -42,9 +42,9 @@ interface BatchDao {
     fun delete(batchEntity: BatchEntity)
 
     @Query("DELETE FROM " + TableNames.BATCH
-            + " WHERE " + ColumnNames.Batch.FACULTY + "=:faculty")
-    fun deleteAll(faculty: String)
+            + " WHERE " + ColumnNames.Batch.FACULTY_ID + "=:faculty")
+    suspend fun deleteAll(faculty: String)
 
     @Query("DELETE FROM " + TableNames.BATCH)
-    fun deleteAll()
+    suspend fun deleteAll()
 }

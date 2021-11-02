@@ -5,7 +5,102 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.27076923076923076" />
+        <entry key="app/src/main/res/drawable/bg_circle.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/bg_divider_txt.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/btn_bg_default.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/btn_bg_pressed.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/btn_bg_selector.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_account_heart_outline.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_arrow_up.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_bell_badge_filled.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_bell_badge_filled_primary_color.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_bell_filled.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_bell_filled_primary.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_blood_drop.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_check_circuler_outline.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_close.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_export.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_hand_heart.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_hand_heart_primary.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_location.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_newspaper.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_newspaper_primary.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_pencil_circuler_outline.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_reload.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_sign_in.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/shape_rectangle.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/slider_bg_overlay.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/layout-v21/activity_profile_content.xml" value="0.2484375" />
+        <entry key="app/src/main/res/layout/activity_donate.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_donate_content.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_donors.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_edit_profile_content.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_edit_teacher_profile.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_edit_teacher_profile_content.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_edit_techer_profile.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_employee_profile.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/activity_faculty.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/activity_forgot_password.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/activity_forgot_password_content.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_help.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_image_preview.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_notification.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_profile_content.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/activity_settings_content.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_sign_in_content.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_student_profile.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_students.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_teacher_profile.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_teacher_sign_up.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_web_view.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/content_donate.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/content_edit_profile.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/content_help.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/fragment_batches.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/fragment_course_schedule.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/fragment_employees.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/fragment_profile_pager_item.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_teachers.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/item_information.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/item_slider.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/layout_appbar_profile.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/layout_loader_overlay.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/layout_web_error.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_change_bio.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_change_cv.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_change_name.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_change_password.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_donate.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/prompt_donation_message.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_pro_pic_change.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_select_user_type.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_student_details.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_success.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/row_donor_shimmer.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_dropdown_item.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_faculty.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/row_faculty_shimmer.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/row_notification.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_notification_shimmer.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_student_shimmer.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/row_teacher.xml" value="0.15537459283387622" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

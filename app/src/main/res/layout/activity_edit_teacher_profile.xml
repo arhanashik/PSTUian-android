@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:fitsSystemWindows="true"
+            app:elevation="0dp"
+            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
+
+        <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/backgroundColor"
+                android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include
+                android:id="@+id/content"
+                layout="@layout/activity_edit_teacher_profile_content"/>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/btn_save_changes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_space"
+            android:layout_gravity="bottom|end"
+            android:text="@string/txt_save_changes"
+            app:icon="@drawable/ic_check_circle_outline"
+            app:backgroundTint="?attr/backgroundColor"/>
+
+    <View
+            android:id="@+id/loader_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorDarkOverlay"
+            android:visibility="gone"/>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loader"
+            style="@style/Widget.App.CircularProgressIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            tools:progress="50"
+            android:visibility="gone"/>
+
+    <TextView
+            android:id="@+id/label_saving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp100"
+            android:text="@string/txt_please_wait"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:singleLine="true"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

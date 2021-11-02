@@ -8,4 +8,5 @@ public interface TableNames {
     String BATCH = "batch";
     String EMPLOYEE = "employee";
     String COURSE_SCHEDULE = "course_schedule";
+    String CONFIG = "config";
 }
