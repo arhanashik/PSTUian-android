@@ -206,7 +206,7 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                 when(item.action) {
                     ProfileInfoAction.CALL -> { promptCall(item.actionData) }
                     ProfileInfoAction.MAIL -> { promptEmail(item.actionData) }
-                    ProfileInfoAction.LINK -> item.actionData?.let { openLink(it) }
+                    ProfileInfoAction.LINK -> openLink(item.actionData)
                     else -> Unit
                 }
             }
@@ -567,12 +567,11 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
             .show()
     }
 
-    private fun openLink(link: String) {
-        if(!link.startsWith("http://") || link.startsWith("https://")) {
-            Toaster.show("Invalid link")
+    private fun openLink(link: String?) {
+        if(link.isNullOrEmpty()) {
+            Toaster.show("Invalid Link")
             return
         }
-
         if(link.contains("linkedin.com") || link.contains("facebook.com")) {
             mLinkUtil.openBrowser(link)
         } else {
