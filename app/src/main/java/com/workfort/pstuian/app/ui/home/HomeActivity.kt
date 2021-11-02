@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.lifecycleScope
@@ -176,22 +175,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 launchActivity<WebViewActivity>(
                     Pair(Const.Key.URL, getString(R.string.link_pstu_website)))
             }
-            cardDonationList.setOnClickListener {
-                launchActivity<DonorsActivity> {  }
-            }
-            cardGradingSystem.setOnClickListener { showGrading() }
-            cardAdmissionSeatPlan.setOnClickListener {
-                playStoreUtil.openStore(getString(R.string.app_id_pstu_seat_plan))
-            }
-            cardAdmissionHelp.setOnClickListener {
-                playStoreUtil.openStore(getString(R.string.app_id_pstu_help_line))
+            cardDonationList.setOnClickListener { launchActivity<DonorsActivity> {  } }
+            cardAdmissionSupport.setOnClickListener {
+                launchActivity<WebViewActivity>(
+                    Pair(Const.Key.URL, Const.Remote.ADMISSION_SUPPORT))
             }
             cardHelp.setOnClickListener { launchActivity<SupportActivity>() }
             btnDonate.setOnClickListener { launchActivity<DonateActivity>() }
-            btnRateApp.setOnClickListener {
-                playStoreUtil.openStore()
-            }
+            btnRateApp.setOnClickListener { playStoreUtil.openStore() }
             btnClearData.setOnClickListener { clearData() }
+            btnBlood.setOnClickListener { Toaster.show(getString(R.string.txt_coming_soon)) }
+            btnCheckIn.setOnClickListener { Toaster.show(getString(R.string.txt_coming_soon)) }
             btnSettings.setOnClickListener { launchActivity<SettingsActivity>() }
         }
     }
@@ -331,17 +325,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     private fun renderFaculties(faculties: List<FacultyEntity>) {
         mAdapter.setFaculties(faculties.toMutableList())
-    }
-
-    private fun showGrading() {
-        val dialog = AlertDialog.Builder(this)
-            .setTitle(getString(R.string.label_grading_system))
-            .setMessage(getString(R.string.grading_system))
-            .setPositiveButton(getString(R.string.label_got_it)){ dialog, _ -> dialog.dismiss()
-            }
-            .create()
-
-        dialog.show()
     }
 
     private fun clearData() {

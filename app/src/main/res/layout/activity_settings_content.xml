@@ -17,7 +17,8 @@
         <TextView
                 style="@style/TvInformation"
                 android:textColor="@android:color/black"
-                android:text="@string/about_it"/>
+                android:text="@string/about_it"
+                android:gravity="center"/>
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
@@ -40,7 +41,8 @@
                     android:layout_marginEnd="@dimen/space_10dp"
                     android:text="@string/donation_request_message"
                     android:textStyle="normal"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white"
+                    android:gravity="center"/>
 
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_donate"
@@ -63,7 +65,8 @@
                 style="@style/TvInformation"
                 android:textColor="@android:color/black"
                 android:text="@string/data_load_policy"
-                android:textStyle="normal" />
+                android:textStyle="normal"
+                android:gravity="center"/>
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
@@ -81,7 +84,8 @@
             <TextView
                     style="@style/TvInformation"
                     android:textColor="@android:color/black"
-                    android:text="@string/dev_team"/>
+                    android:text="@string/dev_team"
+                    android:gravity="center"/>
 
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_contact_us"

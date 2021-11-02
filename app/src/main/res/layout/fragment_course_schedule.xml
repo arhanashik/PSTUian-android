@@ -22,7 +22,7 @@
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_data_found_exception"
+            android:text="@string/no_data_found_error"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:visibility="gone"
             tools:visibility="gone"

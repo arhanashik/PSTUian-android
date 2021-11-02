@@ -94,15 +94,17 @@ object Const {
 
     object Remote {
         private const val LOCAL_SERVER = "http://192.168.1.100:8888/PSTUian-web/"
+        private const val DEV_SERVER = "https://dev.pstuian.com/"
         private const val LIVE_SERVER = "https://pstuian.com/"
-        private val BASE_URL = if(BuildConfig.DEBUG) LOCAL_SERVER else LIVE_SERVER
-        val TERMS_AND_CONDITIONS = "${BASE_URL}terms_and_conditions.php"
-        val PRIVACY_POLICY = "${BASE_URL}privacy_policy.php"
-
         private const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/mobile/v1/"
         private const val DEV_API_SERVER = "https://api-dev.pstuian.com/mobile/v1/"
         private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
+
+        private val BASE_URL = if(BuildConfig.DEBUG) LOCAL_SERVER else LIVE_SERVER
         val BASE_API_URL = if(BuildConfig.DEBUG) LOCAL_API_SERVER else LIVE_API_SERVER
+        val TERMS_AND_CONDITIONS = "${BASE_URL}terms_and_conditions.php"
+        val PRIVACY_POLICY = "${BASE_URL}privacy_policy.php"
+        val ADMISSION_SUPPORT = "${BASE_URL}admission_support.php"
 
         private const val CONFIG_API_PATH = "config.php?call="
         private const val DEVICE_API_PATH = "device.php?call="

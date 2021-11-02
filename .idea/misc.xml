@@ -26,6 +26,7 @@
         <entry key="app/src/main/res/drawable/ic_export.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_hand_heart.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_hand_heart_primary.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_location.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_newspaper.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_newspaper_primary.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_pencil_circuler_outline.xml" value="0.16547231270358306" />
@@ -89,6 +90,7 @@
         <entry key="app/src/main/res/layout/prompt_success.xml" value="0.1" />
         <entry key="app/src/main/res/layout/row_donor_shimmer.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_dropdown_item.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_faculty.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_faculty_shimmer.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_notification.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_notification_shimmer.xml" value="0.1569078947368421" />
