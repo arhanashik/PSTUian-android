@@ -18,6 +18,13 @@ import com.workfort.pstuian.app.data.local.donor.DonorEntity
  *  ****************************************************************************
  */
 
+sealed class DonationOptionState {
+    object Idle : DonationOptionState()
+    object Loading : DonationOptionState()
+    data class Success(val option: String) : DonationOptionState()
+    data class Error(val error: String?) : DonationOptionState()
+}
+
 sealed class DonorsState {
     object Idle : DonorsState()
     object Loading : DonorsState()

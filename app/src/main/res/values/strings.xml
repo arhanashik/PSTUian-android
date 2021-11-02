@@ -125,7 +125,9 @@
     <string name="txt_forgot_password">Forgot password?</string>
     <string name="txt_or">Or</string>
     <string name="txt_send">Send</string>
-    <string name="txt_sign_up_conditions">By signing up you will automatically agree to the</string>
+    <string name="txt_sign_up_conditions">
+        By signing up you will automatically agree to the
+    </string>
     <string name="txt_and">and</string>
     <string name="txt_privacy_policy">Privacy Policy</string>
     <string name="txt_terms_and_conditions"><![CDATA[Terms & Conditions]]></string>
@@ -232,7 +234,7 @@
     </string>
 
     <string name="donation_request_message">
-        <u>PLEASE DONATE</u>\nOur dev team work without hoping for any benefit. But, we still
+        <u>PLEASE DONATE</u>\nOur dev team works without hoping for any benefit. But, we still
         need some maintenance(e.g. domain, hosting, PlayStore Account, testing etc) cost. It might
         also help us to expand our dimension and inspire us to do more. A cup of coffee is well
         appreciated. Because, programmers transform the coffee into code(:p). Your small donation
@@ -303,6 +305,7 @@
     <string name="message_donation_thanks">We are grateful for your support. No matter how
         small it is, for us it is an inspiration to continue our work.
     </string>
+    <string name="txt_be_first_doner">Be the first doner</string>
 
     <array name="blood_group">
         <item>A+</item>

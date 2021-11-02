@@ -17,6 +17,7 @@ import com.workfort.pstuian.app.ui.donors.viewstate.DonorsState
 import com.workfort.pstuian.app.ui.faculty.listener.DonorClickEvent
 import com.workfort.pstuian.databinding.ActivityDonorsBinding
 import com.workfort.pstuian.util.extension.launchActivity
+import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -65,7 +66,7 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
         mAdapter = DonorsAdapter()
         mAdapter.setListener(object: DonorClickEvent {
             override fun onClickDonor(donor: DonorEntity) {
-
+                showDetails(donor)
             }
         })
         binding.rvData.adapter = mAdapter
@@ -120,14 +121,29 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
             rvData.visibility = visibility
             srlReloadData.visibility = visibility
             lavError.visibility = inverseVisibility
-            if(data.isEmpty()) lavError.playAnimation()
             tvMessage.visibility = inverseVisibility
             btnRefresh.visibility = inverseVisibility
+            if(data.isEmpty()) {
+                lavError.playAnimation()
+                tvMessage.setText(R.string.txt_be_first_doner)
+            }
         }
         mAdapter.setDonors(data.toMutableList())
     }
 
     private fun donate() {
         launchActivity<DonateActivity>()
+    }
+
+    private fun showDetails(data: DonorEntity) {
+        val info = "Email: " + (data.email?: "Anonymous") +
+                "\n" + (data.info?: "") +
+                "\nReference: ${data.reference}"
+        CommonDialog.success(
+            this,
+            data.name?: "Anonymous",
+            info,
+            icon = R.drawable.ic_account_heart_outline
+        )
     }
 }

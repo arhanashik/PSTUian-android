@@ -11,7 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
+import com.workfort.pstuian.app.ui.donors.viewstate.DonationOptionState
 import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.databinding.ActivityDonateBinding
 import com.workfort.pstuian.databinding.PromptDonationMessageBinding
@@ -32,10 +34,10 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         setHomeEnabled()
         setUiData()
+        observeDonationOption()
+        getDonationOption()
         observeDonation()
         binding.content.fabDonate.setOnClickListener { donate() }
-
-        showInfoDialog()
     }
 
     private fun setUiData() {
@@ -51,6 +53,32 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
             loaderOverlay.visibility = visibility
             loader.visibility = visibility
             labelSaving.visibility = visibility
+        }
+    }
+
+    private fun getDonationOption() {
+        lifecycleScope.launch {
+            mViewModel.intent.send(DonorsIntent.GetDonationOptions)
+        }
+    }
+
+    private fun observeDonationOption() {
+        lifecycleScope.launch {
+            mViewModel.donationOptionState.collect {
+                when (it) {
+                    is DonationOptionState.Idle -> Unit
+                    is DonationOptionState.Loading -> setActionUi(isLoading = true)
+                    is DonationOptionState.Success -> {
+                        setActionUi(isLoading = false)
+                        setUiData()
+                        showInfoDialog()
+                    }
+                    is DonationOptionState.Error -> {
+                        setActionUi(isLoading = false)
+                        showInfoDialog()
+                    }
+                }
+            }
         }
     }
 
@@ -95,19 +123,15 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
 
     private fun showInfoDialog() {
         launchActivity<DonateActivity> {  }
-        val donationMessage = DataBindingUtil.inflate<PromptDonationMessageBinding>(
+        val binding = DataBindingUtil.inflate<PromptDonationMessageBinding>(
             layoutInflater, R.layout.prompt_donation_message, null, false
         )
 
         val alertDialog = AlertDialog.Builder(this)
-            .setView(donationMessage.root)
+            .setView(binding.root)
             .create()
 
-        donationMessage.btnDonate.setOnClickListener {
-            alertDialog.dismiss()
-            launchActivity<DonateActivity> {  }
-        }
-
+        binding.btnDonate.setOnClickListener { alertDialog.dismiss() }
         alertDialog.show()
     }
 }

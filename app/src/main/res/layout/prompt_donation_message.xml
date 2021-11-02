@@ -18,14 +18,17 @@
                     android:layout_marginTop="@dimen/space_10dp"
                     android:layout_marginEnd="@dimen/space_10dp"
                     android:text="@string/donation_request_message"
+                    android:gravity="center"
                     android:textStyle="normal"/>
 
-            <TextView
+            <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_donate"
-                    style="@style/TextButton.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/txt_donate"
-                    android:textAllCaps="true" />
+                    app:icon="@drawable/ic_hand_heart"
+                    app:iconSize="@dimen/dp24"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.data.repository.DonationRepository
 import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
+import com.workfort.pstuian.app.ui.donors.viewstate.DonationOptionState
 import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.app.ui.donors.viewstate.DonorsState
 import kotlinx.coroutines.channels.Channel
@@ -36,6 +37,10 @@ class DonorsViewModel(
     private val donationRepo: DonationRepository
 ) : ViewModel() {
     val intent = Channel<DonorsIntent>(Channel.UNLIMITED)
+
+    private val _donationOptionState = MutableStateFlow<DonationOptionState>(DonationOptionState.Idle)
+    val donationOptionState: StateFlow<DonationOptionState> get() = _donationOptionState
+
     private val _donorsState = MutableStateFlow<DonorsState>(DonorsState.Idle)
     val donorsState: StateFlow<DonorsState> get() = _donorsState
 
@@ -57,8 +62,7 @@ class DonorsViewModel(
         }
     }
 
-    private fun getDonors()
-    {
+    private fun getDonors() {
         viewModelScope.launch {
             _donorsState.value = DonorsState.Loading
             _donorsState.value = try {
@@ -71,10 +75,14 @@ class DonorsViewModel(
 
     private fun getDonationOptions() {
         viewModelScope.launch {
-            try {
-                Prefs.donateOption = donationRepo.getDonationOption()
+            _donationOptionState.value = DonationOptionState.Loading
+            _donationOptionState.value = try {
+                val option = donationRepo.getDonationOption()
+                Prefs.donateOption = option
+                DonationOptionState.Success(option)
             } catch (e: Exception) {
                 Timber.e(e)
+                DonationOptionState.Error(e.message)
             }
         }
     }

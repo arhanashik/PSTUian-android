@@ -26,8 +26,6 @@ import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.donate.DonateActivity
 import com.workfort.pstuian.app.ui.donors.DonorsActivity
-import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
-import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
 import com.workfort.pstuian.app.ui.faculty.FacultyActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
@@ -72,7 +70,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private val mViewModel: HomeViewModel by viewModel()
     private val mFacultyViewModel: FacultyViewModel by viewModel()
     private val mAuthViewModel: AuthViewModel by viewModel()
-    private val mDonorsViewModel: DonorsViewModel by viewModel()
 
     private lateinit var mSliderAdapter: SliderAdapter
     private lateinit var mAdapter: FacultyAdapter
@@ -92,7 +89,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         lifecycleScope.launch {
             mViewModel.intent.send(HomeIntent.GetSliders)
             mFacultyViewModel.intent.send(FacultyIntent.GetFaculties)
-            mDonorsViewModel.intent.send(DonorsIntent.GetDonationOptions)
         }
     }
 
