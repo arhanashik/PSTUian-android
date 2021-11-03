@@ -8,7 +8,7 @@ class TeacherService(private val teacherDao: TeacherDao) {
         teacherDao.getAllLive(faculty)
     suspend fun getAll(): List<TeacherEntity> = teacherDao.getAll()
     suspend fun getAll(facultyId: Int): List<TeacherEntity> = teacherDao.getAll(facultyId)
-    suspend fun get(id: String) : TeacherEntity = teacherDao.get(id)
+    suspend fun get(id: Int) : TeacherEntity? = teacherDao.get(id)
     suspend fun insert(teacherEntity: TeacherEntity) = teacherDao.insert(teacherEntity)
     suspend fun insertAll(entities: List<TeacherEntity>) = teacherDao.insertAll(entities)
     suspend fun update(teacherEntity: TeacherEntity) = teacherDao.update(teacherEntity)

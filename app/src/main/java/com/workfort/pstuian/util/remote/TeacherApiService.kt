@@ -3,9 +3,7 @@ package com.workfort.pstuian.util.remote
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.remote.Response
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 /**
  *  ****************************************************************************
@@ -24,6 +22,9 @@ import retrofit2.http.POST
  */
 
 interface TeacherApiService {
+    @GET(Const.Remote.Api.Teacher.GET)
+    suspend fun get(@Query(Const.Params.ID) id: Int): Response<TeacherEntity>
+
     @FormUrlEncoded
     @POST(Const.Remote.Api.Teacher.CHANGE_PROFILE_IMAGE)
     suspend fun changeProfileImage(

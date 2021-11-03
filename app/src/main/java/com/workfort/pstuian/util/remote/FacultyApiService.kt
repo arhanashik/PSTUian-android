@@ -1,6 +1,7 @@
 package com.workfort.pstuian.util.remote
 
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.course.CourseEntity
 import com.workfort.pstuian.app.data.local.employee.EmployeeEntity
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
@@ -11,29 +12,34 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface FacultyApiService {
-    @GET("faculty.php?call=getAll")
+    @GET(Const.Remote.Api.Faculty.GET_ALL)
     suspend fun getFaculties(): Response<List<FacultyEntity>>
 
-    @GET("batch.php?call=getAll")
-    suspend fun getBatches(@Query("faculty_id") facultyId: Int):
+    @GET(Const.Remote.Api.Faculty.GET)
+    suspend fun getFaculty(@Query(Const.Params.ID) id: Int): Response<FacultyEntity>
+
+    @GET(Const.Remote.Api.BATCH.GET_ALL)
+    suspend fun getBatches(@Query(Const.Params.FACULTY_ID) facultyId: Int):
             Response<List<BatchEntity>>
 
-    @GET("batch.php?call=get")
-    suspend fun getBatch(@Query("id") id: Int): Response<BatchEntity>
+    @GET(Const.Remote.Api.BATCH.GET)
+    suspend fun getBatch(@Query(Const.Params.ID) id: Int): Response<BatchEntity>
 
-    @GET("student.php?call=getAll")
-    suspend fun getStudents(@Query("faculty_id") facultyId: Int,
-                    @Query("batch_id") batchId: Int): Response<List<StudentEntity>>
+    @GET(Const.Remote.Api.Student.GET_ALL)
+    suspend fun getStudents(
+        @Query(Const.Params.FACULTY_ID) facultyId: Int,
+        @Query(Const.Params.BATCH_ID) batchId: Int
+    ): Response<List<StudentEntity>>
 
-    @GET("teacher.php?call=getAll")
-    suspend fun getTeachers(@Query("faculty_id") facultyId: Int):
+    @GET(Const.Remote.Api.Teacher.GET_ALL)
+    suspend fun getTeachers(@Query(Const.Params.FACULTY_ID) facultyId: Int):
             Response<List<TeacherEntity>>
 
-    @GET("course.php?call=getAll")
-    suspend fun getCourseSchedules(@Query("faculty_id") facultyId: Int):
+    @GET(Const.Remote.Api.Course.GET_ALL)
+    suspend fun getCourseSchedules(@Query(Const.Params.FACULTY_ID) facultyId: Int):
             Response<List<CourseEntity>>
 
-    @GET("employee.php?call=getAll")
-    suspend fun getEmployees(@Query("faculty_id") facultyId: Int):
+    @GET(Const.Remote.Api.Employee.GET_ALL)
+    suspend fun getEmployees(@Query(Const.Params.FACULTY_ID) facultyId: Int):
             Response<List<EmployeeEntity>>
 }

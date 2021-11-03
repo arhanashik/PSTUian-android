@@ -147,19 +147,15 @@ class TeacherSignUpActivity : BaseActivity<ActivityTeacherSignUpBinding>() {
             cancelable = false,
             callback = object : CommonDialog.SuccessDialogCallback {
                 override fun onClickDismiss() {
-                    gotToTeacherProfile(mFaculty, teacher)
+                    gotToTeacherProfile(teacher)
                     finish()
                 }
         })
     }
 
-    private fun gotToTeacherProfile(
-        faculty: FacultyEntity,
-        teacher: TeacherEntity
-    ) {
+    private fun gotToTeacherProfile(teacher: TeacherEntity) {
         val intent = Intent(this, TeacherProfileActivity::class.java)
-        intent.putExtra(Const.Key.FACULTY, faculty)
-        intent.putExtra(Const.Key.TEACHER, teacher)
+        intent.putExtra(Const.Key.TEACHER_ID, teacher.id)
         startActivity(intent)
     }
 }

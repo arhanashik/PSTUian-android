@@ -28,11 +28,11 @@ interface StudentDao {
     suspend fun getAll(facultyId: Int, batchId: Int): List<StudentEntity>
 
     @Query("SELECT * FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.ID + " = :id LIMIT 1")
-    fun get(id: String): StudentEntity
+            + " WHERE " + ColumnNames.Student.ID + " = :id")
+    suspend fun get(id: Int): StudentEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(studentEntity: StudentEntity)
+    suspend fun insert(studentEntity: StudentEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<StudentEntity>)

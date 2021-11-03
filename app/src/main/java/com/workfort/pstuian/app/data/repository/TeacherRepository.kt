@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.data.repository
 
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
+import com.workfort.pstuian.app.data.local.teacher.TeacherProfile
 import com.workfort.pstuian.app.data.local.teacher.TeacherService
 import com.workfort.pstuian.app.data.remote.apihelper.TeacherApiHelper
 
@@ -22,9 +23,30 @@ import com.workfort.pstuian.app.data.remote.apihelper.TeacherApiHelper
 
 class TeacherRepository(
     private val authRepo: AuthRepository,
+    private val facultyRepo: FacultyRepository,
     private val teacherDbService: TeacherService,
     private val helper: TeacherApiHelper
 ) {
+    suspend fun getProfile(teacherId: Int): TeacherProfile {
+        // get teacher
+        var teacher = teacherDbService.get(teacherId)
+        if(teacher == null) {
+            teacher = helper.get(teacherId)
+            teacherDbService.insert(teacher)
+        }
+        // get faculty
+        val faculty = facultyRepo.getFaculty(teacher.facultyId)
+        // get sign in state
+        val isSignedIn = try {
+            val user = authRepo.getSignInUser()
+            user is TeacherEntity && user.id == teacherId
+        } catch (ex: Exception) {
+            false
+        }
+
+        return TeacherProfile(teacher, faculty, isSignedIn)
+    }
+
     suspend fun changeProfileImage(teacher: TeacherEntity, imageUrl: String): Boolean {
         val isChanged = helper.changeProfileImage(teacher.id, imageUrl)
         if(isChanged) {

@@ -20,6 +20,12 @@ import com.workfort.pstuian.util.remote.TeacherApiService
  */
 
 class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiHelper {
+    override suspend fun get(id: Int): TeacherEntity {
+        val response = service.get(id)
+        if(!response.success) throw Exception(response.message)
+        return response.data?: throw Exception("Empty data")
+    }
+
     override suspend fun changeProfileImage(id: Int, imageUrl: String): Boolean {
         val response = service.changeProfileImage(id, imageUrl)
         if(!response.success) throw Exception(response.message)

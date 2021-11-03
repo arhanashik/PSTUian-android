@@ -61,8 +61,8 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         mViewModel.batchId = mBatch.id
         loadData()
         with(binding) {
-            srlReloadData.setOnRefreshListener { loadData() }
-            btnRefresh.setOnClickListener { loadData() }
+            srlReloadData.setOnRefreshListener { loadData(true) }
+            btnRefresh.setOnClickListener { loadData(true) }
         }
     }
 
@@ -74,7 +74,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         mAdapter = StudentsAdapter()
         mAdapter.setListener(object: StudentClickEvent {
             override fun onClickStudent(student: StudentEntity) {
-                gotToStudentProfile(mFaculty, mBatch, student)
+                gotToStudentProfile(student)
             }
         })
         binding.rvData.adapter = mAdapter
@@ -137,15 +137,9 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         mAdapter.setStudents(data.toMutableList())
     }
 
-    private fun gotToStudentProfile(
-        faculty: FacultyEntity,
-        batch: BatchEntity,
-        student: StudentEntity
-    ) {
+    private fun gotToStudentProfile(student: StudentEntity) {
         val intent = Intent(this, StudentProfileActivity::class.java)
-        intent.putExtra(Const.Key.FACULTY, faculty)
-        intent.putExtra(Const.Key.BATCH, batch)
-        intent.putExtra(Const.Key.STUDENT, student)
+        intent.putExtra(Const.Key.STUDENT_ID, student.id)
         startActivityForResult.launch(intent)
     }
 

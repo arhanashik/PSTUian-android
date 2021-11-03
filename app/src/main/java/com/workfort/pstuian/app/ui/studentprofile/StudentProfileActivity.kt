@@ -19,10 +19,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
+import com.workfort.pstuian.app.data.local.student.StudentProfile
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoAction
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
@@ -33,11 +32,11 @@ import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
 import com.workfort.pstuian.app.ui.editprofile.EditStudentProfileActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
-import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.imagepreview.ImagePreviewActivity
 import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
+import com.workfort.pstuian.app.ui.studentprofile.viewstate.GetProfileState
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityStudentProfileBinding
 import com.workfort.pstuian.util.extension.launchActivity
@@ -49,7 +48,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.io.File
 
 class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
@@ -67,56 +65,79 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         handleNotificationIntent(intent)
     }
 
-    private lateinit var mFaculty: FacultyEntity
-    private lateinit var mBatch: BatchEntity
-    private lateinit var mStudent: StudentEntity
-    private var isSignedIn = false
-
+    private lateinit var profile: StudentProfile
     private lateinit var pagerAdapter: PagerAdapter
-
     private val mLinkUtil by lazy { LinkUtil(this) }
 
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         setHomeEnabled()
 
-        val faculty = intent.getParcelableExtra<FacultyEntity>(Const.Key.FACULTY)
-        if(faculty == null) finish()
-        else mFaculty = faculty
+        val studentId = intent.getIntExtra(Const.Key.STUDENT_ID, -1)
+        if(studentId == -1) {
+            finish()
+            return
+        }
+        mViewModel.getProfile(studentId)
 
-        val batch = intent.getParcelableExtra<BatchEntity>(Const.Key.BATCH)
-        if(batch == null) finish()
-        else mBatch = batch
-
-        val student = intent.getParcelableExtra<StudentEntity>(Const.Key.STUDENT)
-        if(student == null) finish()
-        else mStudent = student
-
-        setUiData()
-        initTabs()
-
-        observeSignedInUser()
+        observeProfile()
         observeProfileImageChange()
         observeNameChange()
         observeBioChange()
         observeSignOut()
         observePasswordChange()
+    }
+
+    /**
+     * If user profile is loaded successfully, set ui data
+     * Else show blocking error dialog
+     * */
+    private fun observeProfile() {
         lifecycleScope.launch {
-            mAuthViewModel.intent.send(AuthIntent.GetSignInUser)
+            mViewModel.getProfileState.collect {
+                when (it) {
+                    is GetProfileState.Idle -> Unit
+                    is GetProfileState.Loading -> {
+                        binding.loaderOverlay.visibility = View.VISIBLE
+                        binding.loader.visibility = View.VISIBLE
+                        binding.loader.isIndeterminate = true
+                    }
+                    is GetProfileState.Success<*> -> {
+                        binding.loaderOverlay.visibility = View.GONE
+                        binding.loader.visibility = View.GONE
+                        profile = it.data as StudentProfile
+                        setUiData()
+                        initTabs()
+                    }
+                    is GetProfileState.Error -> {
+                        binding.loaderOverlay.visibility = View.GONE
+                        binding.loader.visibility = View.GONE
+                        val msg = it.error?: "Failed to load data"
+                        CommonDialog.error(
+                            this@StudentProfileActivity,
+                            message = msg,
+                            cancelable = false,
+                            onBtnClick = { finish() }
+                        )
+                    }
+                }
+            }
         }
     }
 
     private fun setUiData() {
-        title = mStudent.name
+        val student = profile.student
+        setSignInUiState(isSignedIn = profile.isSignedIn)
+        title = student.name
         with(binding.header) {
-            btnCall.setOnClickListener { promptCall(mStudent.phone) }
-            btnEmail.setOnClickListener { promptEmail(mStudent.email) }
+            btnCall.setOnClickListener { promptCall(student.phone) }
+            btnEmail.setOnClickListener { promptEmail(student.email) }
             btnSignOut.setOnClickListener { promptSignOut() }
         }
         with(binding.content) {
-            if(mStudent.imageUrl.isNullOrEmpty()) {
+            if(student.imageUrl.isNullOrEmpty()) {
                 imgAvatar.setImageResource(R.drawable.img_placeholder_profile)
             } else {
-                imgAvatar.load(mStudent.imageUrl) {
+                imgAvatar.load(student.imageUrl) {
                     placeholder(R.drawable.img_placeholder_profile)
                     error(R.drawable.img_placeholder_profile)
                 }
@@ -124,7 +145,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                 imgAvatar.setOnClickListener {
                     val intent = Intent(this@StudentProfileActivity,
                         ImagePreviewActivity::class.java)
-                    intent.putExtra(Const.Key.URL, mStudent.imageUrl)
+                    intent.putExtra(Const.Key.URL, student.imageUrl)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
                             imgAvatar.transitionName)
@@ -132,21 +153,17 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     startActivity(intent)
                 }
             }
-            if(mStudent.bio.isNullOrEmpty()) {
-                tvBio.visibility = View.GONE
-            } else {
-                tvBio.visibility = View.VISIBLE
-                tvBio.text = mStudent.bio
-            }
+            tvBio.text = if(student.bio.isNullOrEmpty()) getString(R.string.hint_add_bio) else
+                student.bio
+            tvBio.visibility = if(student.bio.isNullOrEmpty()) View.GONE else View.VISIBLE
+            if(profile.isSignedIn) tvBio.visibility = View.VISIBLE
 
             btnCamera.setOnClickListener { chooseImage() }
-            btnEditBio.setOnClickListener { promptChangeBio(mStudent) }
+            btnEditBio.setOnClickListener { promptChangeBio(student) }
             btnEdit.setOnClickListener {
-                val action = if(tabs.selectedTabPosition == 0) {
-                    Const.Key.EDIT_ACADEMIC
-                } else Const.Key.EDIT_CONNECT
-
-                gotToEditProfile(mStudent, action)
+                val action = if(tabs.selectedTabPosition == 0) Const.Key.EDIT_ACADEMIC
+                else Const.Key.EDIT_CONNECT
+                gotToEditProfile(student, action)
             }
         }
     }
@@ -155,7 +172,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         pagerAdapter = PagerAdapter(this)
         pagerAdapter.addItem(createAcademicFragment())
         pagerAdapter.addItem(createConnectFragment())
-        if(isSignedIn) pagerAdapter.addItem(createOptionFragment())
+        if(profile.isSignedIn) pagerAdapter.addItem(createOptionFragment())
         binding.content.viewPager.adapter = pagerAdapter
         binding.content.viewPager.offscreenPageLimit = pagerAdapter.itemCount
 
@@ -171,7 +188,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         }.attach()
         binding.content.tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                if(!isSignedIn) return
+                if(!profile.isSignedIn) return
                 binding.content.btnEdit.visibility = if(tab.position == 2)
                     View.GONE else View.VISIBLE
                 if(binding.content.btnEdit.visibility == View.VISIBLE) {
@@ -200,7 +217,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                 when (item.action) {
                     ProfileInfoAction.EDIT -> {
                         when(item.actionData) {
-                            mStudent.name -> {promptChangeName(mStudent)}
+                            profile.student.name -> {promptChangeName(profile.student)}
                             else -> Unit
                         }
                     }
@@ -233,45 +250,49 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
     })
 
     private fun getAcademicInfoList(): List<ProfileInfoItem> {
-        val nameEntity = ProfileInfoItem(getString(R.string.txt_name), mStudent.name)
-        if(isSignedIn) {
+        val student = profile.student
+        val faculty = profile.faculty
+        val batch = profile.batch
+        val nameEntity = ProfileInfoItem(getString(R.string.txt_name), student.name)
+        if(profile.isSignedIn) {
             nameEntity.actionIcon = R.drawable.ic_pencil_circular_outline
             nameEntity.action = ProfileInfoAction.EDIT
-            nameEntity.actionData = mStudent.name
+            nameEntity.actionData = student.name
         }
         return listOf(
             nameEntity,
-            ProfileInfoItem(getString(R.string.txt_id), mStudent.id.toString()),
-            ProfileInfoItem(getString(R.string.txt_registration_number), mStudent.reg),
-            ProfileInfoItem(getString(R.string.txt_blood_group), mStudent.blood ?: "~"),
-            ProfileInfoItem(getString(R.string.txt_faculty), mFaculty.title),
-            ProfileInfoItem(getString(R.string.txt_session), mStudent.session),
-            ProfileInfoItem(getString(R.string.txt_batch), mBatch.name),
+            ProfileInfoItem(getString(R.string.txt_id), student.id.toString()),
+            ProfileInfoItem(getString(R.string.txt_registration_number), student.reg),
+            ProfileInfoItem(getString(R.string.txt_blood_group), student.blood ?: "~"),
+            ProfileInfoItem(getString(R.string.txt_faculty), faculty.title),
+            ProfileInfoItem(getString(R.string.txt_session), student.session),
+            ProfileInfoItem(getString(R.string.txt_batch), batch.name),
         )
     }
 
     private fun getConnectInfoList(): List<ProfileInfoItem> {
+        val student = profile.student
         return listOf(
-            ProfileInfoItem(getString(R.string.txt_address), mStudent.address ?: "~"),
+            ProfileInfoItem(getString(R.string.txt_address), student.address ?: "~"),
             ProfileInfoItem(
-                getString(R.string.txt_phone), mStudent.phone ?: "~",
-                R.drawable.ic_call, ProfileInfoAction.CALL, mStudent.phone
+                getString(R.string.txt_phone), student.phone ?: "~",
+                R.drawable.ic_call, ProfileInfoAction.CALL, student.phone
             ),
             ProfileInfoItem(
-                getString(R.string.txt_email), mStudent.email ?: "~",
-                R.drawable.ic_email, ProfileInfoAction.MAIL, mStudent.email
+                getString(R.string.txt_email), student.email ?: "~",
+                R.drawable.ic_email, ProfileInfoAction.MAIL, student.email
             ),
             ProfileInfoItem(
-                getString(R.string.txt_cv), mStudent.cvLink ?: "~",
-                R.drawable.ic_download, ProfileInfoAction.DOWNLOAD, mStudent.cvLink
+                getString(R.string.txt_cv), student.cvLink ?: "~",
+                R.drawable.ic_download, ProfileInfoAction.DOWNLOAD, student.cvLink
             ),
             ProfileInfoItem(
-                getString(R.string.txt_linked_in), mStudent.linkedIn ?: "~",
-                R.drawable.ic_web, ProfileInfoAction.LINK, mStudent.linkedIn
+                getString(R.string.txt_linked_in), student.linkedIn ?: "~",
+                R.drawable.ic_web, ProfileInfoAction.LINK, student.linkedIn
             ),
             ProfileInfoItem(
-                getString(R.string.txt_facebook), mStudent.fbLink ?: "~",
-                R.drawable.ic_web, ProfileInfoAction.LINK, mStudent.fbLink
+                getString(R.string.txt_facebook), student.fbLink ?: "~",
+                R.drawable.ic_web, ProfileInfoAction.LINK, student.fbLink
             ),
         )
     }
@@ -285,34 +306,11 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         )
     }
 
-    private fun observeSignedInUser() {
-        lifecycleScope.launch {
-            mAuthViewModel.signInUserState.collect {
-                when (it) {
-                    is SignInUserState.Idle -> {
-                        setSignInUiState(isSignedIn = false)
-                    }
-                    is SignInUserState.Loading -> { }
-                    is SignInUserState.User -> {
-                        isSignedIn = it.user is StudentEntity && it.user.id == mStudent.id
-                        setSignInUiState(isSignedIn)
-                        initTabs()
-                    }
-                    is SignInUserState.Error -> {
-                        isSignedIn = false
-                        setSignInUiState(false)
-                        Timber.e(it.error)
-                    }
-                }
-            }
-        }
-    }
-
     private fun requestFileCreatePermission() {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "application/pdf"
-            putExtra(Intent.EXTRA_TITLE, "cv_${mStudent.id}.pdf")
+            putExtra(Intent.EXTRA_TITLE, "cv_${profile.student.id}.pdf")
         }
 
         fileCreateResultLauncher.launch(intent)
@@ -322,7 +320,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.also { uri ->
-                mStudent.cvLink?.let { downloadFile(it, uri.toString()) }
+                profile.student.cvLink?.let { downloadFile(it, uri.toString()) }
             }
         } else {
             Toaster.show("Failed to save the file")
@@ -337,6 +335,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     if (progress == 0) {
                         binding.loaderOverlay.visibility = View.VISIBLE
                         binding.loader.visibility = View.VISIBLE
+                        binding.loader.isIndeterminate = false
                         binding.labelDownload.visibility = View.VISIBLE
                     }
                     binding.loader.progress = progress
@@ -411,7 +410,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
 
     // the compressed file should be stored in the cache folder
     private fun compressProfileImage(uri: Uri) {
-        val fileName = "${mStudent.id}.jpeg"
+        val fileName = "${profile.student.id}.jpeg"
         mFileHandlerVM.compressImage(this, uri, fileName).observe(this, {
             when (it.state) {
                 WorkInfo.State.ENQUEUED,
@@ -455,7 +454,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     if(data.isNullOrEmpty()) {
                         CommonDialog.error(this, message = "Failed to upload the image")
                     } else {
-                        mViewModel.changeProfileImage(mStudent, data)
+                        mViewModel.changeProfileImage(profile.student, data)
                     }
                 }
                 WorkInfo.State.FAILED -> {
@@ -513,7 +512,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     }
                     is ChangeProfileInfoState.Success<*> -> {
                         setActivityResult()
-                        mStudent.name = it.data as String
+                        profile.student.name = it.data as String
                         title = it.data
                         //notify name change in academic tab
                         initTabs()
@@ -550,8 +549,9 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     }
                     is ChangeProfileInfoState.Success<*> -> {
                         setActivityResult()
-                        mStudent.bio = it.data as String
+                        profile.student.bio = it.data as String
                         binding.content.tvBio.text = it.data
+                        binding.content.tvBio.visibility = View.VISIBLE
                         setActionUiState(isActionRunning = false)
                         CommonDialog.success(this@StudentProfileActivity)
                     }
@@ -603,7 +603,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     }
                     is SignOutState.Success -> {
                         setActionUiState(isActionRunning = false)
-                        isSignedIn = false
+                        profile.isSignedIn = false
                         setSignInUiState(isSignedIn = false)
                         initTabs()
                         Toaster.show(it.message)
@@ -736,10 +736,6 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             btnEditBio.visibility = signInVisibility
             btnEdit.visibility = signInVisibility
             if(isSignedIn) {
-                if(mStudent.bio.isNullOrEmpty()) {
-                    tvBio.visibility = View.VISIBLE
-                    tvBio.text = getString(R.string.hint_add_bio)
-                }
                 lifecycleScope.launch {
                     delay(1000)
                     btnEdit.shrink()
@@ -761,18 +757,15 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         StartActivityForResult()) { result ->
         if(result.resultCode == Activity.RESULT_OK) {
             result?.data?.getParcelableExtra<StudentEntity>(Const.Key.STUDENT)?.let {
-                mStudent = it
+                mViewModel.getProfile(it.id)
             }
-            setUiData()
-            initTabs()
-            setSignInUiState(isSignedIn)
             setActivityResult()
         }
     }
 
     private fun setActivityResult(dataChanged: Boolean = true) {
         val intent = Intent()
-        intent.putExtra(Const.Key.STUDENT, mStudent)
+        intent.putExtra(Const.Key.STUDENT, profile.student)
         intent.putExtra(Const.Key.UPDATED, dataChanged)
         setResult(Activity.RESULT_OK, intent)
     }

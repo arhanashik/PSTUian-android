@@ -23,6 +23,7 @@
     <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/loader"
             style="@style/Widget.App.CircularProgressIndicator"
+            android:indeterminate="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"

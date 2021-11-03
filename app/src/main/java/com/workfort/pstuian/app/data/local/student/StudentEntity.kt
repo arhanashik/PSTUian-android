@@ -3,10 +3,13 @@ package com.workfort.pstuian.app.data.local.student
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.database.ColumnNames
 import com.workfort.pstuian.app.data.local.database.TableNames
+import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -46,5 +49,5 @@ data class StudentEntity(
     @SerializedName("cv_link")
     var cvLink: String?,
     @ColumnInfo(name = ColumnNames.Student.BIO)
-    var bio: String?
+    var bio: String?,
 ) : Parcelable

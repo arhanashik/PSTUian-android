@@ -26,8 +26,8 @@ interface TeacherDao {
     suspend fun getAll(facultyId: Int): List<TeacherEntity>
 
     @Query("SELECT * FROM " + TableNames.TEACHER
-            + " WHERE " + ColumnNames.Teacher.ID + "=:id LIMIT 1")
-    suspend fun get(id: String): TeacherEntity
+            + " WHERE " + ColumnNames.Teacher.ID + "=:id")
+    suspend fun get(id: Int): TeacherEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(teacherEntity: TeacherEntity)

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.repository.TeacherRepository
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
+import com.workfort.pstuian.app.ui.studentprofile.viewstate.GetProfileState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -28,6 +29,9 @@ import kotlinx.coroutines.launch
 class TeacherProfileViewModel(
     private val teacherRepo: TeacherRepository
 ) : ViewModel() {
+    private val _getProfileState = MutableStateFlow<GetProfileState>(GetProfileState.Idle)
+    val getProfileState: StateFlow<GetProfileState> get() = _getProfileState
+
     private val _changeProfileImageState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
     val changeProfileImageState: StateFlow<ChangeProfileInfoState> get() = _changeProfileImageState
 
@@ -42,6 +46,17 @@ class TeacherProfileViewModel(
 
     private val _changeConnectInfoState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
     val changeConnectInfoState: StateFlow<ChangeProfileInfoState> get() = _changeConnectInfoState
+
+    fun getProfile(teacherId: Int) {
+        viewModelScope.launch {
+            _getProfileState.value = GetProfileState.Loading
+            _getProfileState.value = try {
+                GetProfileState.Success(teacherRepo.getProfile(teacherId))
+            } catch (e: Exception) {
+                GetProfileState.Error(e.message)
+            }
+        }
+    }
 
     fun changeProfileImage(
         teacher: TeacherEntity,

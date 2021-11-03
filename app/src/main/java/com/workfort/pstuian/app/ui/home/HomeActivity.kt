@@ -13,7 +13,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.SliderAnimations
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.pref.Prefs
@@ -31,7 +30,6 @@ import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.BatchState
 import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.home.adapter.SliderAdapter
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
@@ -365,54 +363,21 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     private fun gotoUserProfile(user: Any) {
         when(user) {
-            is StudentEntity -> loadBatch(user)
+            is StudentEntity -> openStudentProfile(user)
             is TeacherEntity -> openTeacherProfile(user)
         }
     }
 
-    private fun loadBatch(student: StudentEntity) {
-        observeBatch(student)
-        mFacultyViewModel.getBatch(student.batchId)
-    }
-
-    private fun observeBatch(student: StudentEntity) {
-        lifecycleScope.launch {
-            mFacultyViewModel.batchState.collect {
-                when (it) {
-                    is BatchState.Idle -> Unit
-                    is BatchState.Loading -> Unit
-                    is BatchState.Batch -> {
-                        openStudentProfile(it.batch, student)
-                    }
-                    is BatchState.Error -> {
-                        Toaster.show(it.error ?: "Failed to open profile!")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun openStudentProfile(batch: BatchEntity, student: StudentEntity) {
-        var faculty: FacultyEntity? = null
-        mAdapter.getItems().filter { it.id == student.facultyId }.also {
-            if(!it.isNullOrEmpty()) faculty = it[0]
-        }
+    private fun openStudentProfile(student: StudentEntity) {
         val intent = Intent(this, StudentProfileActivity::class.java).apply {
-            putExtra(Const.Key.FACULTY, faculty)
-            putExtra(Const.Key.BATCH, batch)
-            putExtra(Const.Key.STUDENT, student)
+            putExtra(Const.Key.STUDENT_ID, student.id)
         }
         startActivity(intent)
     }
 
     private fun openTeacherProfile(teacher: TeacherEntity) {
-        var faculty: FacultyEntity? = null
-        mAdapter.getItems().filter { it.id == teacher.facultyId }.also {
-            if(!it.isNullOrEmpty()) faculty = it[0]
-        }
         val intent = Intent(this, TeacherProfileActivity::class.java).apply {
-            putExtra(Const.Key.FACULTY, faculty)
-            putExtra(Const.Key.TEACHER, teacher)
+            putExtra(Const.Key.TEACHER_ID, teacher.id)
         }
         startActivity(intent)
     }

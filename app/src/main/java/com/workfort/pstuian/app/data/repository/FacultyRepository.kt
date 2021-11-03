@@ -50,6 +50,10 @@ class FacultyRepository(
         return existingData
     }
 
+    suspend fun getFaculty(id: Int) : FacultyEntity {
+        return facultyDbService.get(id) ?: return helper.getFaculty(id)
+    }
+
     suspend fun getBatches(facultyId: Int, forceRefresh: Boolean = false) : List<BatchEntity> {
         val existingData = if(forceRefresh) emptyList() else batchDbService.getAll(facultyId)
         if(existingData.isNullOrEmpty()) {

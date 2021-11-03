@@ -12,7 +12,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(tableName = TableNames.TEACHER)
 data class TeacherEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey
+    @ColumnInfo(name = ColumnNames.Teacher.ID)
+    val id: Int,
     @ColumnInfo(name = ColumnNames.Teacher.NAME)
     var name: String,
     @ColumnInfo(name = ColumnNames.Teacher.DESIGNATION)

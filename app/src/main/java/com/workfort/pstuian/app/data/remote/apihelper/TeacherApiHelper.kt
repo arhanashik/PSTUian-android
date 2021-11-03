@@ -19,6 +19,8 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
  */
 
 interface TeacherApiHelper {
+    suspend fun get(id: Int): TeacherEntity
+
     suspend fun changeProfileImage(
         id: Int,
         imageUrl: String,

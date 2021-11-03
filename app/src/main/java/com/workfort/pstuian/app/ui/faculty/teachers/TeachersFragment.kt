@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
@@ -51,7 +50,7 @@ class TeachersFragment(private val faculty: FacultyEntity)
         mAdapter = TeachersAdapter()
         mAdapter.setListener(object: TeacherClickEvent {
             override fun onClickTeacher(teacher: TeacherEntity) {
-                gotToTeacherProfile(faculty, teacher)
+                gotToTeacherProfile(teacher)
             }
         })
         binding.rvData.adapter = mAdapter
@@ -114,13 +113,9 @@ class TeachersFragment(private val faculty: FacultyEntity)
         mAdapter.filter.filter(query)
     }
 
-    private fun gotToTeacherProfile(
-        faculty: FacultyEntity,
-        teacher: TeacherEntity
-    ) {
+    private fun gotToTeacherProfile(teacher: TeacherEntity) {
         val intent = Intent(requireContext(), TeacherProfileActivity::class.java)
-        intent.putExtra(Const.Key.FACULTY, faculty)
-        intent.putExtra(Const.Key.TEACHER, teacher)
+        intent.putExtra(Const.Key.TEACHER_ID, teacher.id)
         startActivityForResult.launch(intent)
     }
 

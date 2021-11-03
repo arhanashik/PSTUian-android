@@ -16,8 +16,8 @@ interface FacultyDao {
     suspend fun getAll(): List<FacultyEntity>
 
     @Query("SELECT * FROM " + TableNames.FACULTY
-            + " WHERE " + ColumnNames.Faculty.SHORT_TITLE + " = :shortTitle LIMIT 1")
-    fun get(shortTitle: String): FacultyEntity
+            + " WHERE " + ColumnNames.Faculty.ID + " = :id")
+    suspend fun get(id: Int): FacultyEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(facultyEntity: FacultyEntity)

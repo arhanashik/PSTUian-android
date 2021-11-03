@@ -152,21 +152,15 @@ class StudentSignUpActivity : BaseActivity<ActivityStudentSignUpBinding>() {
             warning = warning, cancelable = false,
             callback = object : CommonDialog.SuccessDialogCallback {
                 override fun onClickDismiss() {
-                    gotToStudentProfile(mFaculty, mBatch, student)
+                    gotToStudentProfile(student)
                     finish()
                 }
         })
     }
 
-    private fun gotToStudentProfile(
-        faculty: FacultyEntity,
-        batch: BatchEntity,
-        student: StudentEntity
-    ) {
+    private fun gotToStudentProfile(student: StudentEntity) {
         val intent = Intent(this, StudentProfileActivity::class.java)
-        intent.putExtra(Const.Key.FACULTY, faculty)
-        intent.putExtra(Const.Key.BATCH, batch)
-        intent.putExtra(Const.Key.STUDENT, student)
+        intent.putExtra(Const.Key.STUDENT_ID, student.id)
         startActivity(intent)
     }
 }

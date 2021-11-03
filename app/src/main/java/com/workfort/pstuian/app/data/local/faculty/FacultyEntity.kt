@@ -14,8 +14,12 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = TableNames.FACULTY, indices = [Index(value = [ColumnNames.Faculty.SHORT_TITLE],
     unique = true)])
 data class FacultyEntity (
-    @PrimaryKey val id: Int,
+    @PrimaryKey
+    @ColumnInfo(name = ColumnNames.Faculty.ID)
+    val id: Int,
     @ColumnInfo(name = ColumnNames.Faculty.SHORT_TITLE)
     @SerializedName("short_title")
     val shortTitle: String,
-    @ColumnInfo(name = ColumnNames.Faculty.TITLE) val title: String) : Parcelable
+    @ColumnInfo(name = ColumnNames.Faculty.TITLE)
+    val title: String
+) : Parcelable

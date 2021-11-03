@@ -27,7 +27,9 @@ object Const {
         const val FACULTY = "FACULTY"
         const val BATCH = "BATCH"
         const val STUDENT = "STUDENT"
+        const val STUDENT_ID = "STUDENT_ID"
         const val TEACHER = "TEACHER"
+        const val TEACHER_ID = "TEACHER_ID"
         const val EMPLOYEE = "EMPLOYEE"
         const val URL = "URL"
         const val URI = "URI"
@@ -109,8 +111,12 @@ object Const {
         private const val CONFIG_API_PATH = "config.php?call="
         private const val DEVICE_API_PATH = "device.php?call="
         private const val AUTH_API_PATH = "auth.php?call="
+        private const val FACULTY_API_PATH = "faculty.php?call="
+        private const val BATCH_API_PATH = "batch.php?call="
         private const val STUDENT_API_PATH = "student.php?call="
         private const val TEACHER_API_PATH = "teacher.php?call="
+        private const val COURSE_API_PATH = "course.php?call="
+        private const val EMPLOYEE_API_PATH = "employee.php?call="
         private const val NOTIFICATION_API_PATH = "notification.php?call="
         object Api {
             const val GET_CONFIG =  "${CONFIG_API_PATH}getLatest"
@@ -126,7 +132,19 @@ object Const {
                 const val FORGOT_PASSWORD = "${AUTH_API_PATH}forgotPassword"
             }
 
+            object Faculty {
+                const val GET_ALL = "${FACULTY_API_PATH}getAll"
+                const val GET = "${FACULTY_API_PATH}get"
+            }
+
+            object BATCH {
+                const val GET_ALL = "${BATCH_API_PATH}getAll"
+                const val GET = "${BATCH_API_PATH}get"
+            }
+
             object Student {
+                const val GET_ALL = "${STUDENT_API_PATH}getAll"
+                const val GET = "${STUDENT_API_PATH}get"
                 const val CHANGE_PROFILE_IMAGE = "${STUDENT_API_PATH}updateImageUrl"
                 const val UPDATE_NAME = "${STUDENT_API_PATH}updateName"
                 const val UPDATE_BIO= "${STUDENT_API_PATH}updateBio"
@@ -135,11 +153,21 @@ object Const {
             }
 
             object Teacher {
+                const val GET_ALL = "${TEACHER_API_PATH}getAll"
+                const val GET = "${TEACHER_API_PATH}get"
                 const val CHANGE_PROFILE_IMAGE = "${TEACHER_API_PATH}updateImageUrl"
                 const val UPDATE_NAME = "${TEACHER_API_PATH}updateName"
                 const val UPDATE_BIO= "${TEACHER_API_PATH}updateBio"
                 const val UPDATE_ACADEMIC_INFO= "${TEACHER_API_PATH}updateAcademicInfo"
                 const val UPDATE_CONNECT_INFO= "${TEACHER_API_PATH}updateConnectInfo"
+            }
+
+            object Course {
+                const val GET_ALL = "${COURSE_API_PATH}getAll"
+            }
+
+            object Employee {
+                const val GET_ALL = "${EMPLOYEE_API_PATH}getAll"
             }
 
             object Notification {
