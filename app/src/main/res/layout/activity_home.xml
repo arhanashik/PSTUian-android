@@ -64,7 +64,9 @@
                 android:id="@+id/image_slider_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="0dp"
+                android:layout_marginStart="@dimen/default_space"
+                android:layout_marginEnd="@dimen/default_space"
+                app:cardCornerRadius="8dp"
                 app:layout_constraintTop_toBottomOf="@id/tv_title">
 
             <com.smarteist.autoimageslider.SliderView
@@ -102,7 +104,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextView.TitleSmall"
-                android:paddingBottom="@dimen/default_space"
+                android:layout_marginTop="@dimen/default_space"
+                android:layout_marginBottom="@dimen/dp5"
                 android:text="@string/label_faculties"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/image_slider_container"/>
@@ -111,7 +114,10 @@
                 android:id="@+id/rv_faculties"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp11"
+                android:layout_marginEnd="@dimen/dp11"
                 android:visibility="gone"
+                tools:visibility="visible"
                 tools:itemCount="3"
                 tools:listitem="@layout/row_faculty"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
@@ -124,10 +130,13 @@
                 android:id="@+id/shimmer_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp8"
+                android:layout_marginEnd="@dimen/dp8"
                 android:animateLayoutChanges="true"
                 android:animationCache="true"
                 app:shimmer_repeat_mode="restart"
                 app:shimmer_shape="linear"
+                tools:visibility="visible"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title_faculties">
 
             <LinearLayout
@@ -174,10 +183,10 @@
 
         <TextView
                 android:id="@+id/tv_information_title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextView.TitleSmall"
-                android:paddingBottom="@dimen/default_space"
+                android:paddingTop="@dimen/dp10"
                 android:text="@string/label_information_corner"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/shimmer_layout"/>
@@ -185,13 +194,12 @@
         <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
                 android:id="@+id/card_admission_support"
                 android:layout_width="0dp"
-                style="@style/MaterialCardView"
+                style="@style/InformationCardViewLeft"
                 app:title="@string/label_admission_support"
-                app:icon="@drawable/ic_file_edit_outline"
+                app:icon="@drawable/img_admission_support"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_information_title"
-                app:layout_constraintEnd_toStartOf="@id/card_donation_list"
-                app:layout_constraintBottom_toTopOf="@id/card_university_website">
+                app:layout_constraintTop_toBottomOf="@id/tv_information_title"
+                app:layout_constraintEnd_toStartOf="@id/card_donation_list">
 
             <include layout="@layout/item_information"/>
         </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
@@ -199,14 +207,12 @@
         <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
                 android:id="@+id/card_donation_list"
                 android:layout_width="0dp"
-                style="@style/MaterialCardView"
+                style="@style/InformationCardViewRight"
                 app:title="@string/label_donation_list"
-                app:icon="@drawable/ic_account_heart_outline"
-                app:background="@drawable/bg_gradient4"
+                app:icon="@drawable/img_donors"
                 app:layout_constraintStart_toEndOf="@id/card_admission_support"
-                app:layout_constraintTop_toBottomOf="@+id/tv_information_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/card_help">
+                app:layout_constraintTop_toBottomOf="@id/tv_information_title"
+                app:layout_constraintEnd_toEndOf="parent">
 
             <include layout="@layout/item_information"/>
         </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
@@ -214,13 +220,13 @@
         <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
                 android:id="@+id/card_university_website"
                 android:layout_width="0dp"
-                style="@style/MaterialCardView"
+                style="@style/InformationCardViewLeft"
+                android:layout_marginTop="@dimen/dp10"
                 app:title="@string/label_university_website"
-                app:icon="@drawable/ic_web"
+                app:icon="@drawable/img_pstu_website"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/card_admission_support"
-                app:layout_constraintEnd_toStartOf="@id/card_help"
-                app:layout_constraintBottom_toTopOf="@id/guideline_title_option">
+                app:layout_constraintEnd_toStartOf="@id/card_help">
 
             <include layout="@layout/item_information"/>
         </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
@@ -228,121 +234,107 @@
         <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
                 android:id="@+id/card_help"
                 android:layout_width="0dp"
-                style="@style/MaterialCardView"
+                style="@style/InformationCardViewRight"
+                android:layout_marginTop="@dimen/dp10"
                 app:title="@string/txt_need_help"
-                app:icon="@drawable/ic_help_outline"
+                app:icon="@drawable/img_help"
                 app:layout_constraintStart_toEndOf="@id/card_university_website"
-                app:layout_constraintTop_toBottomOf="@+id/card_donation_list"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/guideline_title_option">
+                app:layout_constraintTop_toBottomOf="@id/card_donation_list"
+                app:layout_constraintEnd_toEndOf="parent">
 
             <include layout="@layout/item_information"/>
         </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
 
         <TextView
                 android:id="@+id/tv_title_options"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/TextView.TitleSmall"
-                android:paddingBottom="@dimen/default_space"
+                android:paddingTop="@dimen/dp10"
                 android:text="@string/label_options"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/card_university_website"/>
 
-        <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline_title_option"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toTopOf="@id/tv_title_options"/>
-
         <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
                 android:id="@+id/btn_donate"
                 android:layout_width="0dp"
-                style="@style/MaterialCardView"
+                style="@style/InformationCardViewLeft"
                 app:title="@string/txt_donate"
                 app:icon="@drawable/ic_hand_heart"
                 app:background="@drawable/bg_gradient4"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_options"
-                app:layout_constraintEnd_toStartOf="@id/btn_rate_app">
+                app:layout_constraintTop_toBottomOf="@id/tv_title_options"
+                app:layout_constraintEnd_toStartOf="@id/btn_blood">
 
-            <include layout="@layout/item_information"/>
+            <include layout="@layout/item_information_small"/>
         </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
-
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
-                android:id="@+id/btn_rate_app"
-                android:layout_width="0dp"
-                style="@style/MaterialCardView"
-                app:title="@string/txt_rate_app"
-                app:icon="@drawable/ic_star_face"
-                app:layout_constraintStart_toEndOf="@id/btn_donate"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_options"
-                app:layout_constraintEnd_toStartOf="@id/btn_clear_data">
-
-            <include layout="@layout/item_information"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
-
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
-                android:id="@+id/btn_clear_data"
-                android:layout_width="0dp"
-                style="@style/MaterialCardView"
-                app:title="@string/label_clear_data"
-                app:icon="@drawable/ic_database_remove_outline"
-                app:layout_constraintStart_toEndOf="@id/btn_rate_app"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_options"
-                app:layout_constraintEnd_toEndOf="parent">
-
-            <include layout="@layout/item_information"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
-
-        <TextView
-                android:id="@+id/tv_title_others"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/TextView.TitleSmall"
-                android:paddingBottom="@dimen/default_space"
-                android:text="@string/label_others"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_donate"/>
 
         <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
                 android:id="@+id/btn_blood"
                 android:layout_width="0dp"
-                style="@style/MaterialCardView"
+                style="@style/InformationCardView"
                 app:title="@string/txt_need_blood"
                 app:icon="@drawable/ic_blood_drop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_others"
+                app:layout_constraintStart_toEndOf="@id/btn_donate"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_options"
                 app:layout_constraintEnd_toStartOf="@id/btn_check_in">
 
-            <include layout="@layout/item_information"/>
+            <include layout="@layout/item_information_small"/>
         </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
 
         <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
                 android:id="@+id/btn_check_in"
                 android:layout_width="0dp"
-                style="@style/MaterialCardView"
+                style="@style/InformationCardViewRight"
                 app:title="@string/txt_check_in"
                 app:icon="@drawable/ic_check_in"
                 app:layout_constraintStart_toEndOf="@id/btn_blood"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_others"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_options"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <include layout="@layout/item_information_small"/>
+        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+
+        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+                android:id="@+id/btn_rate_app"
+                android:layout_width="0dp"
+                style="@style/InformationCardViewLeft"
+                android:layout_marginTop="@dimen/dp10"
+                app:title="@string/txt_rate_app"
+                app:icon="@drawable/ic_star_face"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_donate"
+                app:layout_constraintEnd_toStartOf="@id/btn_clear_data">
+
+            <include layout="@layout/item_information_small"/>
+        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+
+        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+                android:id="@+id/btn_clear_data"
+                android:layout_width="0dp"
+                style="@style/InformationCardView"
+                android:layout_marginTop="@dimen/dp10"
+                app:title="@string/label_clear_data"
+                app:icon="@drawable/ic_database_remove_outline"
+                app:layout_constraintStart_toEndOf="@id/btn_rate_app"
+                app:layout_constraintTop_toBottomOf="@id/btn_blood"
                 app:layout_constraintEnd_toStartOf="@id/btn_settings">
 
-            <include layout="@layout/item_information"/>
+            <include layout="@layout/item_information_small"/>
         </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
 
         <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
                 android:id="@+id/btn_settings"
                 android:layout_width="0dp"
-                style="@style/MaterialCardView"
+                style="@style/InformationCardViewRight"
+                android:layout_marginTop="@dimen/dp10"
                 app:title="@string/txt_settings"
                 app:icon="@drawable/ic_settings"
-                app:layout_constraintStart_toEndOf="@id/btn_check_in"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_others"
+                app:layout_constraintStart_toEndOf="@id/btn_clear_data"
+                app:layout_constraintTop_toBottomOf="@id/btn_check_in"
                 app:layout_constraintEnd_toEndOf="parent">
 
-            <include layout="@layout/item_information"/>
+            <include layout="@layout/item_information_small"/>
         </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
 
         <View
@@ -350,6 +342,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/space_1dp"
                 android:layout_marginTop="@dimen/default_space"
-                app:layout_constraintTop_toBottomOf="@id/btn_settings"/>
+                app:layout_constraintTop_toBottomOf="@id/btn_rate_app"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

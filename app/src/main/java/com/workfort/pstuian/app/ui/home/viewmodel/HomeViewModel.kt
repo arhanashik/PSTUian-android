@@ -78,12 +78,13 @@ class HomeViewModel(
     }
 
     /**
-     * Clear stored faculty, batch, students, teachers, courses and employees
+     * Clear stored slider, faculty, batch, students, teachers, courses and employees
      * */
     private fun clearCache() {
         viewModelScope.launch {
             _clearCache.value = ClearCacheState.Loading
             _clearCache.value = try {
+                sliderRepo.deleteAll()
                 facultyRepo.deleteAll()
                 ClearCacheState.Success
             } catch (e: Exception) {

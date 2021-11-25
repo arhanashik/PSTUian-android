@@ -21,5 +21,7 @@ data class FacultyEntity (
     @SerializedName("short_title")
     val shortTitle: String,
     @ColumnInfo(name = ColumnNames.Faculty.TITLE)
-    val title: String
+    val title: String,
+    @ColumnInfo(name = ColumnNames.Faculty.ICON)
+    val icon: String?
 ) : Parcelable

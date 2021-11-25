@@ -6,7 +6,10 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.text.HtmlCompat
 import com.workfort.pstuian.R
+import timber.log.Timber
 
 
 /**
@@ -28,13 +31,13 @@ class InformationCardView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
     fun setData(title: String?, icon: Drawable?) {
-        findViewById<TextView>(R.id.tv_title).text = title
+        findViewById<TextView>(R.id.tv_title).text = HtmlCompat.fromHtml(title?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
         findViewById<ImageView>(R.id.iv_icon).setImageDrawable(icon)
     }
 
     fun changeBackground(background: Drawable) {
-        findViewById<FrameLayout>(R.id.container).background = background
+        findViewById<ConstraintLayout>(R.id.container).background = background
     }
 }

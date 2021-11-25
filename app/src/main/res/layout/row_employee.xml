@@ -64,7 +64,8 @@
                     android:id="@+id/label_department"
                     style="@style/TvStyleTeacherInfoLabel"
                     android:text="@string/txt_department"
-                    app:layout_constraintStart_toStartOf="@id/tv_department"
+                    android:layout_marginEnd="@dimen/space_16dp"
+                    app:layout_constraintEnd_toEndOf="@id/vertical_guide"
                     app:layout_constraintBottom_toTopOf="@id/tv_department"/>
 
             <TextView

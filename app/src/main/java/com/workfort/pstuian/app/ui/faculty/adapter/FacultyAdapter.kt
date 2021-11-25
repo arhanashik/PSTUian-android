@@ -15,15 +15,11 @@ class FacultyAdapter : RecyclerView.Adapter<FacultyViewHolder>() {
     private val faculties : MutableList<FacultyEntity> = ArrayList()
     private var listener: FacultyClickEvent? = null
 
-    private val backgroundIndexArr = arrayListOf(0,1,2,3,4,5,6,7,8)
-
     @SuppressLint("NotifyDataSetChanged")
     fun setFaculties(faculties: MutableList<FacultyEntity>) {
         this.faculties.clear()
         this.faculties.addAll(faculties)
         notifyDataSetChanged()
-
-        MathHelper.shuffle(backgroundIndexArr)
     }
 
     fun setListener(listener: FacultyClickEvent) {
@@ -44,9 +40,8 @@ class FacultyAdapter : RecyclerView.Adapter<FacultyViewHolder>() {
 
     override fun onBindViewHolder(holder: FacultyViewHolder, position: Int) {
         val faculty = faculties[position]
-        val background = Const.backgroundList[backgroundIndexArr[position]]
 
-        holder.bind(faculty, background)
+        holder.bind(faculty)
         holder.binding.root.setOnClickListener {
             listener?.onClickFaculty(faculty)
         }

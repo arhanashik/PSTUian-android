@@ -5,32 +5,30 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dp10"
-                android:layout_marginEnd="@dimen/dp10"
                 tools:text="@tools:sample/lorem"
-                android:textColor="@android:color/black"
+                android:layout_margin="@dimen/dp10"
                 app:autoSizeTextType="uniform"
                 app:autoSizeMinTextSize="12dp"
                 app:autoSizeMaxTextSize="14dp"
                 android:maxLines="2"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/iv_icon"
                 app:layout_constraintEnd_toStartOf="@id/iv_icon"
-                app:layout_constraintBottom_toBottomOf="@id/iv_icon"/>
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageView
                 android:id="@+id/iv_icon"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_percent="0.45"
-                tools:src="@drawable/img_admission_support"
-                android:scaleType="centerCrop"
+                android:layout_margin="@dimen/dp10"
+                tools:srcCompat="@drawable/ic_account_heart_outline"
+                app:tint="@android:color/darker_gray"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="ContentDescription" />

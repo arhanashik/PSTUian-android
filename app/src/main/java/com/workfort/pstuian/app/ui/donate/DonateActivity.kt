@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.text.HtmlCompat
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.pref.Prefs
@@ -123,9 +122,8 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
 
     private fun showInfoDialog() {
         launchActivity<DonateActivity> {  }
-        val binding = DataBindingUtil.inflate<PromptDonationMessageBinding>(
-            layoutInflater, R.layout.prompt_donation_message, null, false
-        )
+        val binding = PromptDonationMessageBinding.inflate(layoutInflater,
+            null, false)
 
         val alertDialog = AlertDialog.Builder(this)
             .setView(binding.root)

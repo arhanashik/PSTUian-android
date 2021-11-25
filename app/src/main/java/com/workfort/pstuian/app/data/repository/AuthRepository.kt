@@ -81,7 +81,7 @@ class AuthRepository(
             Prefs.deviceId = newId
             newId
         } else Prefs.deviceId
-        val unregisteredDevice = DeviceEntity(
+        val newDevice = DeviceEntity(
             id = deviceId!!,
             fcmToken = fcmToken,
             model = AndroidUtil.getDeviceName(),
@@ -94,11 +94,11 @@ class AuthRepository(
             locale = AndroidUtil.getLocaleLanguage()
         )
 
-        if(unregisteredDevice == getRegisteredDevice()) {
-            return unregisteredDevice
+        if(newDevice == getRegisteredDevice()) {
+            return newDevice
         }
 
-        helper.registerDevice(unregisteredDevice).also { device ->
+        helper.registerDevice(newDevice).also { device ->
             storeRegisteredDevice(device)
             return device
         }
