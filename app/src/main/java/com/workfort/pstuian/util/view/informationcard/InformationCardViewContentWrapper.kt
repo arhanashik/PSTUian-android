@@ -1,4 +1,4 @@
-package com.workfort.pstuian.util.view
+package com.workfort.pstuian.util.view.informationcard
 
 import android.content.Context
 import android.graphics.drawable.Drawable

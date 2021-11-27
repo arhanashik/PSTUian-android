@@ -69,7 +69,7 @@
                 app:cardCornerRadius="8dp"
                 app:layout_constraintTop_toBottomOf="@id/tv_title">
 
-            <com.smarteist.autoimageslider.SliderView
+            <com.workfort.pstuian.util.view.imageslider.SliderView
                     android:id="@+id/image_slider"
                     android:layout_width="match_parent"
                     android:layout_height="220dp"
@@ -191,7 +191,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/shimmer_layout"/>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/card_admission_support"
                 android:layout_width="0dp"
                 style="@style/InformationCardViewLeft"
@@ -202,9 +202,9 @@
                 app:layout_constraintEnd_toStartOf="@id/card_donation_list">
 
             <include layout="@layout/item_information"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/card_donation_list"
                 android:layout_width="0dp"
                 style="@style/InformationCardViewRight"
@@ -215,9 +215,9 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
             <include layout="@layout/item_information"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/card_university_website"
                 android:layout_width="0dp"
                 style="@style/InformationCardViewLeft"
@@ -229,9 +229,9 @@
                 app:layout_constraintEnd_toStartOf="@id/card_help">
 
             <include layout="@layout/item_information"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/card_help"
                 android:layout_width="0dp"
                 style="@style/InformationCardViewRight"
@@ -243,7 +243,7 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
             <include layout="@layout/item_information"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
         <TextView
                 android:id="@+id/tv_title_options"
@@ -255,7 +255,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/card_university_website"/>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/btn_donate"
                 android:layout_width="0dp"
                 style="@style/InformationCardViewLeft"
@@ -267,9 +267,9 @@
                 app:layout_constraintEnd_toStartOf="@id/btn_blood">
 
             <include layout="@layout/item_information_small"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/btn_blood"
                 android:layout_width="0dp"
                 style="@style/InformationCardView"
@@ -280,9 +280,9 @@
                 app:layout_constraintEnd_toStartOf="@id/btn_check_in">
 
             <include layout="@layout/item_information_small"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/btn_check_in"
                 android:layout_width="0dp"
                 style="@style/InformationCardViewRight"
@@ -293,9 +293,9 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
             <include layout="@layout/item_information_small"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/btn_rate_app"
                 android:layout_width="0dp"
                 style="@style/InformationCardViewLeft"
@@ -307,9 +307,9 @@
                 app:layout_constraintEnd_toStartOf="@id/btn_clear_data">
 
             <include layout="@layout/item_information_small"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/btn_clear_data"
                 android:layout_width="0dp"
                 style="@style/InformationCardView"
@@ -321,9 +321,9 @@
                 app:layout_constraintEnd_toStartOf="@id/btn_settings">
 
             <include layout="@layout/item_information_small"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
-        <com.workfort.pstuian.util.view.InformationCardViewContentWrapper
+        <com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper
                 android:id="@+id/btn_settings"
                 android:layout_width="0dp"
                 style="@style/InformationCardViewRight"
@@ -335,7 +335,7 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
             <include layout="@layout/item_information_small"/>
-        </com.workfort.pstuian.util.view.InformationCardViewContentWrapper>
+        </com.workfort.pstuian.util.view.informationcard.InformationCardViewContentWrapper>
 
         <View
                 android:id="@+id/divider_bottom"

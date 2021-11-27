@@ -46,8 +46,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.appcompat:appcompat:$appcompat"
     implementation "androidx.constraintlayout:constraintlayout:$constraint"
-    // reading and writing Exif tags in a JPEG file or a RAW image file
-    implementation "androidx.exifinterface:exifinterface:$exifinterface"
     //instead of support v4
     implementation "androidx.legacy:legacy-support-v4:$support"
     //instead of support design
@@ -77,8 +75,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
 
     //multiDex
     implementation "androidx.multidex:multidex:$multidex"
@@ -126,14 +124,6 @@ dependencies {
 
     //logger
     implementation "com.jakewharton.timber:timber:$timber"
-
-    //animation on text
-    implementation "com.hanks:htextview-base:$htextview_version"
-    //available: line, fade, rainbow, typer, scale, evaporate, fall
-    implementation "com.hanks:htextview-line:$htextview_version"
-
-    //image slider
-    implementation "com.github.smarteist:autoimageslider:$autoimageslider"
 
     //facebook shimmer layout.
     implementation "com.facebook.shimmer:shimmer:$shimmer"
