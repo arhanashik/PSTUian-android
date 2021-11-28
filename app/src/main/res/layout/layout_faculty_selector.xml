@@ -13,7 +13,7 @@
             android:id="@+id/tv_title_faculties"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextView.TitleSmall"
+            style="@style/TextView.TitleSmall2"
             android:text="@string/txt_select_faculty"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
