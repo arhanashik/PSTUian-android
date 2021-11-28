@@ -26,6 +26,7 @@ object ColumnNames {
         const val ID = "id"
         const val SHORT_TITLE = "short_title"
         const val TITLE = "title"
+        const val ICON = "icon"
     }
 
     object Student {

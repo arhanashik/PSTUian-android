@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <com.hanks.htextview.line.LineTextView
+    <com.workfort.pstuian.util.view.animatedtextview.line.LineTextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
             android:textSize="48sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
-            app:animationDuration="2000"
+            app:lineAnimationDuration="2000"
             app:lineColor="@color/colorPrimary"
             app:lineWidth="10dp"
             app:layout_constraintStart_toStartOf="parent"

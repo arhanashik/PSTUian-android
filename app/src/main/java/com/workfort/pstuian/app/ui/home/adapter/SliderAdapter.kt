@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import coil.load
-import com.smarteist.autoimageslider.SliderViewAdapter
 import com.workfort.pstuian.app.data.local.slider.SliderEntity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
 import com.workfort.pstuian.databinding.ItemSliderBinding
+import com.workfort.pstuian.util.view.imageslider.SliderViewAdapter
 
 
 /**

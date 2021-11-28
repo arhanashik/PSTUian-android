@@ -11,9 +11,14 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.27076923076923076" />
         <entry key="app/src/main/res/drawable/bg_circle.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/bg_divider_txt.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/bg_gradient.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/bg_gradient1.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/bg_splash.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/bg_warning.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/btn_bg_default.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/btn_bg_pressed.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/btn_bg_selector.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/faculty_title_bg_overlay.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_account_heart_outline.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_arrow_up.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_bell_badge_filled.xml" value="0.16547231270358306" />
@@ -34,8 +39,10 @@
         <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_sign_in.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/ic_web.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/shape_rectangle.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/slider_bg_overlay.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/font/poppins.xml" value="0.1742671009771987" />
         <entry key="app/src/main/res/layout-v21/activity_profile_content.xml" value="0.2484375" />
         <entry key="app/src/main/res/layout/activity_donate.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_donate_content.xml" value="0.1569078947368421" />
@@ -62,6 +69,8 @@
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_student_profile.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_students.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_support.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_support_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_teacher_profile.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_teacher_sign_up.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_web_view.xml" value="0.1569078947368421" />
@@ -74,9 +83,12 @@
         <entry key="app/src/main/res/layout/fragment_profile_pager_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_teachers.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/item_information.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/item_information_small.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/item_slider.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/layout_appbar_profile.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/layout_batch_selector.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/layout_faculty_selector.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/layout_loader_overlay.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/layout_web_error.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_change_bio.xml" value="0.1569078947368421" />
@@ -91,12 +103,15 @@
         <entry key="app/src/main/res/layout/prompt_success.xml" value="0.1" />
         <entry key="app/src/main/res/layout/row_donor_shimmer.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_dropdown_item.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_employee.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_faculty.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_faculty_shimmer.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_notification.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_notification_shimmer.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_student_shimmer.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_teacher.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.16547231270358306" />
       </map>
     </option>
   </component>

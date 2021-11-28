@@ -95,7 +95,7 @@ object Const {
     }
 
     object Remote {
-        private const val LOCAL_SERVER = "http://192.168.1.100:8888/PSTUian-web/"
+        private const val LOCAL_SERVER = "http://192.168.1.103:8888/PSTUian-web/"
         private const val DEV_SERVER = "https://dev.pstuian.com/"
         private const val LIVE_SERVER = "https://pstuian.com/"
         private const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/mobile/v1/"

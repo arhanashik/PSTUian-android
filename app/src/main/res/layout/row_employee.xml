@@ -56,22 +56,30 @@
             <TextView
                     android:id="@+id/tv_designation"
                     style="@style/TvStyleBatchInfo"
-                    tools:text="Assistance Professor"
+                    android:layout_width="0dp"
+                    app:layout_constraintWidth_percent="0.35"
+                    tools:text="@tools:sample/lorem/random"
+                    android:ellipsize="end"
                     app:layout_constraintStart_toStartOf="@id/img_avatar"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView
                     android:id="@+id/label_department"
                     style="@style/TvStyleTeacherInfoLabel"
                     android:text="@string/txt_department"
-                    app:layout_constraintStart_toStartOf="@id/tv_department"
+                    android:layout_marginEnd="@dimen/space_16dp"
+                    app:layout_constraintEnd_toEndOf="@id/vertical_guide"
                     app:layout_constraintBottom_toTopOf="@id/tv_department"/>
 
             <TextView
                     android:id="@+id/tv_department"
                     style="@style/TvStyleBatchInfo"
+                    android:layout_width="0dp"
+                    app:layout_constraintWidth_percent="0.32"
                     android:layout_marginEnd="@dimen/space_16dp"
-                    tools:text="Mathematics"
+                    tools:text="@tools:sample/lorem/random"
+                    android:gravity="end"
+                    android:ellipsize="end"
                     app:layout_constraintEnd_toStartOf="@id/vertical_guide"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 

@@ -42,7 +42,7 @@ class FacultyActivity : BaseActivity<ActivityFacultyBinding>() {
         if(faculty == null) finish()
         else mFaculty = faculty
 
-        title = mFaculty.shortTitle
+        title = mFaculty.title
 
         initTabs()
     }

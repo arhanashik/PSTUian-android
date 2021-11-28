@@ -6,43 +6,45 @@
         android:id="@+id/container_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space_8dp"
-        android:layout_marginTop="@dimen/space_5dp"
-        android:layout_marginEnd="@dimen/space_8dp"
-        android:layout_marginBottom="@dimen/space_8dp"
-        app:cardCornerRadius="@dimen/space_5dp"
+        android:layout_marginStart="@dimen/dp5"
+        android:layout_marginTop="@dimen/dp2"
+        android:layout_marginEnd="@dimen/dp5"
+        android:layout_marginBottom="@dimen/dp8"
+        app:cardCornerRadius="@dimen/space_8dp"
         app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@drawable/bg_gradient10"
-            android:padding="@dimen/space_10dp">
+            android:layout_height="wrap_content">
 
         <ImageView
-                android:id="@+id/btn_open"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_arrow_right_large"
-                app:tint="@android:color/darker_gray"
+                android:id="@+id/iv_icon"
+                android:layout_width="match_parent"
+                android:layout_height="84dp"
+                tools:src="@tools:sample/avatars"
+                android:padding="@dimen/default_space"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="ContentDescription" />
+
+        <View
+                android:id="@+id/title_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:background="@drawable/faculty_title_bg_overlay"
+                app:layout_constraintBottom_toBottomOf="@id/tv_title"/>
 
         <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 tools:text="CSE"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
-                app:autoSizeTextType="uniform"
-                app:autoSizeMinTextSize="12sp"
-                app:autoSizeMaxTextSize="20sp"
-                app:autoSizeStepGranularity="1sp"
-                android:gravity="bottom"
+                android:textSize="16sp"
+                android:layout_marginStart="@dimen/dp10"
+                android:layout_marginBottom="@dimen/dp5"
+                android:layout_marginEnd="@dimen/dp10"
                 app:layout_constraintBottom_toBottomOf="parent"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

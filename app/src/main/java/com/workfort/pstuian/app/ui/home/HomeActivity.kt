@@ -1,7 +1,6 @@
 package com.workfort.pstuian.app.ui.home
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +9,6 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
-import com.smarteist.autoimageslider.SliderAnimations
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
@@ -50,6 +47,8 @@ import com.workfort.pstuian.databinding.ActivityHomeBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.PlayStoreUtil
 import com.workfort.pstuian.util.helper.Toaster
+import com.workfort.pstuian.util.view.imageslider.indicatorview.animation.type.IndicatorAnimationType
+import com.workfort.pstuian.util.view.imageslider.SliderAnimations
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -125,10 +124,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     val intent = Intent(this@HomeActivity,
                         ImagePreviewActivity::class.java)
                     intent.putExtra(Const.Key.URL, item.imageUrl)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
-                            getString(R.string.transition_image_preview))
-                    }
+                    intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                        getString(R.string.transition_image_preview))
                     startActivity(intent)
                 }
             }

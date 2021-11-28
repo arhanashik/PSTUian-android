@@ -57,7 +57,7 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         setHomeEnabled()
         initList()
-        observeStudents()
+        observeNotifications()
         loadData()
         with(binding) {
             srlReloadData.setOnRefreshListener { loadData() }
@@ -81,7 +81,7 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
         }
     }
 
-    private fun observeStudents() {
+    private fun observeNotifications() {
         lifecycleScope.launch {
             mViewModel.notificationsState.collect {
                 when (it) {

@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -146,10 +145,8 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     val intent = Intent(this@StudentProfileActivity,
                         ImagePreviewActivity::class.java)
                     intent.putExtra(Const.Key.URL, student.imageUrl)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
-                            imgAvatar.transitionName)
-                    }
+                    intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                        imgAvatar.transitionName)
                     startActivity(intent)
                 }
             }
