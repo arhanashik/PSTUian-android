@@ -7,6 +7,7 @@ import com.workfort.pstuian.app.data.repository.StudentRepository
 import com.workfort.pstuian.app.ui.studentprofile.intent.StudentProfileIntent
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.GetProfileState
+import com.workfort.pstuian.util.helper.CoilUtil
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,6 +71,8 @@ class StudentProfileViewModel(
             _changeProfileImageState.value = ChangeProfileInfoState.Loading
             _changeProfileImageState.value = try {
                 studentRepo.changeProfileImage(student, imageUrl)
+                CoilUtil.clearUrlCache(imageUrl)
+                CoilUtil.clearCache()
                 ChangeProfileInfoState.Success(imageUrl)
             } catch (e: Exception) {
                 ChangeProfileInfoState.Error(e.message)

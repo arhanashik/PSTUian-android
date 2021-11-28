@@ -350,7 +350,7 @@ class PageIndicatorView @JvmOverloads constructor(
         if (isRtl()) {
             position = indicator.count - 1 - selectedPosition
         } else if (viewPager != null) {
-            position = viewPager!!.currentItem
+            position = viewPager!!.getCurrentItem()
         }
         indicator.lastSelectedPosition = position
         indicator.selectingPosition = position
@@ -424,7 +424,7 @@ class PageIndicatorView @JvmOverloads constructor(
     }
 
     private fun registerSetObserver() {
-        if (setObserver != null || viewPager == null || viewPager?.adapter == null) {
+        if (setObserver != null || viewPager == null || viewPager?.mAdapter == null) {
             return
         }
         setObserver = object : DataSetObserver() {
@@ -433,18 +433,18 @@ class PageIndicatorView @JvmOverloads constructor(
             }
         }
         try {
-            viewPager?.adapter?.registerDataSetObserver(setObserver!!)
+            viewPager?.mAdapter?.registerDataSetObserver(setObserver!!)
         } catch (e: IllegalStateException) {
             e.printStackTrace()
         }
     }
 
     private fun unRegisterSetObserver() {
-        if (setObserver == null || viewPager == null || viewPager?.adapter == null) {
+        if (setObserver == null || viewPager == null || viewPager?.mAdapter == null) {
             return
         }
         try {
-            viewPager?.adapter?.unregisterDataSetObserver(setObserver!!)
+            viewPager?.mAdapter?.unregisterDataSetObserver(setObserver!!)
             setObserver = null
         } catch (e: IllegalStateException) {
             e.printStackTrace()
@@ -452,21 +452,21 @@ class PageIndicatorView @JvmOverloads constructor(
     }
 
     private fun updateState() {
-        if (viewPager == null || viewPager?.adapter == null) {
+        if (viewPager == null || viewPager?.mAdapter == null) {
             return
         }
         val count: Int
         val position: Int
-        if (viewPager?.adapter is InfinitePagerAdapter) {
-            count = (viewPager?.adapter as InfinitePagerAdapter?)!!.getRealCount()
+        if (viewPager?.mAdapter is InfinitePagerAdapter) {
+            count = (viewPager?.mAdapter as InfinitePagerAdapter?)!!.getRealCount()
             position = if (count > 0) {
-                viewPager!!.currentItem % count
+                viewPager!!.getCurrentItem() % count
             } else {
                 0
             }
         } else {
-            count = viewPager?.adapter!!.count
-            position = viewPager!!.currentItem
+            count = viewPager?.mAdapter!!.count
+            position = viewPager!!.getCurrentItem()
         }
         val selectedPos = if (isRtl()) count - 1 - position else position
         manager.indicator().selectedPosition = selectedPos
