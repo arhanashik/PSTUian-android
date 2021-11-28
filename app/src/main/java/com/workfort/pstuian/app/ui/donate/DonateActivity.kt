@@ -74,7 +74,8 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
                     }
                     is DonationOptionState.Error -> {
                         setActionUi(isLoading = false)
-                        showInfoDialog()
+                        val msg = it.error?: getString(R.string.default_error_dialog_message)
+                        CommonDialog.error(this@DonateActivity, message = msg)
                     }
                 }
             }
@@ -121,7 +122,6 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
     }
 
     private fun showInfoDialog() {
-        launchActivity<DonateActivity> {  }
         val binding = PromptDonationMessageBinding.inflate(layoutInflater,
             null, false)
 
