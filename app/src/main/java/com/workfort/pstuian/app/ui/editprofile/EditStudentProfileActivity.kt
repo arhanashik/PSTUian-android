@@ -32,6 +32,7 @@ import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoSta
 import com.workfort.pstuian.databinding.ActivityEditStudentProfileBinding
 import com.workfort.pstuian.util.helper.PermissionUtil
 import com.workfort.pstuian.util.helper.Toaster
+import com.workfort.pstuian.util.helper.nameFilter
 import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -95,6 +96,7 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
                 groupConnect.visibility = View.GONE
                 etName.setText(mStudent.name)
                 etName.setSelection(mStudent.name.length)
+                etName.filters = arrayOf(nameFilter)
                 etId.setText(mStudent.id.toString())
                 etReg.setText(mStudent.reg)
                 etSession.setText(mStudent.session)

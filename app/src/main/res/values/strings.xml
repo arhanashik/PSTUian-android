@@ -305,7 +305,17 @@
     <string name="message_donation_thanks">We are grateful for your support. No matter how
         small it is, for us it is an inspiration to continue our work.
     </string>
-    <string name="txt_be_first_doner">Be the first doner</string>
+    <string name="txt_be_first_donor">Be the first donor</string>
+    <string name="txt_total_registered_students">Registered Students</string>
+    <string name="label_blood_donation_request_activity">Donation Requests</string>
+    <string name="hint_search_donation_request">Search donation request</string>
+    <string name="txt_request_donation">Request Donation</string>
+    <string name="hint_need_before">Need before</string>
+    <string name="hint_contact">Phone numbers</string>
+    <string name="helper_txt_max_length_blood_donation_message">Maximum 500 characters</string>
+    <string name="info_blood_donation">After you create a request, one admin will review it. Then, a notification will be sent to the donors of same blood group. Also, the request will be added to the blood donation requst list.</string>
+    <string name="txt_create_request">Create Request</string>
+    <string name="label_create_blood_donation_request_activity">Create Request</string>
 
     <array name="blood_group">
         <item>A+</item>

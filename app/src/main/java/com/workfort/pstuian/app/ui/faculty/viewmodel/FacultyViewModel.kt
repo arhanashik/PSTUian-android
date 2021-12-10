@@ -94,8 +94,8 @@ class FacultyViewModel(private val facultyRepo: FacultyRepository) : ViewModel()
         viewModelScope.launch {
             _batchesState.value = BatchesState.Loading
             _batchesState.value = try {
-                BatchesState.Batches(facultyRepo.getBatches(
-                    facultyId, batchesStateForceRefresh))
+                BatchesState.Batches(facultyRepo.getBatches(facultyId,
+                    batchesStateForceRefresh))
             } catch (e: Exception) {
                 BatchesState.Error(e.message)
             }

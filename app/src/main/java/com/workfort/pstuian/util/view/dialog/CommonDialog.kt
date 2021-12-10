@@ -11,6 +11,7 @@ import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
 import com.workfort.pstuian.databinding.*
+import com.workfort.pstuian.util.helper.nameFilter
 
 /**
  *  ****************************************************************************
@@ -148,21 +149,8 @@ object CommonDialog {
         val binding = PromptChangeNameBinding.inflate(inflater, null, false)
         binding.etName.setText(oldName)
         binding.etName.setSelection(oldName.length)
+        binding.etName.filters = arrayOf(nameFilter)
         binding.btnChange.isEnabled = false
-
-        val filter = InputFilter { source, start, end, _, _, _ ->
-            for(i in start until end) {
-                if (!Character.isLetter(source[i]) &&
-                    source[i].toString() != "_" &&
-                    source[i].toString() != "-" &&
-                    source[i].toString() != " "
-                ) {
-                    return@InputFilter ""
-                }
-            }
-            null
-        }
-        binding.etName.filters = arrayOf(filter)
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}

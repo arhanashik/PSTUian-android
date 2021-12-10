@@ -3,9 +3,11 @@ package com.workfort.pstuian.app.ui.faculty.adapter
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.course.CourseEntity
 import com.workfort.pstuian.app.ui.faculty.viewholder.CourseViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.CourseScheduleClickEvent
@@ -78,6 +80,8 @@ class CourseAdapter :
     override fun onBindViewHolder(holder: CourseViewHolder, position: Int) {
         val student = filteredCourses[position]
 
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
         holder.bind(student)
         holder.binding.root.setOnClickListener {
             run {

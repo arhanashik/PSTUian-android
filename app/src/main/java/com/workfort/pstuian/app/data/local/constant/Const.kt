@@ -49,6 +49,7 @@ object Const {
         const val ID = "id"
         const val OLD_ID = "old_id"
         const val USER_ID = "user_id"
+        const val REQUEST_ID = "request_id"
 
         const val DEVICE_ID = "device_id"
         const val FCM_TOKEN = "fcm_token"
@@ -80,13 +81,22 @@ object Const {
         const val IMAGE_URL = "image_url"
         const val BIO = "bio"
         const val BLOOD = "blood"
+        const val BLOOD_GROUP = "blood_group"
         const val ADDRESS = "address"
         const val PHONE = "phone"
         const val CV_LINK = "cv_link"
         const val LINKED_IN = "linked_in"
         const val FB_LINK = "fb_link"
 
+        const val DATE = "date"
+        const val BEFORE_DATE = "before_date"
+        const val CONTACT = "contact"
+        const val INFO = "info"
+
         const val CREATED_AT = "created_at"
+
+        const val PAGE = "page"
+        const val LIMIT = "limit"
 
         object UserType {
             const val STUDENT = "student"
@@ -103,7 +113,7 @@ object Const {
         private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
 
         private val BASE_URL = if(BuildConfig.DEBUG) DEV_SERVER else LIVE_SERVER
-        val BASE_API_URL = if(BuildConfig.DEBUG) DEV_API_SERVER else LIVE_API_SERVER
+        val BASE_API_URL = if(BuildConfig.DEBUG) LOCAL_API_SERVER else LIVE_API_SERVER
         val TERMS_AND_CONDITIONS = "${BASE_URL}terms_and_conditions.php"
         val PRIVACY_POLICY = "${BASE_URL}privacy_policy.php"
         val ADMISSION_SUPPORT = "${BASE_URL}admission_support.php"
@@ -118,6 +128,9 @@ object Const {
         private const val COURSE_API_PATH = "course.php?call="
         private const val EMPLOYEE_API_PATH = "employee.php?call="
         private const val NOTIFICATION_API_PATH = "notification.php?call="
+        private const val BLOOD_DONATION_API_PATH = "blood_donation.php?call="
+        private const val BLOOD_DONATION_REQUEST_API_PATH = "blood_donation_request.php?call="
+
         object Api {
             const val GET_CONFIG =  "${CONFIG_API_PATH}getLatest"
             const val REGISTER_DEVICE = "${DEVICE_API_PATH}register"
@@ -172,6 +185,22 @@ object Const {
 
             object Notification {
                 const val GET_ALL = "${NOTIFICATION_API_PATH}getAll"
+            }
+
+            object BloodDonation {
+                const val GET_ALL = "${BLOOD_DONATION_API_PATH}getAll"
+                const val GET = "${BLOOD_DONATION_API_PATH}get"
+                const val INSERT = "${BLOOD_DONATION_API_PATH}insert"
+                const val UPDATE = "${BLOOD_DONATION_API_PATH}update"
+                const val DELETE = "${BLOOD_DONATION_API_PATH}delete"
+            }
+
+            object BloodDonationRequest {
+                const val GET_ALL = "${BLOOD_DONATION_REQUEST_API_PATH}getAll"
+                const val GET = "${BLOOD_DONATION_REQUEST_API_PATH}get"
+                const val INSERT = "${BLOOD_DONATION_REQUEST_API_PATH}insert"
+                const val UPDATE = "${BLOOD_DONATION_REQUEST_API_PATH}update"
+                const val DELETE = "${BLOOD_DONATION_REQUEST_API_PATH}delete"
             }
         }
     }

@@ -267,5 +267,27 @@
                 android:name=".app.ui.imagepreview.ImagePreviewActivity"
                 android:launchMode="singleTop"
                 android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+                android:name=".app.ui.blooddonation.BloodDonationRequestActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_blood_donation_request_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.home.HomeActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.home.HomeActivity"/>
+        </activity>
+
+        <activity
+                android:name=".app.ui.blooddonation.CreateBloodDonationRequestActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_create_blood_donation_request_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.blooddonation.BloodDonationRequestActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.blooddonation.BloodDonationRequestActivity"/>
+        </activity>
     </application>
 </manifest>

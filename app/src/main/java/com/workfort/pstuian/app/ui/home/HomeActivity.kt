@@ -18,6 +18,7 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
+import com.workfort.pstuian.app.ui.blooddonation.BloodDonationRequestActivity
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.donate.DonateActivity
@@ -47,8 +48,8 @@ import com.workfort.pstuian.databinding.ActivityHomeBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.PlayStoreUtil
 import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.imageslider.indicatorview.animation.type.IndicatorAnimationType
 import com.workfort.pstuian.util.view.imageslider.SliderAnimations
+import com.workfort.pstuian.util.view.imageslider.indicatorview.animation.type.IndicatorAnimationType
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -175,7 +176,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             btnDonate.setOnClickListener { launchActivity<DonateActivity>() }
             btnRateApp.setOnClickListener { playStoreUtil.openStore() }
             btnClearData.setOnClickListener { clearData() }
-            btnBlood.setOnClickListener { Toaster.show(getString(R.string.txt_coming_soon)) }
+            btnBlood.setOnClickListener { launchActivity<BloodDonationRequestActivity>() }
             btnCheckIn.setOnClickListener { Toaster.show(getString(R.string.txt_coming_soon)) }
             btnSettings.setOnClickListener { launchActivity<SettingsActivity>() }
         }

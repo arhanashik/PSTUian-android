@@ -3,6 +3,7 @@ package com.workfort.pstuian.app.ui.faculty.adapter
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
@@ -78,7 +79,8 @@ class EmployeeAdapter : RecyclerView.Adapter<EmployeeViewHolder>(), Filterable {
 
     override fun onBindViewHolder(holder: EmployeeViewHolder, position: Int) {
         val student = filteredEmployees[position]
-
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
         holder.bind(student)
         holder.binding.root.setOnClickListener {
             run {

@@ -19,5 +19,7 @@ data class BatchEntity (
     @ColumnInfo(name = ColumnNames.Batch.FACULTY_ID)
     @SerializedName("faculty_id") val facultyId: Int,
     @ColumnInfo(name = ColumnNames.Batch.TOTAL_STUDENT)
-    @SerializedName("total_student") val totalStudent: Int
+    @SerializedName("total_student") val totalStudent: Int,
+    @ColumnInfo(name = ColumnNames.Batch.REGISTERED_STUDENT)
+    @SerializedName("registered_student") val registeredStudent: Int
 ) : Parcelable

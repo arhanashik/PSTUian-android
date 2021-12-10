@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
@@ -82,7 +83,8 @@ class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
 
     override fun onBindViewHolder(holder: TeachersViewHolder, position: Int) {
         val teacher = filteredTeachers[position]
-
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
         holder.bind(teacher)
         holder.binding.root.setOnClickListener {
             run {

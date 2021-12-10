@@ -19,7 +19,7 @@ import com.workfort.pstuian.util.remote.SliderApiService
  *  ****************************************************************************
  */
 
-class SliderApiHelper(private val service: SliderApiService) : ApiHelper<SliderEntity> {
+class SliderApiHelper(private val service: SliderApiService) : ApiHelper<SliderEntity>() {
     override suspend fun getAll(): List<SliderEntity> {
         val response = service.getSliders()
         if(!response.success) throw Exception(response.message)

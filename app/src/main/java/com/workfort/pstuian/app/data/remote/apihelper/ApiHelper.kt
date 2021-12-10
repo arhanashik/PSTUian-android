@@ -1,7 +1,5 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
-import com.workfort.pstuian.app.data.local.slider.SliderEntity
-
 /**
  *  ****************************************************************************
  *  * Created by : arhan on 30 Sep, 2021 at 10:01 PM.
@@ -18,6 +16,11 @@ import com.workfort.pstuian.app.data.local.slider.SliderEntity
  *  ****************************************************************************
  */
 
-interface ApiHelper<T> {
-    suspend fun getAll(): List<T>
+abstract class ApiHelper<T> {
+    open suspend fun getAll(): List<T> = emptyList()
+    open suspend fun getAll(page: Int, limit: Int): List<T> = emptyList()
+    open suspend fun get(id: Int): T? = null
+    open suspend fun insert(item: T): Int = 0
+    open suspend fun update(item: T): Boolean = false
+    open suspend fun delete(id: Int): Boolean = false
 }

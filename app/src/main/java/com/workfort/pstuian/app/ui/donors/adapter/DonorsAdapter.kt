@@ -1,11 +1,14 @@
 package com.workfort.pstuian.app.ui.donors.adapter
 
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.donor.DonorEntity
 import com.workfort.pstuian.app.ui.donors.viewholder.DonorsViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.DonorClickEvent
@@ -37,11 +40,11 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
                 if(TextUtils.isEmpty(query)) {
                     result.addAll(donors)
                 } else {
-                    val q = query.toString().toLowerCase(Locale.ROOT)
+                    val q = query.toString().lowercase(Locale.ROOT)
                     donors.forEach {
-                        if((it.name?: "").toLowerCase(Locale.ROOT).contains(q)
-                            || (it.info?: "").toLowerCase(Locale.ROOT).contains(q)
-                            || it.reference.toLowerCase(Locale.ROOT).contains(q))
+                        if((it.name?: "").lowercase(Locale.ROOT).contains(q)
+                            || (it.info?: "").lowercase(Locale.ROOT).contains(q)
+                            || it.reference.lowercase(Locale.ROOT).contains(q))
                             result.add(it)
                     }
                 }
@@ -53,6 +56,7 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
                 return filteredResult
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
                 filteredDonors.clear()
                 @Suppress("UNCHECKED_CAST")
@@ -75,7 +79,8 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
 
     override fun onBindViewHolder(holder: DonorsViewHolder, position: Int) {
         val batch = filteredDonors[position]
-
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
         holder.bind(batch)
         holder.binding.root.setOnClickListener {
             run {

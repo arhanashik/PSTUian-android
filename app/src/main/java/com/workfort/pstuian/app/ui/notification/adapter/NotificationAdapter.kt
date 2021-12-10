@@ -3,7 +3,9 @@ package com.workfort.pstuian.app.ui.notification.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.notification.NotificationEntity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
 import com.workfort.pstuian.app.ui.notification.viewholder.NotificationViewHolder
@@ -53,6 +55,8 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationViewHolder>() {
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
         val item = notifications[position]
 
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
         holder.bind(item)
         holder.binding.root.setOnClickListener {
             run {

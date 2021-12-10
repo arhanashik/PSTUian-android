@@ -43,6 +43,8 @@ abstract class AppDatabase : RoomDatabase() {
                     val context = PstuianApp.getBaseApplicationContext()
                     INSTANCE = Room.databaseBuilder(
                         context, AppDatabase::class.java, context.getString(R.string.db_name)
+                    ).addMigrations(
+                        MIGRATION_1_2
                     ).build()
                 }
             }

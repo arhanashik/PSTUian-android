@@ -3,9 +3,11 @@ package com.workfort.pstuian.app.ui.faculty.adapter
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewholder.BatchesMinViewHolder
@@ -83,6 +85,8 @@ class BatchesAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val batch = filteredBatches[position]
 
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
         if(isExpandView) {
             (holder as BatchesViewHolder).apply {
                 bind(batch)

@@ -81,6 +81,7 @@ object ColumnNames {
         const val SESSION = "session"
         const val FACULTY_ID = "faculty_id"
         const val TOTAL_STUDENT = "total_student"
+        const val REGISTERED_STUDENT = "registered_student"
     }
 
     object Course {

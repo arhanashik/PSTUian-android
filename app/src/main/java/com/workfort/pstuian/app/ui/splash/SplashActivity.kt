@@ -200,6 +200,7 @@ class SplashActivity : AppCompatActivity() {
                     }
                     is ClearCacheState.Error -> {
                         binding.loader.visibility = View.GONE
+                        Timber.e(it.error)
                         val msg = it.error?: "Couldn't clear cache"
                         CommonDialog.error(
                             this@SplashActivity,
