@@ -7,23 +7,19 @@ import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewholder.FacultyViewHolder
 import com.workfort.pstuian.databinding.RowFacultyBinding
 
-class FacultyAdapter : RecyclerView.Adapter<FacultyViewHolder>() {
+class FacultyAdapter(
+    private val onClickItem : (faculty: FacultyEntity) -> Unit
+) : RecyclerView.Adapter<FacultyViewHolder>() {
     private val faculties : MutableList<FacultyEntity> = ArrayList()
-    private var listener: FacultyClickEvent? = null
 
     @SuppressLint("NotifyDataSetChanged")
     fun setFaculties(faculties: MutableList<FacultyEntity>) {
         this.faculties.clear()
         this.faculties.addAll(faculties)
         notifyDataSetChanged()
-    }
-
-    fun setListener(listener: FacultyClickEvent) {
-        this.listener = listener
     }
 
     override fun getItemCount(): Int {
@@ -43,8 +39,6 @@ class FacultyAdapter : RecyclerView.Adapter<FacultyViewHolder>() {
         holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
             R.anim.anim_item_insert)
         holder.bind(faculty)
-        holder.binding.root.setOnClickListener {
-            listener?.onClickFaculty(faculty)
-        }
+        holder.binding.root.setOnClickListener { onClickItem(faculty) }
     }
 }

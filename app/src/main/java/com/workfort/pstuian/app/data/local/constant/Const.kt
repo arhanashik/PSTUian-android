@@ -113,7 +113,7 @@ object Const {
         private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
 
         private val BASE_URL = if(BuildConfig.DEBUG) DEV_SERVER else LIVE_SERVER
-        val BASE_API_URL = if(BuildConfig.DEBUG) LOCAL_API_SERVER else LIVE_API_SERVER
+        val BASE_API_URL = if(BuildConfig.DEBUG) DEV_API_SERVER else LIVE_API_SERVER
         val TERMS_AND_CONDITIONS = "${BASE_URL}terms_and_conditions.php"
         val PRIVACY_POLICY = "${BASE_URL}privacy_policy.php"
         val ADMISSION_SUPPORT = "${BASE_URL}admission_support.php"
@@ -134,6 +134,7 @@ object Const {
         object Api {
             const val GET_CONFIG =  "${CONFIG_API_PATH}getLatest"
             const val REGISTER_DEVICE = "${DEVICE_API_PATH}register"
+            const val UPDATE_DEVICE = "${DEVICE_API_PATH}update"
             const val UPDATE_FCM_TOKEN = "${DEVICE_API_PATH}updateFcmToken"
 
             object Auth {

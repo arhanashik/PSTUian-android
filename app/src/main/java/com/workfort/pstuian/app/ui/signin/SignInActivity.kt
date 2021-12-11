@@ -16,7 +16,6 @@ import com.workfort.pstuian.app.ui.common.bottomsheet.BatchSelectorBottomSheet
 import com.workfort.pstuian.app.ui.common.bottomsheet.FacultySelectorBottomSheet
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
-import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.forgotpassword.ForgotPasswordActivity
 import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
 import com.workfort.pstuian.app.ui.signup.StudentSignUpActivity
@@ -148,16 +147,14 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     }
 
     private fun selectFaculty(userType: String) {
-        FacultySelectorBottomSheet(object : FacultyClickEvent {
-            override fun onClickFaculty(faculty: FacultyEntity) {
-                if(userType == Const.Params.UserType.STUDENT) {
-                    selectBatch(faculty)
-                } else {
-                    gotoTeacherSignUp(faculty)
-                    finish()
-                }
+        FacultySelectorBottomSheet { faculty ->
+            if(userType == Const.Params.UserType.STUDENT) {
+                selectBatch(faculty)
+            } else {
+                gotoTeacherSignUp(faculty)
+                finish()
             }
-        }).show(supportFragmentManager, FacultySelectorBottomSheet.TAG)
+        }.show(supportFragmentManager, FacultySelectorBottomSheet.TAG)
     }
 
     private fun selectBatch(faculty: FacultyEntity) {

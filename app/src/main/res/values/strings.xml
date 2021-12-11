@@ -316,6 +316,8 @@
     <string name="info_blood_donation">After you create a request, one admin will review it. Then, a notification will be sent to the donors of same blood group. Also, the request will be added to the blood donation requst list.</string>
     <string name="txt_create_request">Create Request</string>
     <string name="label_create_blood_donation_request_activity">Create Request</string>
+    <string name="msg_sign_in_required">You need to sign in first to complete this action.</string>
+    <string name="txt_sign_in_required">Sign In Required</string>
 
     <array name="blood_group">
         <item>A+</item>

@@ -13,7 +13,6 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
-import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
 import com.workfort.pstuian.databinding.LayoutFacultySelectorBinding
@@ -38,8 +37,9 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
  *  ****************************************************************************
  */
 
-class FacultySelectorBottomSheet(private val callback: FacultyClickEvent? = null)
-    : BottomSheetDialogFragment() {
+class FacultySelectorBottomSheet(
+    private val onClickItem : (faculty: FacultyEntity) -> Unit
+) : BottomSheetDialogFragment() {
 
     private var _binding: LayoutFacultySelectorBinding? = null
     // This property is only valid between onCreateView and
@@ -78,13 +78,10 @@ class FacultySelectorBottomSheet(private val callback: FacultyClickEvent? = null
     }
 
     private fun initFacultyList() {
-        mAdapter = FacultyAdapter()
-        mAdapter.setListener(object : FacultyClickEvent {
-            override fun onClickFaculty(faculty: FacultyEntity) {
-                dismiss()
-                callback?.onClickFaculty(faculty)
-            }
-        })
+        mAdapter = FacultyAdapter { faculty ->
+            dismiss()
+            onClickItem(faculty)
+        }
 
         binding.rvFaculties.setHasFixedSize(true)
         binding.rvFaculties.adapter = mAdapter

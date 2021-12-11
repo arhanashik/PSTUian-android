@@ -26,7 +26,6 @@ import com.workfort.pstuian.app.ui.donors.DonorsActivity
 import com.workfort.pstuian.app.ui.faculty.FacultyActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
-import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.home.adapter.SliderAdapter
@@ -48,6 +47,7 @@ import com.workfort.pstuian.databinding.ActivityHomeBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.PlayStoreUtil
 import com.workfort.pstuian.util.helper.Toaster
+import com.workfort.pstuian.util.view.dialog.CommonDialog
 import com.workfort.pstuian.util.view.imageslider.SliderAnimations
 import com.workfort.pstuian.util.view.imageslider.indicatorview.animation.type.IndicatorAnimationType
 import kotlinx.coroutines.flow.collect
@@ -142,14 +142,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     private fun initFacultyList() {
-        mAdapter = FacultyAdapter()
-        mAdapter.setListener(object : FacultyClickEvent {
-            override fun onClickFaculty(faculty: FacultyEntity) {
-                val intent = Intent(this@HomeActivity, FacultyActivity::class.java)
-                intent.putExtra(Const.Key.FACULTY, faculty)
-                startActivity(intent)
-            }
-        })
+        mAdapter = FacultyAdapter { faculty -> gotoFaculty(faculty) }
 
         binding.rvFaculties.setHasFixedSize(true)
         binding.rvFaculties.adapter = mAdapter
@@ -158,16 +151,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private fun setClickEvents() {
         val playStoreUtil = PlayStoreUtil(this@HomeActivity)
         with(binding) {
-            btnSignInSignUp.setOnClickListener {
-                launchActivity<SignInActivity> {  }
-            }
+            btnSignInSignUp.setOnClickListener { launchActivity<SignInActivity>() }
             btnAccount.setOnClickListener { mSignedInUser?.let { gotoUserProfile(it) }}
             btnNotification.setOnClickListener { launchActivity<NotificationActivity>() }
             cardUniversityWebsite.setOnClickListener {
                 launchActivity<WebViewActivity>(
                     Pair(Const.Key.URL, getString(R.string.link_pstu_website)))
             }
-            cardDonationList.setOnClickListener { launchActivity<DonorsActivity> {  } }
+            cardDonationList.setOnClickListener { launchActivity<DonorsActivity>() }
             cardAdmissionSupport.setOnClickListener {
                 launchActivity<WebViewActivity>(
                     Pair(Const.Key.URL, Const.Remote.ADMISSION_SUPPORT))
@@ -176,8 +167,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             btnDonate.setOnClickListener { launchActivity<DonateActivity>() }
             btnRateApp.setOnClickListener { playStoreUtil.openStore() }
             btnClearData.setOnClickListener { clearData() }
-            btnBlood.setOnClickListener { launchActivity<BloodDonationRequestActivity>() }
-            btnCheckIn.setOnClickListener { Toaster.show(getString(R.string.txt_coming_soon)) }
+            btnBlood.setOnClickListener { gotoBloodDonation() }
+            btnCheckIn.setOnClickListener { gotoCheckIn() }
             btnSettings.setOnClickListener { launchActivity<SettingsActivity>() }
         }
     }
@@ -186,8 +177,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         lifecycleScope.launch {
             mAuthViewModel.signInUserState.collect {
                 when (it) {
-                    is SignInUserState.Idle -> {
-                    }
+                    is SignInUserState.Idle -> Unit
                     is SignInUserState.Loading -> {
                         binding.btnSignInSignUp.visibility = View.GONE
                         binding.btnAccount.visibility = View.GONE
@@ -359,6 +349,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
     }
 
+    private fun gotoFaculty(faculty: FacultyEntity) {
+        if(mSignedInUser == null) {
+            showSignInRequiredDialog()
+            return
+        }
+        val intent = Intent(this@HomeActivity, FacultyActivity::class.java).apply {
+            putExtra(Const.Key.FACULTY, faculty)
+        }
+        startActivity(intent)
+    }
+
     private fun gotoUserProfile(user: Any) {
         when(user) {
             is StudentEntity -> openStudentProfile(user)
@@ -378,5 +379,31 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             putExtra(Const.Key.TEACHER_ID, teacher.id)
         }
         startActivity(intent)
+    }
+
+    private fun gotoBloodDonation() {
+        if(mSignedInUser == null) {
+            showSignInRequiredDialog()
+            return
+        }
+        launchActivity<BloodDonationRequestActivity>()
+    }
+
+    private fun gotoCheckIn() {
+        if(mSignedInUser == null) {
+            showSignInRequiredDialog()
+            return
+        }
+        Toaster.show(getString(R.string.txt_coming_soon))
+    }
+
+    private fun showSignInRequiredDialog() {
+        CommonDialog.error(
+            this,
+            getString(R.string.txt_sign_in_required),
+            getString(R.string.msg_sign_in_required),
+            getString(R.string.txt_sign_in),
+            onBtnClick = { launchActivity<SignInActivity>() }
+        )
     }
 }

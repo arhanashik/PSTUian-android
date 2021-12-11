@@ -94,10 +94,12 @@ class AuthRepository(
             locale = AndroidUtil.getLocaleLanguage()
         )
 
+        // device is registered and updated
         if(newDevice == getRegisteredDevice()) {
             return newDevice
         }
 
+        // device is not registered yet/device is not updated
         helper.registerDevice(newDevice).also { device ->
             storeRegisteredDevice(device)
             return device
