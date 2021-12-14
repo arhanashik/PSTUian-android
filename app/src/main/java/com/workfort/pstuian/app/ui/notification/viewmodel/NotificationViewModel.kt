@@ -32,6 +32,7 @@ class NotificationViewModel(
 ) : ViewModel() {
     val intent = Channel<NotificationIntent>(Channel.UNLIMITED)
 
+    var notificationsPage = 1
     private val _notificationsState = MutableStateFlow<NotificationsState>(NotificationsState.Idle)
     val notificationsState: StateFlow<NotificationsState> get() = _notificationsState
 
@@ -43,17 +44,17 @@ class NotificationViewModel(
         viewModelScope.launch {
             intent.consumeAsFlow().collect {
                 when(it) {
-                    NotificationIntent.GetAll -> getAll()
+                    is NotificationIntent.GetAll -> getAll(it.page)
                 }
             }
         }
     }
 
-    private fun getAll() {
+    private fun getAll(page: Int) {
         viewModelScope.launch {
             _notificationsState.value = NotificationsState.Loading
             _notificationsState.value = try {
-                NotificationsState.Notifications(repo.getAll())
+                NotificationsState.Notifications(repo.getAll(page))
             } catch (e: Exception) {
                 NotificationsState.Error(e.message)
             }

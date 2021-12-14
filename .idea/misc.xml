@@ -41,11 +41,14 @@
         <entry key="app/src/main/res/drawable/ic_sign_in.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/ic_web.xml" value="0.16547231270358306" />
+        <entry key="app/src/main/res/drawable/indicator_online.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/shape_rectangle.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/drawable/slider_bg_overlay.xml" value="0.16547231270358306" />
         <entry key="app/src/main/res/font/poppins.xml" value="0.1742671009771987" />
         <entry key="app/src/main/res/layout-v21/activity_profile_content.xml" value="0.2484375" />
         <entry key="app/src/main/res/layout/activity_blood_donation_request.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_check_in.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/activity_check_in_list.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_create_blood_donation_request.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_create_blood_donation_request_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_donate.xml" value="0.1569078947368421" />
@@ -85,6 +88,7 @@
         <entry key="app/src/main/res/layout/fragment_batches.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/fragment_course_schedule.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/fragment_employees.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/fragment_location_picker.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/fragment_profile_pager_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_teachers.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/item_chip.xml" value="0.1569078947368421" />
@@ -97,8 +101,10 @@
         <entry key="app/src/main/res/layout/layout_batch_selector.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/layout_faculty_selector.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/layout_loader_overlay.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/layout_search_location.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/layout_web_error.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_change_bio.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_change_check_in_visibility.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_change_cv.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_change_name.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_change_password.xml" value="0.1569078947368421" />
@@ -113,14 +119,18 @@
         <entry key="app/src/main/res/layout/row_batch_shimmer.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_blood_donation_request.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_blood_donation_request_shimmer.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_check_in_user.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_create_location.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_donor.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_donor_shimmer.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_dropdown_item.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_employee.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_faculty.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_faculty_shimmer.xml" value="0.15537459283387622" />
+        <entry key="app/src/main/res/layout/row_location.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_notification.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_notification_shimmer.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_student.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_student_shimmer.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_teacher.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.16547231270358306" />

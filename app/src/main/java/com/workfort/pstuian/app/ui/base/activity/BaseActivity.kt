@@ -17,6 +17,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewbinding.ViewBinding
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -32,6 +33,8 @@ import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.NetworkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
 import com.workfort.pstuian.util.view.dialog.CommonDialog
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 
 /**
@@ -103,8 +106,20 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
     }
 
     /**
-     * When the search query is changed in search view, this function is triggered
+     * When the search query is changed in search view,
+     * "searchQuery" flow emits new value and "onSearchQueryChange" function is triggered.
+     * Using any of them is fine to get the search query.
+     *
+     * N.B. using the flow is helpful to use delay in search operation.
+     * Example:
+     * lifecycleScope.launch {
+     *      searchQuery.collectLatest { query ->
+     *         delay(300)
+     *         search(query)
+     *     }
+     * }
      * */
+    var searchQuery = MutableStateFlow("")
     open fun onSearchQueryChange(searchQuery: String) = Unit
 
     /**
@@ -262,6 +277,7 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
                     }
 
                     override fun onQueryTextChange(s: String): Boolean {
+                        lifecycleScope.launch { searchQuery.emit(s) }
                         onSearchQueryChange(s)
                         return false
                     }

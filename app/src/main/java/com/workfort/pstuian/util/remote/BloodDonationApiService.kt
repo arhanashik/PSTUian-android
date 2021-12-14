@@ -1,6 +1,6 @@
 package com.workfort.pstuian.util.remote
 
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonation
+import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.remote.Response
 import retrofit2.http.*
@@ -26,10 +26,10 @@ interface BloodDonationApiService {
     suspend fun getAll(
         @Query(Const.Params.PAGE) page: Int = 1,
         @Query(Const.Params.LIMIT) limit: Int = 20,
-    ): Response<List<BloodDonation>>
+    ): Response<List<BloodDonationEntity>>
 
     @GET(Const.Remote.Api.BloodDonation.GET)
-    suspend fun get(@Query(Const.Params.ID) id: Int): Response<BloodDonation>
+    suspend fun get(@Query(Const.Params.ID) id: Int): Response<BloodDonationEntity>
 
     @FormUrlEncoded
     @POST(Const.Remote.Api.BloodDonation.INSERT)
@@ -39,7 +39,7 @@ interface BloodDonationApiService {
         @Field(Const.Params.REQUEST_ID) requestId: Int?,
         @Field(Const.Params.DATE) date: String,
         @Field(Const.Params.INFO) info: String,
-    ): Response<BloodDonation>
+    ): Response<BloodDonationEntity>
 
     @FormUrlEncoded
     @POST(Const.Remote.Api.BloodDonation.UPDATE)
@@ -48,7 +48,7 @@ interface BloodDonationApiService {
         @Field(Const.Params.REQUEST_ID) requestId: Int?,
         @Field(Const.Params.DATE) date: String,
         @Field(Const.Params.INFO) info: String,
-    ): Response<BloodDonation>
+    ): Response<BloodDonationEntity>
 
     @FormUrlEncoded
     @POST(Const.Remote.Api.BloodDonation.DELETE)

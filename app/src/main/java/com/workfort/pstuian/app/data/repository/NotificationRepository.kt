@@ -4,6 +4,7 @@ import com.workfort.pstuian.app.data.local.notification.NotificationEntity
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.remote.apihelper.NotificationApiHelper
+import timber.log.Timber
 
 /**
  *  ****************************************************************************
@@ -25,7 +26,7 @@ class NotificationRepository(
     private val helper: NotificationApiHelper,
     private val authRepo: AuthRepository
 ) {
-    suspend fun getAll(): List<NotificationEntity> {
+    suspend fun getAll(page: Int): List<NotificationEntity> {
         var userId = -1
         var userType = ""
         try {
@@ -36,8 +37,8 @@ class NotificationRepository(
             }
             userType = authRepo.getSignInUserType()
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            Timber.e("Getting Notification for non signed in user")
         }
-        return helper.getAll(userId, userType)
+        return helper.getAll(userId, userType, page, limit = 20)
     }
 }

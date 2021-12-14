@@ -118,7 +118,7 @@ class FacultySelectorBottomSheet(
     }
 
     private fun renderFaculties(faculties: List<FacultyEntity>) {
-        mAdapter.setFaculties(faculties.toMutableList())
+        mAdapter.setData(faculties.toMutableList())
     }
 
     override fun onDestroyView() {

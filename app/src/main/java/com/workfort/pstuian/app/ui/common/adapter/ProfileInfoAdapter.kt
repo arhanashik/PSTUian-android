@@ -42,7 +42,7 @@ data class ProfileInfoItem (
     val title: String,
     @DrawableRes
     var actionIcon: Int = -1,
-    var action: ProfileInfoAction = ProfileInfoAction.NONE,
+    var action: ProfileInfoAction = ProfileInfoAction.None,
     var actionData: String? = ""
 )
 
@@ -51,11 +51,13 @@ abstract class ProfileInfoClickEvent {
 }
 
 sealed class ProfileInfoAction {
-    object NONE : ProfileInfoAction()
-    object EDIT : ProfileInfoAction()
-    object CALL : ProfileInfoAction()
-    object MAIL : ProfileInfoAction()
-    object DOWNLOAD : ProfileInfoAction()
-    object LINK : ProfileInfoAction()
-    object PASSWORD : ProfileInfoAction()
+    object None : ProfileInfoAction()
+    object Edit : ProfileInfoAction()
+    object Call : ProfileInfoAction()
+    object Mail : ProfileInfoAction()
+    object Download : ProfileInfoAction()
+    object Link : ProfileInfoAction()
+    object Password : ProfileInfoAction()
+    object BloodDonationList : ProfileInfoAction()
+    object CheckInList : ProfileInfoAction()
 }

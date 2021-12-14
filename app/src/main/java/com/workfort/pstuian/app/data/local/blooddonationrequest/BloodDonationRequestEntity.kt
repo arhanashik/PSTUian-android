@@ -38,7 +38,7 @@ data class BloodDonationRequestEntity(
     @SerializedName("name")
     val name: String,
     @SerializedName("image_url")
-    val imageUrl: String,
+    val imageUrl: String?,
 ) : Parcelable {
     override fun equals(other: Any?): Boolean {
         return other != null && other is BloodDonationRequestEntity
@@ -62,7 +62,7 @@ data class BloodDonationRequestEntity(
         result = 31 * result + userId.hashCode()
         result = 31 * result + userType.hashCode()
         result = 31 * result + name.hashCode()
-        result = 31 * result + imageUrl.hashCode()
+        result = 31 * result + (imageUrl?.hashCode() ?: 0)
         return result
     }
 }

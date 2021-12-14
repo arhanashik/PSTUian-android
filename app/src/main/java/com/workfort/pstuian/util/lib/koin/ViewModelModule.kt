@@ -1,6 +1,8 @@
 package com.workfort.pstuian.util.lib.koin
 
 import com.workfort.pstuian.app.ui.blooddonation.viewmodel.BloodDonationViewModel
+import com.workfort.pstuian.app.ui.checkin.viewmodel.CheckInViewModel
+import com.workfort.pstuian.app.ui.common.locationpicker.viewmodel.CheckInLocationViewModel
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
@@ -40,4 +42,6 @@ val viewModelModule = module {
     viewModel { SupportViewModel(get()) }
     viewModel { NotificationViewModel(get()) }
     viewModel { BloodDonationViewModel(get(), get()) }
+    viewModel { CheckInViewModel(get()) }
+    viewModel { CheckInLocationViewModel(get()) }
 }

@@ -89,7 +89,7 @@ class BloodDonationViewModel(
         viewModelScope.launch {
             _createDonationRequestState.value = try {
                 val response = donationRequestRepo.insert(bloodGroup, beforeDate, contact, info)
-                CreateBloodDonationRequestsState.Success(response!!)
+                CreateBloodDonationRequestsState.Success(response)
             } catch (e: Exception) {
                 CreateBloodDonationRequestsState.Error(e.message)
             }

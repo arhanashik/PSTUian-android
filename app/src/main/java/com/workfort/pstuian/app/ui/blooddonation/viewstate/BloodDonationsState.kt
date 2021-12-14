@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.blooddonation.viewstate
 
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonation
+import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
 import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationRequestEntity
 
 /**
@@ -22,7 +22,7 @@ import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationReq
 sealed class BloodDonationsState {
     object Idle: BloodDonationsState()
     object Loading: BloodDonationsState()
-    data class Donations(val data: List<BloodDonation>) : BloodDonationsState()
+    data class Donations(val data: List<BloodDonationEntity>) : BloodDonationsState()
     data class Error(val error: String?) : BloodDonationsState()
 }
 

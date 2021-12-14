@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.data.repository
 
+import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
 import com.workfort.pstuian.app.data.remote.apihelper.BloodDonationApiHelper
 
 /**
@@ -18,16 +19,22 @@ import com.workfort.pstuian.app.data.remote.apihelper.BloodDonationApiHelper
  *  ****************************************************************************
  */
 
-class BloodDonationRepository(private val helper: BloodDonationApiHelper) {
+class BloodDonationRepository(
+    private val authRepo: AuthRepository,
+    private val helper: BloodDonationApiHelper
+) {
     suspend fun getAll(page: Int) = helper.getAll(page, limit = 20)
     suspend fun get(id: Int) = helper.get(id)
     suspend fun insert(
-        userId: Int,
-        userType: String,
         requestId: Int?,
         date: String,
         info: String,
-    ) = helper.insert(userId, userType, requestId, date, info)
+    ) : BloodDonationEntity {
+        val userIdAndType = authRepo.getUserIdAndType()
+
+        return helper.insert(userIdAndType.first, userIdAndType.second, requestId, date, info)
+            ?: throw Exception("Insert failed")
+    }
     suspend fun update(
         id: Int,
         requestId: Int?,

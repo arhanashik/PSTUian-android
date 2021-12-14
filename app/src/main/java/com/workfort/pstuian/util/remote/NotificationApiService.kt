@@ -26,6 +26,8 @@ interface NotificationApiService {
     @GET(Const.Remote.Api.Notification.GET_ALL)
     suspend fun getAll(
         @Query(Const.Params.USER_ID) userId: Int = -1,
-        @Query(Const.Params.USER_TYPE) userType: String = ""
+        @Query(Const.Params.USER_TYPE) userType: String = "",
+        @Query(Const.Params.PAGE) page: Int = 1,
+        @Query(Const.Params.LIMIT) limit: Int = 20,
     ): Response<List<NotificationEntity>>
 }

@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.ui.students.adapter
 
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,27 +11,77 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.student.StudentEntity
-import com.workfort.pstuian.databinding.RowStudentBinding
-import com.workfort.pstuian.app.ui.students.viewholder.StudentsViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.StudentClickEvent
+import com.workfort.pstuian.app.ui.students.viewholder.StudentsViewHolder
+import com.workfort.pstuian.databinding.RowStudentBinding
 import java.util.*
 import kotlin.collections.ArrayList
 
 class StudentsAdapter : RecyclerView.Adapter<StudentsViewHolder>(), Filterable {
 
-    private val students : MutableList<StudentEntity> = ArrayList()
-    private val filteredStudents : MutableList<StudentEntity> = ArrayList()
+    private val data : MutableList<StudentEntity> = ArrayList()
+    private val filteredData : MutableList<StudentEntity> = ArrayList()
     private var listener: StudentClickEvent? = null
 
-    fun setStudents(students: MutableList<StudentEntity>) {
-        this.students.clear()
-        this.students.addAll(students)
+    fun setData(data: MutableList<StudentEntity>) {
+        this.data.clear()
+        this.data.addAll(data)
+        filterData(data)
+    }
 
-        filter.filter("")
+    fun addData(data: MutableList<StudentEntity>) {
+        if(data.isEmpty()) return
+
+        val newData = if(itemCount == 0) data else data.toSet().minus(this.data.toSet())
+        if(newData.isEmpty()) return
+
+        val startPosition = itemCount
+        this.data.addAll(newData)
+        this.filteredData.addAll(newData)
+
+        val newDataCount = newData.size
+        if(newDataCount == 1) notifyItemInserted(startPosition)
+        else notifyItemRangeInserted(startPosition, newDataCount)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterData(data: MutableList<StudentEntity>) {
+        // if new data is same as current data no need to do anything
+        if(data.size <= itemCount && filteredData.toSet().minus(data.toSet()).isEmpty()) {
+            return
+        }
+
+        filteredData.clear()
+        filteredData.addAll(data)
+
+        notifyDataSetChanged()
     }
 
     fun setListener(listener: StudentClickEvent) {
         this.listener = listener
+    }
+
+    override fun getItemCount(): Int {
+        return filteredData.size
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentsViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = DataBindingUtil.inflate(inflater, R.layout.row_student, parent, false)
+                as RowStudentBinding
+        return StudentsViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: StudentsViewHolder, position: Int) {
+        val student = filteredData[position]
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
+        holder.bind(student)
+        holder.binding.root.setOnClickListener {
+            run {
+                if(listener != null) listener?.onClickStudent(student)
+            }
+        }
     }
 
     override fun getFilter(): Filter {
@@ -38,16 +89,16 @@ class StudentsAdapter : RecyclerView.Adapter<StudentsViewHolder>(), Filterable {
             override fun performFiltering(query: CharSequence?): FilterResults {
                 val result: ArrayList<StudentEntity> = ArrayList()
                 if(TextUtils.isEmpty(query)) {
-                    result.addAll(students)
+                    result.addAll(data)
                 } else {
-                    val q = query.toString().toLowerCase(Locale.ROOT)
-                    students.forEach {
+                    val q = query.toString().lowercase(Locale.ROOT)
+                    data.forEach {
                         if(it.id.toString().contains(q)
-                            || it.reg.toLowerCase(Locale.ROOT).contains(q)
-                            || it.name.toLowerCase(Locale.ROOT).contains(q)
-                            || (it.blood?: "").toLowerCase(Locale.ROOT).contains(q)
-                            || (it.phone?: "").toLowerCase(Locale.ROOT).contains(q)
-                            || (it.email?: "").toLowerCase(Locale.ROOT).contains(q))
+                            || it.reg.lowercase(Locale.ROOT).contains(q)
+                            || it.name.lowercase(Locale.ROOT).contains(q)
+                            || (it.blood?: "").lowercase(Locale.ROOT).contains(q)
+                            || (it.phone?: "").lowercase(Locale.ROOT).contains(q)
+                            || (it.email?: "").lowercase(Locale.ROOT).contains(q))
                             result.add(it)
                     }
                 }
@@ -60,37 +111,10 @@ class StudentsAdapter : RecyclerView.Adapter<StudentsViewHolder>(), Filterable {
             }
 
             override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
-                filteredStudents.clear()
                 @Suppress("UNCHECKED_CAST")
-                filteredStudents.addAll(filteredResult?.values as ArrayList<StudentEntity>)
-
-                notifyDataSetChanged()
+                val newData = filteredResult?.values as ArrayList<StudentEntity>
+                filterData(newData)
             }
         }
     }
-
-    override fun getItemCount(): Int {
-        return filteredStudents.size
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentsViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil.inflate(inflater, R.layout.row_student, parent, false)
-                as RowStudentBinding
-        return StudentsViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: StudentsViewHolder, position: Int) {
-        val student = filteredStudents[position]
-        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
-            R.anim.anim_item_insert)
-        holder.bind(student)
-        holder.binding.root.setOnClickListener {
-            run {
-                if(listener != null) listener?.onClickStudent(student)
-            }
-        }
-    }
-
-
 }

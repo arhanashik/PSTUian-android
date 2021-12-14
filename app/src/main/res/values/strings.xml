@@ -22,7 +22,7 @@
     <string name="title_flexible_update_dialog">Update Available!</string>
     <string name="title_install_update_dialog">Ready To Install</string>
 
-    <string name="hint_search">Search hint</string>
+    <string name="hint_search">Search</string>
     <string name="hint_search_teacher">Search teacher</string>
     <string name="hint_search_student">Search student</string>
     <string name="hint_search_batch">Search batch</string>
@@ -313,11 +313,29 @@
     <string name="hint_need_before">Need before</string>
     <string name="hint_contact">Phone numbers</string>
     <string name="helper_txt_max_length_blood_donation_message">Maximum 500 characters</string>
-    <string name="info_blood_donation">After you create a request, one admin will review it. Then, a notification will be sent to the donors of same blood group. Also, the request will be added to the blood donation requst list.</string>
+    <string name="info_blood_donation">
+        After you create a request, one admin will review it. Then, a notification will be
+        sent to the donors. Also, the request will be added to the blood donation request
+        list.
+    </string>
     <string name="txt_create_request">Create Request</string>
     <string name="label_create_blood_donation_request_activity">Create Request</string>
     <string name="msg_sign_in_required">You need to sign in first to complete this action.</string>
     <string name="txt_sign_in_required">Sign In Required</string>
+    <string name="txt_say_hi">Say Hi</string>
+    <string name="label_check_in_activity">Check In</string>
+    <string name="txt_change_check_in_visibility">Change check in visibility</string>
+    <string name="txt_public">Public</string>
+    <string name="txt_only_me">Only Me</string>
+    <string name="hint_visibility_public">Everyone can find you in check in list</string>
+    <string name="hint_visibility_only_me">Nobody can find you in check in list</string>
+    <string name="prefix_selected_location">Check In - </string>
+    <string name="hint_type_location_name">Location Name</string>
+    <string name="txt_create_new">Create new</string>
+    <string name="txt_create_new_location">Create New Location</string>
+    <string name="txt_my_check_in_list">My Check In List</string>
+    <string name="txt_blood_donation">Blood Donation</string>
+    <string name="txt_my_donation_list">My Donation List</string>
 
     <array name="blood_group">
         <item>A+</item>

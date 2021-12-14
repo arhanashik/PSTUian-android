@@ -104,7 +104,7 @@ class EmployeeProfileActivity : BaseActivity<ActivityEmployeeProfileBinding>() {
         object: ProfileInfoClickEvent() {
             override fun onAction(item: ProfileInfoItem) {
                 when(item.action) {
-                    ProfileInfoAction.LINK -> {
+                    ProfileInfoAction.Link -> {
                         item.actionData?.let { mLinkUtil.openBrowser(it) }
                     }
                     else -> {}
@@ -124,7 +124,7 @@ class EmployeeProfileActivity : BaseActivity<ActivityEmployeeProfileBinding>() {
         return listOf(
             ProfileInfoItem(getString(R.string.txt_address), mEmployee.address?: "~"),
             ProfileInfoItem(getString(R.string.txt_phone), mEmployee.phone?: "~",
-                R.drawable.ic_call, ProfileInfoAction.CALL, mEmployee.phone?: "~"),
+                R.drawable.ic_call, ProfileInfoAction.Call, mEmployee.phone?: "~"),
         )
     }
 }

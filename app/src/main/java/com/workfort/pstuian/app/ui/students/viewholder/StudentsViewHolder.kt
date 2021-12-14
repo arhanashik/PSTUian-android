@@ -11,13 +11,9 @@ class StudentsViewHolder (val binding: RowStudentBinding) :
 
     fun bind(student: StudentEntity) {
         with(binding) {
-            if(student.imageUrl.isNullOrEmpty()) {
-                imgAvatar.setImageResource(R.drawable.img_placeholder_profile)
-            } else {
-                imgAvatar.load(student.imageUrl) {
-                    placeholder(R.drawable.img_placeholder_profile)
-                    error(R.drawable.img_placeholder_profile)
-                }
+            imgAvatar.load(student.imageUrl?: "") {
+                placeholder(R.drawable.img_placeholder_profile)
+                error(R.drawable.img_placeholder_profile)
             }
             tvName.text = student.name
             tvId.text = student.id.toString()

@@ -50,6 +50,7 @@ object Const {
         const val OLD_ID = "old_id"
         const val USER_ID = "user_id"
         const val REQUEST_ID = "request_id"
+        const val LOCATION_ID = "location_id"
 
         const val DEVICE_ID = "device_id"
         const val FCM_TOKEN = "fcm_token"
@@ -92,15 +93,35 @@ object Const {
         const val BEFORE_DATE = "before_date"
         const val CONTACT = "contact"
         const val INFO = "info"
+        const val VISIBILITY = "visibility"
 
         const val CREATED_AT = "created_at"
+        const val UPDATED_AT = "updated_at"
 
         const val PAGE = "page"
         const val LIMIT = "limit"
 
+        const val QUERY = "query"
+        const val DETAILS = "details"
+        const val LINK = "link"
+
         object UserType {
             const val STUDENT = "student"
             const val TEACHER = "teacher"
+        }
+
+        object CheckInLocation {
+            const val MAIN_CAMPUS = 1
+            const val SECOND_CAMPUS = 2
+        }
+
+        object CheckInVisibility {
+            const val PUBLIC = "public"
+            const val ONLY_ME = "only_me"
+        }
+
+        object Default {
+            const val PAGE_SIZE = 20
         }
     }
 
@@ -113,7 +134,7 @@ object Const {
         private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
 
         private val BASE_URL = if(BuildConfig.DEBUG) DEV_SERVER else LIVE_SERVER
-        val BASE_API_URL = if(BuildConfig.DEBUG) DEV_API_SERVER else LIVE_API_SERVER
+        val BASE_API_URL = if(BuildConfig.DEBUG) LOCAL_API_SERVER else LIVE_API_SERVER
         val TERMS_AND_CONDITIONS = "${BASE_URL}terms_and_conditions.php"
         val PRIVACY_POLICY = "${BASE_URL}privacy_policy.php"
         val ADMISSION_SUPPORT = "${BASE_URL}admission_support.php"
@@ -130,6 +151,8 @@ object Const {
         private const val NOTIFICATION_API_PATH = "notification.php?call="
         private const val BLOOD_DONATION_API_PATH = "blood_donation.php?call="
         private const val BLOOD_DONATION_REQUEST_API_PATH = "blood_donation_request.php?call="
+        private const val CHECK_IN_API_PATH = "check_in.php?call="
+        private const val CHECK_IN_LOCATION_API_PATH = "check_in_location.php?call="
 
         object Api {
             const val GET_CONFIG =  "${CONFIG_API_PATH}getLatest"
@@ -202,6 +225,22 @@ object Const {
                 const val INSERT = "${BLOOD_DONATION_REQUEST_API_PATH}insert"
                 const val UPDATE = "${BLOOD_DONATION_REQUEST_API_PATH}update"
                 const val DELETE = "${BLOOD_DONATION_REQUEST_API_PATH}delete"
+            }
+
+            object CheckIn {
+                const val GET_ALL = "${CHECK_IN_API_PATH}getAll"
+                const val GET = "${CHECK_IN_API_PATH}get"
+                const val CHECK_IN = "${CHECK_IN_API_PATH}checkIn"
+                const val VISIBILITY = "${CHECK_IN_API_PATH}visibility"
+                const val DELETE = "${CHECK_IN_API_PATH}delete"
+            }
+
+            object CheckInLocation {
+                const val GET_ALL = "${CHECK_IN_LOCATION_API_PATH}getAll"
+                const val GET = "${CHECK_IN_LOCATION_API_PATH}get"
+                const val SEARCH = "${CHECK_IN_LOCATION_API_PATH}search"
+                const val INSERT = "${CHECK_IN_LOCATION_API_PATH}insert"
+                const val UPDATE = "${CHECK_IN_LOCATION_API_PATH}update"
             }
         }
     }

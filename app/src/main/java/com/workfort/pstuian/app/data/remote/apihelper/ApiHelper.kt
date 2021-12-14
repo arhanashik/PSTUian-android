@@ -1,5 +1,7 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
+import com.workfort.pstuian.app.data.local.constant.Const
+
 /**
  *  ****************************************************************************
  *  * Created by : arhan on 30 Sep, 2021 at 10:01 PM.
@@ -18,7 +20,10 @@ package com.workfort.pstuian.app.data.remote.apihelper
 
 abstract class ApiHelper<T> {
     open suspend fun getAll(): List<T> = emptyList()
-    open suspend fun getAll(page: Int, limit: Int): List<T> = emptyList()
+    open suspend fun getAll(
+        page: Int,
+        limit: Int = Const.Params.Default.PAGE_SIZE
+    ): List<T> = emptyList()
     open suspend fun get(id: Int): T? = null
     open suspend fun insert(item: T): Int = 0
     open suspend fun update(item: T): Boolean = false

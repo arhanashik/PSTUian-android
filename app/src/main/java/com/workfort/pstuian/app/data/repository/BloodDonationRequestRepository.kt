@@ -1,9 +1,6 @@
 package com.workfort.pstuian.app.data.repository
 
 import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationRequestEntity
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.student.StudentEntity
-import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.remote.apihelper.BloodDonationRequestApiHelper
 
 /**
@@ -33,26 +30,11 @@ class BloodDonationRequestRepository(
         beforeDate: String,
         contact: String,
         info: String,
-    ) : BloodDonationRequestEntity? {
-        // get sign in state
-        val userType: String
-        val userId = try {
-            when(val user = authRepo.getSignInUser()) {
-                is StudentEntity -> {
-                    userType = Const.Params.UserType.STUDENT
-                    user.id
-                }
-                is TeacherEntity -> {
-                    userType = Const.Params.UserType.TEACHER
-                    user.id
-                }
-                else -> throw Exception("Sign in first to complete this action")
-            }
-        } catch (ex: Exception) {
-            throw Exception("Sign in first to complete this action")
-        }
+    ) : BloodDonationRequestEntity {
+        val userIdAndType = authRepo.getUserIdAndType()
 
-        return helper.insert(userId, userType, bloodGroup, beforeDate, contact, info)
+        return helper.insert(userIdAndType.first, userIdAndType.second, bloodGroup,
+            beforeDate, contact, info) ?: throw Exception("Insert failed")
     }
 
     suspend fun update(

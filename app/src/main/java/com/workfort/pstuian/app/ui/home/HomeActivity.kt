@@ -19,6 +19,7 @@ import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
 import com.workfort.pstuian.app.ui.blooddonation.BloodDonationRequestActivity
+import com.workfort.pstuian.app.ui.checkin.CheckInActivity
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.donate.DonateActivity
@@ -306,7 +307,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     private fun renderFaculties(faculties: List<FacultyEntity>) {
-        mAdapter.setFaculties(faculties.toMutableList())
+        mAdapter.setData(faculties.toMutableList())
     }
 
     private fun clearData() {
@@ -394,7 +395,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             showSignInRequiredDialog()
             return
         }
-        Toaster.show(getString(R.string.txt_coming_soon))
+        launchActivity<CheckInActivity>()
     }
 
     private fun showSignInRequiredDialog() {

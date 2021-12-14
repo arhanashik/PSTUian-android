@@ -27,6 +27,7 @@ import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.faculty.viewstate.BatchesState
 import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
+import com.workfort.pstuian.app.ui.studentprofile.intent.StudentProfileIntent
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.databinding.ActivityEditStudentProfileBinding
@@ -320,9 +321,11 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
                 return
             }
 
-            mStudentViewModel.changeAcademicInfo(
-                mStudent, name, id, reg, blood, facultyId, session, batchId
-            )
+            lifecycleScope.launch {
+                mStudentViewModel.intent.send(StudentProfileIntent.ChangeAcademicInfo(
+                    mStudent, name, id, reg, blood, facultyId, session, batchId
+                ))
+            }
         }
     }
 
@@ -365,9 +368,11 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
             val linkedIn = etLinkedIn.text.toString()
             val facebook = etFacebook.text.toString()
 
-            mStudentViewModel.changeConnectInfo(
-                mStudent, address, phone, email, cvLink, linkedIn, facebook
-            )
+            lifecycleScope.launch {
+                mStudentViewModel.intent.send(StudentProfileIntent.ChangeConnectInfo(
+                    mStudent, address, phone, email, cvLink, linkedIn, facebook
+                ))
+            }
         }
     }
 

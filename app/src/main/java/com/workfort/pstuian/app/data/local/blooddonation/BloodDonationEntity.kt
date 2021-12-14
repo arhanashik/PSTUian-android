@@ -21,7 +21,7 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
-data class BloodDonation(
+data class BloodDonationEntity(
     val id: Int,
     @SerializedName("request_id")
     val requestId: Int?,
@@ -36,5 +36,5 @@ data class BloodDonation(
     @SerializedName("name")
     val name: String,
     @SerializedName("image_url")
-    val image_url: String,
+    val image_url: String?,
 ) : Parcelable

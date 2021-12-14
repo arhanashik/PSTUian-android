@@ -1,5 +1,6 @@
 package com.workfort.pstuian.app.ui.faculty.adapter
 
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -21,56 +22,35 @@ class BatchesAdapter(
     private val isExpandView: Boolean = true
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
-    private val batches : MutableList<BatchEntity> = ArrayList()
-    private val filteredBatches : MutableList<BatchEntity> = ArrayList()
+    private val data : MutableList<BatchEntity> = ArrayList()
+    private val filteredData : MutableList<BatchEntity> = ArrayList()
     private var listener: BatchClickEvent? = null
 
-    fun setBatches(batches: MutableList<BatchEntity>) {
-        this.batches.clear()
-        this.batches.addAll(batches)
+    fun setData(data: MutableList<BatchEntity>) {
+        this.data.clear()
+        this.data.addAll(data)
+        filterData(data)
+    }
 
-        filter.filter("")
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterData(data: MutableList<BatchEntity>) {
+        // if new data is same as current data no need to do anything
+        if(data.size <= itemCount && filteredData.toSet().minus(data.toSet()).isEmpty()) {
+            return
+        }
+
+        filteredData.clear()
+        filteredData.addAll(data)
+
+        notifyDataSetChanged()
     }
 
     fun setListener(listener: BatchClickEvent) {
         this.listener = listener
     }
 
-    override fun getFilter(): Filter {
-        return object: Filter() {
-            override fun performFiltering(query: CharSequence?): FilterResults {
-                val result: ArrayList<BatchEntity> = ArrayList()
-                if(TextUtils.isEmpty(query)) {
-                    result.addAll(batches)
-                } else {
-                    val q = query.toString().toLowerCase(Locale.ROOT)
-                    batches.forEach {
-                        if(it.name.toLowerCase(Locale.ROOT).contains(q)
-                            || (it.title?: "").toLowerCase(Locale.ROOT).contains(q)
-                            || it.session.toLowerCase(Locale.ROOT).contains(q))
-                            result.add(it)
-                    }
-                }
-
-                val filteredResult = FilterResults()
-                filteredResult.count = result.size
-                filteredResult.values = result
-
-                return filteredResult
-            }
-
-            override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
-                filteredBatches.clear()
-                @Suppress("UNCHECKED_CAST")
-                filteredBatches.addAll(filteredResult?.values as ArrayList<BatchEntity>)
-
-                notifyDataSetChanged()
-            }
-        }
-    }
-
     override fun getItemCount(): Int {
-        return filteredBatches.size
+        return filteredData.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -83,7 +63,7 @@ class BatchesAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val batch = filteredBatches[position]
+        val batch = filteredData[position]
 
         holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
             R.anim.anim_item_insert)
@@ -104,6 +84,37 @@ class BatchesAdapter(
                         if(listener != null) listener?.onClickBatch(batch)
                     }
                 }
+            }
+        }
+    }
+
+    override fun getFilter(): Filter {
+        return object: Filter() {
+            override fun performFiltering(query: CharSequence?): FilterResults {
+                val result: ArrayList<BatchEntity> = ArrayList()
+                if(TextUtils.isEmpty(query)) {
+                    result.addAll(data)
+                } else {
+                    val q = query.toString().lowercase(Locale.ROOT)
+                    data.forEach {
+                        if(it.name.lowercase(Locale.ROOT).contains(q)
+                            || (it.title?: "").lowercase(Locale.ROOT).contains(q)
+                            || it.session.lowercase(Locale.ROOT).contains(q))
+                            result.add(it)
+                    }
+                }
+
+                val filteredResult = FilterResults()
+                filteredResult.count = result.size
+                filteredResult.values = result
+
+                return filteredResult
+            }
+
+            override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
+                @Suppress("UNCHECKED_CAST")
+                val newData = filteredResult?.values as ArrayList<BatchEntity>
+                filterData(newData)
             }
         }
     }

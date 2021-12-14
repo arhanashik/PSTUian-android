@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonation
+import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
 import com.workfort.pstuian.util.remote.BloodDonationApiService
 
 /**
@@ -22,14 +22,14 @@ import com.workfort.pstuian.util.remote.BloodDonationApiService
 class BloodDonationApiHelperImpl(
     private val service: BloodDonationApiService
 ) : BloodDonationApiHelper() {
-    override suspend fun getAll(page: Int, limit: Int): List<BloodDonation> {
+    override suspend fun getAll(page: Int, limit: Int): List<BloodDonationEntity> {
         val response = service.getAll(page, limit)
         if(!response.success) throw Exception(response.message)
 
         return response.data?: throw Exception("No data")
     }
 
-    override suspend fun get(id: Int): BloodDonation {
+    override suspend fun get(id: Int): BloodDonationEntity {
         val response = service.get(id)
         if(!response.success) throw Exception(response.message)
 
@@ -42,7 +42,7 @@ class BloodDonationApiHelperImpl(
         requestId: Int?,
         date: String,
         info: String
-    ): BloodDonation {
+    ): BloodDonationEntity {
         val response = service.insert(userId, userType, requestId, date, info)
         if(!response.success) throw Exception(response.message)
 
@@ -54,7 +54,7 @@ class BloodDonationApiHelperImpl(
         requestId: Int?,
         date: String,
         info: String
-    ): BloodDonation {
+    ): BloodDonationEntity {
         val response = service.update(id, requestId, date, info)
         if(!response.success) throw Exception(response.message)
 

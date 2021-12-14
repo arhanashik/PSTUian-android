@@ -18,5 +18,10 @@ import com.workfort.pstuian.app.data.local.notification.NotificationEntity
  *  ****************************************************************************
  */
 interface NotificationApiHelper {
-    suspend fun getAll(userId: Int, userType: String): List<NotificationEntity>
+    suspend fun getAll(
+        userId: Int,
+        userType: String,
+        page: Int,
+        limit: Int
+    ): List<NotificationEntity>
 }

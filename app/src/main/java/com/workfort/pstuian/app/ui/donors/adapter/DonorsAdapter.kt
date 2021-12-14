@@ -18,19 +18,53 @@ import kotlin.collections.ArrayList
 
 class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
 
-    private val donors : MutableList<DonorEntity> = ArrayList()
-    private val filteredDonors : MutableList<DonorEntity> = ArrayList()
+    private val data : MutableList<DonorEntity> = ArrayList()
+    private val filteredData : MutableList<DonorEntity> = ArrayList()
     private var listener: DonorClickEvent? = null
 
-    fun setDonors(donors: MutableList<DonorEntity>) {
-        this.donors.clear()
-        this.donors.addAll(donors)
+    fun setData(data: MutableList<DonorEntity>) {
+        this.data.clear()
+        this.data.addAll(data)
+        filterData(data)
+    }
 
-        filter.filter("")
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterData(data: MutableList<DonorEntity>) {
+        // if new data is same as current data no need to do anything
+        if(data.size <= itemCount && filteredData.toSet().minus(data.toSet()).isEmpty()) {
+            return
+        }
+
+        filteredData.clear()
+        filteredData.addAll(data)
+
+        notifyDataSetChanged()
     }
 
     fun setListener(listener: DonorClickEvent) {
         this.listener = listener
+    }
+
+    override fun getItemCount(): Int {
+        return filteredData.size
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DonorsViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = RowDonorBinding.inflate(inflater, parent, false)
+        return DonorsViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: DonorsViewHolder, position: Int) {
+        val batch = filteredData[position]
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
+        holder.bind(batch)
+        holder.binding.root.setOnClickListener {
+            run {
+                listener?.onClickDonor(batch)
+            }
+        }
     }
 
     override fun getFilter(): Filter {
@@ -38,10 +72,10 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
             override fun performFiltering(query: CharSequence?): FilterResults {
                 val result: ArrayList<DonorEntity> = ArrayList()
                 if(TextUtils.isEmpty(query)) {
-                    result.addAll(donors)
+                    result.addAll(data)
                 } else {
                     val q = query.toString().lowercase(Locale.ROOT)
-                    donors.forEach {
+                    data.forEach {
                         if((it.name?: "").lowercase(Locale.ROOT).contains(q)
                             || (it.info?: "").lowercase(Locale.ROOT).contains(q)
                             || it.reference.lowercase(Locale.ROOT).contains(q))
@@ -56,35 +90,10 @@ class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
                 return filteredResult
             }
 
-            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
-                filteredDonors.clear()
                 @Suppress("UNCHECKED_CAST")
-                filteredDonors.addAll(filteredResult?.values as ArrayList<DonorEntity>)
-
-                notifyDataSetChanged()
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return filteredDonors.size
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DonorsViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = RowDonorBinding.inflate(inflater, parent, false)
-        return DonorsViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: DonorsViewHolder, position: Int) {
-        val batch = filteredDonors[position]
-        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
-            R.anim.anim_item_insert)
-        holder.bind(batch)
-        holder.binding.root.setOnClickListener {
-            run {
-                listener?.onClickDonor(batch)
+                val newData = filteredResult?.values as ArrayList<DonorEntity>
+                filterData(newData)
             }
         }
     }

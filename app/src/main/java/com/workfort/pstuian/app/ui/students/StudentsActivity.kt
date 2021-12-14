@@ -134,7 +134,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
             tvMessage.visibility = inverseVisibility
             btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.setStudents(data.toMutableList())
+        mAdapter.addData(data.toMutableList())
     }
 
     private fun gotToStudentProfile(student: StudentEntity) {

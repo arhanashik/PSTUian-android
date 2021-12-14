@@ -128,7 +128,7 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
                 tvMessage.setText(R.string.txt_be_first_donor)
             }
         }
-        mAdapter.setDonors(data.toMutableList())
+        mAdapter.setData(data.toMutableList())
     }
 
     private fun donate() {

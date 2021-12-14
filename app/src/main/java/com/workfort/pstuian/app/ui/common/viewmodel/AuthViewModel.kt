@@ -67,6 +67,7 @@ class AuthViewModel(
                     is AuthIntent.RegisterDevice -> registerDevice()
                     is AuthIntent.GetConfig -> getConfig()
                     is AuthIntent.GetSignInUser -> getSignedInUser()
+                    is AuthIntent.ChangePassword -> changePassword(it.oldPassword, it.newPassword)
                     is AuthIntent.SignOut -> signOut()
                 }
             }
@@ -185,7 +186,7 @@ class AuthViewModel(
         }
     }
 
-    fun changePassword(oldPassword: String, newPassword: String) {
+    private fun changePassword(oldPassword: String, newPassword: String) {
         viewModelScope.launch {
             _changePasswordState.value = ChangeProfileInfoState.Loading
             _changePasswordState.value = try {

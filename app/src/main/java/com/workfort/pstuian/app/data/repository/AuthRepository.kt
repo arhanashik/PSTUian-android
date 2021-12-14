@@ -168,6 +168,20 @@ class AuthRepository(
         }
     }
 
+    fun getUserIdAndType() : Pair<Int, String> {
+        val userId = try {
+            when(val user = getSignInUser()) {
+                is StudentEntity -> user.id
+                is TeacherEntity -> user.id
+                else -> throw Exception("Sign in first to complete this action")
+            }
+        } catch (ex: Exception) {
+            throw Exception("Sign in first to complete this action")
+        }
+
+        return Pair(userId, getSignInUserType())
+    }
+
     suspend fun storeSignInStudent(student: StudentEntity) {
         val context = PstuianApp.getBaseApplicationContext()
         context.authStore.edit { auth ->

@@ -289,5 +289,16 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.blooddonation.BloodDonationRequestActivity"/>
         </activity>
+
+        <activity
+                android:name=".app.ui.checkin.CheckInActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_check_in_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.home.HomeActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.home.HomeActivity"/>
+        </activity>
     </application>
 </manifest>

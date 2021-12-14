@@ -24,8 +24,7 @@ class BloodDonationRequestAdapter : RecyclerView.Adapter<BloodDonationRequestVie
     fun setData(data: MutableList<BloodDonationRequestEntity>) {
         this.data.clear()
         this.data.addAll(data)
-
-        filter.filter("")
+        filterData(data)
     }
 
     fun addData(data: MutableList<BloodDonationRequestEntity>) {
@@ -39,7 +38,20 @@ class BloodDonationRequestAdapter : RecyclerView.Adapter<BloodDonationRequestVie
         this.filteredData.addAll(newData)
 
         if(newData.size == 1) notifyItemInserted(startPosition)
-        else notifyItemRangeInserted(startPosition, itemCount - 1)
+        else notifyItemRangeInserted(startPosition, newData.size)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterData(data: MutableList<BloodDonationRequestEntity>) {
+        // if new data is same as current data no need to do anything
+        if(data.size <= itemCount && filteredData.toSet().minus(data.toSet()).isEmpty()) {
+            return
+        }
+
+        filteredData.clear()
+        filteredData.addAll(data)
+
+        notifyDataSetChanged()
     }
 
     fun clear() {
@@ -49,42 +61,7 @@ class BloodDonationRequestAdapter : RecyclerView.Adapter<BloodDonationRequestVie
         notifyItemRangeRemoved(0, lastPosition)
     }
 
-    override fun getFilter(): Filter {
-        return object: Filter() {
-            override fun performFiltering(query: CharSequence?): FilterResults {
-                val result: ArrayList<BloodDonationRequestEntity> = ArrayList()
-                if(TextUtils.isEmpty(query)) {
-                    result.addAll(data)
-                } else {
-                    val q = query.toString().lowercase(Locale.ROOT)
-                    data.forEach {
-                        if(it.name.lowercase(Locale.ROOT).contains(q)
-                            || (it.bloodGroup).lowercase(Locale.ROOT).contains(q))
-                            result.add(it)
-                    }
-                }
-
-                val filteredResult = FilterResults()
-                filteredResult.count = result.size
-                filteredResult.values = result
-
-                return filteredResult
-            }
-
-            @SuppressLint("NotifyDataSetChanged")
-            override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
-                filteredData.clear()
-                @Suppress("UNCHECKED_CAST")
-                filteredData.addAll(filteredResult?.values as ArrayList<BloodDonationRequestEntity>)
-
-                notifyDataSetChanged()
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return filteredData.size
-    }
+    override fun getItemCount(): Int = filteredData.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BloodDonationRequestViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -97,5 +74,36 @@ class BloodDonationRequestAdapter : RecyclerView.Adapter<BloodDonationRequestVie
         holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
             R.anim.anim_item_insert)
         holder.bind(filteredData[position])
+    }
+
+    override fun getFilter(): Filter {
+        return object: Filter() {
+            override fun performFiltering(query: CharSequence?): FilterResults {
+                val result: ArrayList<BloodDonationRequestEntity> = ArrayList()
+                if(TextUtils.isEmpty(query)) {
+                    result.addAll(data)
+                } else {
+                    val q = query.toString().lowercase(Locale.ROOT)
+                    data.forEach {
+                        if(it.name.lowercase(Locale.ROOT).contains(q)
+                            || (it.bloodGroup).lowercase(Locale.ROOT).contains(q)
+                            || (it.beforeDate).lowercase(Locale.ROOT).contains(q))
+                            result.add(it)
+                    }
+                }
+
+                val filteredResult = FilterResults()
+                filteredResult.count = result.size
+                filteredResult.values = result
+
+                return filteredResult
+            }
+
+            override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
+                @Suppress("UNCHECKED_CAST")
+                val newData = filteredResult?.values as ArrayList<BloodDonationRequestEntity>
+                filterData(newData)
+            }
+        }
     }
 }

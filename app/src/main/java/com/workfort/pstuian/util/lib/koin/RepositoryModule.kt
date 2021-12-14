@@ -75,9 +75,17 @@ val repositoryModule = module {
 
     // blood donation repository injections
     single<BloodDonationApiHelper> { BloodDonationApiHelperImpl(get()) }
-    single { BloodDonationRepository(get()) }
+    single { BloodDonationRepository(get(), get()) }
 
     // blood donation request repository injections
     single<BloodDonationRequestApiHelper> { BloodDonationRequestApiHelperImpl(get()) }
     single { BloodDonationRequestRepository(get(), get()) }
+
+    // check in repository injections
+    single<CheckInApiHelper> { CheckInApiHelperImpl(get()) }
+    single { CheckInRepository(get(), get()) }
+
+    // check in location repository injections
+    single<CheckInLocationApiHelper> { CheckInLocationApiHelperImpl(get()) }
+    single { CheckInLocationRepository(get(), get()) }
 }

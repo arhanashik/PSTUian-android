@@ -28,14 +28,28 @@ import com.workfort.pstuian.databinding.RowNotificationBinding
  */
 
 class NotificationAdapter : RecyclerView.Adapter<NotificationViewHolder>() {
-    private val notifications : MutableList<NotificationEntity> = ArrayList()
+    private val data : MutableList<NotificationEntity> = ArrayList()
     private var listener: ItemClickEvent<NotificationEntity>? = null
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setItems(notifications: MutableList<NotificationEntity>) {
-        this.notifications.clear()
-        this.notifications.addAll(notifications)
+    fun setData(notifications: MutableList<NotificationEntity>) {
+        this.data.clear()
+        this.data.addAll(notifications)
         notifyDataSetChanged()
+    }
+
+    fun addData(data: MutableList<NotificationEntity>) {
+        if(data.isEmpty()) return
+
+        val newData = if(itemCount == 0) data else data.toSet().minus(this.data.toSet())
+        if(newData.isEmpty()) return
+
+        val startPosition = itemCount
+        this.data.addAll(newData)
+
+        val newDataCount = newData.size
+        if(newDataCount == 1) notifyItemInserted(startPosition)
+        else notifyItemRangeInserted(startPosition, newDataCount)
     }
 
     fun setListener(listener: ItemClickEvent<NotificationEntity>) {
@@ -43,7 +57,13 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return notifications.size
+        return data.size
+    }
+
+    fun clear() {
+        val lastPosition = itemCount
+        this.data.clear()
+        notifyItemRangeRemoved(0, lastPosition)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
@@ -53,7 +73,7 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        val item = notifications[position]
+        val item = data[position]
 
         holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
             R.anim.anim_item_insert)
