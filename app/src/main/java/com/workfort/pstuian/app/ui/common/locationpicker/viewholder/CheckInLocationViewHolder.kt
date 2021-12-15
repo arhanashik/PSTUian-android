@@ -6,7 +6,6 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.checkinlocation.CheckInLocationEntity
 import com.workfort.pstuian.databinding.RowLocationBinding
 import com.workfort.pstuian.util.helper.MathUtil
-import java.text.DecimalFormatSymbols
 
 /**
  *  ****************************************************************************
@@ -29,9 +28,6 @@ class CheckInLocationViewHolder(private val binding : RowLocationBinding) :
     fun bind(item: CheckInLocationEntity, onSelect : (location: CheckInLocationEntity) -> Unit) {
         with(binding) {
             tvName.text = item.name
-            val symbols = DecimalFormatSymbols.getInstance()
-            symbols.groupingSeparator = ' '
-
             val formattedCount = MathUtil.prettyCount(item.count)
             val checkInCountStr = "$formattedCount check in"
             tvCheckInCount.text = checkInCountStr

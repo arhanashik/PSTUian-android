@@ -29,15 +29,17 @@ import com.workfort.pstuian.util.helper.Toaster
 class CheckInViewHolder (val binding: RowCheckInUserBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(entity: CheckInEntity) {
+    fun bind(item: CheckInEntity, onClickItem : (item: CheckInEntity) -> Unit) {
         with(binding) {
-            ivAvatar.load(entity.imageUrl?: "") {
+            ivAvatar.load(item.imageUrl?: "") {
                 placeholder(R.drawable.img_placeholder_profile)
                 error(R.drawable.img_placeholder_profile)
             }
-            tvName.text = entity.name
-            tvBatch.text = entity.batch
-            btnCall.setOnClickListener { promptCall(root.context, entity.phone.trim()) }
+            tvName.text = item.name
+            tvBatch.text = item.batch
+            btnCall.setOnClickListener { promptCall(root.context, item.phone.trim()) }
+
+            root.setOnClickListener { onClickItem(item) }
         }
     }
 

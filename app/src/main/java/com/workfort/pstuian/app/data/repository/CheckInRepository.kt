@@ -38,10 +38,8 @@ class CheckInRepository(
         return helper.checkIn(locationId, userIdAndType.first, userIdAndType.second)
             ?: throw Exception("Check in failed")
     }
-    suspend fun updateVisibility(visibility: String) : CheckInEntity {
-        val userIdAndType = authRepo.getUserIdAndType()
+    suspend fun updatePrivacy(checkInId: Int, privacy: String) =
+        helper.updatePrivacy(checkInId, privacy) ?: throw Exception("Update failed")
 
-        return helper.updateVisibility(userIdAndType.first, userIdAndType.second, visibility)
-            ?: throw Exception("Update failed")
-    }
+    suspend fun delete(checkInId: Int) = helper.delete(checkInId)
 }

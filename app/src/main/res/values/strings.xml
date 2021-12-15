@@ -324,11 +324,10 @@
     <string name="txt_sign_in_required">Sign In Required</string>
     <string name="txt_say_hi">Say Hi</string>
     <string name="label_check_in_activity">Check In</string>
-    <string name="txt_change_check_in_visibility">Change check in visibility</string>
     <string name="txt_public">Public</string>
     <string name="txt_only_me">Only Me</string>
-    <string name="hint_visibility_public">Everyone can find you in check in list</string>
-    <string name="hint_visibility_only_me">Nobody can find you in check in list</string>
+    <string name="hint_privacy_public">Visible to everyone</string>
+    <string name="hint_privacy_only_me">Visible to you only</string>
     <string name="prefix_selected_location">Check In - </string>
     <string name="hint_type_location_name">Location Name</string>
     <string name="txt_create_new">Create new</string>
@@ -336,6 +335,9 @@
     <string name="txt_my_check_in_list">My Check In List</string>
     <string name="txt_blood_donation">Blood Donation</string>
     <string name="txt_my_donation_list">My Donation List</string>
+    <string name="txt_change_privacy">Change Privacy</string>
+    <string name="txt_delete">Delete</string>
+    <string name="msg_delete_permanent">Are you surely want to delete? You cannot restore it again.</string>
 
     <array name="blood_group">
         <item>A+</item>

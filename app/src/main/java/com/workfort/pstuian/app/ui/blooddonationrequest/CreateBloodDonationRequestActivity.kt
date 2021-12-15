@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.blooddonation
+package com.workfort.pstuian.app.ui.blooddonationrequest
 
 import android.os.Bundle
 import android.text.InputType
@@ -12,8 +12,9 @@ import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
-import com.workfort.pstuian.app.ui.blooddonation.viewmodel.BloodDonationViewModel
-import com.workfort.pstuian.app.ui.blooddonation.viewstate.CreateBloodDonationRequestsState
+import com.workfort.pstuian.app.ui.blooddonationrequest.intent.BloodDonationIntent
+import com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel.BloodDonationViewModel
+import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.BloodDonationRequestState
 import com.workfort.pstuian.databinding.ActivityCreateBloodDonationRequestBinding
 import com.workfort.pstuian.util.helper.DateUtil
 import com.workfort.pstuian.util.view.dialog.CommonDialog
@@ -105,7 +106,11 @@ class CreateBloodDonationRequestActivity : BaseActivity<ActivityCreateBloodDonat
             tilContact.error = null
             val info = etInfo.text.toString()
 
-            mViewModel.createDonationRequest(blood, dateBefore, contact, info)
+            lifecycleScope.launch {
+                mViewModel.intent.send(BloodDonationIntent.CreateDonationRequest(
+                    blood, dateBefore, contact, info
+                ))
+            }
         }
     }
 
@@ -113,9 +118,9 @@ class CreateBloodDonationRequestActivity : BaseActivity<ActivityCreateBloodDonat
         lifecycleScope.launch {
             mViewModel.createDonationRequestState.collect {
                 when (it) {
-                    is CreateBloodDonationRequestsState.Idle -> Unit
-                    is CreateBloodDonationRequestsState.Loading -> setActionUi(isLoading = true)
-                    is CreateBloodDonationRequestsState.Success -> {
+                    is BloodDonationRequestState.Idle -> Unit
+                    is BloodDonationRequestState.Loading -> setActionUi(isLoading = true)
+                    is BloodDonationRequestState.Success -> {
                         setActionUi(isLoading = false)
                         val message = "Blood donation request created successfully!"
                         CommonDialog.success(
@@ -125,10 +130,10 @@ class CreateBloodDonationRequestActivity : BaseActivity<ActivityCreateBloodDonat
                             onBtnClick = { finish() }
                         )
                     }
-                    is CreateBloodDonationRequestsState.Error -> {
+                    is BloodDonationRequestState.Error -> {
                         setActionUi(isLoading = false)
-                        val error = it.error?: "Donation failed!"
-                        CommonDialog.error(this@CreateBloodDonationRequestActivity, message = error)
+                        CommonDialog.error(this@CreateBloodDonationRequestActivity,
+                            message = it.message)
                     }
                 }
             }

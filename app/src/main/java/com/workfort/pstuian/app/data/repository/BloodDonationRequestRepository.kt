@@ -29,12 +29,12 @@ class BloodDonationRequestRepository(
         bloodGroup: String,
         beforeDate: String,
         contact: String,
-        info: String,
+        info: String?,
     ) : BloodDonationRequestEntity {
         val userIdAndType = authRepo.getUserIdAndType()
 
         return helper.insert(userIdAndType.first, userIdAndType.second, bloodGroup,
-            beforeDate, contact, info) ?: throw Exception("Insert failed")
+            beforeDate, contact, info)
     }
 
     suspend fun update(

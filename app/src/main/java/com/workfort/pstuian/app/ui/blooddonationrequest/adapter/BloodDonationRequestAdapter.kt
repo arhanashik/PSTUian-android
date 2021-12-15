@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.blooddonation.adapter
+package com.workfort.pstuian.app.ui.blooddonationrequest.adapter
 
 import android.annotation.SuppressLint
 import android.text.TextUtils
@@ -10,7 +10,7 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationRequestEntity
-import com.workfort.pstuian.app.ui.blooddonation.viewholder.BloodDonationRequestViewHolder
+import com.workfort.pstuian.app.ui.blooddonationrequest.viewholder.BloodDonationRequestViewHolder
 import com.workfort.pstuian.databinding.RowBloodDonationRequestBinding
 import java.util.*
 import kotlin.collections.ArrayList

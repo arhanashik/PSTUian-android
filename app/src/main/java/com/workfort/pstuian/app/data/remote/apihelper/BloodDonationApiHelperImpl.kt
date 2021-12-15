@@ -22,11 +22,16 @@ import com.workfort.pstuian.util.remote.BloodDonationApiService
 class BloodDonationApiHelperImpl(
     private val service: BloodDonationApiService
 ) : BloodDonationApiHelper() {
-    override suspend fun getAll(page: Int, limit: Int): List<BloodDonationEntity> {
-        val response = service.getAll(page, limit)
-        if(!response.success) throw Exception(response.message)
-
-        return response.data?: throw Exception("No data")
+    override suspend fun getAll(
+        userId: Int,
+        userType: String,
+        page: Int,
+        limit: Int
+    ): List<BloodDonationEntity> {
+        service.getAll(userId, userType, page, limit).also {
+            if(!it.success) throw Exception(it.message)
+            return it.data?: throw Exception("No data")
+        }
     }
 
     override suspend fun get(id: Int): BloodDonationEntity {
@@ -41,7 +46,7 @@ class BloodDonationApiHelperImpl(
         userType: String,
         requestId: Int?,
         date: String,
-        info: String
+        info: String?
     ): BloodDonationEntity {
         val response = service.insert(userId, userType, requestId, date, info)
         if(!response.success) throw Exception(response.message)
@@ -49,13 +54,8 @@ class BloodDonationApiHelperImpl(
         return response.data?: throw Exception("No data")
     }
 
-    override suspend fun update(
-        id: Int,
-        requestId: Int?,
-        date: String,
-        info: String
-    ): BloodDonationEntity {
-        val response = service.update(id, requestId, date, info)
+    override suspend fun update(item: BloodDonationEntity): BloodDonationEntity {
+        val response = service.update(item.id, item.requestId, item.date, item.info)
         if(!response.success) throw Exception(response.message)
 
         return response.data?: throw Exception("No data")

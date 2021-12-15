@@ -45,6 +45,10 @@ object Prefs : PrefProp {
         get() = prefs.getBoolean(keyHasNewNotification, false)
         set(value) = prefs.edit { it.putBoolean(keyHasNewNotification, value) }
 
+    var lastShownCheckInLocationId: Int
+        get() = prefs.getInt(keyLastShownCheckInLocationId, -1)
+        set(value) = prefs.edit { it.putInt(keyLastShownCheckInLocationId, value) }
+
     fun clear() {
         prefs.edit().clear().apply()
     }

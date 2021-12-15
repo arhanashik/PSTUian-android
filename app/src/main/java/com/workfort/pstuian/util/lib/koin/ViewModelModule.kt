@@ -1,6 +1,6 @@
 package com.workfort.pstuian.util.lib.koin
 
-import com.workfort.pstuian.app.ui.blooddonation.viewmodel.BloodDonationViewModel
+import com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel.BloodDonationViewModel
 import com.workfort.pstuian.app.ui.checkin.viewmodel.CheckInViewModel
 import com.workfort.pstuian.app.ui.common.locationpicker.viewmodel.CheckInLocationViewModel
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel

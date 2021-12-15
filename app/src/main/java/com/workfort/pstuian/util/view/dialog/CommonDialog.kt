@@ -10,6 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
+import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.databinding.*
 import com.workfort.pstuian.util.helper.nameFilter
 
@@ -324,6 +326,64 @@ object CommonDialog {
             onClickChange(oldPassword, newPassword)
             dialog.dismiss()
         }
+        dialog.show()
+
+        return dialog
+    }
+
+    fun changePrivacy(
+        context: Context,
+        item: CheckInEntity,
+        onChange: (privacy: String) -> Unit
+    ) : AlertDialog {
+        val inflater = LayoutInflater.from(context)
+        val binding = PromptChangeCheckInPrivacyBinding.inflate(inflater,
+            null, false)
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(binding.root)
+            .create()
+
+        val prevCheckedId = if(item.privacy == Const.Params.CheckInPrivacy.PUBLIC)
+            R.id.btn_public else R.id.btn_only_me
+        var newPrivacy = Const.Params.CheckInPrivacy.PUBLIC
+        binding.btgPrivacy.addOnButtonCheckedListener { _, checkedId, _ ->
+            newPrivacy = if(checkedId == R.id.btn_public) {
+                binding.tvMessage.text = context.getString(R.string.hint_privacy_public)
+                Const.Params.CheckInPrivacy.PUBLIC
+            } else {
+                binding.tvMessage.text = context.getString(R.string.hint_privacy_only_me)
+                Const.Params.CheckInPrivacy.ONLY_ME
+            }
+        }
+        binding.btgPrivacy.check(prevCheckedId)
+
+        binding.btnChange.setOnClickListener {
+            dialog.dismiss()
+            onChange(newPrivacy)
+        }
+        binding.btnDismiss.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+
+        return dialog
+    }
+
+    fun deleteConfirmation(
+        context: Context,
+        onConfirm: () -> Unit
+    ) : AlertDialog {
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.txt_delete)
+            .setMessage(R.string.msg_delete_permanent)
+            .setPositiveButton(R.string.txt_delete) { dialog, _ ->
+                dialog.dismiss()
+                onConfirm()
+            }
+            .setNegativeButton(R.string.label_cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
         dialog.show()
 
         return dialog

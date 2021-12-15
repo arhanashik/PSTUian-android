@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.blooddonation
+package com.workfort.pstuian.app.ui.blooddonationrequest
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,10 +11,10 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationRequestEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
-import com.workfort.pstuian.app.ui.blooddonation.adapter.BloodDonationRequestAdapter
-import com.workfort.pstuian.app.ui.blooddonation.intent.BloodDonationIntent
-import com.workfort.pstuian.app.ui.blooddonation.viewmodel.BloodDonationViewModel
-import com.workfort.pstuian.app.ui.blooddonation.viewstate.BloodDonationRequestsState
+import com.workfort.pstuian.app.ui.blooddonationrequest.adapter.BloodDonationRequestAdapter
+import com.workfort.pstuian.app.ui.blooddonationrequest.intent.BloodDonationIntent
+import com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel.BloodDonationViewModel
+import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.BloodDonationRequestsState
 import com.workfort.pstuian.databinding.ActivityBloodDonationRequestBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import kotlinx.coroutines.delay
@@ -92,7 +92,7 @@ class BloodDonationRequestActivity : BaseActivity<ActivityBloodDonationRequestBi
                 val scrollPosition = layoutManager.findLastCompletelyVisibleItemPosition()
                 val loadMorePosition = mAdapter.itemCount - 1
                 if(scrollPosition == loadMorePosition) {
-                    loadData(mViewModel.donationRequestPage + 1)
+                    loadData(mViewModel.donationRequestsPage + 1)
                 }
             }
         })
@@ -103,9 +103,9 @@ class BloodDonationRequestActivity : BaseActivity<ActivityBloodDonationRequestBi
             endOfData = false
             mAdapter.clear()
         }
-        mViewModel.donationRequestPage = page
+        mViewModel.donationRequestsPage = page
         lifecycleScope.launch {
-            mViewModel.intent.send(BloodDonationIntent.GetAllDonationRequests)
+            mViewModel.intent.send(BloodDonationIntent.GetAllDonationRequests(page))
         }
     }
 
@@ -124,7 +124,7 @@ class BloodDonationRequestActivity : BaseActivity<ActivityBloodDonationRequestBi
                         endOfData = true
                         setActionUiState(false)
                         renderData(emptyList())
-                        binding.tvMessage.text = it.error?: "Can't load data"
+                        binding.tvMessage.text = it.message
                     }
                 }
             }

@@ -18,7 +18,7 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
-import com.workfort.pstuian.app.ui.blooddonation.BloodDonationRequestActivity
+import com.workfort.pstuian.app.ui.blooddonationrequest.BloodDonationRequestActivity
 import com.workfort.pstuian.app.ui.checkin.CheckInActivity
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel

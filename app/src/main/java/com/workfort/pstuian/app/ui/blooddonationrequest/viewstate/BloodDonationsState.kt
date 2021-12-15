@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.blooddonation.viewstate
+package com.workfort.pstuian.app.ui.blooddonationrequest.viewstate
 
 import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
 import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationRequestEntity
@@ -23,19 +23,33 @@ sealed class BloodDonationsState {
     object Idle: BloodDonationsState()
     object Loading: BloodDonationsState()
     data class Donations(val data: List<BloodDonationEntity>) : BloodDonationsState()
-    data class Error(val error: String?) : BloodDonationsState()
+    data class Error(val message: String) : BloodDonationsState()
+}
+
+sealed class BloodDonationState {
+    object Idle: BloodDonationState()
+    object Loading: BloodDonationState()
+    data class Success(val item: BloodDonationEntity) : BloodDonationState()
+    data class Error(val message: String) : BloodDonationState()
+}
+
+sealed class ItemDeleteState {
+    object Idle: ItemDeleteState()
+    object Loading: ItemDeleteState()
+    data class Success(val itemId: Int) : ItemDeleteState()
+    data class Error(val message: String) : ItemDeleteState()
 }
 
 sealed class BloodDonationRequestsState {
     object Idle: BloodDonationRequestsState()
     object Loading: BloodDonationRequestsState()
     data class DonationRequests(val data: List<BloodDonationRequestEntity>) : BloodDonationRequestsState()
-    data class Error(val error: String?) : BloodDonationRequestsState()
+    data class Error(val message: String) : BloodDonationRequestsState()
 }
 
-sealed class CreateBloodDonationRequestsState {
-    object Idle: CreateBloodDonationRequestsState()
-    object Loading: CreateBloodDonationRequestsState()
-    data class Success(val data: BloodDonationRequestEntity) : CreateBloodDonationRequestsState()
-    data class Error(val error: String?) : CreateBloodDonationRequestsState()
+sealed class BloodDonationRequestState {
+    object Idle: BloodDonationRequestState()
+    object Loading: BloodDonationRequestState()
+    data class Success(val data: BloodDonationRequestEntity) : BloodDonationRequestState()
+    data class Error(val message: String) : BloodDonationRequestState()
 }

@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
 import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
+import com.workfort.pstuian.app.data.local.constant.Const
 
 /**
  *  ****************************************************************************
@@ -19,18 +20,18 @@ import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
  */
 
 abstract class BloodDonationApiHelper : ApiHelper<BloodDonationEntity>()  {
+    open suspend fun getAll(
+        userId: Int,
+        userType: String,
+        page: Int,
+        limit: Int = Const.Params.Default.PAGE_SIZE
+    ): List<BloodDonationEntity> = emptyList()
+
     open suspend fun insert(
         userId: Int,
         userType: String,
         requestId: Int?,
         date: String,
-        info: String,
-    ): BloodDonationEntity? = null
-
-    open suspend fun update(
-        id: Int,
-        requestId: Int?,
-        date: String,
-        info: String,
+        info: String?,
     ): BloodDonationEntity? = null
 }

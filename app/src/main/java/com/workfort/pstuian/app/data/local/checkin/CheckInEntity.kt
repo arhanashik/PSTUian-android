@@ -27,8 +27,10 @@ data class CheckInEntity(
     val locationId: Int,
     @SerializedName("location_name")
     val locationName: String,
+    @SerializedName("location_image_url")
+    val locationImageUrl: String?,
     val count: Int,
-    val visibility: String,
+    val privacy: String,
     @SerializedName("user_id")
     val userId: Int,
     @SerializedName("user_type")
@@ -38,7 +40,6 @@ data class CheckInEntity(
     val phone: String,
     @SerializedName("image_url")
     val imageUrl: String?,
-    @SerializedName("created_at")
     val date: String
 ) : Parcelable {
     override fun equals(other: Any?): Boolean {
@@ -47,7 +48,7 @@ data class CheckInEntity(
                 && locationId == other.locationId
                 && locationName == other.locationName
                 && count == other.count
-                && visibility == other.visibility
+                && privacy == other.privacy
                 && userId == other.userId
                 && userType == other.userType
                 && name == other.name
@@ -62,7 +63,7 @@ data class CheckInEntity(
         result = 31 * result + locationId
         result = 31 * result + locationName.hashCode()
         result = 31 * result + count
-        result = 31 * result + visibility.hashCode()
+        result = 31 * result + privacy.hashCode()
         result = 31 * result + userId
         result = 31 * result + userType.hashCode()
         result = 31 * result + name.hashCode()

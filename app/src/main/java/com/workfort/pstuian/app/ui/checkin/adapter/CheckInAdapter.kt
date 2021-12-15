@@ -33,9 +33,9 @@ import kotlin.collections.ArrayList
  */
 
 class CheckInAdapter(
-    private val onClickCheckIn : () -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
-    Filterable {
+    private val onCreateNew : () -> Unit,
+    private val onClickItem : (item: CheckInEntity) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
     /**
      * Setting extraViewCount to true will add a default view at the start of the list
@@ -113,13 +113,13 @@ class CheckInAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DefaultCheckInViewHolder -> {
-                holder.bind(onClickCheckIn)
+                holder.bind(onCreateNew)
             }
             is CheckInViewHolder -> {
                 val realPosition = position.minus(if(hasDefaultView) 1 else 0)
                 holder.itemView.animation = AnimationUtils.loadAnimation(
                     holder.itemView.context, R.anim.anim_item_insert)
-                holder.bind(filteredData[realPosition])
+                holder.bind(filteredData[realPosition], onClickItem)
             }
         }
     }

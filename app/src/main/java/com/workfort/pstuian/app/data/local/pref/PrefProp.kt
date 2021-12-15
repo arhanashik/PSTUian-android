@@ -24,4 +24,7 @@ interface PrefProp {
 
     val keyHasNewNotification: String
         get() = "has_new_notification"
+
+    val keyLastShownCheckInLocationId: String
+        get() = "last_shown_check_in_location_id"
 }

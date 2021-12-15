@@ -46,7 +46,7 @@
                 android:layout_height="10dp"
                 android:layout_marginEnd="@dimen/dp10"
                 android:layout_marginBottom="@dimen/dp5"
-                android:src="@drawable/indicator_online"
+                android:src="@drawable/indicator_dot_green"
                 app:layout_constraintBottom_toTopOf="@id/tv_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="ContentDescription" />

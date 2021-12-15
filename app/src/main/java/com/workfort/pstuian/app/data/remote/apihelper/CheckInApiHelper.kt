@@ -44,9 +44,5 @@ abstract class CheckInApiHelper : ApiHelper<CheckInEntity>()  {
         userType: String,
     ): CheckInEntity? = null
 
-    open suspend fun updateVisibility(
-        userId: Int,
-        userType: String,
-        visibility: String,
-    ): CheckInEntity? = null
+    open suspend fun updatePrivacy(checkInId: Int, privacy: String, ): CheckInEntity? = null
 }

@@ -22,19 +22,19 @@ sealed class CheckInListState {
     object Idle: CheckInListState()
     object Loading: CheckInListState()
     data class CheckInList(val list: List<CheckInEntity>) : CheckInListState()
-    data class Error(val error: String?) : CheckInListState()
+    data class Error(val message: String?) : CheckInListState()
 }
 
 sealed class CheckInState {
     object Idle: CheckInState()
     object Loading: CheckInState()
     data class Success(val data: CheckInEntity) : CheckInState()
-    data class Error(val error: String?) : CheckInState()
+    data class Error(val message: String) : CheckInState()
 }
 
-sealed class CheckInVisibilityState {
-    object Idle: CheckInVisibilityState()
-    object Loading: CheckInVisibilityState()
-    data class Success(val data: CheckInEntity) : CheckInVisibilityState()
-    data class Error(val error: String?) : CheckInVisibilityState()
+sealed class CheckInDeleteState {
+    object Idle: CheckInDeleteState()
+    object Loading: CheckInDeleteState()
+    data class Success(val itemId: Int) : CheckInDeleteState()
+    data class Error(val message: String) : CheckInDeleteState()
 }

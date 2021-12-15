@@ -67,14 +67,17 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         }
     }
 
-    override suspend fun updateVisibility(
-        userId: Int,
-        userType: String,
-        visibility: String
-    ): CheckInEntity {
-        service.updateVisibility(userId, userType, visibility).also {
+    override suspend fun updatePrivacy(checkInId: Int, privacy: String): CheckInEntity {
+        service.updatePrivacy(checkInId, privacy).also {
             if(!it.success) throw Exception(it.message)
             return it.data?: throw Exception("No data")
+        }
+    }
+
+    override suspend fun delete(id: Int): Boolean {
+        service.delete(id).also {
+            if(!it.success) throw Exception(it.message)
+            return true
         }
     }
 }

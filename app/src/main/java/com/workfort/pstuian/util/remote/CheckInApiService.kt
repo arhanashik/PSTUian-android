@@ -55,10 +55,13 @@ interface CheckInApiService {
     ): Response<CheckInEntity>
 
     @FormUrlEncoded
-    @POST(Const.Remote.Api.CheckIn.VISIBILITY)
-    suspend fun updateVisibility(
-        @Field(Const.Params.USER_ID) userId: Int,
-        @Field(Const.Params.USER_TYPE) userType: String,
-        @Field(Const.Params.VISIBILITY) visibility: String,
+    @POST(Const.Remote.Api.CheckIn.PRIVACY)
+    suspend fun updatePrivacy(
+        @Field(Const.Params.ID) id: Int,
+        @Field(Const.Params.PRIVACY) privacy: String,
     ): Response<CheckInEntity>
+
+    @FormUrlEncoded
+    @POST(Const.Remote.Api.CheckIn.DELETE)
+    suspend fun delete(@Field(Const.Params.ID) id: Int): Response<Int>
 }

@@ -1,0 +1,58 @@
+package com.workfort.pstuian.app.ui.common.blooddonationlist.viewholder
+
+import android.content.Context
+import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.R
+import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
+import com.workfort.pstuian.databinding.RowBloodDonationBinding
+import com.workfort.pstuian.util.view.dialog.CommonDialog
+
+/**
+ *  ****************************************************************************
+ *  * Created by : arhan on 16 Dec, 2021 at 3:20.
+ *  * Email : ashik.pstu.cse@gmail.com
+ *  *
+ *  * This class is for:
+ *  * 1.
+ *  * 2.
+ *  * 3.
+ *  *
+ *  * Last edited by : arhan on 2021/12/16.
+ *  *
+ *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
+ *  ****************************************************************************
+ */
+
+class BloodDonationViewHolder (val binding: RowBloodDonationBinding) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(
+        item: BloodDonationEntity,
+        onClickEdit : (item: BloodDonationEntity) -> Unit,
+        onClickDelete : (item: BloodDonationEntity) -> Unit,
+    ) {
+        with(binding) {
+            val date = item.date.split(" ")[0]
+            tvDate.text = date
+            val requestId = if(item.requestId == null || item.requestId == 0) "Unregistered"
+            else item.requestId.toString()
+            val title = "Request Id : $requestId"
+            tvTitle.text = title
+            tvInfo.text = item.info
+            chipEdit.setOnClickListener { onClickEdit(item) }
+            chipDelete.setOnClickListener { onClickDelete(item) }
+            root.setOnClickListener {
+                showDetails(root.context, title, item.info?: "")
+            }
+        }
+    }
+
+    private fun showDetails(context: Context, title: String, message: String) {
+        CommonDialog.success(
+            context,
+            title,
+            message,
+            icon = R.drawable.ic_blood_drop
+        )
+    }
+}

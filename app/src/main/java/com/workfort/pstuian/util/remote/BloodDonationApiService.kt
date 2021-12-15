@@ -24,6 +24,8 @@ import retrofit2.http.*
 interface BloodDonationApiService {
     @GET(Const.Remote.Api.BloodDonation.GET_ALL)
     suspend fun getAll(
+        @Query(Const.Params.USER_ID) userId: Int,
+        @Query(Const.Params.USER_TYPE) userType: String,
         @Query(Const.Params.PAGE) page: Int = 1,
         @Query(Const.Params.LIMIT) limit: Int = 20,
     ): Response<List<BloodDonationEntity>>
@@ -38,7 +40,7 @@ interface BloodDonationApiService {
         @Field(Const.Params.USER_TYPE) userType: String,
         @Field(Const.Params.REQUEST_ID) requestId: Int?,
         @Field(Const.Params.DATE) date: String,
-        @Field(Const.Params.INFO) info: String,
+        @Field(Const.Params.INFO) info: String?,
     ): Response<BloodDonationEntity>
 
     @FormUrlEncoded
@@ -47,7 +49,7 @@ interface BloodDonationApiService {
         @Field(Const.Params.ID) id: Int,
         @Field(Const.Params.REQUEST_ID) requestId: Int?,
         @Field(Const.Params.DATE) date: String,
-        @Field(Const.Params.INFO) info: String,
+        @Field(Const.Params.INFO) info: String?,
     ): Response<BloodDonationEntity>
 
     @FormUrlEncoded

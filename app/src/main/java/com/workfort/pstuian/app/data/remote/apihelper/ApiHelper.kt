@@ -24,8 +24,8 @@ abstract class ApiHelper<T> {
         page: Int,
         limit: Int = Const.Params.Default.PAGE_SIZE
     ): List<T> = emptyList()
-    open suspend fun get(id: Int): T? = null
+    open suspend fun get(id: Int): T = throw Exception("Not implemented yet")
     open suspend fun insert(item: T): Int = 0
-    open suspend fun update(item: T): Boolean = false
+    open suspend fun update(item: T): T = throw Exception("Not implemented yet")
     open suspend fun delete(id: Int): Boolean = false
 }

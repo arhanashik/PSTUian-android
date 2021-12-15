@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_16dp"
+        android:layout_marginTop="@dimen/space_8dp"
+        android:layout_marginEnd="@dimen/space_16dp"
+        android:layout_marginBottom="@dimen/space_8dp"
+        app:cardElevation="@dimen/space_5dp"
+        app:cardCornerRadius="@dimen/default_space">
+
+    <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_gradient10">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="@dimen/space_16dp"
+                android:paddingTop="@dimen/default_space"
+                android:paddingBottom="@dimen/space_10dp">
+
+            <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Request Id: Unregistered"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:lines="1"
+                    android:ellipsize="end"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                    android:id="@+id/tv_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="@tools:sample/lorem/random"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:maxLines="4"
+                    android:ellipsize="end"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_title"/>
+
+            <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="@tools:sample/date/ddmmyy"
+                    android:textSize="12sp"
+                    android:textColor="@color/color4B4B4B"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/cg_actions"
+                    app:layout_constraintBottom_toBottomOf="@id/cg_actions"/>
+
+            <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cg_actions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tv_info"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_edit"
+                        app:chipIcon="@drawable/ic_pencil_circular_outline"
+                        app:chipCornerRadius="16dp"
+                        app:chipBackgroundColor="@android:color/white"/>
+
+                <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_delete"
+                        app:chipIcon="@drawable/ic_delete_outline"
+                        app:chipCornerRadius="16dp"
+                        app:chipBackgroundColor="@android:color/white"/>
+            </com.google.android.material.chip.ChipGroup>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>

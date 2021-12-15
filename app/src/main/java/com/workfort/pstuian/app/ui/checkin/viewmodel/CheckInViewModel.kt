@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.app.data.repository.CheckInRepository
 import com.workfort.pstuian.app.ui.checkin.intent.CheckInIntent
+import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInDeleteState
 import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInListState
 import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInState
-import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInVisibilityState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,11 +42,15 @@ class CheckInViewModel(
     private val _checkInState = MutableStateFlow<CheckInState>(CheckInState.Idle)
     val checkInState: StateFlow<CheckInState> get() = _checkInState
 
+    var userCheckInListPage = 1
     private val _userCheckInListState = MutableStateFlow<CheckInListState>(CheckInListState.Idle)
     val userCheckInListState: StateFlow<CheckInListState> get() = _userCheckInListState
 
-    private val _checkInVisibilityState = MutableStateFlow<CheckInVisibilityState>(CheckInVisibilityState.Idle)
-    val checkInVisibilityState: StateFlow<CheckInVisibilityState> get() = _checkInVisibilityState
+    private val _checkInPrivacyState = MutableStateFlow<CheckInState>(CheckInState.Idle)
+    val checkInPrivacyState: StateFlow<CheckInState> get() = _checkInPrivacyState
+
+    private val _checkInDeleteState = MutableStateFlow<CheckInDeleteState>(CheckInDeleteState.Idle)
+    val checkInDeleteState: StateFlow<CheckInDeleteState> get() = _checkInDeleteState
 
     init {
         handleIntent()
@@ -59,7 +63,8 @@ class CheckInViewModel(
                     is CheckInIntent.GetAll -> getCheckInList(it.locationId, it.page)
                     is CheckInIntent.GetAllByUser -> getCheckInList(it.userId, it.userType, it.page)
                     is CheckInIntent.CheckIn -> checkIn(it.locationId)
-                    is CheckInIntent.UpdateVisibility -> updateVisibility(it.visibility)
+                    is CheckInIntent.UpdatePrivacy -> updatePrivacy(it.checkInId, it.privacy)
+                    is CheckInIntent.Delete -> delete(it.checkInId)
                 }
             }
         }
@@ -93,19 +98,34 @@ class CheckInViewModel(
             _checkInState.value = try {
                 CheckInState.Success(checkInRepo.checkIn(locationId))
             } catch (e: Exception) {
-                CheckInState.Error(e.message)
+                CheckInState.Error(e.message?: "Check in failed")
             }
         }
     }
 
-    private fun updateVisibility(visibility: String) {
+    private fun updatePrivacy(checkInId: Int, privacy: String) {
         viewModelScope.launch {
-            _checkInVisibilityState.value = CheckInVisibilityState.Loading
-            _checkInVisibilityState.value = try {
-                val response = checkInRepo.updateVisibility(visibility)
-                CheckInVisibilityState.Success(response)
+            _checkInPrivacyState.value = CheckInState.Loading
+            _checkInPrivacyState.value = try {
+                val response = checkInRepo.updatePrivacy(checkInId, privacy)
+                CheckInState.Success(response)
             } catch (e: Exception) {
-                CheckInVisibilityState.Error(e.message)
+                CheckInState.Error(e.message?: "Update failed")
+            }
+        }
+    }
+
+    private fun delete(checkInId: Int) {
+        viewModelScope.launch {
+            _checkInDeleteState.value = CheckInDeleteState.Loading
+            _checkInDeleteState.value = try {
+                if(checkInRepo.delete(checkInId)) {
+                    CheckInDeleteState.Success(checkInId)
+                } else {
+                    CheckInDeleteState.Error("Failed to delete")
+                }
+            } catch (e: Exception) {
+                CheckInDeleteState.Error(e.message?: "Failed to delete")
             }
         }
     }

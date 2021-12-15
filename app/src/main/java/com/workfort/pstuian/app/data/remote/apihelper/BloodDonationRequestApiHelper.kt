@@ -25,8 +25,8 @@ abstract class BloodDonationRequestApiHelper : ApiHelper<BloodDonationRequestEnt
         bloodGroup: String,
         beforeDate: String,
         contact: String,
-        info: String,
-    ): BloodDonationRequestEntity? = null
+        info: String?,
+    ): BloodDonationRequestEntity = throw Exception("Not implemented yet")
 
     open suspend fun update(
         id: Int,
@@ -34,5 +34,5 @@ abstract class BloodDonationRequestApiHelper : ApiHelper<BloodDonationRequestEnt
         beforeDate: String,
         contact: String,
         info: String,
-    ): BloodDonationRequestEntity? = null
+    ): BloodDonationRequestEntity = throw Exception("Not implemented yet")
 }

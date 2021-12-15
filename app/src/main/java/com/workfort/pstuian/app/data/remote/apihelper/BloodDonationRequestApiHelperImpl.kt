@@ -42,7 +42,7 @@ class BloodDonationRequestApiHelperImpl(
         bloodGroup: String,
         beforeDate: String,
         contact: String,
-        info: String
+        info: String?
     ): BloodDonationRequestEntity {
         val response = service.insert(userId, userType, bloodGroup, beforeDate, contact, info)
         if(!response.success) throw Exception(response.message)

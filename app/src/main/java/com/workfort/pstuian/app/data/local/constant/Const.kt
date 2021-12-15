@@ -93,7 +93,7 @@ object Const {
         const val BEFORE_DATE = "before_date"
         const val CONTACT = "contact"
         const val INFO = "info"
-        const val VISIBILITY = "visibility"
+        const val PRIVACY = "privacy"
 
         const val CREATED_AT = "created_at"
         const val UPDATED_AT = "updated_at"
@@ -115,7 +115,7 @@ object Const {
             const val SECOND_CAMPUS = 2
         }
 
-        object CheckInVisibility {
+        object CheckInPrivacy {
             const val PUBLIC = "public"
             const val ONLY_ME = "only_me"
         }
@@ -231,7 +231,7 @@ object Const {
                 const val GET_ALL = "${CHECK_IN_API_PATH}getAll"
                 const val GET = "${CHECK_IN_API_PATH}get"
                 const val CHECK_IN = "${CHECK_IN_API_PATH}checkIn"
-                const val VISIBILITY = "${CHECK_IN_API_PATH}visibility"
+                const val PRIVACY = "${CHECK_IN_API_PATH}privacy"
                 const val DELETE = "${CHECK_IN_API_PATH}delete"
             }
 

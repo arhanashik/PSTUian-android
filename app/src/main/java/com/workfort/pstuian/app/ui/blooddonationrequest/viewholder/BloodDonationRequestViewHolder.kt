@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.blooddonation.viewholder
+package com.workfort.pstuian.app.ui.blooddonationrequest.viewholder
 
 import android.content.Context
 import android.view.LayoutInflater

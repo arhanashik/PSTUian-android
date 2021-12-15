@@ -24,5 +24,6 @@ sealed class CheckInIntent {
     data class GetAll(val locationId: Int, val page: Int) : CheckInIntent()
     data class GetAllByUser(val userId: Int, val userType: String, val page: Int) : CheckInIntent()
     data class CheckIn(val locationId: Int) : CheckInIntent()
-    data class UpdateVisibility(val visibility: String) : CheckInIntent()
+    data class UpdatePrivacy(val checkInId: Int, val privacy: String) : CheckInIntent()
+    data class Delete(val checkInId: Int) : CheckInIntent()
 }

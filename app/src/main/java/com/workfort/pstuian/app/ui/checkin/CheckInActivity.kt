@@ -12,12 +12,14 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
 import com.workfort.pstuian.app.data.local.checkinlocation.CheckInLocationEntity
 import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.checkin.adapter.CheckInAdapter
 import com.workfort.pstuian.app.ui.checkin.intent.CheckInIntent
 import com.workfort.pstuian.app.ui.checkin.viewmodel.CheckInViewModel
 import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInListState
 import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInState
+import com.workfort.pstuian.app.ui.common.bottomsheet.MyCheckInDetailsBottomSheet
 import com.workfort.pstuian.app.ui.common.locationpicker.LocationPickerDialogFragment
 import com.workfort.pstuian.app.ui.common.locationpicker.intent.CheckInLocationIntent
 import com.workfort.pstuian.app.ui.common.locationpicker.viewmodel.CheckInLocationViewModel
@@ -88,10 +90,15 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
         observeCheckIn()
 
         /**
-         * Load default check in location(Main Campus)
+         * Load default check in location - last selected check in location
+         * If not selected yet show for Main Campus
          * After getting the location data call setUiData() and loadData()
          * */
-        loadCheckInLocation(Const.Params.CheckInLocation.MAIN_CAMPUS)
+        val lastCheckInLocationId = Prefs.lastShownCheckInLocationId
+        loadCheckInLocation(
+            if(lastCheckInLocationId == -1) Const.Params.CheckInLocation.MAIN_CAMPUS
+            else lastCheckInLocationId
+        )
     }
 
     override fun onClick(v: View?) {
@@ -146,8 +153,11 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
 
     private var endOfData = false
     private fun initDataList() {
-        mAdapter = CheckInAdapter {
-            Toaster.show("Check In")
+        mAdapter = CheckInAdapter({
+            // create new
+        }) {
+            // show details
+            promptCheckInAction(it)
         }
         binding.rvData.adapter = mAdapter
         val layoutManager = binding.rvData.layoutManager as LinearLayoutManager
@@ -199,7 +209,7 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
                         endOfData = true
                         setActionUiState(false)
                         renderData(emptyList())
-                        binding.tvMessage.text = it.error?: "Can't load data"
+                        binding.tvMessage.text = it.message?: "Can't load data"
                     }
                 }
             }
@@ -257,7 +267,7 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
                     }
                     is CheckInState.Error -> {
                         setActionUiState(false)
-                        Toaster.show(it.error?: "Can't load data")
+                        Toaster.show(it.message)
                     }
                 }
             }
@@ -271,8 +281,15 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
     }
 
     private fun changeLocationAndReload(location: CheckInLocationEntity) {
+        Prefs.lastShownCheckInLocationId = location.id
         mCheckInLocation = location
         setUiData()
         loadData()
+    }
+
+    private fun promptCheckInAction(item: CheckInEntity) {
+        MyCheckInDetailsBottomSheet.show(supportFragmentManager, item, showAction = false) {
+            //TODO - add actions
+        }
     }
 }

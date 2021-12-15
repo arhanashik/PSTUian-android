@@ -18,17 +18,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.local.student.StudentProfile
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
-import com.workfort.pstuian.app.ui.checkin.intent.CheckInIntent
-import com.workfort.pstuian.app.ui.checkin.viewmodel.CheckInViewModel
-import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInState
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoAction
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoItem
+import com.workfort.pstuian.app.ui.common.blooddonationlist.BloodDonationListDialogFragment
+import com.workfort.pstuian.app.ui.common.checkinlist.CheckInListDialogFragment
 import com.workfort.pstuian.app.ui.common.fragment.ProfilePagerItemFragment
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
@@ -43,7 +41,6 @@ import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoSta
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.GetProfileState
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityStudentProfileBinding
-import com.workfort.pstuian.databinding.PromptChangeCheckInVisibilityBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
@@ -61,7 +58,6 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
 
     private val mViewModel : StudentProfileViewModel by viewModel()
     private val mAuthViewModel : AuthViewModel by viewModel()
-    private val mCheckInViewModel : CheckInViewModel by viewModel()
     private val mFileHandlerVM : FileHandlerViewModel by viewModel()
 
     override fun getToolbarId(): Int = R.id.toolbar
@@ -90,7 +86,6 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         observeBioChange()
         observeSignOut()
         observePasswordChange()
-        observeMyCheckIn()
     }
 
     private fun loadProfile(studentId: Int) {
@@ -744,64 +739,21 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
     }
 
     private fun promptBloodDonationList() {
-
+        BloodDonationListDialogFragment.show(
+            supportFragmentManager,
+            profile.student.id,
+            "student",
+            profile.isSignedIn
+        )
     }
 
     private fun promptCheckInList() {
-        lifecycleScope.launch {
-            mCheckInViewModel.intent.send(CheckInIntent.GetAllByUser(
-                profile.student.id, "student", 1))
-        }
-    }
-
-    private fun observeMyCheckIn() {
-        lifecycleScope.launch {
-            mCheckInViewModel.myCheckInState.collect {
-                when (it) {
-                    is CheckInState.Idle -> Unit
-                    is CheckInState.Loading -> setActionUiState(isActionRunning = true)
-                    is CheckInState.Success -> {
-                        setActionUiState(isActionRunning = false)
-                        promptChangeCheckInVisibility(it.data)
-                    }
-                    is CheckInState.Error -> {
-                        setActionUiState(isActionRunning = false)
-                        val msg = it.error?: getString(R.string.default_error_dialog_message)
-                        CommonDialog.error(this@StudentProfileActivity, message = msg)
-                    }
-                }
-            }
-        }
-    }
-    private fun promptChangeCheckInVisibility(checkIn: CheckInEntity) {
-        val binding = PromptChangeCheckInVisibilityBinding.inflate(layoutInflater,
-            null, false)
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setView(binding.root)
-            .create()
-
-        val prevCheckedId = if(checkIn.visibility == Const.Params.CheckInVisibility.PUBLIC)
-            R.id.btn_public else R.id.btn_only_me
-        binding.tbVisibilityType.check(prevCheckedId)
-        var visibility = Const.Params.CheckInVisibility.PUBLIC
-        binding.tbVisibilityType.addOnButtonCheckedListener { _, checkedId, _ ->
-            visibility = if(checkedId == R.id.btn_public) {
-                binding.tvMessage.text = getString(R.string.hint_visibility_public)
-                Const.Params.CheckInVisibility.PUBLIC
-            } else {
-                binding.tvMessage.text = getString(R.string.hint_visibility_only_me)
-                Const.Params.CheckInVisibility.ONLY_ME
-            }
-        }
-        binding.btnChange.setOnClickListener {
-            dialog.dismiss()
-            lifecycleScope.launch {
-                mCheckInViewModel.intent.send(CheckInIntent.UpdateVisibility(visibility))
-            }
-        }
-        binding.btnDismiss.setOnClickListener { dialog.dismiss() }
-
-        dialog.show()
+        CheckInListDialogFragment.show(
+            supportFragmentManager,
+            profile.student.id,
+            "student",
+            profile.isSignedIn
+        )
     }
 
     //according to documentation this should work. But unfortunately nope :D

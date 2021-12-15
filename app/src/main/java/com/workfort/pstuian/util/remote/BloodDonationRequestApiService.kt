@@ -39,7 +39,7 @@ interface BloodDonationRequestApiService {
         @Field(Const.Params.BLOOD_GROUP) bloodGroup: String,
         @Field(Const.Params.BEFORE_DATE) beforeDate: String,
         @Field(Const.Params.CONTACT) contact: String,
-        @Field(Const.Params.INFO) info: String,
+        @Field(Const.Params.INFO) info: String?,
     ): Response<BloodDonationRequestEntity>
 
     @FormUrlEncoded
