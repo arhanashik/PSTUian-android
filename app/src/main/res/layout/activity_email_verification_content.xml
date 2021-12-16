@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:showIn="@layout/activity_sign_in">
+        tools:showIn="@layout/activity_email_verification">
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/loader"
@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/loader"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tb_user_type"
             android:text="@string/app_name"
@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tb_user_type"
-            app:layout_constraintBottom_toTopOf="@id/tilPassword"
+            app:layout_constraintBottom_toTopOf="@id/btnSend"
             android:layout_marginStart="@dimen/default_space"
             android:layout_marginTop="@dimen/default_space"
             android:layout_marginEnd="@dimen/default_space">
@@ -84,70 +84,42 @@
                 android:paddingStart="@dimen/default_space"
                 android:paddingEnd="@dimen/default_space"
                 android:hint="@string/hint_email"
-                tools:text="ashik.pstu.cse@gmail.com"
                 android:textColor="?attr/customPrimaryTextColor"
                 android:textColorHint="?attr/customSecondaryTextColor"
                 android:textSize="18sp"
-                android:inputType="textEmailAddress">
-            <requestFocus/>
-        </com.google.android.material.textfield.TextInputEditText>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPassword"
-            style="@style/TextInputLayoutAppearance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tilEmail"
-            app:layout_constraintBottom_toTopOf="@id/btnSignIn"
-            android:layout_marginStart="@dimen/default_space"
-            android:layout_marginTop="@dimen/default_space"
-            android:layout_marginEnd="@dimen/default_space"
-            app:endIconMode="password_toggle">
-
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/default_space"
-                android:paddingEnd="@dimen/default_space"
-                android:hint="@string/hint_password"
-                tools:text="password"
-                android:textColor="?attr/customPrimaryTextColor"
-                android:textColorHint="?attr/customSecondaryTextColor"
-                android:textSize="18sp"
-                android:inputType="textPassword"/>
+                android:inputType="textEmailAddress"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignIn"
+            android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/tilPassword"
-            app:layout_constraintTop_toBottomOf="@id/tilPassword"
-            app:layout_constraintBottom_toTopOf="@id/labelOr"
+            app:layout_constraintStart_toStartOf="@id/tilEmail"
+            app:layout_constraintTop_toBottomOf="@id/tilEmail"
+            app:layout_constraintBottom_toTopOf="@id/tvPasswordRecoveryHint"
             android:layout_marginTop="10dp"
-            android:text="@string/txt_sign_in"
+            android:text="@string/txt_send"
             android:textStyle="bold"
             android:textSize="16sp"
             app:backgroundTint="@color/colorPrimary"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.InputField"/>
 
     <TextView
-            android:id="@+id/btnForgetPassword"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvPasswordRecoveryHint"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tilPassword"
-            app:layout_constraintEnd_toEndOf="@id/tilPassword"
+            app:layout_constraintTop_toBottomOf="@id/btnSend"
+            app:layout_constraintBottom_toTopOf="@id/labelOr"
+            android:layout_marginStart="@dimen/default_space"
             android:layout_marginTop="@dimen/default_space"
-            android:text="@string/txt_forgot_password"
+            android:layout_marginEnd="@dimen/default_space"
+            android:text="@string/hint_email_verification_link"
             android:textSize="16sp"
             android:textColor="?attr/customSecondaryTextColor"/>
 
     <View
-            android:id="@+id/divider2"
+            android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?attr/customDividerColor"
@@ -163,9 +135,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnSignIn"
+            app:layout_constraintTop_toBottomOf="@id/tvPasswordRecoveryHint"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btnSignUp"
+            app:layout_constraintBottom_toTopOf="@id/btnSignIn"
+            android:layout_marginTop="@dimen/default_space"
             android:background="@drawable/bg_divider_txt"
             android:paddingStart="12dp"
             android:paddingTop="10dp"
@@ -176,84 +149,28 @@
             android:textColor="?attr/customSecondaryTextColor"/>
 
     <TextView
-            android:id="@+id/labelSignUp"
+            android:id="@+id/labelSignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btnSignUp"
-            app:layout_constraintEnd_toStartOf="@id/btnSignUp"
-            app:layout_constraintBottom_toBottomOf="@id/btnSignUp"
+            app:layout_constraintTop_toTopOf="@id/btnSignIn"
+            app:layout_constraintEnd_toStartOf="@id/btnSignIn"
+            app:layout_constraintBottom_toBottomOf="@id/btnSignIn"
             app:layout_constraintHorizontal_chainStyle="packed"
-            android:text="@string/hint_sign_up"
+            android:text="@string/hint_already_verified"
             android:textSize="16sp"
             android:textColor="?attr/customPrimaryTextColor"/>
 
     <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignUp"
+            android:id="@+id/btnSignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.Button.TextButton"
-            app:layout_constraintStart_toEndOf="@id/labelSignUp"
+            app:layout_constraintStart_toEndOf="@id/labelSignIn"
             app:layout_constraintTop_toBottomOf="@id/labelOr"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/labelOr2"
-            android:text="@string/txt_sign_up"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="?attr/customPrimaryTextColor"/>
-
-    <View
-            android:id="@+id/divider3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?attr/customDividerColor"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/labelOr2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/labelOr2"
-            android:layout_marginStart="@dimen/default_space"
-            android:layout_marginEnd="@dimen/default_space"/>
-
-    <TextView
-            android:id="@+id/labelOr2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnSignUp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btn_email_verification"
-            android:background="@drawable/bg_divider_txt"
-            android:paddingStart="12dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="10dp"
-            android:text="@string/txt_or"
-            android:textSize="12sp"
-            android:textColor="?attr/customSecondaryTextColor"/>
-
-    <TextView
-            android:id="@+id/label_email_verification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btn_email_verification"
-            app:layout_constraintEnd_toStartOf="@id/btn_email_verification"
-            app:layout_constraintBottom_toBottomOf="@id/btn_email_verification"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            android:text="@string/hint_email_verification"
-            android:textSize="16sp"
-            android:textColor="?attr/customPrimaryTextColor"/>
-
-    <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_email_verification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            app:layout_constraintStart_toEndOf="@id/label_email_verification"
-            app:layout_constraintTop_toBottomOf="@id/labelOr2"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/txt_verify_now"
+            android:text="@string/txt_sign_in"
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="?attr/customPrimaryTextColor"/>

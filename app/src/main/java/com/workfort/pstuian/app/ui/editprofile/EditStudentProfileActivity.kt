@@ -137,6 +137,8 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
                 etLinkedIn.setText(mStudent.linkedIn)
                 etFacebook.setText(mStudent.fbLink)
                 btnUploadCv.setOnClickListener { choosePdf() }
+                // for now email is not editable
+                tilEmail.isEnabled = false
             }
         }
         with(binding) {

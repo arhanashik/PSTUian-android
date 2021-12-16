@@ -126,4 +126,10 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         if(!response.success) throw Exception(response.message)
         return response.message
     }
+
+    override suspend fun emailVerification(userType: String, email: String): String {
+        val response = service.emailVerification(userType, email)
+        if(!response.success) throw Exception(response.message)
+        return response.message
+    }
 }

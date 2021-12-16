@@ -311,5 +311,15 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.studentprofile.StudentProfileActivity"/>
         </activity>
+        <activity
+                android:name=".app.ui.emailverification.EmailVerificationActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_email_verification_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.signin.SignInActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.signin.SignInActivity"/>
+        </activity>
     </application>
 </manifest>

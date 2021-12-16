@@ -101,6 +101,8 @@ class EditTeacherProfileActivity: BaseActivity<ActivityEditTeacherProfileBinding
                 etEmail.setText(mTeacher.email)
                 etLinkedIn.setText(mTeacher.linkedIn)
                 etFacebook.setText(mTeacher.fbLink)
+                // for now email is not editable
+                tilEmail.isEnabled = false
             }
         }
         with(binding) {

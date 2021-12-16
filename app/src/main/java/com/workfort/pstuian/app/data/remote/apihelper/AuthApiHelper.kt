@@ -83,4 +83,6 @@ interface AuthApiHelper {
     ): Pair<String, String?>
 
     suspend fun forgotPassword(userType: String, email: String): String
+
+    suspend fun emailVerification(userType: String, email: String): String
 }

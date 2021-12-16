@@ -169,6 +169,7 @@ object Const {
                 const val SIGN_OUT = "${AUTH_API_PATH}signOut"
                 const val CHANGE_PASSWORD = "${AUTH_API_PATH}changePassword"
                 const val FORGOT_PASSWORD = "${AUTH_API_PATH}forgotPassword"
+                const val EMAIL_VERIFICATION = "${AUTH_API_PATH}resendVerificationEmail"
             }
 
             object Faculty {

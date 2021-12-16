@@ -352,6 +352,14 @@
         If you don\'t know the id, keep it empty or 0.
     </string>
     <string name="txt_open_email">Open Email</string>
+    <string name="hint_already_verified">Already verified?</string>
+    <string name="hint_email_verification_link">
+        *A verification link will be sent to your email address.
+        Check spam folder if you cannot find it.
+    </string>
+    <string name="hint_email_verification">Email not verified yet?</string>
+    <string name="txt_verify_now">Verify now</string>
+    <string name="label_email_verification_activity">Email Verification</string>
 
     <array name="blood_group">
         <item>A+</item>

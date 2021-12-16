@@ -29,5 +29,6 @@ sealed class AuthIntent {
         val email: String
     ) : AuthIntent()
     data class ChangePassword(val oldPassword: String, val newPassword: String) : AuthIntent()
+    data class EmailVerification(val userType: String, val email: String) : AuthIntent()
     object SignOut : AuthIntent()
 }

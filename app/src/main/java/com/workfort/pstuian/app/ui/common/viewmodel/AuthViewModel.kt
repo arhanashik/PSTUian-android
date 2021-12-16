@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.app.data.repository.AuthRepository
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
+import com.workfort.pstuian.app.ui.emailverification.viewstate.EmailVerificationState
 import com.workfort.pstuian.app.ui.forgotpassword.viewstate.ForgotPasswordState
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
@@ -56,6 +57,9 @@ class AuthViewModel(
     private val _forgotPasswordState = MutableStateFlow<ForgotPasswordState>(ForgotPasswordState.Idle)
     val forgotPasswordState: StateFlow<ForgotPasswordState> get() = _forgotPasswordState
 
+    private val _emailVerificationState = MutableStateFlow<EmailVerificationState>(EmailVerificationState.Idle)
+    val emailVerificationState: StateFlow<EmailVerificationState> get() = _emailVerificationState
+
     init {
         handleIntent()
     }
@@ -71,6 +75,7 @@ class AuthViewModel(
                         it.name, it.id, it.reg, it.facultyId, it.batchId, it.session, it.email
                     )
                     is AuthIntent.ChangePassword -> changePassword(it.oldPassword, it.newPassword)
+                    is AuthIntent.EmailVerification -> emailVerification(it.userType, it.email)
                     is AuthIntent.SignOut -> signOut()
                 }
             }
@@ -209,6 +214,17 @@ class AuthViewModel(
                 ForgotPasswordState.Success(response)
             } catch (e: Exception) {
                 ForgotPasswordState.Error(e.message)
+            }
+        }
+    }
+
+    private fun emailVerification(userType: String, email: String) {
+        viewModelScope.launch {
+            _emailVerificationState.value = EmailVerificationState.Loading
+            _emailVerificationState.value = try {
+                EmailVerificationState.Success(authRepo.emailVerification(userType, email))
+            } catch (e: Exception) {
+                EmailVerificationState.Error(e.message?: "Couldn't send verification email!")
             }
         }
     }

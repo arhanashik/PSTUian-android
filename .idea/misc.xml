@@ -64,6 +64,8 @@
         <entry key="app/src/main/res/layout/activity_edit_teacher_profile.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_edit_teacher_profile_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_edit_techer_profile.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_email_verification.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_email_verification_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_employee_profile.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/activity_faculty.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/activity_forgot_password.xml" value="0.15537459283387622" />

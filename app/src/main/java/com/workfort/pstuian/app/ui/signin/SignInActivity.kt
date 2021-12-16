@@ -15,6 +15,7 @@ import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.bottomsheet.BatchSelectorBottomSheet
 import com.workfort.pstuian.app.ui.common.bottomsheet.FacultySelectorBottomSheet
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.emailverification.EmailVerificationActivity
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.forgotpassword.ForgotPasswordActivity
 import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
@@ -49,7 +50,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                     Const.Params.UserType.STUDENT else Const.Params.UserType.TEACHER
             }
 
-            setClickListener(btnSignIn, btnSignUp, btnForgetPassword)
+            setClickListener(btnSignIn, btnSignUp, btnForgetPassword, btnEmailVerification)
         }
 
         observeSignIn()
@@ -62,6 +63,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                 btnSignIn -> signIn()
                 btnSignUp -> selectUserTypeAndSignUp()
                 btnForgetPassword -> launchActivity<ForgotPasswordActivity>()
+                btnEmailVerification -> launchActivity<EmailVerificationActivity>()
                 else -> Timber.e("Who clicked me!")
             }
         }

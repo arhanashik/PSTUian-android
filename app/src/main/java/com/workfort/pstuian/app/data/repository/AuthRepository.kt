@@ -293,9 +293,11 @@ class AuthRepository(
         }
     }
 
-    suspend fun forgotPassword(userType: String, email: String): String {
-        return helper.forgotPassword(userType, email)
-    }
+    suspend fun forgotPassword(userType: String, email: String): String =
+        helper.forgotPassword(userType, email)
+
+    suspend fun emailVerification(userType: String, email: String): String =
+        helper.emailVerification(userType, email)
 
     suspend fun deleteAll() {
         val context = PstuianApp.getBaseApplicationContext()
