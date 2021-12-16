@@ -32,19 +32,21 @@ import com.workfort.pstuian.util.view.dialog.CommonDialog
 class BloodDonationRequestViewHolder (val binding: RowBloodDonationRequestBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(entity: BloodDonationRequestEntity) {
+    fun bind(item: BloodDonationRequestEntity) {
         with(binding) {
-            ivAvatar.load(entity.imageUrl) {
+            ivAvatar.load(item.imageUrl) {
                 placeholder(R.drawable.img_placeholder_profile)
                 error(R.drawable.img_placeholder_profile)
             }
-            tvName.text = entity.name
-            val date = entity.beforeDate.split(" ")[0]
-            val title = "Need ${entity.bloodGroup} blood before $date"
+            val requestId = "Request id: ${item.id}"
+            tvRequestId.text = requestId
+            tvName.text = item.name
+            val date = item.beforeDate.split(" ")[0]
+            val title = "Need ${item.bloodGroup} blood before $date"
             tvTitle.text = title
-            tvInfo.text = entity.info
+            tvInfo.text = item.info
             cgActions.removeAllViews()
-            entity.contacts.split(",").forEach { contact ->
+            item.contacts.split(",").forEach { contact ->
                 val inflater = LayoutInflater.from(cgActions.context)
                 val chip = ItemChipBinding.inflate(inflater, cgActions,
                     false).root.apply {
@@ -54,7 +56,7 @@ class BloodDonationRequestViewHolder (val binding: RowBloodDonationRequestBindin
                 cgActions.addView(chip)
             }
             root.setOnClickListener {
-                showDetails(root.context, title, entity.info?: "")
+                showDetails(root.context, title, item.info?: "")
             }
         }
     }

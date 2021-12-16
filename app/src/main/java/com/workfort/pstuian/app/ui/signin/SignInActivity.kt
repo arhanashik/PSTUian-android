@@ -104,10 +104,10 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                     }
                     is SignInState.Error -> {
                         setActionUiState(false)
-                        val title = it.error?: "Failed to Sign in"
-                        val msg = getString(if(selectedUserType == Const.Params.UserType.STUDENT)
-                            R.string.error_msg_sign_in else R.string.default_error_dialog_message)
-                        CommonDialog.error(this@SignInActivity, title, msg)
+                        var msg = it.error?: "Failed to Sign in. "
+                        if(selectedUserType == Const.Params.UserType.STUDENT)
+                            msg += getString(R.string.error_msg_sign_in)
+                        CommonDialog.error(this@SignInActivity, message = msg)
                     }
                 }
             }

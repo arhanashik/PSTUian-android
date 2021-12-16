@@ -21,7 +21,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="@dimen/space_16dp">
+                android:paddingHorizontal="@dimen/space_16dp"
+                android:paddingTop="@dimen/default_space"
+                android:paddingBottom="@dimen/space_10dp">
 
             <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/iv_avatar"
@@ -71,12 +73,23 @@
                     android:ellipsize="end"
                     app:layout_constraintTop_toBottomOf="@+id/tv_title"/>
 
+            <TextView
+                    android:id="@+id/tv_request_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Request Id: 1"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_info"/>
+
             <com.google.android.material.chip.ChipGroup
                     android:id="@+id/cg_actions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp10"
-                    app:layout_constraintTop_toBottomOf="@id/tv_info">
+                    app:layout_constraintTop_toBottomOf="@id/tv_request_id">
 
                 <com.google.android.material.chip.Chip
                         android:id="@+id/chip_default"

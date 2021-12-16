@@ -51,6 +51,8 @@
         <entry key="app/src/main/res/layout/activity_blood_donation_request.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_check_in.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/activity_check_in_list.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_create_blood_donation.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_create_blood_donation_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_create_blood_donation_request.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_create_blood_donation_request_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_donate.xml" value="0.1569078947368421" />
@@ -78,6 +80,7 @@
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_student_profile.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_student_sign_up.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_students.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_support.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_support_content.xml" value="0.1569078947368421" />

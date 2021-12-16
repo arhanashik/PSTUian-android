@@ -81,10 +81,7 @@ class SupportActivity : BaseActivity<ActivitySupportBinding>() {
                             message = it.message,
                             btnText = getString(R.string.txt_home),
                             cancelable = false,
-                            onBtnClick = {
-                                finish()
-                            }
-                        )
+                        ) { finish() }
                     }
                     is InquiryState.Error -> {
                         setActionUi(isLoading = false)

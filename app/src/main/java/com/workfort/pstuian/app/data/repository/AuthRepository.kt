@@ -239,8 +239,8 @@ class AuthRepository(
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         val data = helper.signUpStudent(name, id, reg, facultyId, batchId, session,
             email, deviceId)
-        storeSignInStudent(data.first)
-        storeAuthToken(data.second)
+//        storeSignInStudent(data.first)
+//        storeAuthToken(data.second)
 
         return data.first
     }
@@ -257,8 +257,8 @@ class AuthRepository(
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         val data = helper.signUpTeacher(name, designation, department, email, password,
             facultyId, deviceId)
-        storeSignInTeacher(data.first)
-        storeAuthToken(data.second)
+//        storeSignInTeacher(data.first)
+//        storeAuthToken(data.second)
 
         return data.first
     }

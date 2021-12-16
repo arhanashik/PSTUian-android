@@ -43,6 +43,8 @@ object Const {
         const val UPDATED = "UPDATED"
         const val USER_TYPE = "USER_TYPE"
         const val EXTRA_IMAGE_TRANSITION_NAME = "EXTRA_IMAGE_TRANSITION_NAME"
+        const val EXTRA_ITEM = "EXTRA_ITEM"
+        const val EXTRA_IS_UPDATED = "EXTRA_IS_UPDATED"
     }
 
     object Params {

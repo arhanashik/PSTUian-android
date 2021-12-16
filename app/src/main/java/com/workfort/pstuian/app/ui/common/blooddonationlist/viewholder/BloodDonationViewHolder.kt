@@ -1,6 +1,7 @@
 package com.workfort.pstuian.app.ui.common.blooddonationlist.viewholder
 
 import android.content.Context
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
@@ -23,22 +24,24 @@ import com.workfort.pstuian.util.view.dialog.CommonDialog
  *  ****************************************************************************
  */
 
-class BloodDonationViewHolder (val binding: RowBloodDonationBinding) :
+class BloodDonationViewHolder(val binding: RowBloodDonationBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(
+        showAction: Boolean,
         item: BloodDonationEntity,
         onClickEdit : (item: BloodDonationEntity) -> Unit,
         onClickDelete : (item: BloodDonationEntity) -> Unit,
     ) {
         with(binding) {
-            val date = item.date.split(" ")[0]
-            tvDate.text = date
             val requestId = if(item.requestId == null || item.requestId == 0) "Unregistered"
             else item.requestId.toString()
             val title = "Request Id : $requestId"
             tvTitle.text = title
             tvInfo.text = item.info
+            val date = item.date.split(" ")[0]
+            tvDate.text = date
+            cgActions.visibility = if(showAction) View.VISIBLE else View.GONE
             chipEdit.setOnClickListener { onClickEdit(item) }
             chipDelete.setOnClickListener { onClickDelete(item) }
             root.setOnClickListener {

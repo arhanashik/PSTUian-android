@@ -31,7 +31,8 @@ import kotlin.collections.ArrayList
  *  ****************************************************************************
  */
 
-class BloodDonationListAdapter(
+class BloodDonationListAdapter (
+    private val showAction: Boolean,
     private val onClickEdit : (item: BloodDonationEntity) -> Unit,
     private val onClickDelete : (item: BloodDonationEntity) -> Unit,
 ) : RecyclerView.Adapter<BloodDonationViewHolder>(),
@@ -73,6 +74,23 @@ class BloodDonationListAdapter(
         _filteredData.addAll(data)
 
         notifyDataSetChanged()
+    }
+
+    fun add(item: BloodDonationEntity, first: Boolean = false) {
+        // check if item already exists
+        val oldItem = _data.firstOrNull { it.id == item.id }
+        if(oldItem != null) return
+
+        // add in the list
+        if(first) {
+            _data.add(0, item)
+            _filteredData.add(0, item)
+            notifyItemInserted(0)
+        } else {
+            _data.add(item)
+            _filteredData.add(item)
+            notifyItemInserted(_filteredData.size - 1)
+        }
     }
 
     fun update(item: BloodDonationEntity) {
@@ -125,7 +143,7 @@ class BloodDonationListAdapter(
     override fun onBindViewHolder(holder: BloodDonationViewHolder, position: Int) {
         holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
             R.anim.anim_item_insert)
-        holder.bind(_filteredData[position], onClickEdit, onClickDelete)
+        holder.bind(showAction, _filteredData[position], onClickEdit, onClickDelete)
     }
 
     override fun getFilter(): Filter {

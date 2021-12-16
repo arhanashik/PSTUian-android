@@ -117,9 +117,8 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                         CommonDialog.error(
                             this@TeacherProfileActivity,
                             message = msg,
-                            cancelable = false,
-                            onBtnClick = { finish() }
-                        )
+                            cancelable = false
+                        ) { finish() }
                     }
                 }
             }

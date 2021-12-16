@@ -24,11 +24,11 @@ import kotlinx.parcelize.Parcelize
 data class BloodDonationEntity(
     val id: Int,
     @SerializedName("request_id")
-    val requestId: Int?,
+    var requestId: Int?,
     @SerializedName("date")
-    val date: String,
+    var date: String,
     @SerializedName("info")
-    val info: String?,
+    var info: String?,
     @SerializedName("user_id")
     val userId: String,
     @SerializedName("user_type")

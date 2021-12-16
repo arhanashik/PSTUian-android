@@ -122,9 +122,8 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                         CommonDialog.error(
                             this@StudentProfileActivity,
                             message = msg,
-                            cancelable = false,
-                            onBtnClick = { finish() }
-                        )
+                            cancelable = false
+                        ) { finish() }
                     }
                 }
             }

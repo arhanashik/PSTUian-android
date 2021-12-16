@@ -277,9 +277,15 @@
     <string name="default_success_dialog_message">
         Operation successful. Everything seems alright!
     </string>
-    <string name="success_msg_sign_up">You\'ve successfully signed up!</string>
-    <string name="warning_msg_sign_up">For the first time login, please use your student id
-        as password. We STRONGLY recommend to change the password after signing in.</string>
+    <string name="success_msg_sign_up">
+        Sign up Successful! A verification link has been sent to your email address.
+        Please check your inbox(also spam folder) and confirm your account. If you did not
+        receive the email, please contact with the admin from support screen.
+    </string>
+    <string name="warning_msg_sign_up">
+        For the first time login, please use your student id as password.
+        We STRONGLY recommend to change the password after signing in.
+    </string>
     <string name="error_msg_server_issue">It seems there could be an issue with the server.
         Or there might not be enough data available. In either case, please send us a complain
         from the help option. We promise to check it ASAP. You might also check your network
@@ -338,6 +344,14 @@
     <string name="txt_change_privacy">Change Privacy</string>
     <string name="txt_delete">Delete</string>
     <string name="msg_delete_permanent">Are you surely want to delete? You cannot restore it again.</string>
+    <string name="hint_request_id">Request id</string>
+    <string name="label_create_blood_donation_activity">Create donation</string>
+    <string name="hint_donation_date">Donation date</string>
+    <string name="helper_text_blood_donation_request_id">
+        You can find the request id from the blood donation requests list.
+        If you don\'t know the id, keep it empty or 0.
+    </string>
+    <string name="txt_open_email">Open Email</string>
 
     <array name="blood_group">
         <item>A+</item>

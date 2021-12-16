@@ -1,10 +1,13 @@
 package com.workfort.pstuian.app.ui.common.blooddonationlist
 
+import android.app.Activity
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
+import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.app.ui.blooddonation.CreateBloodDonationActivity
 import com.workfort.pstuian.app.ui.blooddonationrequest.intent.BloodDonationIntent
 import com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel.BloodDonationViewModel
 import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.BloodDonationState
@@ -71,6 +76,9 @@ class BloodDonationListDialogFragment (
         initDataList()
 
         with(binding) {
+            srlReloadData.setOnRefreshListener { loadData() }
+            btnCreateNew.visibility = if(isSignedIn) View.VISIBLE else View.GONE
+            btnCreateNew.setOnClickListener { createNewDonation() }
             btnDismiss.setOnClickListener { dismiss() }
         }
 
@@ -82,7 +90,8 @@ class BloodDonationListDialogFragment (
 
     private var endOfData = false
     private fun initDataList() {
-        mAdapter = BloodDonationListAdapter({ promptEdit(it) }) { promptDelete(it) }
+        mAdapter = BloodDonationListAdapter(showAction = isSignedIn, { promptEdit(it) }) {
+            promptDelete(it) }
         with(binding) {
             rvData.adapter = mAdapter
             val layoutManager = rvData.layoutManager as LinearLayoutManager
@@ -128,11 +137,15 @@ class BloodDonationListDialogFragment (
             mViewModel.donationsState.collect {
                 when(it) {
                     is BloodDonationsState.Idle -> Unit
-                    is BloodDonationsState.Loading -> {}
+                    is BloodDonationsState.Loading -> setActionUiState(true)
                     is BloodDonationsState.Donations -> {
+                        setActionUiState(false)
+                        endOfData = it.data.isEmpty()
                         renderData(it.data)
                     }
                     is BloodDonationsState.Error -> {
+                        setActionUiState(false)
+                        endOfData = true
                         Timber.e(it.message)
                     }
                 }
@@ -148,8 +161,31 @@ class BloodDonationListDialogFragment (
         }
     }
 
+    private fun createNewDonation() {
+        val intent = Intent(requireContext(), CreateBloodDonationActivity::class.java)
+        startActivityForResult.launch(intent)
+    }
+
+    private val startActivityForResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if(result.resultCode == Activity.RESULT_OK) {
+            result?.data?.let { data ->
+                data.getParcelableExtra<BloodDonationEntity>(Const.Key.EXTRA_ITEM)?.let { item ->
+                    val isUpdated = data.getBooleanExtra(Const.Key.EXTRA_IS_UPDATED, false)
+                    if(isUpdated) mAdapter.update(item)
+                    else mAdapter.add(item, true)
+                }
+            }
+        }
+    }
+
     private fun promptEdit(item: BloodDonationEntity) {
-        // TODO - edit
+        val intent = Intent(requireContext(), CreateBloodDonationActivity::class.java)
+            .apply {
+                putExtra(Const.Key.EXTRA_ITEM, item)
+            }
+        startActivityForResult.launch(intent)
     }
 
     private fun observeUpdate() {
@@ -157,11 +193,13 @@ class BloodDonationListDialogFragment (
             mViewModel.updateDonationState.collect {
                 when(it) {
                     is BloodDonationState.Idle -> Unit
-                    is BloodDonationState.Loading -> {}
+                    is BloodDonationState.Loading -> setActionUiState(true)
                     is BloodDonationState.Success -> {
+                        setActionUiState(false)
                         mAdapter.update(it.item)
                     }
                     is BloodDonationState.Error -> {
+                        setActionUiState(false)
                         CommonDialog.error(requireContext(), message = it.message)
                     }
                 }
@@ -182,15 +220,23 @@ class BloodDonationListDialogFragment (
             mViewModel.deleteDonationState.collect {
                 when(it) {
                     is ItemDeleteState.Idle -> Unit
-                    is ItemDeleteState.Loading -> {}
+                    is ItemDeleteState.Loading -> setActionUiState(true)
                     is ItemDeleteState.Success -> {
+                        setActionUiState(false)
                         mAdapter.remove(it.itemId)
                     }
                     is ItemDeleteState.Error -> {
+                        setActionUiState(false)
                         CommonDialog.error(requireContext(), message = it.message)
                     }
                 }
             }
+        }
+    }
+
+    private fun setActionUiState(isActionRunning: Boolean) {
+        with(binding) {
+            srlReloadData.isRefreshing = isActionRunning
         }
     }
 

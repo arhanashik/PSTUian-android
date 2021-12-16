@@ -403,8 +403,7 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
             title,
             message,
             btnTxt,
-            onBtnClick = { btnAction() },
             icon = iconRes
-        )
+        ) { btnAction() }
     }
 }

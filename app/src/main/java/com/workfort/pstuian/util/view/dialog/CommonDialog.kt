@@ -39,10 +39,9 @@ object CommonDialog {
         btnText: String = context.getString(R.string.txt_dismiss),
         warning: String = "",
         cancelable: Boolean = true,
-        onBtnClick: () -> Unit = {},
         dismissOnBtnClick: Boolean = true,
-        callback: SuccessDialogCallback? = null,
-        @DrawableRes icon: Int = R.drawable.ic_check_circle_fill
+        @DrawableRes icon: Int = R.drawable.ic_check_circle_fill,
+        onBtnClick: () -> Unit = {},
     ): AlertDialog {
         val inflater = LayoutInflater.from(context)
         val binding = PromptSuccessBinding.inflate(inflater, null, false)
@@ -62,16 +61,11 @@ object CommonDialog {
 
         binding.btnDismiss.setOnClickListener {
             if(dismissOnBtnClick) dialog.dismiss()
-            callback?.onClickDismiss()
             onBtnClick()
         }
         dialog.show()
 
         return dialog
-    }
-
-    interface SuccessDialogCallback {
-        fun onClickDismiss()
     }
 
     fun error(
@@ -80,9 +74,8 @@ object CommonDialog {
         message: String = context.getString(R.string.default_error_dialog_message),
         btnText: String = context.getString(R.string.txt_dismiss),
         cancelable: Boolean = true,
-        onBtnClick: () -> Unit = {},
         dismissOnBtnClick: Boolean = true,
-        callback: ErrorDialogCallback? = null,
+        onBtnClick: () -> Unit = {},
     ): AlertDialog {
         val inflater = LayoutInflater.from(context)
         val binding = PromptErrorBinding.inflate(inflater, null, false)
@@ -97,16 +90,11 @@ object CommonDialog {
 
         binding.btnDismiss.setOnClickListener {
             if(dismissOnBtnClick) dialog.dismiss()
-            callback?.onClickDismiss()
             onBtnClick()
         }
         dialog.show()
 
         return dialog
-    }
-
-    interface ErrorDialogCallback {
-        fun onClickDismiss()
     }
 
     fun changeProPic(

@@ -6,17 +6,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_data"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/srl_reload_data"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:clipToPadding="false"
-            android:paddingTop="@dimen/space_8dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/divider_bottom"
-            tools:itemCount="5"
-            tools:listitem="@layout/row_my_check_in" />
+            app:layout_constraintBottom_toTopOf="@id/divider_bottom">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_data"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/space_8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"
+                tools:listitem="@layout/row_my_check_in" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <View
             android:id="@+id/divider_bottom"

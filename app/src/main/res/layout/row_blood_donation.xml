@@ -59,8 +59,7 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/cg_actions"
-                    app:layout_constraintBottom_toBottomOf="@id/cg_actions"/>
+                    app:layout_constraintTop_toBottomOf="@id/tv_info"/>
 
             <com.google.android.material.chip.ChipGroup
                     android:id="@+id/cg_actions"

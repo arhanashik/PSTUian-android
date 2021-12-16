@@ -67,6 +67,9 @@ class AuthViewModel(
                     is AuthIntent.RegisterDevice -> registerDevice()
                     is AuthIntent.GetConfig -> getConfig()
                     is AuthIntent.GetSignInUser -> getSignedInUser()
+                    is AuthIntent.SignUpStudent -> signUpStudent(
+                        it.name, it.id, it.reg, it.facultyId, it.batchId, it.session, it.email
+                    )
                     is AuthIntent.ChangePassword -> changePassword(it.oldPassword, it.newPassword)
                     is AuthIntent.SignOut -> signOut()
                 }
@@ -132,7 +135,7 @@ class AuthViewModel(
         }
     }
 
-    fun signUpStudent(
+    private fun signUpStudent(
         name: String,
         id: String,
         reg: String,

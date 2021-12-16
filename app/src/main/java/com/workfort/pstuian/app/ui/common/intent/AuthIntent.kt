@@ -19,6 +19,15 @@ sealed class AuthIntent {
     object RegisterDevice : AuthIntent()
     object GetConfig : AuthIntent()
     object GetSignInUser : AuthIntent()
+    data class SignUpStudent(
+        val name: String,
+        val id: String,
+        val reg: String,
+        val facultyId: Int,
+        val batchId: Int,
+        val session:String,
+        val email: String
+    ) : AuthIntent()
     data class ChangePassword(val oldPassword: String, val newPassword: String) : AuthIntent()
     object SignOut : AuthIntent()
 }

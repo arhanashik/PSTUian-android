@@ -404,7 +404,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             getString(R.string.txt_sign_in_required),
             getString(R.string.msg_sign_in_required),
             getString(R.string.txt_sign_in),
-            onBtnClick = { launchActivity<SignInActivity>() }
-        )
+        ) { launchActivity<SignInActivity>() }
     }
 }

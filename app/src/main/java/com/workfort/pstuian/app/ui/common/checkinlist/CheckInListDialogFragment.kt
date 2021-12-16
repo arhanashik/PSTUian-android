@@ -72,6 +72,7 @@ class CheckInListDialogFragment (
         initDataList()
 
         with(binding) {
+            srlReloadData.setOnRefreshListener { loadData() }
             btnDismiss.setOnClickListener { dismiss() }
         }
 
@@ -122,11 +123,15 @@ class CheckInListDialogFragment (
             mViewModel.userCheckInListState.collect {
                 when(it) {
                     is CheckInListState.Idle -> Unit
-                    is CheckInListState.Loading -> {}
+                    is CheckInListState.Loading -> setActionUiState(true)
                     is CheckInListState.CheckInList -> {
+                        setActionUiState(false)
+                        endOfData = it.list.isEmpty()
                         renderData(it.list)
                     }
                     is CheckInListState.Error -> {
+                        setActionUiState(false)
+                        endOfData = true
                         Timber.e(it.message)
                     }
                 }
@@ -164,11 +169,13 @@ class CheckInListDialogFragment (
             mViewModel.checkInPrivacyState.collect {
                 when(it) {
                     is CheckInState.Idle -> Unit
-                    is CheckInState.Loading -> {}
+                    is CheckInState.Loading -> setActionUiState(true)
                     is CheckInState.Success -> {
+                        setActionUiState(false)
                         mAdapter.update(it.data)
                     }
                     is CheckInState.Error -> {
+                        setActionUiState(false)
                         CommonDialog.error(requireContext(), message = it.message)
                     }
                 }
@@ -189,15 +196,23 @@ class CheckInListDialogFragment (
             mViewModel.checkInDeleteState.collect {
                 when(it) {
                     is CheckInDeleteState.Idle -> Unit
-                    is CheckInDeleteState.Loading -> {}
+                    is CheckInDeleteState.Loading -> setActionUiState(true)
                     is CheckInDeleteState.Success -> {
+                        setActionUiState(false)
                         mAdapter.remove(it.itemId)
                     }
                     is CheckInDeleteState.Error -> {
+                        setActionUiState(false)
                         CommonDialog.error(requireContext(), message = it.message)
                     }
                 }
             }
+        }
+    }
+
+    private fun setActionUiState(isActionRunning: Boolean) {
+        with(binding) {
+            srlReloadData.isRefreshing = isActionRunning
         }
     }
 

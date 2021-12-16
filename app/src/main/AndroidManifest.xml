@@ -300,5 +300,16 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".app.ui.home.HomeActivity"/>
         </activity>
+
+        <activity
+                android:name=".app.ui.blooddonation.CreateBloodDonationActivity"
+                android:launchMode="singleTop"
+                android:label="@string/label_create_blood_donation_activity"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".app.ui.studentprofile.StudentProfileActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".app.ui.studentprofile.StudentProfileActivity"/>
+        </activity>
     </application>
 </manifest>

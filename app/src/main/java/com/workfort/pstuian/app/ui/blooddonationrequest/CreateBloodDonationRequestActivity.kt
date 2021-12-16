@@ -77,7 +77,7 @@ class CreateBloodDonationRequestActivity : BaseActivity<ActivityCreateBloodDonat
             .build()
             .apply {
                 addOnPositiveButtonClickListener {
-                    val dateStr = DateUtil.format(it)
+                    val dateStr = DateUtil.format(it, "yyyy-MM-dd")
                     binding.content.etDate.setText(dateStr)
                 }
                 show(supportFragmentManager, "date-picker")
@@ -127,8 +127,7 @@ class CreateBloodDonationRequestActivity : BaseActivity<ActivityCreateBloodDonat
                             this@CreateBloodDonationRequestActivity,
                             message = message,
                             cancelable = false,
-                            onBtnClick = { finish() }
-                        )
+                        ) { finish() }
                     }
                     is BloodDonationRequestState.Error -> {
                         setActionUi(isLoading = false)
