@@ -136,7 +136,7 @@ object Const {
         private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
 
         private val BASE_URL = if(BuildConfig.DEBUG) DEV_SERVER else LIVE_SERVER
-        val BASE_API_URL = if(BuildConfig.DEBUG) LOCAL_API_SERVER else LIVE_API_SERVER
+        val BASE_API_URL = if(BuildConfig.DEBUG) DEV_API_SERVER else LIVE_API_SERVER
         val TERMS_AND_CONDITIONS = "${BASE_URL}terms_and_conditions.php"
         val PRIVACY_POLICY = "${BASE_URL}privacy_policy.php"
         val ADMISSION_SUPPORT = "${BASE_URL}admission_support.php"
@@ -158,15 +158,19 @@ object Const {
 
         object Api {
             const val GET_CONFIG =  "${CONFIG_API_PATH}getLatest"
-            const val REGISTER_DEVICE = "${DEVICE_API_PATH}register"
-            const val UPDATE_DEVICE = "${DEVICE_API_PATH}update"
-            const val UPDATE_FCM_TOKEN = "${DEVICE_API_PATH}updateFcmToken"
+
+            object Device {
+                const val GET_ALL = "${DEVICE_API_PATH}getAll"
+                const val REGISTER = "${DEVICE_API_PATH}register"
+                const val UPDATE_FCM_TOKEN = "${DEVICE_API_PATH}updateFcmToken"
+            }
 
             object Auth {
                 const val SIGN_IN = "${AUTH_API_PATH}signIn"
                 const val SIGN_UP_STUDENT = "${AUTH_API_PATH}signUpStudent"
                 const val SIGN_UP_TEACHER = "${AUTH_API_PATH}signUpTeacher"
                 const val SIGN_OUT = "${AUTH_API_PATH}signOut"
+                const val SIGN_OUT_FROM_ALL_DEVICE = "${AUTH_API_PATH}signOutFromAllDevice"
                 const val CHANGE_PASSWORD = "${AUTH_API_PATH}changePassword"
                 const val FORGOT_PASSWORD = "${AUTH_API_PATH}forgotPassword"
                 const val EMAIL_VERIFICATION = "${AUTH_API_PATH}resendVerificationEmail"

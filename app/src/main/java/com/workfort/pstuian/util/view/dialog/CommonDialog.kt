@@ -356,14 +356,17 @@ object CommonDialog {
         return dialog
     }
 
-    fun deleteConfirmation(
+    fun confirmation(
         context: Context,
+        title: String = context.getString(R.string.txt_delete),
+        message: String = context.getString(R.string.msg_delete_permanent),
+        confirmBtnTxt: String = context.getString(R.string.txt_delete),
         onConfirm: () -> Unit
     ) : AlertDialog {
         val dialog = MaterialAlertDialogBuilder(context)
-            .setTitle(R.string.txt_delete)
-            .setMessage(R.string.msg_delete_permanent)
-            .setPositiveButton(R.string.txt_delete) { dialog, _ ->
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(confirmBtnTxt) { dialog, _ ->
                 dialog.dismiss()
                 onConfirm()
             }

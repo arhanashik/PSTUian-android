@@ -96,6 +96,8 @@
         <entry key="app/src/main/res/layout/fragment_blood_donation_list.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/fragment_check_in_list.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/fragment_course_schedule.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/fragment_device_all.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/fragment_device_list.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/fragment_employees.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/fragment_location_picker.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/fragment_profile_pager_item.xml" value="0.1" />
@@ -133,6 +135,7 @@
         <entry key="app/src/main/res/layout/row_blood_donation_request_shimmer.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_check_in_user.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_create_location.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/row_device.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_donor.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/row_donor_shimmer.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/row_dropdown_item.xml" value="0.1569078947368421" />

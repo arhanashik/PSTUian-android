@@ -23,7 +23,7 @@ import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
 import com.workfort.pstuian.app.ui.splash.viewstate.ClearCacheState
 import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
-import com.workfort.pstuian.app.ui.splash.viewstate.DeviceRegistrationState
+import com.workfort.pstuian.app.ui.splash.viewstate.DeviceState
 import com.workfort.pstuian.databinding.ActivitySplashBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.InAppUpdateUtil
@@ -158,15 +158,15 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mAuthViewModel.deviceRegistrationState.collect {
                 when (it) {
-                    is DeviceRegistrationState.Idle -> Unit
-                    is DeviceRegistrationState.Loading -> setActionUiState(true)
-                    is DeviceRegistrationState.Success -> {
+                    is DeviceState.Idle -> Unit
+                    is DeviceState.Loading -> setActionUiState(true)
+                    is DeviceState.Success -> {
                         setActionUiState(false)
                         clearCache()
                     }
-                    is DeviceRegistrationState.Error -> {
+                    is DeviceState.Error -> {
                         setActionUiState(false)
-                        val msg = it.error?: "Couldn't register the device"
+                        val msg = it.message?: "Couldn't register the device"
                         CommonDialog.error(
                             this@SplashActivity,
                             message = msg,

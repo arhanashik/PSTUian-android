@@ -335,7 +335,7 @@
     <string name="hint_privacy_public">Visible to everyone</string>
     <string name="hint_privacy_only_me">Visible to you only</string>
     <string name="prefix_selected_location">Check In - </string>
-    <string name="hint_type_location_name">Location Name</string>
+    <string name="hint_search_location">Search Location</string>
     <string name="txt_create_new">Create new</string>
     <string name="txt_create_new_location">Create New Location</string>
     <string name="txt_my_check_in_list">My Check In List</string>
@@ -360,6 +360,11 @@
     <string name="hint_email_verification">Email not verified yet?</string>
     <string name="txt_verify_now">Verify now</string>
     <string name="label_email_verification_activity">Email Verification</string>
+    <string name="txt_devices">Devices</string>
+    <string name="txt_signed_in_devices">Signed In Devices</string>
+    <string name="txt_sign_out_from_all">Sign out from all</string>
+    <string name="msg_sign_out_from_all">Are you surely want to sign out from all devices? You will have to sign in again.</string>
+    <string name="msg_sign_out">Are you surely want to sign out?</string>
 
     <array name="blood_group">
         <item>A+</item>

@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/default_space"
                 android:paddingEnd="@dimen/default_space"
-                android:hint="@string/hint_type_location_name"
+                android:hint="@string/hint_search_location"
                 tools:text="Pstu main campus"
                 android:textColor="?attr/customPrimaryTextColor"
                 android:textColorHint="?attr/customSecondaryTextColor"
@@ -49,7 +49,6 @@
             app:layout_constraintTop_toBottomOf="@id/divider_top"
             app:layout_constraintVertical_bias="1.0"
             tools:itemCount="5"
-            tools:layout_editor_absoluteX="-16dp"
             tools:listitem="@layout/row_location" />
 
     <View

@@ -37,7 +37,11 @@ data class DeviceEntity(
     var ipAddress: String? = "",
     var lat: String? = "",
     var lng: String? = "",
-    var locale: String? = ""
+    var locale: String? = "",
+    @SerializedName(Const.Params.CREATED_AT)
+    var createdAt: String? = "",
+    @SerializedName(Const.Params.UPDATED_AT)
+    var updatedAt: String? = "",
 ) : Parcelable {
     override fun equals(other: Any?) = (other is DeviceEntity)
             && other.id == id
@@ -50,6 +54,8 @@ data class DeviceEntity(
             && other.lat == lat
             && other.lng == lng
             && other.locale == locale
+            && other.createdAt == createdAt
+            && other.updatedAt == updatedAt
 
     override fun hashCode(): Int {
         var result = id.hashCode()
@@ -62,6 +68,8 @@ data class DeviceEntity(
         result = 31 * result + lat.hashCode()
         result = 31 * result + lng.hashCode()
         result = 31 * result + locale.hashCode()
+        result = 31 * result + createdAt.hashCode()
+        result = 31 * result + updatedAt.hashCode()
         return result
     }
 }

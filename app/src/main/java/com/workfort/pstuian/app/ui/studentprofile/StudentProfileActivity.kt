@@ -27,6 +27,7 @@ import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoItem
 import com.workfort.pstuian.app.ui.common.blooddonationlist.BloodDonationListDialogFragment
 import com.workfort.pstuian.app.ui.common.checkinlist.CheckInListDialogFragment
+import com.workfort.pstuian.app.ui.common.devicelist.DeviceListDialogFragment
 import com.workfort.pstuian.app.ui.common.fragment.ProfilePagerItemFragment
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
@@ -250,6 +251,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                 ProfileInfoAction.Password -> { promptChangePassword() }
                 ProfileInfoAction.BloodDonationList -> { promptBloodDonationList() }
                 ProfileInfoAction.CheckInList -> { promptCheckInList() }
+                ProfileInfoAction.SignedInDevices -> { promptSignedInDevices() }
                 else -> Unit
             }
         }
@@ -316,6 +318,10 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             ProfileInfoItem(
                 getString(R.string.txt_check_in), getString(R.string.txt_my_check_in_list),
                 R.drawable.ic_pencil_circular_outline, ProfileInfoAction.CheckInList, "~"
+            ),
+            ProfileInfoItem(
+                getString(R.string.txt_devices), getString(R.string.txt_signed_in_devices),
+                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.SignedInDevices, "~"
             ),
         )
     }
@@ -536,7 +542,6 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                         //notify name change in academic tab
                         initTabs()
                         setActionUiState(isActionRunning = false)
-                        CommonDialog.success(this@StudentProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
                         setActionUiState(isActionRunning = false)
@@ -574,7 +579,6 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                         binding.content.tvBio.text = it.data
                         binding.content.tvBio.visibility = View.VISIBLE
                         setActionUiState(isActionRunning = false)
-                        CommonDialog.success(this@StudentProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
                         setActionUiState(isActionRunning = false)
@@ -598,19 +602,20 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
     }
 
     private fun promptSignOut() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.txt_sign_out)
-            .setMessage("Are you surely want to sign out?")
-            .setPositiveButton(R.string.txt_sign_out) { _,_ ->
-                lifecycleScope.launch {
-                    mAuthViewModel.intent.send(AuthIntent.SignOut)
-                }
-            }
-            .setNegativeButton(R.string.txt_dismiss) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
+        CommonDialog.confirmation(
+            this,
+            getString(R.string.txt_sign_out),
+            getString(R.string.msg_sign_out),
+            getString(R.string.txt_sign_out),
+        ) {
+            signOut()
+        }
+    }
+
+    private fun signOut(fromAllDevices: Boolean = false) {
+        lifecycleScope.launch {
+            mAuthViewModel.intent.send(AuthIntent.SignOut(fromAllDevices))
+        }
     }
 
     private fun observeSignOut() {
@@ -753,6 +758,12 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             "student",
             profile.isSignedIn
         )
+    }
+
+    private fun promptSignedInDevices() {
+        DeviceListDialogFragment.show(supportFragmentManager) {
+            signOut(true)
+        }
     }
 
     //according to documentation this should work. But unfortunately nope :D

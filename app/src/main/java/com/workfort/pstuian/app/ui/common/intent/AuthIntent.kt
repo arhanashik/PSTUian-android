@@ -16,6 +16,7 @@ package com.workfort.pstuian.app.ui.common.intent
  *  ****************************************************************************
  */
 sealed class AuthIntent {
+    data class GetAllDevices(val page: Int) : AuthIntent()
     object RegisterDevice : AuthIntent()
     object GetConfig : AuthIntent()
     object GetSignInUser : AuthIntent()
@@ -30,5 +31,5 @@ sealed class AuthIntent {
     ) : AuthIntent()
     data class ChangePassword(val oldPassword: String, val newPassword: String) : AuthIntent()
     data class EmailVerification(val userType: String, val email: String) : AuthIntent()
-    object SignOut : AuthIntent()
+    data class SignOut(val fromAllDevices: Boolean = false) : AuthIntent()
 }

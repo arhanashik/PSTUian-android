@@ -192,9 +192,11 @@ class LocationPickerDialogFragment(
         val locationName = binding.etQuery.text.toString()
         if(locationName.isEmpty()) {
             binding.tilQuery.error = "*Required"
+            return
         }
         if(locationName.length > 50) {
             binding.tilQuery.error = "*Max length is 50"
+            return
         }
         binding.tilQuery.error = null
 

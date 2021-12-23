@@ -124,6 +124,7 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
     }
 
     private fun renderStudents(data: List<StudentEntity>) {
+        mAdapter.setData(data.toMutableList())
         val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
         val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
         with(binding) {
@@ -134,7 +135,6 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
             tvMessage.visibility = inverseVisibility
             btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.addData(data.toMutableList())
     }
 
     private fun gotToStudentProfile(student: StudentEntity) {

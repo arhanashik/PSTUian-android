@@ -103,6 +103,7 @@ class DrawController(private val indicator: Indicator) {
             IndicatorAnimationType.DROP -> drawer.drawDrop(canvas, value!!)
             IndicatorAnimationType.SWAP -> drawer.drawSwap(canvas, value!!)
             IndicatorAnimationType.SCALE_DOWN -> drawer.drawScaleDown(canvas, value!!)
+            else -> drawer.drawBasic(canvas, true)
         }
     }
 }

@@ -71,6 +71,18 @@ class AuthRepository(
         }
     }
 
+    suspend fun getAllDevices(page: Int): List<DeviceEntity> {
+        val userType = getSignInUserType()
+        val id = when(val user = getSignInUser()) {
+            is StudentEntity -> user.id
+            is TeacherEntity -> user.id
+            else -> throw Exception("Invalid account")
+        }
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        return helper.getAllDevices(id, userType, deviceId, page)
+    }
+
     suspend fun registerDevice(
         fcmToken: String,
         lat: String = "0.0",
@@ -263,14 +275,16 @@ class AuthRepository(
         return data.first
     }
 
-    suspend fun signOut(): String {
+    suspend fun signOut(fromAllDevice: Boolean = false): String {
         val userType = getSignInUserType()
         val id = when(val user = getSignInUser()) {
             is StudentEntity -> user.id
             is TeacherEntity -> user.id
             else -> throw Exception("Invalid account")
         }
-        val data = helper.signOut(id, userType)
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        val data = helper.signOut(id, userType, deviceId, fromAllDevice)
         deleteAll()
 
         return data
@@ -293,11 +307,18 @@ class AuthRepository(
         }
     }
 
-    suspend fun forgotPassword(userType: String, email: String): String =
-        helper.forgotPassword(userType, email)
+    suspend fun forgotPassword(userType: String, email: String): String {
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        return helper.forgotPassword(userType, email, deviceId)
+    }
 
-    suspend fun emailVerification(userType: String, email: String): String =
-        helper.emailVerification(userType, email)
+    suspend fun emailVerification(userType: String, email: String): String {
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        return helper.emailVerification(userType, email, deviceId)
+    }
+
 
     suspend fun deleteAll() {
         val context = PstuianApp.getBaseApplicationContext()

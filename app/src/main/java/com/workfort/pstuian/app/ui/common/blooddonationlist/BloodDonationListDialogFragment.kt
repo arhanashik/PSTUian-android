@@ -28,7 +28,6 @@ import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import timber.log.Timber
 
 /**
  *  ****************************************************************************
@@ -77,6 +76,7 @@ class BloodDonationListDialogFragment (
 
         with(binding) {
             srlReloadData.setOnRefreshListener { loadData() }
+            btnRefresh.setOnClickListener { loadData() }
             btnCreateNew.visibility = if(isSignedIn) View.VISIBLE else View.GONE
             btnCreateNew.setOnClickListener { createNewDonation() }
             btnDismiss.setOnClickListener { dismiss() }
@@ -146,7 +146,8 @@ class BloodDonationListDialogFragment (
                     is BloodDonationsState.Error -> {
                         setActionUiState(false)
                         endOfData = true
-                        Timber.e(it.message)
+                        binding.tvMessage.text = it.message
+                        renderData(emptyList())
                     }
                 }
             }
@@ -154,10 +155,17 @@ class BloodDonationListDialogFragment (
     }
 
     private fun renderData(data: List<BloodDonationEntity>) {
-        if(mViewModel.donationsPage == 1) {
-            mAdapter.setData(data)
-        } else {
-            mAdapter.addData(data)
+        if(mViewModel.donationsPage == 1) mAdapter.setData(data)
+        else mAdapter.addData(data)
+        val noData = mAdapter.data.isEmpty()
+        val visibility = if(noData) View.GONE else View.VISIBLE
+        val inverseVisibility = if(noData) View.VISIBLE else View.GONE
+        with(binding) {
+            rvData.visibility = visibility
+            lavError.visibility = inverseVisibility
+            if(data.isEmpty()) lavError.playAnimation()
+            tvMessage.visibility = inverseVisibility
+            btnRefresh.visibility = inverseVisibility
         }
     }
 
@@ -208,7 +216,7 @@ class BloodDonationListDialogFragment (
     }
 
     private fun promptDelete(item: BloodDonationEntity) {
-        CommonDialog.deleteConfirmation(requireContext()) {
+        CommonDialog.confirmation(requireContext()) {
             lifecycleScope.launch {
                 mViewModel.intent.send(BloodDonationIntent.DeleteDonation(item.id))
             }
@@ -224,6 +232,10 @@ class BloodDonationListDialogFragment (
                     is ItemDeleteState.Success -> {
                         setActionUiState(false)
                         mAdapter.remove(it.itemId)
+                        // update empty view
+                        if(mAdapter.data.isEmpty()) {
+                            renderData(emptyList())
+                        }
                     }
                     is ItemDeleteState.Error -> {
                         setActionUiState(false)

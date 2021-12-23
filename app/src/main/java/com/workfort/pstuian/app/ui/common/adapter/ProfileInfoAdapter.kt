@@ -60,4 +60,5 @@ sealed class ProfileInfoAction {
     object Password : ProfileInfoAction()
     object BloodDonationList : ProfileInfoAction()
     object CheckInList : ProfileInfoAction()
+    object SignedInDevices : ProfileInfoAction()
 }

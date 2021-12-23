@@ -23,6 +23,41 @@
                 tools:listitem="@layout/row_my_check_in" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_error"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_margin="@dimen/default_space"
+            app:lottie_rawRes="@raw/empty_box"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/tv_message"/>
+
+    <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data_found_error"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_dismiss"/>
+
+    <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_space"
+            android:text="@string/txt_refresh"
+            app:icon="@drawable/ic_reload"
+            android:visibility="gone"
+            tools:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_message"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
     <View
             android:id="@+id/divider_bottom"
             android:layout_width="match_parent"

@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.5.30'
+    ext.kotlin_version = '1.6.10'
     repositories {
         google()
         mavenCentral()
@@ -42,7 +42,7 @@ ext {
     cardview = '1.0.0'
     recyclerview = '1.2.1'
     support = '1.0.0'
-    room = '2.3.0'
+    room = '2.4.0'
     lifecycle = '2.4.0'
     multidex = '2.0.1'
     datastorePreferences = '1.0.0'
@@ -51,7 +51,7 @@ ext {
 
     coroutines = '1.5.2'
 
-    playServicesLocation = '18.0.0'
+    playServicesLocation = '19.0.0'
 
     junit = '4.13.2'
     runner = '1.4.1-alpha03'
