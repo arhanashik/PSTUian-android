@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.data.remote.apihelper
 
-import com.workfort.pstuian.app.data.local.slider.SliderEntity
+import com.workfort.pstuian.app.data.local.constant.Const
 
 /**
  *  ****************************************************************************
@@ -18,6 +18,14 @@ import com.workfort.pstuian.app.data.local.slider.SliderEntity
  *  ****************************************************************************
  */
 
-interface ApiHelper<T> {
-    suspend fun getAll(): List<T>
+abstract class ApiHelper<T> {
+    open suspend fun getAll(): List<T> = emptyList()
+    open suspend fun getAll(
+        page: Int,
+        limit: Int = Const.Params.Default.PAGE_SIZE
+    ): List<T> = emptyList()
+    open suspend fun get(id: Int): T = throw Exception("Not implemented yet")
+    open suspend fun insert(item: T): Int = 0
+    open suspend fun update(item: T): T = throw Exception("Not implemented yet")
+    open suspend fun delete(id: Int): Boolean = false
 }

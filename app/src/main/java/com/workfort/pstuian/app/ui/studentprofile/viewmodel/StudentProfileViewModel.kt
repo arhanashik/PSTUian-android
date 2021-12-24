@@ -11,6 +11,8 @@ import com.workfort.pstuian.util.helper.CoilUtil
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -52,7 +54,29 @@ class StudentProfileViewModel(
     private val _changeConnectInfoState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
     val changeConnectInfoState: StateFlow<ChangeProfileInfoState> get() = _changeConnectInfoState
 
-    fun getProfile(studentId: Int) {
+    init {
+        handleIntent()
+    }
+
+    private fun handleIntent() {
+        viewModelScope.launch {
+            intent.consumeAsFlow().collect {
+                when(it) {
+                    is StudentProfileIntent.GetProfile -> getProfile(it.id)
+                    is StudentProfileIntent.ChangeProfileImage ->
+                        changeProfileImage(it.student, it.imageUrl)
+                    is StudentProfileIntent.ChangeName -> changeName(it.student, it.newName)
+                    is StudentProfileIntent.ChangeBio -> changeBio(it.student, it.newBio)
+                    is StudentProfileIntent.ChangeAcademicInfo -> changeAcademicInfo(it.student,
+                        it.name, it.id, it.reg, it.blood, it.facultyId, it.session, it.batchId)
+                    is StudentProfileIntent.ChangeConnectInfo -> changeConnectInfo(it.student,
+                        it.address, it.phone, it.email, it.cvLink, it.linkedIn, it.facebook)
+                }
+            }
+        }
+    }
+
+    private fun getProfile(studentId: Int) {
         viewModelScope.launch {
             _getProfileState.value = GetProfileState.Loading
             _getProfileState.value = try {
@@ -63,7 +87,7 @@ class StudentProfileViewModel(
         }
     }
 
-    fun changeProfileImage(
+    private fun changeProfileImage(
         student: StudentEntity,
         imageUrl: String
     ) {
@@ -80,7 +104,7 @@ class StudentProfileViewModel(
         }
     }
 
-    fun changeName(
+    private fun changeName(
         student: StudentEntity,
         newName: String
     ) {
@@ -95,7 +119,7 @@ class StudentProfileViewModel(
         }
     }
 
-    fun changeBio(
+    private fun changeBio(
         student: StudentEntity,
         newBio: String
     ) {
@@ -110,7 +134,7 @@ class StudentProfileViewModel(
         }
     }
 
-    fun changeAcademicInfo(
+    private fun changeAcademicInfo(
         student: StudentEntity,
         name: String,
         id: Int,
@@ -132,7 +156,7 @@ class StudentProfileViewModel(
         }
     }
 
-    fun changeConnectInfo(
+    private fun changeConnectInfo(
         student: StudentEntity,
         address: String,
         phone: String,

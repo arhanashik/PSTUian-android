@@ -27,11 +27,13 @@ import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.faculty.viewstate.BatchesState
 import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
+import com.workfort.pstuian.app.ui.studentprofile.intent.StudentProfileIntent
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.databinding.ActivityEditStudentProfileBinding
 import com.workfort.pstuian.util.helper.PermissionUtil
 import com.workfort.pstuian.util.helper.Toaster
+import com.workfort.pstuian.util.helper.nameFilter
 import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -95,6 +97,7 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
                 groupConnect.visibility = View.GONE
                 etName.setText(mStudent.name)
                 etName.setSelection(mStudent.name.length)
+                etName.filters = arrayOf(nameFilter)
                 etId.setText(mStudent.id.toString())
                 etReg.setText(mStudent.reg)
                 etSession.setText(mStudent.session)
@@ -134,6 +137,8 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
                 etLinkedIn.setText(mStudent.linkedIn)
                 etFacebook.setText(mStudent.fbLink)
                 btnUploadCv.setOnClickListener { choosePdf() }
+                // for now email is not editable
+                tilEmail.isEnabled = false
             }
         }
         with(binding) {
@@ -318,9 +323,11 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
                 return
             }
 
-            mStudentViewModel.changeAcademicInfo(
-                mStudent, name, id, reg, blood, facultyId, session, batchId
-            )
+            lifecycleScope.launch {
+                mStudentViewModel.intent.send(StudentProfileIntent.ChangeAcademicInfo(
+                    mStudent, name, id, reg, blood, facultyId, session, batchId
+                ))
+            }
         }
     }
 
@@ -363,9 +370,11 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
             val linkedIn = etLinkedIn.text.toString()
             val facebook = etFacebook.text.toString()
 
-            mStudentViewModel.changeConnectInfo(
-                mStudent, address, phone, email, cvLink, linkedIn, facebook
-            )
+            lifecycleScope.launch {
+                mStudentViewModel.intent.send(StudentProfileIntent.ChangeConnectInfo(
+                    mStudent, address, phone, email, cvLink, linkedIn, facebook
+                ))
+            }
         }
     }
 

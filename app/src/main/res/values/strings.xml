@@ -22,7 +22,7 @@
     <string name="title_flexible_update_dialog">Update Available!</string>
     <string name="title_install_update_dialog">Ready To Install</string>
 
-    <string name="hint_search">Search hint</string>
+    <string name="hint_search">Search</string>
     <string name="hint_search_teacher">Search teacher</string>
     <string name="hint_search_student">Search student</string>
     <string name="hint_search_batch">Search batch</string>
@@ -277,9 +277,15 @@
     <string name="default_success_dialog_message">
         Operation successful. Everything seems alright!
     </string>
-    <string name="success_msg_sign_up">You\'ve successfully signed up!</string>
-    <string name="warning_msg_sign_up">For the first time login, please use your student id
-        as password. We STRONGLY recommend to change the password after signing in.</string>
+    <string name="success_msg_sign_up">
+        Sign up Successful! A verification link has been sent to your email address.
+        Please check your inbox(also spam folder) and confirm your account. If you did not
+        receive the email, please contact with the admin from support screen.
+    </string>
+    <string name="warning_msg_sign_up">
+        For the first time login, please use your student id as password.
+        We STRONGLY recommend to change the password after signing in.
+    </string>
     <string name="error_msg_server_issue">It seems there could be an issue with the server.
         Or there might not be enough data available. In either case, please send us a complain
         from the help option. We promise to check it ASAP. You might also check your network
@@ -305,7 +311,60 @@
     <string name="message_donation_thanks">We are grateful for your support. No matter how
         small it is, for us it is an inspiration to continue our work.
     </string>
-    <string name="txt_be_first_doner">Be the first doner</string>
+    <string name="txt_be_first_donor">Be the first donor</string>
+    <string name="txt_total_registered_students">Registered Students</string>
+    <string name="label_blood_donation_request_activity">Donation Requests</string>
+    <string name="hint_search_donation_request">Search donation request</string>
+    <string name="txt_request_donation">Request Donation</string>
+    <string name="hint_need_before">Need before</string>
+    <string name="hint_contact">Phone numbers</string>
+    <string name="helper_txt_max_length_blood_donation_message">Maximum 500 characters</string>
+    <string name="info_blood_donation">
+        After you create a request, one admin will review it. Then, a notification will be
+        sent to the donors. Also, the request will be added to the blood donation request
+        list.
+    </string>
+    <string name="txt_create_request">Create Request</string>
+    <string name="label_create_blood_donation_request_activity">Create Request</string>
+    <string name="msg_sign_in_required">You need to sign in first to complete this action.</string>
+    <string name="txt_sign_in_required">Sign In Required</string>
+    <string name="txt_say_hi">Say Hi</string>
+    <string name="label_check_in_activity">Check In</string>
+    <string name="txt_public">Public</string>
+    <string name="txt_only_me">Only Me</string>
+    <string name="hint_privacy_public">Visible to everyone</string>
+    <string name="hint_privacy_only_me">Visible to you only</string>
+    <string name="prefix_selected_location">Check In - </string>
+    <string name="hint_search_location">Search Location</string>
+    <string name="txt_create_new">Create new</string>
+    <string name="txt_create_new_location">Create New Location</string>
+    <string name="txt_my_check_in_list">My Check In List</string>
+    <string name="txt_blood_donation">Blood Donation</string>
+    <string name="txt_my_donation_list">My Donation List</string>
+    <string name="txt_change_privacy">Change Privacy</string>
+    <string name="txt_delete">Delete</string>
+    <string name="msg_delete_permanent">Are you surely want to delete? You cannot restore it again.</string>
+    <string name="hint_request_id">Request id</string>
+    <string name="label_create_blood_donation_activity">Create donation</string>
+    <string name="hint_donation_date">Donation date</string>
+    <string name="helper_text_blood_donation_request_id">
+        You can find the request id from the blood donation requests list.
+        If you don\'t know the id, keep it empty or 0.
+    </string>
+    <string name="txt_open_email">Open Email</string>
+    <string name="hint_already_verified">Already verified?</string>
+    <string name="hint_email_verification_link">
+        *A verification link will be sent to your email address.
+        Check spam folder if you cannot find it.
+    </string>
+    <string name="hint_email_verification">Email not verified yet?</string>
+    <string name="txt_verify_now">Verify now</string>
+    <string name="label_email_verification_activity">Email Verification</string>
+    <string name="txt_devices">Devices</string>
+    <string name="txt_signed_in_devices">Signed In Devices</string>
+    <string name="txt_sign_out_from_all">Sign out from all</string>
+    <string name="msg_sign_out_from_all">Are you surely want to sign out from all devices? You will have to sign in again.</string>
+    <string name="msg_sign_out">Are you surely want to sign out?</string>
 
     <array name="blood_group">
         <item>A+</item>

@@ -125,10 +125,10 @@ class DonorsActivity : BaseActivity<ActivityDonorsBinding>() {
             btnRefresh.visibility = inverseVisibility
             if(data.isEmpty()) {
                 lavError.playAnimation()
-                tvMessage.setText(R.string.txt_be_first_doner)
+                tvMessage.setText(R.string.txt_be_first_donor)
             }
         }
-        mAdapter.setDonors(data.toMutableList())
+        mAdapter.setData(data.toMutableList())
     }
 
     private fun donate() {

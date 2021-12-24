@@ -101,6 +101,8 @@ class EditTeacherProfileActivity: BaseActivity<ActivityEditTeacherProfileBinding
                 etEmail.setText(mTeacher.email)
                 etLinkedIn.setText(mTeacher.linkedIn)
                 etFacebook.setText(mTeacher.fbLink)
+                // for now email is not editable
+                tilEmail.isEnabled = false
             }
         }
         with(binding) {
@@ -175,21 +177,21 @@ class EditTeacherProfileActivity: BaseActivity<ActivityEditTeacherProfileBinding
 
     private fun updateAcademicInfo() {
         with(binding.content) {
-            val name = etName.text.toString()
+            val name = etName.text.toString().trim()
             if(TextUtils.isEmpty(name)) {
                 tilName.error = "*Required"
                 return
             }
             tilName.error = null
 
-            val designation = etDesignation.text.toString()
+            val designation = etDesignation.text.toString().trim()
             if(TextUtils.isEmpty(designation)) {
                 tilDesignation.error = "*Required"
                 return
             }
             tilDesignation.error = null
 
-            val department = etDepartment.text.toString()
+            val department = etDepartment.text.toString().trim()
             if(TextUtils.isEmpty(department)) {
                 tilDepartment.error = "*Required"
                 return
@@ -250,16 +252,16 @@ class EditTeacherProfileActivity: BaseActivity<ActivityEditTeacherProfileBinding
 
     private fun updateConnectInfo() {
         with(binding.content) {
-            val address = etAddress.text.toString()
-            val phone = etPhone.text.toString()
-            val email = etEmail.text.toString()
+            val address = etAddress.text.toString().trim()
+            val phone = etPhone.text.toString().trim()
+            val email = etEmail.text.toString().trim()
             if(TextUtils.isEmpty(email)) {
                 tilEmail.error = "*Required"
                 return
             }
             tilEmail.error = null
-            val linkedIn = etLinkedIn.text.toString()
-            val fbLink = etFacebook.text.toString()
+            val linkedIn = etLinkedIn.text.toString().trim()
+            val fbLink = etFacebook.text.toString().trim()
 
             mViewModel.changeConnectInfo(
                 mTeacher, address, phone, email, linkedIn, fbLink

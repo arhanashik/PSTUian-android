@@ -520,12 +520,14 @@ class PageIndicatorView @JvmOverloads constructor(
     }
 
     private fun isRtl(): Boolean {
-        when (manager.indicator().rtlMode) {
-            RtlMode.On -> return true
-            RtlMode.Off -> return false
-            RtlMode.Auto -> return TextUtilsCompat.getLayoutDirectionFromLocale(context.resources.configuration.locale) == ViewCompat.LAYOUT_DIRECTION_RTL
+        return when (manager.indicator().rtlMode) {
+            RtlMode.On -> true
+            RtlMode.Off -> false
+            RtlMode.Auto -> TextUtilsCompat.getLayoutDirectionFromLocale(
+                context.resources.configuration.locale
+            ) == ViewCompat.LAYOUT_DIRECTION_RTL
+            else -> false
         }
-        return false
     }
 
     private fun isViewMeasured(): Boolean {

@@ -32,7 +32,9 @@
             android:id="@+id/rv_items"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="@dimen/space_5dp"
+            android:paddingTop="@dimen/dp8"
+            android:paddingBottom="@dimen/dp8"
+            android:clipToPadding="false"
             tools:itemCount="5"
             tools:listitem="@layout/row_profile_info"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>

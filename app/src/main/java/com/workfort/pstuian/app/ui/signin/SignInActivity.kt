@@ -15,8 +15,8 @@ import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.bottomsheet.BatchSelectorBottomSheet
 import com.workfort.pstuian.app.ui.common.bottomsheet.FacultySelectorBottomSheet
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
+import com.workfort.pstuian.app.ui.emailverification.EmailVerificationActivity
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
-import com.workfort.pstuian.app.ui.faculty.listener.FacultyClickEvent
 import com.workfort.pstuian.app.ui.forgotpassword.ForgotPasswordActivity
 import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
 import com.workfort.pstuian.app.ui.signup.StudentSignUpActivity
@@ -50,7 +50,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                     Const.Params.UserType.STUDENT else Const.Params.UserType.TEACHER
             }
 
-            setClickListener(btnSignIn, btnSignUp, btnForgetPassword)
+            setClickListener(btnSignIn, btnSignUp, btnForgetPassword, btnEmailVerification)
         }
 
         observeSignIn()
@@ -63,6 +63,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                 btnSignIn -> signIn()
                 btnSignUp -> selectUserTypeAndSignUp()
                 btnForgetPassword -> launchActivity<ForgotPasswordActivity>()
+                btnEmailVerification -> launchActivity<EmailVerificationActivity>()
                 else -> Timber.e("Who clicked me!")
             }
         }
@@ -105,10 +106,10 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                     }
                     is SignInState.Error -> {
                         setActionUiState(false)
-                        val title = it.error?: "Failed to Sign in"
-                        val msg = getString(if(selectedUserType == Const.Params.UserType.STUDENT)
-                            R.string.error_msg_sign_in else R.string.default_error_dialog_message)
-                        CommonDialog.error(this@SignInActivity, title, msg)
+                        var msg = it.error?: "Failed to Sign in. "
+                        if(selectedUserType == Const.Params.UserType.STUDENT)
+                            msg += getString(R.string.error_msg_sign_in)
+                        CommonDialog.error(this@SignInActivity, message = msg)
                     }
                 }
             }
@@ -148,16 +149,14 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     }
 
     private fun selectFaculty(userType: String) {
-        FacultySelectorBottomSheet(object : FacultyClickEvent {
-            override fun onClickFaculty(faculty: FacultyEntity) {
-                if(userType == Const.Params.UserType.STUDENT) {
-                    selectBatch(faculty)
-                } else {
-                    gotoTeacherSignUp(faculty)
-                    finish()
-                }
+        FacultySelectorBottomSheet { faculty ->
+            if(userType == Const.Params.UserType.STUDENT) {
+                selectBatch(faculty)
+            } else {
+                gotoTeacherSignUp(faculty)
+                finish()
             }
-        }).show(supportFragmentManager, FacultySelectorBottomSheet.TAG)
+        }.show(supportFragmentManager, FacultySelectorBottomSheet.TAG)
     }
 
     private fun selectBatch(faculty: FacultyEntity) {

@@ -7,10 +7,7 @@ import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.data.remote.AuthResponse
 import com.workfort.pstuian.app.data.remote.Response
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 /**
  *  ****************************************************************************
@@ -32,8 +29,17 @@ interface AuthApiService {
     @GET(Const.Remote.Api.GET_CONFIG)
     suspend fun getConfig(): Response<ConfigEntity>
 
+    @GET(Const.Remote.Api.Device.GET_ALL)
+    suspend fun getAllDevices(
+        @Query(Const.Params.USER_ID) userId: Int,
+        @Query(Const.Params.USER_TYPE) userType: String,
+        @Query(Const.Params.DEVICE_ID) deviceId: String,
+        @Query(Const.Params.PAGE) page: Int,
+        @Query(Const.Params.LIMIT) limit: Int,
+    ): Response<List<DeviceEntity>>
+
     @FormUrlEncoded
-    @POST(Const.Remote.Api.REGISTER_DEVICE)
+    @POST(Const.Remote.Api.Device.REGISTER)
     suspend fun registerDevice(
         @Field(Const.Params.ID) id: String,
         @Field(Const.Params.FCM_TOKEN) fcmToken: String,
@@ -48,7 +54,7 @@ interface AuthApiService {
     ): Response<DeviceEntity>
 
     @FormUrlEncoded
-    @POST(Const.Remote.Api.UPDATE_FCM_TOKEN)
+    @POST(Const.Remote.Api.Device.UPDATE_FCM_TOKEN)
     fun updateFcmToken(
         @Field(Const.Params.DEVICE_ID) deviceId: String,
         @Field(Const.Params.FCM_TOKEN) fcmToken: String
@@ -102,6 +108,15 @@ interface AuthApiService {
     suspend fun signOut(
         @Field(Const.Params.ID) id: Int,
         @Field(Const.Params.USER_TYPE) userType: String,
+        @Field(Const.Params.DEVICE_ID) deviceId: String,
+    ): AuthResponse<String>
+
+    @FormUrlEncoded
+    @POST(Const.Remote.Api.Auth.SIGN_OUT_FROM_ALL_DEVICE)
+    suspend fun signOutFromAllDevice(
+        @Field(Const.Params.ID) id: Int,
+        @Field(Const.Params.USER_TYPE) userType: String,
+        @Field(Const.Params.DEVICE_ID) deviceId: String,
     ): AuthResponse<String>
 
     @FormUrlEncoded
@@ -119,5 +134,14 @@ interface AuthApiService {
     suspend fun forgotPassword(
         @Field(Const.Params.USER_TYPE) userType: String,
         @Field(Const.Params.EMAIL) email: String,
+        @Field(Const.Params.DEVICE_ID) deviceId: String,
+    ): AuthResponse<String>
+
+    @FormUrlEncoded
+    @POST(Const.Remote.Api.Auth.EMAIL_VERIFICATION)
+    suspend fun emailVerification(
+        @Field(Const.Params.USER_TYPE) userType: String,
+        @Field(Const.Params.EMAIL) email: String,
+        @Field(Const.Params.DEVICE_ID) deviceId: String,
     ): AuthResponse<String>
 }

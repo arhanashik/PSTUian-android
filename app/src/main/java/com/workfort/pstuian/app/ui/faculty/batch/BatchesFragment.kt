@@ -111,7 +111,7 @@ class BatchesFragment(private val faculty: FacultyEntity)
             tvMessage.visibility = inverseVisibility
             btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.setBatches(data.toMutableList())
+        mAdapter.setData(data.toMutableList())
     }
 
     fun filter(query: String) {

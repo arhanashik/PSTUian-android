@@ -10,7 +10,10 @@ import androidx.appcompat.app.AlertDialog
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
+import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
+import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.databinding.*
+import com.workfort.pstuian.util.helper.nameFilter
 
 /**
  *  ****************************************************************************
@@ -36,10 +39,9 @@ object CommonDialog {
         btnText: String = context.getString(R.string.txt_dismiss),
         warning: String = "",
         cancelable: Boolean = true,
-        onBtnClick: () -> Unit = {},
         dismissOnBtnClick: Boolean = true,
-        callback: SuccessDialogCallback? = null,
-        @DrawableRes icon: Int = R.drawable.ic_check_circle_fill
+        @DrawableRes icon: Int = R.drawable.ic_check_circle_fill,
+        onBtnClick: () -> Unit = {},
     ): AlertDialog {
         val inflater = LayoutInflater.from(context)
         val binding = PromptSuccessBinding.inflate(inflater, null, false)
@@ -59,16 +61,11 @@ object CommonDialog {
 
         binding.btnDismiss.setOnClickListener {
             if(dismissOnBtnClick) dialog.dismiss()
-            callback?.onClickDismiss()
             onBtnClick()
         }
         dialog.show()
 
         return dialog
-    }
-
-    interface SuccessDialogCallback {
-        fun onClickDismiss()
     }
 
     fun error(
@@ -77,9 +74,8 @@ object CommonDialog {
         message: String = context.getString(R.string.default_error_dialog_message),
         btnText: String = context.getString(R.string.txt_dismiss),
         cancelable: Boolean = true,
-        onBtnClick: () -> Unit = {},
         dismissOnBtnClick: Boolean = true,
-        callback: ErrorDialogCallback? = null,
+        onBtnClick: () -> Unit = {},
     ): AlertDialog {
         val inflater = LayoutInflater.from(context)
         val binding = PromptErrorBinding.inflate(inflater, null, false)
@@ -94,16 +90,11 @@ object CommonDialog {
 
         binding.btnDismiss.setOnClickListener {
             if(dismissOnBtnClick) dialog.dismiss()
-            callback?.onClickDismiss()
             onBtnClick()
         }
         dialog.show()
 
         return dialog
-    }
-
-    interface ErrorDialogCallback {
-        fun onClickDismiss()
     }
 
     fun changeProPic(
@@ -148,21 +139,8 @@ object CommonDialog {
         val binding = PromptChangeNameBinding.inflate(inflater, null, false)
         binding.etName.setText(oldName)
         binding.etName.setSelection(oldName.length)
+        binding.etName.filters = arrayOf(nameFilter)
         binding.btnChange.isEnabled = false
-
-        val filter = InputFilter { source, start, end, _, _, _ ->
-            for(i in start until end) {
-                if (!Character.isLetter(source[i]) &&
-                    source[i].toString() != "_" &&
-                    source[i].toString() != "-" &&
-                    source[i].toString() != " "
-                ) {
-                    return@InputFilter ""
-                }
-            }
-            null
-        }
-        binding.etName.filters = arrayOf(filter)
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -336,6 +314,67 @@ object CommonDialog {
             onClickChange(oldPassword, newPassword)
             dialog.dismiss()
         }
+        dialog.show()
+
+        return dialog
+    }
+
+    fun changePrivacy(
+        context: Context,
+        item: CheckInEntity,
+        onChange: (privacy: String) -> Unit
+    ) : AlertDialog {
+        val inflater = LayoutInflater.from(context)
+        val binding = PromptChangeCheckInPrivacyBinding.inflate(inflater,
+            null, false)
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(binding.root)
+            .create()
+
+        val prevCheckedId = if(item.privacy == Const.Params.CheckInPrivacy.PUBLIC)
+            R.id.btn_public else R.id.btn_only_me
+        var newPrivacy = Const.Params.CheckInPrivacy.PUBLIC
+        binding.btgPrivacy.addOnButtonCheckedListener { _, checkedId, _ ->
+            newPrivacy = if(checkedId == R.id.btn_public) {
+                binding.tvMessage.text = context.getString(R.string.hint_privacy_public)
+                Const.Params.CheckInPrivacy.PUBLIC
+            } else {
+                binding.tvMessage.text = context.getString(R.string.hint_privacy_only_me)
+                Const.Params.CheckInPrivacy.ONLY_ME
+            }
+        }
+        binding.btgPrivacy.check(prevCheckedId)
+
+        binding.btnChange.setOnClickListener {
+            dialog.dismiss()
+            onChange(newPrivacy)
+        }
+        binding.btnDismiss.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+
+        return dialog
+    }
+
+    fun confirmation(
+        context: Context,
+        title: String = context.getString(R.string.txt_delete),
+        message: String = context.getString(R.string.msg_delete_permanent),
+        confirmBtnTxt: String = context.getString(R.string.txt_delete),
+        onConfirm: () -> Unit
+    ) : AlertDialog {
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(confirmBtnTxt) { dialog, _ ->
+                dialog.dismiss()
+                onConfirm()
+            }
+            .setNegativeButton(R.string.label_cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
         dialog.show()
 
         return dialog

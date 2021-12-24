@@ -25,6 +25,9 @@ import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoAction
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoItem
+import com.workfort.pstuian.app.ui.common.blooddonationlist.BloodDonationListDialogFragment
+import com.workfort.pstuian.app.ui.common.checkinlist.CheckInListDialogFragment
+import com.workfort.pstuian.app.ui.common.devicelist.DeviceListDialogFragment
 import com.workfort.pstuian.app.ui.common.fragment.ProfilePagerItemFragment
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
@@ -33,6 +36,7 @@ import com.workfort.pstuian.app.ui.editprofile.EditStudentProfileActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
 import com.workfort.pstuian.app.ui.imagepreview.ImagePreviewActivity
 import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
+import com.workfort.pstuian.app.ui.studentprofile.intent.StudentProfileIntent
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.GetProfileState
@@ -76,14 +80,19 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             finish()
             return
         }
-        mViewModel.getProfile(studentId)
-
+        loadProfile(studentId)
         observeProfile()
         observeProfileImageChange()
         observeNameChange()
         observeBioChange()
         observeSignOut()
         observePasswordChange()
+    }
+
+    private fun loadProfile(studentId: Int) {
+        lifecycleScope.launch {
+            mViewModel.intent.send(StudentProfileIntent.GetProfile(studentId))
+        }
     }
 
     /**
@@ -114,9 +123,8 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                         CommonDialog.error(
                             this@StudentProfileActivity,
                             message = msg,
-                            cancelable = false,
-                            onBtnClick = { finish() }
-                        )
+                            cancelable = false
+                        ) { finish() }
                     }
                 }
             }
@@ -136,7 +144,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             if(student.imageUrl.isNullOrEmpty()) {
                 imgAvatar.setImageResource(R.drawable.img_placeholder_profile)
             } else {
-                imgAvatar.load(student.imageUrl) {
+                imgAvatar.load(student.imageUrl?: "") {
                     placeholder(R.drawable.img_placeholder_profile)
                     error(R.drawable.img_placeholder_profile)
                 }
@@ -212,7 +220,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         object : ProfileInfoClickEvent() {
             override fun onAction(item: ProfileInfoItem) {
                 when (item.action) {
-                    ProfileInfoAction.EDIT -> {
+                    ProfileInfoAction.Edit -> {
                         when(item.actionData) {
                             profile.student.name -> {promptChangeName(profile.student)}
                             else -> Unit
@@ -227,10 +235,10 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         object : ProfileInfoClickEvent() {
             override fun onAction(item: ProfileInfoItem) {
                 when (item.action) {
-                    ProfileInfoAction.CALL -> { promptCall(item.actionData) }
-                    ProfileInfoAction.MAIL -> { promptEmail(item.actionData) }
-                    ProfileInfoAction.DOWNLOAD -> { promptDownloadCv(item.actionData) }
-                    ProfileInfoAction.LINK -> openLink(item.actionData)
+                    ProfileInfoAction.Call -> { promptCall(item.actionData) }
+                    ProfileInfoAction.Mail -> { promptEmail(item.actionData) }
+                    ProfileInfoAction.Download -> { promptDownloadCv(item.actionData) }
+                    ProfileInfoAction.Link -> openLink(item.actionData)
                     else -> { }
                 }
             }
@@ -240,7 +248,10 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
     object : ProfileInfoClickEvent() {
         override fun onAction(item: ProfileInfoItem) {
             when (item.action) {
-                ProfileInfoAction.PASSWORD -> { promptChangePassword() }
+                ProfileInfoAction.Password -> { promptChangePassword() }
+                ProfileInfoAction.BloodDonationList -> { promptBloodDonationList() }
+                ProfileInfoAction.CheckInList -> { promptCheckInList() }
+                ProfileInfoAction.SignedInDevices -> { promptSignedInDevices() }
                 else -> Unit
             }
         }
@@ -253,7 +264,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         val nameEntity = ProfileInfoItem(getString(R.string.txt_name), student.name)
         if(profile.isSignedIn) {
             nameEntity.actionIcon = R.drawable.ic_pencil_circular_outline
-            nameEntity.action = ProfileInfoAction.EDIT
+            nameEntity.action = ProfileInfoAction.Edit
             nameEntity.actionData = student.name
         }
         return listOf(
@@ -273,23 +284,23 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
             ProfileInfoItem(getString(R.string.txt_address), student.address ?: "~"),
             ProfileInfoItem(
                 getString(R.string.txt_phone), student.phone ?: "~",
-                R.drawable.ic_call, ProfileInfoAction.CALL, student.phone
+                R.drawable.ic_call, ProfileInfoAction.Call, student.phone
             ),
             ProfileInfoItem(
                 getString(R.string.txt_email), student.email ?: "~",
-                R.drawable.ic_email, ProfileInfoAction.MAIL, student.email
+                R.drawable.ic_email, ProfileInfoAction.Mail, student.email
             ),
             ProfileInfoItem(
                 getString(R.string.txt_cv), student.cvLink ?: "~",
-                R.drawable.ic_download, ProfileInfoAction.DOWNLOAD, student.cvLink
+                R.drawable.ic_download, ProfileInfoAction.Download, student.cvLink
             ),
             ProfileInfoItem(
                 getString(R.string.txt_linked_in), student.linkedIn ?: "~",
-                R.drawable.ic_web, ProfileInfoAction.LINK, student.linkedIn
+                R.drawable.ic_web, ProfileInfoAction.Link, student.linkedIn
             ),
             ProfileInfoItem(
                 getString(R.string.txt_facebook), student.fbLink ?: "~",
-                R.drawable.ic_web, ProfileInfoAction.LINK, student.fbLink
+                R.drawable.ic_web, ProfileInfoAction.Link, student.fbLink
             ),
         )
     }
@@ -298,7 +309,19 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         return listOf(
             ProfileInfoItem(
                 getString(R.string.txt_password), getString(R.string.txt_change_password),
-                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.PASSWORD, "~"
+                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.Password, "~"
+            ),
+            ProfileInfoItem(
+                getString(R.string.txt_blood_donation), getString(R.string.txt_my_donation_list),
+                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.BloodDonationList, "~"
+            ),
+            ProfileInfoItem(
+                getString(R.string.txt_check_in), getString(R.string.txt_my_check_in_list),
+                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.CheckInList, "~"
+            ),
+            ProfileInfoItem(
+                getString(R.string.txt_devices), getString(R.string.txt_signed_in_devices),
+                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.SignedInDevices, "~"
             ),
         )
     }
@@ -451,7 +474,10 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     if(data.isNullOrEmpty()) {
                         CommonDialog.error(this, message = "Failed to upload the image")
                     } else {
-                        mViewModel.changeProfileImage(profile.student, data)
+                        lifecycleScope.launch {
+                            mViewModel.intent.send(StudentProfileIntent
+                                .ChangeProfileImage(profile.student, data))
+                        }
                     }
                 }
                 WorkInfo.State.FAILED -> {
@@ -494,7 +520,9 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
     private fun promptChangeName(student: StudentEntity) {
         changeNameDialog = CommonDialog.changeName(this, student.name, { newName ->
             changeNameDialog?.dismiss()
-            mViewModel.changeName(student, newName)
+            lifecycleScope.launch {
+                mViewModel.intent.send(StudentProfileIntent.ChangeName(student, newName))
+            }
         })
     }
 
@@ -514,7 +542,6 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                         //notify name change in academic tab
                         initTabs()
                         setActionUiState(isActionRunning = false)
-                        CommonDialog.success(this@StudentProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
                         setActionUiState(isActionRunning = false)
@@ -531,7 +558,9 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
     private fun promptChangeBio(student: StudentEntity) {
         changeBioDialog = CommonDialog.changeBio(this, student.bio?: "", { newBio ->
             changeBioDialog?.dismiss()
-            mViewModel.changeBio(student, newBio)
+            lifecycleScope.launch {
+                mViewModel.intent.send(StudentProfileIntent.ChangeBio(student, newBio))
+            }
         })
     }
 
@@ -550,7 +579,6 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                         binding.content.tvBio.text = it.data
                         binding.content.tvBio.visibility = View.VISIBLE
                         setActionUiState(isActionRunning = false)
-                        CommonDialog.success(this@StudentProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
                         setActionUiState(isActionRunning = false)
@@ -574,19 +602,20 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
     }
 
     private fun promptSignOut() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.txt_sign_out)
-            .setMessage("Are you surely want to sign out?")
-            .setPositiveButton(R.string.txt_sign_out) { _,_ ->
-                lifecycleScope.launch {
-                    mAuthViewModel.intent.send(AuthIntent.SignOut)
-                }
-            }
-            .setNegativeButton(R.string.txt_dismiss) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
+        CommonDialog.confirmation(
+            this,
+            getString(R.string.txt_sign_out),
+            getString(R.string.msg_sign_out),
+            getString(R.string.txt_sign_out),
+        ) {
+            signOut()
+        }
+    }
+
+    private fun signOut(fromAllDevices: Boolean = false) {
+        lifecycleScope.launch {
+            mAuthViewModel.intent.send(AuthIntent.SignOut(fromAllDevices))
+        }
     }
 
     private fun observeSignOut() {
@@ -686,7 +715,9 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
 
     private fun promptChangePassword() {
         CommonDialog.changePassword(this, { oldPassword, newPassword ->
-            mAuthViewModel.changePassword(oldPassword, newPassword)
+            lifecycleScope.launch {
+                mAuthViewModel.intent.send(AuthIntent.ChangePassword(oldPassword, newPassword))
+            }
         })
     }
 
@@ -708,6 +739,30 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun promptBloodDonationList() {
+        BloodDonationListDialogFragment.show(
+            supportFragmentManager,
+            profile.student.id,
+            "student",
+            profile.isSignedIn
+        )
+    }
+
+    private fun promptCheckInList() {
+        CheckInListDialogFragment.show(
+            supportFragmentManager,
+            profile.student.id,
+            "student",
+            profile.isSignedIn
+        )
+    }
+
+    private fun promptSignedInDevices() {
+        DeviceListDialogFragment.show(supportFragmentManager) {
+            signOut(true)
         }
     }
 
@@ -754,7 +809,7 @@ class StudentProfileActivity : BaseActivity<ActivityStudentProfileBinding>() {
         StartActivityForResult()) { result ->
         if(result.resultCode == Activity.RESULT_OK) {
             result?.data?.getParcelableExtra<StudentEntity>(Const.Key.STUDENT)?.let {
-                mViewModel.getProfile(it.id)
+                loadProfile(it.id)
             }
             setActivityResult()
         }

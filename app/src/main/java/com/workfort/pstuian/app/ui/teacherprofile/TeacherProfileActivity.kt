@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -25,6 +24,7 @@ import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoAction
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoItem
+import com.workfort.pstuian.app.ui.common.devicelist.DeviceListDialogFragment
 import com.workfort.pstuian.app.ui.common.fragment.ProfilePagerItemFragment
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
@@ -118,9 +118,8 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                         CommonDialog.error(
                             this@TeacherProfileActivity,
                             message = msg,
-                            cancelable = false,
-                            onBtnClick = { finish() }
-                        )
+                            cancelable = false
+                        ) { finish() }
                     }
                 }
             }
@@ -148,10 +147,8 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                     val intent = Intent(this@TeacherProfileActivity,
                         ImagePreviewActivity::class.java)
                     intent.putExtra(Const.Key.URL, teacher.imageUrl)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
-                            imgAvatar.transitionName)
-                    }
+                    intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                        imgAvatar.transitionName)
                     startActivity(intent)
                 }
             }
@@ -219,7 +216,7 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         object : ProfileInfoClickEvent() {
             override fun onAction(item: ProfileInfoItem) {
                 when (item.action) {
-                    ProfileInfoAction.EDIT -> {
+                    ProfileInfoAction.Edit -> {
                         when(item.actionData) {
                             profile.teacher.name -> { promptChangeName(profile.teacher) }
                             else -> Unit
@@ -234,9 +231,9 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         object: ProfileInfoClickEvent() {
             override fun onAction(item: ProfileInfoItem) {
                 when(item.action) {
-                    ProfileInfoAction.CALL -> { promptCall(item.actionData) }
-                    ProfileInfoAction.MAIL -> { promptEmail(item.actionData) }
-                    ProfileInfoAction.LINK -> openLink(item.actionData)
+                    ProfileInfoAction.Call -> { promptCall(item.actionData) }
+                    ProfileInfoAction.Mail -> { promptEmail(item.actionData) }
+                    ProfileInfoAction.Link -> openLink(item.actionData)
                     else -> Unit
                 }
             }
@@ -246,7 +243,8 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         object : ProfileInfoClickEvent() {
             override fun onAction(item: ProfileInfoItem) {
                 when (item.action) {
-                    ProfileInfoAction.PASSWORD -> { promptChangePassword() }
+                    ProfileInfoAction.Password -> { promptChangePassword() }
+                    ProfileInfoAction.SignedInDevices -> { promptSignedInDevices() }
                     else -> Unit
                 }
             }
@@ -258,7 +256,7 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         val nameEntity = ProfileInfoItem(getString(R.string.txt_name), teacher.name)
         if(profile.isSignedIn) {
             nameEntity.actionIcon = R.drawable.ic_pencil_circular_outline
-            nameEntity.action = ProfileInfoAction.EDIT
+            nameEntity.action = ProfileInfoAction.Edit
             nameEntity.actionData = teacher.name
         }
         return listOf(
@@ -275,13 +273,13 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         return listOf(
             ProfileInfoItem(getString(R.string.txt_address), teacher.address?: "~"),
             ProfileInfoItem(getString(R.string.txt_phone), teacher.phone?: "~",
-                R.drawable.ic_call, ProfileInfoAction.CALL, teacher.phone),
+                R.drawable.ic_call, ProfileInfoAction.Call, teacher.phone),
             ProfileInfoItem(getString(R.string.txt_email), teacher.email?: "~",
-                R.drawable.ic_email, ProfileInfoAction.MAIL, teacher.email),
+                R.drawable.ic_email, ProfileInfoAction.Mail, teacher.email),
             ProfileInfoItem(getString(R.string.txt_linked_in), teacher.linkedIn?: "~",
-                R.drawable.ic_web, ProfileInfoAction.LINK, teacher.linkedIn),
+                R.drawable.ic_web, ProfileInfoAction.Link, teacher.linkedIn),
             ProfileInfoItem(getString(R.string.txt_facebook), teacher.fbLink?: "~",
-                R.drawable.ic_web, ProfileInfoAction.LINK, teacher.fbLink),
+                R.drawable.ic_web, ProfileInfoAction.Link, teacher.fbLink),
         )
     }
 
@@ -289,7 +287,11 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         return listOf(
             ProfileInfoItem(
                 getString(R.string.txt_password), getString(R.string.txt_change_password),
-                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.PASSWORD, "~"
+                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.Password, "~"
+            ),
+            ProfileInfoItem(
+                getString(R.string.txt_devices), getString(R.string.txt_signed_in_devices),
+                R.drawable.ic_pencil_circular_outline, ProfileInfoAction.SignedInDevices, "~"
             ),
         )
     }
@@ -445,7 +447,6 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                         //notify name change in academic tab
                         initTabs()
                         setActionUiState(isActionRunning = false)
-                        CommonDialog.success(this@TeacherProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
                         setActionUiState(isActionRunning = false)
@@ -479,7 +480,6 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                         profile.teacher.bio = it.data as String
                         binding.content.tvBio.text = it.data
                         setActionUiState(isActionRunning = false)
-                        CommonDialog.success(this@TeacherProfileActivity)
                     }
                     is ChangeProfileInfoState.Error -> {
                         setActionUiState(isActionRunning = false)
@@ -503,19 +503,20 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
     }
 
     private fun promptSignOut() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.txt_sign_out)
-            .setMessage("Are you surely want to sign out?")
-            .setPositiveButton(R.string.txt_sign_out) { _,_ ->
-                lifecycleScope.launch {
-                    mAuthViewModel.intent.send(AuthIntent.SignOut)
-                }
-            }
-            .setNegativeButton(R.string.txt_dismiss) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
+        CommonDialog.confirmation(
+            this,
+            getString(R.string.txt_sign_out),
+            getString(R.string.msg_sign_out),
+            getString(R.string.txt_sign_out),
+        ) {
+            signOut()
+        }
+    }
+
+    private fun signOut(fromAllDevices: Boolean = false) {
+        lifecycleScope.launch {
+            mAuthViewModel.intent.send(AuthIntent.SignOut(fromAllDevices))
+        }
     }
 
     private fun observeSignOut() {
@@ -593,7 +594,9 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
 
     private fun promptChangePassword() {
         CommonDialog.changePassword(this, { oldPassword, newPassword ->
-            mAuthViewModel.changePassword(oldPassword, newPassword)
+            lifecycleScope.launch {
+                mAuthViewModel.intent.send(AuthIntent.ChangePassword(oldPassword, newPassword))
+            }
         })
     }
 
@@ -615,6 +618,12 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun promptSignedInDevices() {
+        DeviceListDialogFragment.show(supportFragmentManager) {
+            signOut(true)
         }
     }
 

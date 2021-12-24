@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_16dp"
+        android:layout_marginTop="@dimen/space_8dp"
+        android:layout_marginEnd="@dimen/space_16dp"
+        android:layout_marginBottom="@dimen/space_8dp"
+        app:cardElevation="@dimen/space_5dp"
+        app:cardCornerRadius="@dimen/default_space">
+
+    <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_gradient10">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="@dimen/space_16dp"
+                android:paddingTop="@dimen/default_space"
+                android:paddingBottom="@dimen/space_10dp">
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    tools:src="@tools:sample/avatars"
+                    app:civ_border="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
+
+            <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp10"
+                    tools:text="@tools:sample/lorem/random"
+                    android:textSize="14sp"
+                    android:textColor="@color/color4B4B4B"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    app:layout_constraintStart_toEndOf="@id/iv_avatar"
+                    app:layout_constraintTop_toTopOf="@id/iv_avatar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_avatar"/>
+
+            <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp10"
+                    tools:text="A+ blood before 10 January, 2022"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/iv_avatar"/>
+
+            <TextView
+                    android:id="@+id/tv_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="@tools:sample/lorem/random"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:maxLines="4"
+                    android:ellipsize="end"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_title"/>
+
+            <TextView
+                    android:id="@+id/tv_request_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Request Id: 1"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_info"/>
+
+            <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cg_actions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tv_request_id">
+
+                <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_default"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Call: 0123456789"
+                        app:chipCornerRadius="16dp"
+                        app:chipBackgroundColor="@android:color/white"/>
+            </com.google.android.material.chip.ChipGroup>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -60,6 +60,7 @@ class AnimationController(
             IndicatorAnimationType.DROP -> dropAnimation()
             IndicatorAnimationType.SWAP -> swapAnimation()
             IndicatorAnimationType.SCALE_DOWN -> scaleDownAnimation()
+            else -> listener.onValueUpdated(null)
         }
     }
 

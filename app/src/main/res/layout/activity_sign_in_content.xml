@@ -196,8 +196,64 @@
             app:layout_constraintStart_toEndOf="@id/labelSignUp"
             app:layout_constraintTop_toBottomOf="@id/labelOr"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/labelOr2"
             android:text="@string/txt_sign_up"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="?attr/customPrimaryTextColor"/>
+
+    <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/customDividerColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/labelOr2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/labelOr2"
+            android:layout_marginStart="@dimen/default_space"
+            android:layout_marginEnd="@dimen/default_space"/>
+
+    <TextView
+            android:id="@+id/labelOr2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnSignUp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_email_verification"
+            android:background="@drawable/bg_divider_txt"
+            android:paddingStart="12dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:text="@string/txt_or"
+            android:textSize="12sp"
+            android:textColor="?attr/customSecondaryTextColor"/>
+
+    <TextView
+            android:id="@+id/label_email_verification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btn_email_verification"
+            app:layout_constraintEnd_toStartOf="@id/btn_email_verification"
+            app:layout_constraintBottom_toBottomOf="@id/btn_email_verification"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:text="@string/hint_email_verification"
+            android:textSize="16sp"
+            android:textColor="?attr/customPrimaryTextColor"/>
+
+    <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_email_verification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintStart_toEndOf="@id/label_email_verification"
+            app:layout_constraintTop_toBottomOf="@id/labelOr2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/txt_verify_now"
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="?attr/customPrimaryTextColor"/>

@@ -17,9 +17,17 @@ import com.workfort.pstuian.app.data.local.device.DeviceEntity
  *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
-sealed class DeviceRegistrationState {
-    object Idle : DeviceRegistrationState()
-    object Loading : DeviceRegistrationState()
-    data class Success(val device: DeviceEntity) : DeviceRegistrationState()
-    data class Error(val error: String?) : DeviceRegistrationState()
+
+sealed class DeviceState {
+    object Idle : DeviceState()
+    object Loading : DeviceState()
+    data class Success(val device: DeviceEntity) : DeviceState()
+    data class Error(val message: String?) : DeviceState()
+}
+
+sealed class DevicesState {
+    object Idle : DevicesState()
+    object Loading : DevicesState()
+    data class Success(val data: List<DeviceEntity>) : DevicesState()
+    data class Error(val message: String) : DevicesState()
 }

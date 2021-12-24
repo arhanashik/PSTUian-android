@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.app.data.repository.AuthRepository
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
+import com.workfort.pstuian.app.ui.emailverification.viewstate.EmailVerificationState
 import com.workfort.pstuian.app.ui.forgotpassword.viewstate.ForgotPasswordState
 import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
 import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
@@ -11,7 +12,8 @@ import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
 import com.workfort.pstuian.app.ui.signup.viewstate.StudentSignUpState
 import com.workfort.pstuian.app.ui.signup.viewstate.TeacherSignUpState
 import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
-import com.workfort.pstuian.app.ui.splash.viewstate.DeviceRegistrationState
+import com.workfort.pstuian.app.ui.splash.viewstate.DeviceState
+import com.workfort.pstuian.app.ui.splash.viewstate.DevicesState
 import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.util.helper.CoilUtil
 import com.workfort.pstuian.util.lib.fcm.FcmUtil
@@ -29,8 +31,12 @@ class AuthViewModel(
 ) : ViewModel() {
     val intent = Channel<AuthIntent>(Channel.UNLIMITED)
 
-    private val _deviceRegistrationState = MutableStateFlow<DeviceRegistrationState>(DeviceRegistrationState.Idle)
-    val deviceRegistrationState: StateFlow<DeviceRegistrationState> get() = _deviceRegistrationState
+    var devicesPage = 1
+    private val _devicesState = MutableStateFlow<DevicesState>(DevicesState.Idle)
+    val devicesState: StateFlow<DevicesState> get() = _devicesState
+
+    private val _deviceRegistrationState = MutableStateFlow<DeviceState>(DeviceState.Idle)
+    val deviceRegistrationState: StateFlow<DeviceState> get() = _deviceRegistrationState
 
     private val _configState = MutableStateFlow<ConfigState>(ConfigState.Idle)
     val configState: StateFlow<ConfigState> get() = _configState
@@ -56,6 +62,9 @@ class AuthViewModel(
     private val _forgotPasswordState = MutableStateFlow<ForgotPasswordState>(ForgotPasswordState.Idle)
     val forgotPasswordState: StateFlow<ForgotPasswordState> get() = _forgotPasswordState
 
+    private val _emailVerificationState = MutableStateFlow<EmailVerificationState>(EmailVerificationState.Idle)
+    val emailVerificationState: StateFlow<EmailVerificationState> get() = _emailVerificationState
+
     init {
         handleIntent()
     }
@@ -64,28 +73,45 @@ class AuthViewModel(
         viewModelScope.launch {
             intent.consumeAsFlow().collect {
                 when (it) {
+                    is AuthIntent.GetAllDevices -> getAllDevices(it.page)
                     is AuthIntent.RegisterDevice -> registerDevice()
                     is AuthIntent.GetConfig -> getConfig()
                     is AuthIntent.GetSignInUser -> getSignedInUser()
-                    is AuthIntent.SignOut -> signOut()
+                    is AuthIntent.SignUpStudent -> signUpStudent(
+                        it.name, it.id, it.reg, it.facultyId, it.batchId, it.session, it.email
+                    )
+                    is AuthIntent.ChangePassword -> changePassword(it.oldPassword, it.newPassword)
+                    is AuthIntent.EmailVerification -> emailVerification(it.userType, it.email)
+                    is AuthIntent.SignOut -> signOut(it.fromAllDevices)
                 }
             }
         }
     }
 
+    private fun getAllDevices(page: Int) {
+        _devicesState.value = DevicesState.Loading
+        viewModelScope.launch {
+            _devicesState.value = try {
+                DevicesState.Success(authRepo.getAllDevices(page))
+            } catch (e: Exception) {
+                DevicesState.Error(e.message?: "Failed to get devices")
+            }
+        }
+    }
+
     private fun registerDevice() {
-        _deviceRegistrationState.value = DeviceRegistrationState.Loading
+        _deviceRegistrationState.value = DeviceState.Loading
         FcmUtil.getFcmToken(object: FcmTokenCallback {
             override fun onResponse(token: String?, error: String?) {
                 if(error != null) {
-                    _deviceRegistrationState.value = DeviceRegistrationState.Error(error)
+                    _deviceRegistrationState.value = DeviceState.Error(error)
                     return
                 }
                 viewModelScope.launch {
                     _deviceRegistrationState.value = try {
-                        DeviceRegistrationState.Success(authRepo.registerDevice(token!!))
+                        DeviceState.Success(authRepo.registerDevice(token!!))
                     } catch (e: Exception) {
-                        DeviceRegistrationState.Error(e.message)
+                        DeviceState.Error(e.message)
                     }
                 }
             }
@@ -131,7 +157,7 @@ class AuthViewModel(
         }
     }
 
-    fun signUpStudent(
+    private fun signUpStudent(
         name: String,
         id: String,
         reg: String,
@@ -172,11 +198,11 @@ class AuthViewModel(
         }
     }
 
-    private fun signOut() {
+    private fun signOut(fromAllDevices: Boolean) {
         viewModelScope.launch {
             _signOutState.value = SignOutState.Loading
             _signOutState.value = try {
-                val response = authRepo.signOut()
+                val response = authRepo.signOut(fromAllDevices)
                 CoilUtil.clearCache()
                 SignOutState.Success(response)
             } catch (e: Exception) {
@@ -185,7 +211,7 @@ class AuthViewModel(
         }
     }
 
-    fun changePassword(oldPassword: String, newPassword: String) {
+    private fun changePassword(oldPassword: String, newPassword: String) {
         viewModelScope.launch {
             _changePasswordState.value = ChangeProfileInfoState.Loading
             _changePasswordState.value = try {
@@ -205,6 +231,17 @@ class AuthViewModel(
                 ForgotPasswordState.Success(response)
             } catch (e: Exception) {
                 ForgotPasswordState.Error(e.message)
+            }
+        }
+    }
+
+    private fun emailVerification(userType: String, email: String) {
+        viewModelScope.launch {
+            _emailVerificationState.value = EmailVerificationState.Loading
+            _emailVerificationState.value = try {
+                EmailVerificationState.Success(authRepo.emailVerification(userType, email))
+            } catch (e: Exception) {
+                EmailVerificationState.Error(e.message ?: "Couldn't send verification email!")
             }
         }
     }

@@ -50,18 +50,18 @@ class PstuianApp  : MultiDexApplication() {
         }
     }
 
-    //trigger di library koin
+    // trigger di library koin
     private fun triggerKoin() {
         startKoin {
             androidContext(this@PstuianApp)
-            androidLogger(Level.DEBUG)
+            androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
             modules(viewModelModule, networkModule, repositoryModule)
         }
     }
 
     private fun plantTimber() {
         Timber.plant(object : Timber.DebugTree() {
-            override fun createStackElementTag(element: StackTraceElement): String? {
+            override fun createStackElementTag(element: StackTraceElement): String {
                 return super.createStackElementTag(element) +
                         " - Method:${element.methodName} - Line:${element.lineNumber}"
             }

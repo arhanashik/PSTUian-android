@@ -76,8 +76,7 @@ class ForgotPasswordActivity : BaseActivity<ActivityForgotPasswordBinding>() {
                             this@ForgotPasswordActivity,
                             message = it.message,
                             cancelable = false,
-                            onBtnClick = { finish() }
-                        )
+                        ) { finish() }
                     }
                     is ForgotPasswordState.Error -> {
                         setActionUiState(false)

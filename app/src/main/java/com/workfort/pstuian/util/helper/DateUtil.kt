@@ -71,4 +71,12 @@ object DateUtil {
 
         return calInput.get(Calendar.DAY_OF_MONTH) - calCurr.get(Calendar.DAY_OF_MONTH)
     }
+
+    /**
+     * This function gets a date long and format it to the target format.
+     * Returns string
+     * */
+    fun format(inputDate: Long, format: String = "yyyy-MM-dd HH:mm:ss"): String {
+        return SimpleDateFormat(format, Locale.getDefault()).format(inputDate)
+    }
 }

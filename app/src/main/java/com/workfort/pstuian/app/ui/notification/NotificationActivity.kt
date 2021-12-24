@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.notification.NotificationEntity
@@ -46,9 +48,7 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
     override fun observeBroadcast() = Const.IntentAction.NOTIFICATION
     override fun onBroadcastReceived(intent: Intent) {
         handleNotificationIntent(intent, "Dismiss") {}
-        lifecycleScope.launch {
-            mViewModel.intent.send(NotificationIntent.GetAll)
-        }
+        lifecycleScope.launch { loadData() }
     }
 
     private val mViewModel: NotificationViewModel by viewModel()
@@ -65,6 +65,7 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
         }
     }
 
+    private var endOfData = false
     private fun initList() {
         mAdapter = NotificationAdapter()
         mAdapter.setListener(object: ItemClickEvent<NotificationEntity> {
@@ -73,11 +74,33 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
             }
         })
         binding.rvData.adapter = mAdapter
+        val layoutManager = binding.rvData.layoutManager as LinearLayoutManager
+        binding.rvData.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val isLoading = mViewModel.notificationsState.value ==
+                        NotificationsState.Loading
+                if(isLoading || endOfData) {
+                    return
+                }
+
+                val scrollPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                val loadMorePosition = mAdapter.itemCount - 1
+                if(scrollPosition == loadMorePosition) {
+                    loadData(mViewModel.notificationsPage + 1)
+                }
+            }
+        })
     }
 
-    private fun loadData() {
+    private fun loadData(page: Int = 1) {
+        if(page == 1) {
+            endOfData = false
+            mAdapter.clear()
+        }
+        mViewModel.notificationsPage = page
         lifecycleScope.launch {
-            mViewModel.intent.send(NotificationIntent.GetAll)
+            mViewModel.intent.send(NotificationIntent.GetAll(page))
         }
     }
 
@@ -88,13 +111,15 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
                     is NotificationsState.Idle -> Unit
                     is NotificationsState.Loading -> setActionUiState(true)
                     is NotificationsState.Notifications -> {
+                        endOfData = it.notifications.isEmpty()
                         setActionUiState(false)
                         Prefs.hasNewNotification = false
-                        renderNotifications(it.notifications)
+                        renderData(it.notifications)
                     }
                     is NotificationsState.Error -> {
+                        endOfData = true
                         setActionUiState(false)
-                        renderNotifications(emptyList())
+                        renderData(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
@@ -118,9 +143,11 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
         }
     }
 
-    private fun renderNotifications(data: List<NotificationEntity>) {
-        val visibility = if(data.isEmpty()) View.GONE else View.VISIBLE
-        val inverseVisibility = if(data.isEmpty()) View.VISIBLE else View.GONE
+    private fun renderData(data: List<NotificationEntity>) {
+        mAdapter.addData(data.toMutableList())
+        val noData = mAdapter.itemCount == 0
+        val visibility = if(noData) View.GONE else View.VISIBLE
+        val inverseVisibility = if(noData) View.VISIBLE else View.GONE
         with(binding) {
             rvData.visibility = visibility
             srlReloadData.visibility = visibility
@@ -129,7 +156,6 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
             tvMessage.visibility = inverseVisibility
             btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.setItems(data.toMutableList())
     }
 
     private fun showDetails(data: NotificationEntity) {

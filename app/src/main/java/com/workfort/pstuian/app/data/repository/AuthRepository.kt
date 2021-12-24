@@ -71,6 +71,18 @@ class AuthRepository(
         }
     }
 
+    suspend fun getAllDevices(page: Int): List<DeviceEntity> {
+        val userType = getSignInUserType()
+        val id = when(val user = getSignInUser()) {
+            is StudentEntity -> user.id
+            is TeacherEntity -> user.id
+            else -> throw Exception("Invalid account")
+        }
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        return helper.getAllDevices(id, userType, deviceId, page)
+    }
+
     suspend fun registerDevice(
         fcmToken: String,
         lat: String = "0.0",
@@ -94,10 +106,12 @@ class AuthRepository(
             locale = AndroidUtil.getLocaleLanguage()
         )
 
+        // device is registered and updated
         if(newDevice == getRegisteredDevice()) {
             return newDevice
         }
 
+        // device is not registered yet/device is not updated
         helper.registerDevice(newDevice).also { device ->
             storeRegisteredDevice(device)
             return device
@@ -166,6 +180,20 @@ class AuthRepository(
         }
     }
 
+    fun getUserIdAndType() : Pair<Int, String> {
+        val userId = try {
+            when(val user = getSignInUser()) {
+                is StudentEntity -> user.id
+                is TeacherEntity -> user.id
+                else -> throw Exception("Sign in first to complete this action")
+            }
+        } catch (ex: Exception) {
+            throw Exception("Sign in first to complete this action")
+        }
+
+        return Pair(userId, getSignInUserType())
+    }
+
     suspend fun storeSignInStudent(student: StudentEntity) {
         val context = PstuianApp.getBaseApplicationContext()
         context.authStore.edit { auth ->
@@ -223,8 +251,8 @@ class AuthRepository(
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         val data = helper.signUpStudent(name, id, reg, facultyId, batchId, session,
             email, deviceId)
-        storeSignInStudent(data.first)
-        storeAuthToken(data.second)
+//        storeSignInStudent(data.first)
+//        storeAuthToken(data.second)
 
         return data.first
     }
@@ -241,20 +269,22 @@ class AuthRepository(
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         val data = helper.signUpTeacher(name, designation, department, email, password,
             facultyId, deviceId)
-        storeSignInTeacher(data.first)
-        storeAuthToken(data.second)
+//        storeSignInTeacher(data.first)
+//        storeAuthToken(data.second)
 
         return data.first
     }
 
-    suspend fun signOut(): String {
+    suspend fun signOut(fromAllDevice: Boolean = false): String {
         val userType = getSignInUserType()
         val id = when(val user = getSignInUser()) {
             is StudentEntity -> user.id
             is TeacherEntity -> user.id
             else -> throw Exception("Invalid account")
         }
-        val data = helper.signOut(id, userType)
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        val data = helper.signOut(id, userType, deviceId, fromAllDevice)
         deleteAll()
 
         return data
@@ -278,8 +308,17 @@ class AuthRepository(
     }
 
     suspend fun forgotPassword(userType: String, email: String): String {
-        return helper.forgotPassword(userType, email)
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        return helper.forgotPassword(userType, email, deviceId)
     }
+
+    suspend fun emailVerification(userType: String, email: String): String {
+        val deviceId = Prefs.deviceId
+        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        return helper.emailVerification(userType, email, deviceId)
+    }
+
 
     suspend fun deleteAll() {
         val context = PstuianApp.getBaseApplicationContext()

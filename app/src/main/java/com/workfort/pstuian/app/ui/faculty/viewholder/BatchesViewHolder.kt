@@ -15,6 +15,7 @@ class BatchesViewHolder (val binding: RowBatchBinding) :
             tvTitle.text = batch.title
             tvSession.text = batch.session
             tvStudentCount.text = batch.totalStudent.toString()
+            tvRegStudentCount.text = batch.registeredStudent.toString()
 
             tvTitle.visibility = if (TextUtils.isEmpty(batch.title))
                 View.GONE else View.VISIBLE

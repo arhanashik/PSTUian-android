@@ -46,12 +46,12 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.appcompat:appcompat:$appcompat"
     implementation "androidx.constraintlayout:constraintlayout:$constraint"
-    //instead of support v4
+    // instead of support v4
     implementation "androidx.legacy:legacy-support-v4:$support"
-    //instead of support design
+    // instead of support design
     implementation "com.google.android.material:material:$material"
 
-    //room
+    // room
     implementation "androidx.room:room-runtime:$room"
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room")
@@ -96,10 +96,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:$playServicesLocation")
 
     // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:28.4.2')
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
 
-    // Declare the dependencies for the Firebase Cloud Messaging and Analytics libraries
-    // When using the BoM, you don't specify versions in Firebase library dependencies
+    // Firebase Authentication library
+    // Firebase Cloud Messaging and Analytics libraries
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
 }

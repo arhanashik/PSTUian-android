@@ -106,7 +106,7 @@ class TeachersFragment(private val faculty: FacultyEntity)
             tvMessage.visibility = inverseVisibility
             btnRefresh.visibility = inverseVisibility
         }
-        mAdapter.setTeachers(data.toMutableList())
+        mAdapter.setData(data.toMutableList())
     }
 
     fun filter(query: String) {

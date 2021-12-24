@@ -4,33 +4,69 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
-import com.workfort.pstuian.databinding.RowTeacherBinding
-import com.workfort.pstuian.app.ui.faculty.viewholder.TeachersViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.TeacherClickEvent
+import com.workfort.pstuian.app.ui.faculty.viewholder.TeachersViewHolder
+import com.workfort.pstuian.databinding.RowTeacherBinding
 import java.util.*
 import kotlin.collections.ArrayList
 
 class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
 
-    private val teachers : MutableList<TeacherEntity> = ArrayList()
-    private val filteredTeachers : MutableList<TeacherEntity> = ArrayList()
+    private val data : MutableList<TeacherEntity> = ArrayList()
+    private val filteredData : MutableList<TeacherEntity> = ArrayList()
     private var listener: TeacherClickEvent? = null
 
-    fun setTeachers(teachers: MutableList<TeacherEntity>) {
-        this.teachers.clear()
-        this.teachers.addAll(teachers)
+    fun setData(teachers: MutableList<TeacherEntity>) {
+        this.data.clear()
+        this.data.addAll(teachers)
+        filterData(data)
+    }
 
-        filter.filter("")
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterData(data: MutableList<TeacherEntity>) {
+        // if new data is same as current data no need to do anything
+        if(data.size <= itemCount && filteredData.toSet().minus(data.toSet()).isEmpty()) {
+            return
+        }
+
+        filteredData.clear()
+        filteredData.addAll(data)
+
+        notifyDataSetChanged()
     }
 
     fun setListener(listener: TeacherClickEvent) {
         this.listener = listener
+    }
+
+    override fun getItemCount(): Int {
+        return filteredData.size
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeachersViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = DataBindingUtil.inflate(inflater, R.layout.row_teacher, parent, false)
+                as RowTeacherBinding
+        return TeachersViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: TeachersViewHolder, position: Int) {
+        val teacher = filteredData[position]
+        holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context,
+            R.anim.anim_item_insert)
+        holder.bind(teacher)
+        holder.binding.root.setOnClickListener {
+            run {
+                if(listener != null) listener?.onClickTeacher(teacher)
+            }
+        }
     }
 
     override fun getFilter(): Filter {
@@ -38,10 +74,10 @@ class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
             override fun performFiltering(query: CharSequence?): FilterResults {
                 val result: ArrayList<TeacherEntity> = ArrayList()
                 if(TextUtils.isEmpty(query)) {
-                    result.addAll(teachers)
+                    result.addAll(data)
                 } else {
                     val q = query.toString().lowercase(Locale.ROOT)
-                    teachers.forEach {
+                    data.forEach {
                         if(it.name.lowercase(Locale.ROOT).contains(q)
                             || it.department.lowercase(Locale.ROOT).contains(q)
                             || it.designation.lowercase(Locale.ROOT).contains(q)
@@ -58,35 +94,10 @@ class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
                 return filteredResult
             }
 
-            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(query: CharSequence?, filteredResult: FilterResults?) {
-                filteredTeachers.clear()
                 @Suppress("UNCHECKED_CAST")
-                filteredTeachers.addAll(filteredResult?.values as ArrayList<TeacherEntity>)
-
-                notifyDataSetChanged()
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return filteredTeachers.size
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeachersViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil.inflate(inflater, R.layout.row_teacher, parent, false)
-                as RowTeacherBinding
-        return TeachersViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: TeachersViewHolder, position: Int) {
-        val teacher = filteredTeachers[position]
-
-        holder.bind(teacher)
-        holder.binding.root.setOnClickListener {
-            run {
-                if(listener != null) listener?.onClickTeacher(teacher)
+                val newData = filteredResult?.values as ArrayList<TeacherEntity>
+                filterData(newData)
             }
         }
     }

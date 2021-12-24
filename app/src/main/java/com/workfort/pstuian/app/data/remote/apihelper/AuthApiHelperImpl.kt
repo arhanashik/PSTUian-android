@@ -29,6 +29,18 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         return response.data?: throw Exception("No data found")
     }
 
+    override suspend fun getAllDevices(
+        userId: Int,
+        userType: String,
+        deviceId: String,
+        page: Int,
+        limit: Int
+    ): List<DeviceEntity> {
+        val response = service.getAllDevices(userId, userType, deviceId, page, limit)
+        if(!response.success) throw Exception(response.message)
+        return response.data?: throw Exception("No data found")
+    }
+
     override suspend fun registerDevice(device: DeviceEntity): DeviceEntity {
         val response = service.registerDevice(
             id = device.id,
@@ -103,8 +115,16 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         return Pair(response.data!!, response.authToken!!)
     }
 
-    override suspend fun signOut(id: Int, userType: String): String {
-        val response = service.signOut(id, userType)
+    override suspend fun signOut(
+        id: Int,
+        userType: String,
+        deviceId: String,
+        fromAllDevice: Boolean,
+    ): String {
+        val response = if(fromAllDevice) service.signOutFromAllDevice(
+            id, userType, deviceId
+        ) else service.signOut(id, userType, deviceId)
+
         if(!response.success) throw Exception(response.message)
         return response.message
     }
@@ -121,8 +141,22 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         return Pair(response.message, response.authToken)
     }
 
-    override suspend fun forgotPassword(userType: String, email: String): String {
-        val response = service.forgotPassword(userType, email)
+    override suspend fun forgotPassword(
+        userType: String,
+        email: String,
+        deviceId: String
+    ): String {
+        val response = service.forgotPassword(userType, email, deviceId)
+        if(!response.success) throw Exception(response.message)
+        return response.message
+    }
+
+    override suspend fun emailVerification(
+        userType: String,
+        email: String,
+        deviceId: String
+    ): String {
+        val response = service.emailVerification(userType, email, deviceId)
         if(!response.success) throw Exception(response.message)
         return response.message
     }

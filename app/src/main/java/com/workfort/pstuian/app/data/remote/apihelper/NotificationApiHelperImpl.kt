@@ -22,8 +22,13 @@ import com.workfort.pstuian.util.remote.NotificationApiService
 class NotificationApiHelperImpl(
     private val service: NotificationApiService
 ) : NotificationApiHelper {
-    override suspend fun getAll(userId: Int, userType: String): List<NotificationEntity> {
-        val response = service.getAll(userId, userType)
+    override suspend fun getAll(
+        userId: Int,
+        userType: String,
+        page: Int,
+        limit: Int
+    ): List<NotificationEntity> {
+        val response = service.getAll(userId, userType, page, limit)
         if(!response.success) throw Exception(response.message)
 
         return response.data?: emptyList()

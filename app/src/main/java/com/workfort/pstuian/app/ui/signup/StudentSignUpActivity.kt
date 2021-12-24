@@ -1,6 +1,5 @@
 package com.workfort.pstuian.app.ui.signup
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -10,12 +9,11 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.signin.SignInActivity
 import com.workfort.pstuian.app.ui.signup.viewstate.StudentSignUpState
-import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityStudentSignUpBinding
 import com.workfort.pstuian.util.extension.launchActivity
@@ -58,10 +56,7 @@ class StudentSignUpActivity : BaseActivity<ActivityStudentSignUpBinding>() {
         super.onClick(v)
         when(v) {
             binding.btnSignUp -> signUp()
-            binding.btnSignIn -> {
-                launchActivity<SignInActivity>()
-                finish()
-            }
+            binding.btnSignIn -> gotToSignIn()
             binding.btnTermsAndConditions -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
                 Const.Remote.TERMS_AND_CONDITIONS))
             binding.btnPrivacyPolicy -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
@@ -107,7 +102,11 @@ class StudentSignUpActivity : BaseActivity<ActivityStudentSignUpBinding>() {
             }
             tilEmail.error = null
 
-            mViewModel.signUpStudent(name, id, reg, mFaculty.id, mBatch.id, session, email)
+            lifecycleScope.launch {
+                mViewModel.intent.send(AuthIntent.SignUpStudent(
+                    name, id, reg, mFaculty.id, mBatch.id, session, email
+                ))
+            }
         }
     }
 
@@ -119,7 +118,7 @@ class StudentSignUpActivity : BaseActivity<ActivityStudentSignUpBinding>() {
                     is StudentSignUpState.Loading -> setActionUiState(true)
                     is StudentSignUpState.Success -> {
                         setActionUiState(false)
-                        doSuccessAction(it.student)
+                        doSuccessAction()
                     }
                     is StudentSignUpState.Error -> {
                         setActionUiState(false)
@@ -144,23 +143,18 @@ class StudentSignUpActivity : BaseActivity<ActivityStudentSignUpBinding>() {
         }
     }
 
-    private fun doSuccessAction(student: StudentEntity) {
+    private fun doSuccessAction() {
         val msg = getString(R.string.success_msg_sign_up)
-        val btnTxt = getString(R.string.txt_open_profile)
+        val btnTxt = getString(R.string.txt_sign_in)
         val warning = getString(R.string.warning_msg_sign_up)
         CommonDialog.success(this@StudentSignUpActivity, message = msg, btnText = btnTxt,
-            warning = warning, cancelable = false,
-            callback = object : CommonDialog.SuccessDialogCallback {
-                override fun onClickDismiss() {
-                    gotToStudentProfile(student)
-                    finish()
-                }
-        })
+            warning = warning, cancelable = false) {
+            gotToSignIn()
+        }
     }
 
-    private fun gotToStudentProfile(student: StudentEntity) {
-        val intent = Intent(this, StudentProfileActivity::class.java)
-        intent.putExtra(Const.Key.STUDENT_ID, student.id)
-        startActivity(intent)
+    private fun gotToSignIn() {
+        launchActivity<SignInActivity>()
+        finish()
     }
 }

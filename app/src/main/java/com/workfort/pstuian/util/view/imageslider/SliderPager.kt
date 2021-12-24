@@ -1361,7 +1361,7 @@ class SliderPager @JvmOverloads constructor(
         var position: Int = 0,
         var adapterState: Parcelable? = null,
         var loader: ClassLoader? = null
-    ) : AbsSavedState(adapterState!!), Parcelable {
+    ) : BaseSavedState(adapterState), Parcelable {
         override fun toString(): String {
             return ("FragmentPager.SavedState{"
                     + Integer.toHexString(System.identityHashCode(this))

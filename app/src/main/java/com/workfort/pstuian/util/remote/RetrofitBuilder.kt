@@ -122,4 +122,20 @@ object RetrofitBuilder {
     // notification api service
     fun createNotificationApiService(): NotificationApiService = retrofit(Const.Remote.BASE_API_URL)
         .create(NotificationApiService::class.java)
+
+    // blood donation api service
+    fun createBloodDonationApiService(): BloodDonationApiService = retrofit(Const.Remote.BASE_API_URL)
+        .create(BloodDonationApiService::class.java)
+
+    // blood donation request api service
+    fun createBloodDonationRequestApiService(): BloodDonationRequestApiService = retrofit(Const.Remote.BASE_API_URL)
+        .create(BloodDonationRequestApiService::class.java)
+
+    // check in api service
+    fun createCheckInApiService(): CheckInApiService = retrofit(Const.Remote.BASE_API_URL)
+        .create(CheckInApiService::class.java)
+
+    // check in location api service
+    fun createCheckInLocationApiService(): CheckInLocationApiService = retrofit(Const.Remote.BASE_API_URL)
+        .create(CheckInLocationApiService::class.java)
 }

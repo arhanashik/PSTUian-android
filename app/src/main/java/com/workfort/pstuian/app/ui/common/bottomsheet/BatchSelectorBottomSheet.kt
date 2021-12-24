@@ -126,7 +126,7 @@ class BatchSelectorBottomSheet(
     }
 
     private fun renderBatches(list: List<BatchEntity>) {
-        mAdapter.setBatches(list.toMutableList())
+        mAdapter.setData(list.toMutableList())
     }
 
     override fun onDestroyView() {

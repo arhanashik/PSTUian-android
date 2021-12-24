@@ -1,6 +1,5 @@
 package com.workfort.pstuian.app.ui.signup
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -9,12 +8,10 @@ import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.signin.SignInActivity
 import com.workfort.pstuian.app.ui.signup.viewstate.TeacherSignUpState
-import com.workfort.pstuian.app.ui.teacherprofile.TeacherProfileActivity
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.databinding.ActivityTeacherSignUpBinding
 import com.workfort.pstuian.util.extension.launchActivity
@@ -52,10 +49,7 @@ class TeacherSignUpActivity : BaseActivity<ActivityTeacherSignUpBinding>() {
         super.onClick(v)
         when(v) {
             binding.btnSignUp -> signUp()
-            binding.btnSignIn -> {
-                launchActivity<SignInActivity>()
-                finish()
-            }
+            binding.btnSignIn -> gotToSignIn()
             binding.btnTermsAndConditions -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
                 Const.Remote.TERMS_AND_CONDITIONS))
             binding.btnPrivacyPolicy -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
@@ -115,7 +109,7 @@ class TeacherSignUpActivity : BaseActivity<ActivityTeacherSignUpBinding>() {
                     is TeacherSignUpState.Loading -> setActionUiState(true)
                     is TeacherSignUpState.Success -> {
                         setActionUiState(false)
-                        doSuccessAction(it.teacher)
+                        doSuccessAction()
                     }
                     is TeacherSignUpState.Error -> {
                         setActionUiState(false)
@@ -140,22 +134,18 @@ class TeacherSignUpActivity : BaseActivity<ActivityTeacherSignUpBinding>() {
         }
     }
 
-    private fun doSuccessAction(teacher: TeacherEntity) {
+    private fun doSuccessAction() {
         val msg = getString(R.string.success_msg_sign_up)
-        val btnTxt = getString(R.string.txt_open_profile)
+        val btnTxt = getString(R.string.txt_sign_in)
+        val warning = getString(R.string.warning_msg_sign_up)
         CommonDialog.success(this@TeacherSignUpActivity, message = msg, btnText = btnTxt,
-            cancelable = false,
-            callback = object : CommonDialog.SuccessDialogCallback {
-                override fun onClickDismiss() {
-                    gotToTeacherProfile(teacher)
-                    finish()
-                }
-        })
+            warning = warning, cancelable = false) {
+            gotToSignIn()
+        }
     }
 
-    private fun gotToTeacherProfile(teacher: TeacherEntity) {
-        val intent = Intent(this, TeacherProfileActivity::class.java)
-        intent.putExtra(Const.Key.TEACHER_ID, teacher.id)
-        startActivity(intent)
+    private fun gotToSignIn() {
+        launchActivity<SignInActivity>()
+        finish()
     }
 }

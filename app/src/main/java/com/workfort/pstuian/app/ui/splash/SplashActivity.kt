@@ -23,7 +23,7 @@ import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
 import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
 import com.workfort.pstuian.app.ui.splash.viewstate.ClearCacheState
 import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
-import com.workfort.pstuian.app.ui.splash.viewstate.DeviceRegistrationState
+import com.workfort.pstuian.app.ui.splash.viewstate.DeviceState
 import com.workfort.pstuian.databinding.ActivitySplashBinding
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.InAppUpdateUtil
@@ -158,22 +158,21 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mAuthViewModel.deviceRegistrationState.collect {
                 when (it) {
-                    is DeviceRegistrationState.Idle -> Unit
-                    is DeviceRegistrationState.Loading -> setActionUiState(true)
-                    is DeviceRegistrationState.Success -> {
+                    is DeviceState.Idle -> Unit
+                    is DeviceState.Loading -> setActionUiState(true)
+                    is DeviceState.Success -> {
                         setActionUiState(false)
                         clearCache()
                     }
-                    is DeviceRegistrationState.Error -> {
+                    is DeviceState.Error -> {
                         setActionUiState(false)
-                        val msg = it.error?: "Couldn't register the device"
+                        val msg = it.message?: "Couldn't register the device"
                         CommonDialog.error(
                             this@SplashActivity,
                             message = msg,
                             btnText = getString(R.string.txt_retry),
                             cancelable = false,
-                            onBtnClick = { registerDevice() }
-                        )
+                        ) { registerDevice() }
                     }
                 }
             }
@@ -200,14 +199,14 @@ class SplashActivity : AppCompatActivity() {
                     }
                     is ClearCacheState.Error -> {
                         binding.loader.visibility = View.GONE
+                        Timber.e(it.error)
                         val msg = it.error?: "Couldn't clear cache"
                         CommonDialog.error(
                             this@SplashActivity,
                             message = msg,
                             btnText = getString(R.string.txt_retry),
                             cancelable = false,
-                            onBtnClick = {clearCache()}
-                        )
+                        ) {clearCache()}
                     }
                 }
             }
@@ -246,9 +245,8 @@ class SplashActivity : AppCompatActivity() {
                             this@SplashActivity,
                             message = msg,
                             btnText = getString(R.string.txt_retry),
-                            cancelable = false,
-                            onBtnClick = { requestConfig() }
-                        )
+                            cancelable = false
+                        ) { requestConfig() }
                     }
                 }
             }
@@ -271,8 +269,9 @@ class SplashActivity : AppCompatActivity() {
         val title = getString(R.string.title_force_refresh_dialog)
         val message = getString(R.string.message_force_refresh_dialog)
         val btnText = getString(R.string.txt_refresh)
-        val onBtnClick = ::refreshData
-        CommonDialog.error(this, title, message, btnText, false, onBtnClick)
+        CommonDialog.error(this, title, message, btnText, false) {
+            refreshData()
+        }
     }
 
     private fun refreshData() {
@@ -302,9 +301,8 @@ class SplashActivity : AppCompatActivity() {
                             this@SplashActivity,
                             message = msg,
                             btnText = getString(R.string.txt_retry),
-                            cancelable = false,
-                            onBtnClick = { refreshData() }
-                        )
+                            cancelable = false
+                        ) { refreshData() }
                     }
                 }
             }
@@ -369,47 +367,38 @@ class SplashActivity : AppCompatActivity() {
         val title = getString(R.string.title_flexible_update_dialog)
         val message = getString(R.string.message_flexible_update_dialog)
         val btnText = getString(R.string.txt_update)
-        CommonDialog.success(this, title, message, btnText,
-            callback = object: CommonDialog.SuccessDialogCallback {
-            override fun onClickDismiss() {
-                mUpdateUtil.requestUpdate(
-                    this@SplashActivity,
-                    appUpdateInfo,
-                    false,
-                    Const.RequestCode.IN_APP_UPDATE,
-                    mUpdateListener
-                )
-            }
-        })
+        CommonDialog.success(this, title, message, btnText) {
+            mUpdateUtil.requestUpdate(
+                this@SplashActivity,
+                appUpdateInfo,
+                false,
+                Const.RequestCode.IN_APP_UPDATE,
+                mUpdateListener
+            )
+        }
     }
 
     private fun requestForceUpdate(appUpdateInfo: AppUpdateInfo) {
         val title = getString(R.string.title_force_update_dialog)
         val message = getString(R.string.message_force_update_dialog)
         val btnText = getString(R.string.txt_update)
-        CommonDialog.error(this, title, message, btnText,
-            callback = object: CommonDialog.ErrorDialogCallback {
-                override fun onClickDismiss() {
-                    mUpdateUtil.requestUpdate(
-                        this@SplashActivity,
-                        appUpdateInfo,
-                        true,
-                        Const.RequestCode.IN_APP_UPDATE
-                    )
-                }
-            })
+        CommonDialog.error(this, title, message, btnText) {
+            mUpdateUtil.requestUpdate(
+                this@SplashActivity,
+                appUpdateInfo,
+                true,
+                Const.RequestCode.IN_APP_UPDATE
+            )
+        }
     }
 
     private fun requestUpdateInstallPermission() {
         val title = getString(R.string.title_install_update_dialog)
         val message = getString(R.string.message_install_update_dialog)
         val btnText = getString(R.string.txt_install)
-        CommonDialog.success(this, title, message, btnText, cancelable = false,
-            callback = object: CommonDialog.SuccessDialogCallback {
-                override fun onClickDismiss() {
-                    mUpdateUtil.completeUpdate()
-                }
-            })
+        CommonDialog.success(this, title, message, btnText, cancelable = false) {
+            mUpdateUtil.completeUpdate()
+        }
     }
 
     private fun setActionUiState(isActionRunning: Boolean) {
