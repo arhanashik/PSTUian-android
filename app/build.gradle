@@ -99,13 +99,9 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
 
     // Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation 'com.google.firebase:firebase-auth-ktx'
     // Firebase Cloud Messaging and Analytics libraries
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    // Google Play services Auth(necessary for Firebase Auth)
-    implementation 'com.google.android.gms:play-services-auth:20.0.0'
 }
 
 //3rd party

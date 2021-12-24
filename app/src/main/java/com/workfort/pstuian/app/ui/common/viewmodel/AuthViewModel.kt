@@ -2,10 +2,6 @@ package com.workfort.pstuian.app.ui.common.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.ktx.actionCodeSettings
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.app.data.repository.AuthRepository
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.emailverification.viewstate.EmailVerificationState
@@ -247,36 +243,6 @@ class AuthViewModel(
             } catch (e: Exception) {
                 EmailVerificationState.Error(e.message ?: "Couldn't send verification email!")
             }
-//            try {
-//                authRepo.emailVerification(userType, email)
-//                verifyEmail(email, "")
-//            } catch (e: Exception) {
-//                _emailVerificationState.value = EmailVerificationState.Error(e.message
-//                    ?: "Couldn't complete sign up!")
-//            }
         }
-    }
-
-    private fun verifyEmail(email: String, authToken: String) {
-        _emailVerificationState.value = EmailVerificationState.Loading
-
-        val actionCodeSettings = actionCodeSettings {
-            url = "https://pstuian.page.link/verify?at=1234"
-            // This must be true
-            handleCodeInApp = true
-            setAndroidPackageName(
-                BuildConfig.APPLICATION_ID,
-                true, /* installIfNotAvailable */
-                "21" /* minimumVersion */)
-        }
-        Firebase.auth.sendSignInLinkToEmail(email, actionCodeSettings)
-            .addOnCompleteListener { task ->
-                _emailVerificationState.value = if (task.isSuccessful) {
-                    EmailVerificationState.Success("Verification mail has been sent to $email")
-                } else {
-                    EmailVerificationState.Error(task.exception?.message
-                        ?: "Couldn't send verification email!")
-                }
-            }
     }
 }
