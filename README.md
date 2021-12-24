@@ -63,6 +63,12 @@ Clone the repo and open with android studio. That's all!
 ## DEPLOY
 Just build the release signed bundle/apk. YES, it's THAT easy.
 
+## Version Control
+Here is an overview on the branches:
+- main: Contains the latest stable released code
+- dev: Contains the latest under development codebase
+- release_***: Contains the code for that particular release
+
 ## CHANGELOG
 2.0.0 - Blood Donation, Check In, Account Verification, Multiple Device
 ----------------------
