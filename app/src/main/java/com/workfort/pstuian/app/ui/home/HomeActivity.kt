@@ -204,6 +204,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                         }
                     }
                     is SignInUserState.Error -> {
+                        mSignedInUser = null
                         binding.btnSignInSignUp.visibility = View.VISIBLE
                         binding.btnAccount.visibility = View.GONE
                         Timber.e(it.error)

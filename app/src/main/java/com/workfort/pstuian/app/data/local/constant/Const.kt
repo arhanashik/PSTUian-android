@@ -1,7 +1,6 @@
 package com.workfort.pstuian.app.data.local.constant
 
 import com.workfort.pstuian.BuildConfig
-import com.workfort.pstuian.R
 
 object Const {
     object RequestCode {
@@ -10,18 +9,6 @@ object Const {
         const val PICK_IMAGE = 333
         const val PICK_PDF = 444
     }
-
-    val backgroundList = arrayListOf(
-        R.drawable.bg_gradient1,
-        R.drawable.bg_gradient2,
-        R.drawable.bg_gradient3,
-        R.drawable.bg_gradient4,
-        R.drawable.bg_gradient5,
-        R.drawable.bg_gradient6,
-        R.drawable.bg_gradient7,
-        R.drawable.bg_gradient8,
-        R.drawable.bg_gradient9,
-    )
 
     object Key {
         const val FACULTY = "FACULTY"
