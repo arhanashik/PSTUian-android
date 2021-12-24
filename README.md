@@ -3,7 +3,7 @@ Welcome to PSTUian mobile app code base.
 
 ## DESCRIPTION
 The project is fully developed with Kotlin and latest MVI architecture. 
-MVI architecture. MVI in a nutshell: 
+MVI in a nutshell: 
 1. when a user makes any action on user interfaces(Activity, Fragment, Dialog etc), it 
    triggers an intent. 
 2. View model process that intent and makes necessary operations. If view model needs any
@@ -13,7 +13,7 @@ MVI architecture. MVI in a nutshell:
 4. User interfaces continue listening to the view states and makes necessary updates to the 
    ui depending on the view states.
 
-[Here](https://medium.com/swlh/mvi-architecture-with-android-fcde123e3c4a) is a blog on
+[Here](https://medium.com/swlh/mvi-architecture-with-android-fcde123e3c4a) is a blog on MVI architecture.
 
 Technology used:
 - Kotlin Programming Language
