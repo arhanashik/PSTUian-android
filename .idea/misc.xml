@@ -60,6 +60,7 @@
         <entry key="app/src/main/res/layout/activity_donors.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_edit_profile_content.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/activity_edit_student_profile.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_edit_student_profile_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_edit_teacher_profile.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_edit_teacher_profile_content.xml" value="0.1569078947368421" />
@@ -77,7 +78,7 @@
         <entry key="app/src/main/res/layout/activity_profile_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/activity_settings_content.xml" value="0.1569078947368421" />
-        <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_sign_in_content.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.1" />
@@ -123,6 +124,7 @@
         <entry key="app/src/main/res/layout/prompt_change_password.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_donate.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/prompt_donation_message.xml" value="0.1569078947368421" />
+        <entry key="app/src/main/res/layout/prompt_error.xml" value="0.15537459283387622" />
         <entry key="app/src/main/res/layout/prompt_pro_pic_change.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_select_user_type.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/prompt_student_details.xml" value="0.1569078947368421" />

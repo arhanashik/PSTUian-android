@@ -32,26 +32,26 @@ ext {
     min_sdk = 21
     compile_sdk = 31
     target_sdk = 31
-    version_code = 3
-    version_name = '2.0.0'
+    version_code = 5
+    version_name = '2.0.2'
     version_code_db = 2
 
-    appcompat = '1.4.0'
+    appcompat = '1.4.1'
     constraint = '2.1.2'
     material = '1.4.0'
     cardview = '1.0.0'
     recyclerview = '1.2.1'
     support = '1.0.0'
-    room = '2.4.0'
+    room = '2.4.1'
     lifecycle = '2.4.0'
     multidex = '2.0.1'
     datastorePreferences = '1.0.0'
     workManager = '2.7.1'
     palette = '1.0.0'
 
-    coroutines = '1.5.2'
+    coroutines = '1.6.0'
 
-    playServicesLocation = '19.0.0'
+    playServicesLocation = '19.0.1'
 
     junit = '4.13.2'
     runner = '1.4.1-alpha03'

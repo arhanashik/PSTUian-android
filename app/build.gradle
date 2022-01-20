@@ -1,8 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'com.google.gms.google-services'
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-kapt")
+    id("kotlin-parcelize")
+    id("com.google.gms.google-services")
+}
 
 android {
     compileSdkVersion compile_sdk
@@ -67,12 +69,8 @@ dependencies {
     // Annotation processor
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle"
 
-    //recycler + card
-    implementation "androidx.cardview:cardview:$cardview"
+    //recycler
     implementation "androidx.recyclerview:recyclerview:$recyclerview"
-
-    //kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"

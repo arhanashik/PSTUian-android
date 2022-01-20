@@ -22,7 +22,7 @@ sealed class DeviceState {
     object Idle : DeviceState()
     object Loading : DeviceState()
     data class Success(val device: DeviceEntity) : DeviceState()
-    data class Error(val message: String?) : DeviceState()
+    data class Error(val message: String) : DeviceState()
 }
 
 sealed class DevicesState {

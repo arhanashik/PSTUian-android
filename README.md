@@ -70,6 +70,15 @@ Here is an overview on the branches:
 - release_***: Contains the code for that particular release
 
 ## CHANGELOG
+2.0.2 - Firebase token issue
+----------------------
+- Some device does not support fcm(for example Poco phone f1). Those device can now register 
+  without the fcm token.
+
+2.0.1 - Device Id Bug
+----------------------
+- Even if the data is cleared the device id should remain the same
+
 2.0.0 - Blood Donation, Check In, Account Verification, Multiple Device
 ----------------------
 - Blood donation and donation request option

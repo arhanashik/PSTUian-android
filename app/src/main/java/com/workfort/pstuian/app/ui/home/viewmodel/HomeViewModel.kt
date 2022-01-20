@@ -65,7 +65,14 @@ class HomeViewModel(
         viewModelScope.launch {
             _deleteAllDataState.value = DeleteAllState.Loading
             _deleteAllDataState.value = try {
+                /** even if we clear the data the device id must not be removed.
+                *   because device id should be generated only once during one installation.
+                *   so we ensure the device id.
+                */
+                val deviceId = Prefs.deviceId
                 Prefs.clear()
+                Prefs.deviceId = deviceId
+
                 authRepo.deleteAll()
                 sliderRepo.deleteAll()
                 facultyRepo.deleteAll()

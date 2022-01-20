@@ -103,15 +103,21 @@ class AuthViewModel(
         _deviceRegistrationState.value = DeviceState.Loading
         FcmUtil.getFcmToken(object: FcmTokenCallback {
             override fun onResponse(token: String?, error: String?) {
-                if(error != null) {
-                    _deviceRegistrationState.value = DeviceState.Error(error)
-                    return
-                }
+                // Some device cannot generate fcm token(for example PocoPhone F1)
+                // In that case, we should not make the app unusable.
+                // We will register the app without the token.
+//                if(error != null) {
+//                    val errorMsg = "FCM Registration Failed: $error"
+//                    _deviceRegistrationState.value = DeviceState.Error(errorMsg)
+//                    return
+//                }
                 viewModelScope.launch {
                     _deviceRegistrationState.value = try {
-                        DeviceState.Success(authRepo.registerDevice(token!!))
+                        DeviceState.Success(authRepo.registerDevice(
+                            token?: "Unknown"
+                        ))
                     } catch (e: Exception) {
-                        DeviceState.Error(e.message)
+                        DeviceState.Error(e.message?: "Couldn't register the device")
                     }
                 }
             }

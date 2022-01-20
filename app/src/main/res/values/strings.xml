@@ -193,7 +193,9 @@
     <string name="description_img_profile" translatable="false">Profile Image</string>
 
     <string name="default_error_dialog_title">Ops, something went wrong!</string>
-    <string name="default_error_dialog_message">Please check if everything is alright and try again. Sorry for the inconvenience.</string>
+    <string name="default_error_dialog_message">
+        Please check if everything is alright and try again. Sorry for the inconvenience.
+    </string>
     <string name="error_msg_sign_in">
         If you are trying to login for the first time, please try to use your student id as
         your password. If not, please check if the email and password is correct. Also, please
@@ -343,7 +345,9 @@
     <string name="txt_my_donation_list">My Donation List</string>
     <string name="txt_change_privacy">Change Privacy</string>
     <string name="txt_delete">Delete</string>
-    <string name="msg_delete_permanent">Are you surely want to delete? You cannot restore it again.</string>
+    <string name="msg_delete_permanent">
+        Are you surely want to delete? You cannot restore it again.
+    </string>
     <string name="hint_request_id">Request id</string>
     <string name="label_create_blood_donation_activity">Create donation</string>
     <string name="hint_donation_date">Donation date</string>

@@ -166,10 +166,10 @@ class SplashActivity : AppCompatActivity() {
                     }
                     is DeviceState.Error -> {
                         setActionUiState(false)
-                        val msg = it.message?: "Couldn't register the device"
                         CommonDialog.error(
                             this@SplashActivity,
-                            message = msg,
+                            title = "Device Registration Error",
+                            message = it.message,
                             btnText = getString(R.string.txt_retry),
                             cancelable = false,
                         ) { registerDevice() }
@@ -203,6 +203,7 @@ class SplashActivity : AppCompatActivity() {
                         val msg = it.error?: "Couldn't clear cache"
                         CommonDialog.error(
                             this@SplashActivity,
+                            title = "Cache Clear Error",
                             message = msg,
                             btnText = getString(R.string.txt_retry),
                             cancelable = false,
@@ -243,6 +244,7 @@ class SplashActivity : AppCompatActivity() {
                         val msg = it.error?: "Couldn't get app config"
                         CommonDialog.error(
                             this@SplashActivity,
+                            title = "Configuration Error",
                             message = msg,
                             btnText = getString(R.string.txt_retry),
                             cancelable = false
@@ -299,6 +301,7 @@ class SplashActivity : AppCompatActivity() {
                         val msg = it.error?: "Couldn't refresh app data"
                         CommonDialog.error(
                             this@SplashActivity,
+                            title = "Data Clear Error",
                             message = msg,
                             btnText = getString(R.string.txt_retry),
                             cancelable = false

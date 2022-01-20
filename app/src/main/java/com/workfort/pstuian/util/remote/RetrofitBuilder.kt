@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
  */
 
 object RetrofitBuilder {
-    //create a logger
+    // create a logger
     private val logging = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
         override fun log(message: String) {
             val blacklist = arrayOf(
@@ -65,7 +65,7 @@ object RetrofitBuilder {
         }
     }
 
-    //build an OkHttp client
+    // build an OkHttp client
     private val client = OkHttpClient
         .Builder()
         .readTimeout(30, TimeUnit.SECONDS)
