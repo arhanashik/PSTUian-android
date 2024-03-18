@@ -1,6 +1,5 @@
 package com.workfort.pstuian.app.ui.base.activity
 
-import android.os.Build
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +8,19 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
-import androidx.annotation.Nullable
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.just.agentweb.*
+import com.just.agentweb.AgentWeb
+import com.just.agentweb.AgentWebSettingsImpl
+import com.just.agentweb.AgentWebUIControllerImplBase
 import com.just.agentweb.DefaultWebClient.OpenOtherPageWays
-import timber.log.Timber
+import com.just.agentweb.IAgentWebSettings
+import com.just.agentweb.IWebLayout
+import com.just.agentweb.MiddlewareWebChromeBase
+import com.just.agentweb.MiddlewareWebClientBase
+import com.just.agentweb.PermissionInterceptor
+import com.just.agentweb.R
+import com.just.agentweb.WebChromeClient
+import com.just.agentweb.WebViewClient
 
 
 /**
@@ -26,10 +32,6 @@ import timber.log.Timber
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/10/24.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -114,17 +116,15 @@ abstract class BaseAgentWebActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    @Nullable
     open fun getUrl(): String? = null
 
-    @Nullable
-    fun getAgentWebSettings(): IAgentWebSettings<*> {
+    private fun getAgentWebSettings(): IAgentWebSettings<*> {
         return AgentWebSettingsImpl.getInstance()
     }
 
     protected abstract fun getAgentWebParent(): ViewGroup
-    @Nullable
-    protected fun getWebChromeClient(): WebChromeClient? {
+
+    private fun getWebChromeClient(): WebChromeClient? {
         return null
     }
 
@@ -133,23 +133,17 @@ abstract class BaseAgentWebActivity : AppCompatActivity() {
 
     open fun getIndicatorHeight(): Int = -1
 
-    @Nullable
-    protected fun getWebViewClient(): WebViewClient? = null
+    private fun getWebViewClient(): WebViewClient? = null
 
-    @Nullable
-    protected fun getWebView(): WebView? = null
+    private fun getWebView(): WebView? = null
 
-    @Nullable
-    protected fun getWebLayout(): IWebLayout<*, *>? = null
+    private fun getWebLayout(): IWebLayout<*, *>? = null
 
-    @Nullable
-    protected fun getPermissionInterceptor(): PermissionInterceptor? = null
+    private fun getPermissionInterceptor(): PermissionInterceptor? = null
 
-    @Nullable
-    fun getAgentWebUIController(): AgentWebUIControllerImplBase? = null
+    private fun getAgentWebUIController(): AgentWebUIControllerImplBase? = null
 
-    @Nullable
-    fun getOpenOtherAppWay(): OpenOtherPageWays? = null
+    private fun getOpenOtherAppWay(): OpenOtherPageWays? = null
 
     open fun getMiddleWareWebChrome(): MiddlewareWebChromeBase {
         return object : MiddlewareWebChromeBase() {

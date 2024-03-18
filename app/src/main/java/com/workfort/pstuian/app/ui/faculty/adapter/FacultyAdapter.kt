@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.FacultyEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.faculty.viewholder.FacultyViewHolder
 import com.workfort.pstuian.databinding.RowFacultyBinding
 

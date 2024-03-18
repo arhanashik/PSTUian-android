@@ -8,12 +8,11 @@ import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.BloodDonationRequestEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationRequestEntity
 import com.workfort.pstuian.app.ui.blooddonationrequest.viewholder.BloodDonationRequestViewHolder
 import com.workfort.pstuian.databinding.RowBloodDonationRequestBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 class BloodDonationRequestAdapter : RecyclerView.Adapter<BloodDonationRequestViewHolder>(),
     Filterable {

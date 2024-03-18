@@ -41,24 +41,29 @@ data class ProfileInfoItem (
     val label: String,
     val title: String,
     @DrawableRes
-    var actionIcon: Int = -1,
+    var actionIcon: Int = NO_ACTION_ICON,
     var action: ProfileInfoAction = ProfileInfoAction.None,
     var actionData: String? = ""
-)
+) {
+    companion object {
+        const val NO_ACTION_ICON = -1
+    }
+}
 
 abstract class ProfileInfoClickEvent {
     open fun onAction(item: ProfileInfoItem) = Unit
 }
 
 sealed class ProfileInfoAction {
-    object None : ProfileInfoAction()
-    object Edit : ProfileInfoAction()
-    object Call : ProfileInfoAction()
-    object Mail : ProfileInfoAction()
-    object Download : ProfileInfoAction()
-    object Link : ProfileInfoAction()
-    object Password : ProfileInfoAction()
-    object BloodDonationList : ProfileInfoAction()
-    object CheckInList : ProfileInfoAction()
-    object SignedInDevices : ProfileInfoAction()
+    data object None : ProfileInfoAction()
+    data object Edit : ProfileInfoAction()
+    data object Call : ProfileInfoAction()
+    data object Mail : ProfileInfoAction()
+    data object Download : ProfileInfoAction()
+    data object Link : ProfileInfoAction()
+    data object Password : ProfileInfoAction()
+    data object BloodDonationList : ProfileInfoAction()
+    data object CheckInList : ProfileInfoAction()
+    data object SignedInDevices : ProfileInfoAction()
+    data object DeleteAccount : ProfileInfoAction()
 }

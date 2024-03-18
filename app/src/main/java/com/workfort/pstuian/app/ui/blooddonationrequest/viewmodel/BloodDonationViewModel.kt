@@ -2,15 +2,14 @@ package com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
-import com.workfort.pstuian.app.data.repository.BloodDonationRepository
-import com.workfort.pstuian.app.data.repository.BloodDonationRequestRepository
 import com.workfort.pstuian.app.ui.blooddonationrequest.intent.BloodDonationIntent
-import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.*
+import com.workfort.pstuian.model.BloodDonationEntity
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.repository.BloodDonationRepository
+import com.workfort.pstuian.repository.BloodDonationRequestRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
@@ -23,10 +22,6 @@ import kotlinx.coroutines.launch
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 12/10/21.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -38,25 +33,25 @@ class BloodDonationViewModel(
 
     // blood donation states
     var donationsPage = 1
-    private val _donationsState = MutableStateFlow<BloodDonationsState>(BloodDonationsState.Idle)
-    val donationsState: StateFlow<BloodDonationsState> get() = _donationsState
+    private val _donationsState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val donationsState: StateFlow<RequestState> get() = _donationsState
 
-    private val _createDonationState = MutableStateFlow<BloodDonationState>(BloodDonationState.Idle)
-    val createDonationState: StateFlow<BloodDonationState> get() = _createDonationState
+    private val _createDonationState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val createDonationState: StateFlow<RequestState> get() = _createDonationState
 
-    private val _updateDonationState = MutableStateFlow<BloodDonationState>(BloodDonationState.Idle)
-    val updateDonationState: StateFlow<BloodDonationState> get() = _updateDonationState
+    private val _updateDonationState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val updateDonationState: StateFlow<RequestState> get() = _updateDonationState
 
-    private val _deleteDonationState = MutableStateFlow<ItemDeleteState>(ItemDeleteState.Idle)
-    val deleteDonationState: StateFlow<ItemDeleteState> get() = _deleteDonationState
+    private val _deleteDonationState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val deleteDonationState: StateFlow<RequestState> get() = _deleteDonationState
 
     // blood donation request states
     var donationRequestsPage = 1
-    private val _donationRequestsState = MutableStateFlow<BloodDonationRequestsState>(BloodDonationRequestsState.Idle)
-    val donationRequestsState: StateFlow<BloodDonationRequestsState> get() = _donationRequestsState
+    private val _donationRequestsState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val donationRequestsState: StateFlow<RequestState> get() = _donationRequestsState
 
-    private val _createDonationRequestState = MutableStateFlow<BloodDonationRequestState>(BloodDonationRequestState.Idle)
-    val createDonationRequestState: StateFlow<BloodDonationRequestState> get() = _createDonationRequestState
+    private val _createDonationRequestState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val createDonationRequestState: StateFlow<RequestState> get() = _createDonationRequestState
 
     init {
         handleIntent()
@@ -83,61 +78,61 @@ class BloodDonationViewModel(
 
     private fun getDonations(userId: Int, userType: String, page: Int) {
         viewModelScope.launch {
-            _donationsState.value = BloodDonationsState.Loading
+            _donationsState.value = RequestState.Loading
             _donationsState.value = try {
-                BloodDonationsState.Donations(donationRepo.getAll(userId, userType, page))
+                RequestState.Success(donationRepo.getAll(userId, userType, page))
             } catch (e: Exception) {
-                BloodDonationsState.Error(e.message?: "Failed to get data")
+                RequestState.Error(e.message ?: "Failed to get data")
             }
         }
     }
 
     private fun createDonation(requestId: Int?, date: String, info: String?) {
-        _createDonationState.value = BloodDonationState.Loading
+        _createDonationState.value = RequestState.Loading
 
         viewModelScope.launch {
             _createDonationState.value = try {
                 val response = donationRepo.insert(requestId, date, info)
-                BloodDonationState.Success(response)
+                RequestState.Success(response)
             } catch (e: Exception) {
-                BloodDonationState.Error(e.message?: "Failed to create donation")
+                RequestState.Error(e.message?: "Failed to create donation")
             }
         }
     }
 
     private fun updateDonation(item: BloodDonationEntity) {
         viewModelScope.launch {
-            _updateDonationState.value = BloodDonationState.Loading
+            _updateDonationState.value = RequestState.Loading
             _updateDonationState.value = try {
-                BloodDonationState.Success(donationRepo.update(item))
+                RequestState.Success(donationRepo.update(item))
             } catch (e: Exception) {
-                BloodDonationState.Error(e.message?: "Failed to update")
+                RequestState.Error(e.message?: "Failed to update")
             }
         }
     }
 
     private fun deleteDonation(id: Int) {
         viewModelScope.launch {
-            _deleteDonationState.value = ItemDeleteState.Loading
+            _deleteDonationState.value = RequestState.Loading
             _deleteDonationState.value = try {
                 if(donationRepo.delete(id)) {
-                    ItemDeleteState.Success(id)
+                    RequestState.Success(id)
                 } else {
-                    ItemDeleteState.Error("Failed to delete")
+                    RequestState.Error("Failed to delete")
                 }
             } catch (e: Exception) {
-                ItemDeleteState.Error(e.message?: "Failed to delete")
+                RequestState.Error(e.message?: "Failed to delete")
             }
         }
     }
 
     private fun getDonationRequests(page: Int) {
         viewModelScope.launch {
-            _donationRequestsState.value = BloodDonationRequestsState.Loading
+            _donationRequestsState.value = RequestState.Loading
             _donationRequestsState.value = try {
-                BloodDonationRequestsState.DonationRequests(donationRequestRepo.getAll(page))
+                RequestState.Success(donationRequestRepo.getAll(page))
             } catch (e: Exception) {
-                BloodDonationRequestsState.Error(e.message?: "Failed to get data")
+                RequestState.Error(e.message?: "Failed to get data")
             }
         }
     }
@@ -148,14 +143,14 @@ class BloodDonationViewModel(
         contact: String,
         info: String?,
     ) {
-        _createDonationRequestState.value = BloodDonationRequestState.Loading
+        _createDonationRequestState.value = RequestState.Loading
 
         viewModelScope.launch {
             _createDonationRequestState.value = try {
                 val response = donationRequestRepo.insert(bloodGroup, beforeDate, contact, info)
-                BloodDonationRequestState.Success(response)
+                RequestState.Success(response)
             } catch (e: Exception) {
-                BloodDonationRequestState.Error(e.message?: "Failed to create request")
+                RequestState.Error(e.message?: "Failed to create request")
             }
         }
     }

@@ -2,8 +2,8 @@ package com.workfort.pstuian.app.ui.faculty.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.workfort.pstuian.model.TeacherEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.databinding.RowTeacherBinding
 
 class TeachersViewHolder (val binding: RowTeacherBinding) :

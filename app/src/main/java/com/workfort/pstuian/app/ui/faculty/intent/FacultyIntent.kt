@@ -17,10 +17,10 @@ package com.workfort.pstuian.app.ui.faculty.intent
  */
 
 sealed class FacultyIntent {
-    object GetFaculties : FacultyIntent()
-    object GetBatches : FacultyIntent()
-    object GetStudents : FacultyIntent()
-    object GetTeachers : FacultyIntent()
-    object GetCourses : FacultyIntent()
-    object GetEmployees : FacultyIntent()
+    data object GetFaculties : FacultyIntent()
+    data object GetBatches : FacultyIntent()
+    data object GetStudents : FacultyIntent()
+    data object GetTeachers : FacultyIntent()
+    data object GetCourses : FacultyIntent()
+    data object GetEmployees : FacultyIntent()
 }

@@ -5,13 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
-import com.workfort.pstuian.app.ui.forgotpassword.viewstate.ForgotPasswordState
+import com.workfort.pstuian.appconstant.NetworkConst
 import com.workfort.pstuian.databinding.ActivityForgotPasswordBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -22,7 +21,7 @@ class ForgotPasswordActivity : BaseActivity<ActivityForgotPasswordBinding>() {
 
     override fun getToolbarId(): Int = R.id.toolbar
 
-    private var selectedUserType : String = Const.Params.UserType.STUDENT
+    private var selectedUserType : String = NetworkConst.Params.UserType.STUDENT
 
     private val mAuthViewModel by viewModel<AuthViewModel>()
     override fun afterOnCreate(savedInstanceState: Bundle?) {
@@ -32,7 +31,7 @@ class ForgotPasswordActivity : BaseActivity<ActivityForgotPasswordBinding>() {
         with(binding.content) {
             tbUserType.addOnButtonCheckedListener { _, checkedId, _ ->
                 selectedUserType = if(checkedId == R.id.btn_student)
-                    Const.Params.UserType.STUDENT else Const.Params.UserType.TEACHER
+                    NetworkConst.Params.UserType.STUDENT else NetworkConst.Params.UserType.TEACHER
             }
             setClickListener(btnSend, btnSignIn)
         }
@@ -66,19 +65,19 @@ class ForgotPasswordActivity : BaseActivity<ActivityForgotPasswordBinding>() {
         lifecycleScope.launch {
             mAuthViewModel.forgotPasswordState.collect {
                 when (it) {
-                    is ForgotPasswordState.Idle -> Unit
-                    is ForgotPasswordState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         setActionUiState(true)
                     }
-                    is ForgotPasswordState.Success -> {
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
                         CommonDialog.success(
                             this@ForgotPasswordActivity,
-                            message = it.message,
+                            message = it.data as String,
                             cancelable = false,
                         ) { finish() }
                     }
-                    is ForgotPasswordState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         val message = it.error?: "Couldn't send reset email."
                         CommonDialog.error(

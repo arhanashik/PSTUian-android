@@ -4,27 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import coil.load
-import com.workfort.pstuian.app.data.local.slider.SliderEntity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
 import com.workfort.pstuian.databinding.ItemSliderBinding
-import com.workfort.pstuian.util.view.imageslider.SliderViewAdapter
-
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 01 Oct, 2021 at 3:09 AM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  *
- *  * Last edited by : arhan on 10/1/21.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
- *  ****************************************************************************
- */
+import com.workfort.pstuian.model.SliderEntity
+import com.workfort.pstuian.view.imageslider.SliderViewAdapter
 
 class SliderAdapter(
     private val listener: ItemClickEvent<SliderEntity>? = null

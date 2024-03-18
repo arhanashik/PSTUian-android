@@ -12,15 +12,15 @@ class ProfileInfoViewHolder (val binding: RowProfileInfoBinding) :
     fun bind(item: ProfileInfoItem, callback: ProfileInfoClickEvent?) {
         with(binding) {
             labelInfo.text = item.label
-            val title = if(item.title.isEmpty()) "~" else item.title
+            val title = item.title.ifEmpty { "~" }
             tvInfo.text = title
-            if(item.actionIcon == -1) {
+            if(item.actionIcon == ProfileInfoItem.NO_ACTION_ICON) {
                 btnAction.visibility = View.INVISIBLE
-                btnAction.setOnClickListener {  }
+                binding.root.setOnClickListener(null)
             } else {
                 btnAction.visibility = View.VISIBLE
                 btnAction.setImageResource(item.actionIcon)
-                btnAction.setOnClickListener { callback?.onAction(item) }
+                binding.root.setOnClickListener { callback?.onAction(item) }
             }
         }
     }

@@ -7,11 +7,10 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.support.viewmodel.SupportViewModel
-import com.workfort.pstuian.app.ui.support.viewstate.InquiryState
 import com.workfort.pstuian.databinding.ActivitySupportBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -72,18 +71,18 @@ class SupportActivity : BaseActivity<ActivitySupportBinding>() {
         lifecycleScope.launch {
             mViewModel.inquiryState.collect {
                 when (it) {
-                    is InquiryState.Idle -> Unit
-                    is InquiryState.Loading -> setActionUi(isLoading = true)
-                    is InquiryState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUi(isLoading = true)
+                    is RequestState.Success<*> -> {
                         setActionUi(isLoading = false)
                         CommonDialog.success(
                             this@SupportActivity,
-                            message = it.message,
+                            message = it.data as String,
                             btnText = getString(R.string.txt_home),
                             cancelable = false,
                         ) { finish() }
                     }
-                    is InquiryState.Error -> {
+                    is RequestState.Error -> {
                         setActionUi(isLoading = false)
                         val error = it.error?: "Could not complete the request! Please try again."
                         CommonDialog.error(this@SupportActivity, message = error)

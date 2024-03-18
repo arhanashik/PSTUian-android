@@ -8,18 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.fragment.BaseFragment
 import com.workfort.pstuian.app.ui.faculty.adapter.TeachersAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.TeacherClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.TeacherState
 import com.workfort.pstuian.app.ui.teacherprofile.TeacherProfileActivity
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.FragmentTeachersBinding
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.model.TeacherEntity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -67,13 +66,14 @@ class TeachersFragment(private val faculty: FacultyEntity)
         lifecycleScope.launch {
             mViewModel.teacherState.collect {
                 when (it) {
-                    is TeacherState.Idle -> Unit
-                    is TeacherState.Loading -> setActionUiState(true)
-                    is TeacherState.Teachers -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        renderTeachers(it.teachers)
+                        val teachers = it.data as List<TeacherEntity>
+                        renderTeachers(teachers)
                     }
-                    is TeacherState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         renderTeachers(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"

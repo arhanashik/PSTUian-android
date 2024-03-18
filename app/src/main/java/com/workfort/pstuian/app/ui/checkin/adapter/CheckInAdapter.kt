@@ -8,13 +8,12 @@ import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.CheckInEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
 import com.workfort.pstuian.app.ui.checkin.viewholder.CheckInViewHolder
 import com.workfort.pstuian.app.ui.checkin.viewholder.DefaultCheckInViewHolder
 import com.workfort.pstuian.databinding.RowCheckInUserBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 /**
  *  ****************************************************************************
@@ -42,8 +41,8 @@ class CheckInAdapter(
      * */
     private val hasDefaultView = false
     object ViewType {
-        const val Default = 0
-        const val CheckIn = 1
+        const val DEFAULT = 0
+        const val CHECK_IN = 1
     }
 
     val data : MutableList<CheckInEntity> = ArrayList()
@@ -95,13 +94,13 @@ class CheckInAdapter(
     override fun getItemCount(): Int = filteredData.size.plus(if(hasDefaultView) 1 else 0)
 
     override fun getItemViewType(position: Int): Int {
-        return if(hasDefaultView && position == 0) ViewType.Default else ViewType.CheckIn
+        return if(hasDefaultView && position == 0) ViewType.DEFAULT else ViewType.CHECK_IN
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when(viewType) {
-            ViewType.Default -> DefaultCheckInViewHolder(
+            ViewType.DEFAULT -> DefaultCheckInViewHolder(
                 RowCheckInUserBinding.inflate(inflater, parent, false)
             )
             else -> CheckInViewHolder(

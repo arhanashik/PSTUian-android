@@ -3,11 +3,13 @@ package com.workfort.pstuian
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
-import com.workfort.pstuian.app.data.local.database.AppDatabase
-import com.workfort.pstuian.app.data.local.pref.Prefs
-import com.workfort.pstuian.util.lib.koin.repositoryModule
-import com.workfort.pstuian.util.lib.koin.networkModule
-import com.workfort.pstuian.util.lib.koin.viewModelModule
+import com.workfort.pstuian.app.data.database.AppDatabase
+import com.workfort.pstuian.networking.di.networkModule
+import com.workfort.pstuian.sharedpref.Prefs
+import com.workfort.pstuian.util.di.appModule
+import com.workfort.pstuian.util.di.repositoryModule
+import com.workfort.pstuian.util.di.viewModelModule
+import com.workfort.pstuian.workmanager.di.workManagerModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -18,10 +20,6 @@ import timber.log.Timber
  *  ****************************************************************************
  *  * Created by : Arhan Ashik on 12/11/2018 at 4:18 PM.
  *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * Last edited by : Arhan Ashik on 12/11/2018.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -41,13 +39,13 @@ class PstuianApp  : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        triggerKoin()
         if (applicationContext != null) {
             if (BuildConfig.DEBUG) {
                 plantTimber()
             }
             initDb(applicationContext)
         }
+        triggerKoin()
     }
 
     // trigger di library koin
@@ -55,7 +53,13 @@ class PstuianApp  : MultiDexApplication() {
         startKoin {
             androidContext(this@PstuianApp)
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
-            modules(viewModelModule, networkModule, repositoryModule)
+            modules(
+                appModule,
+                repositoryModule,
+                networkModule,
+                viewModelModule,
+                workManagerModule,
+            )
         }
     }
 

@@ -2,32 +2,14 @@ package com.workfort.pstuian.app.ui.common.locationpicker.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.app.data.repository.CheckInLocationRepository
 import com.workfort.pstuian.app.ui.common.locationpicker.intent.CheckInLocationIntent
-import com.workfort.pstuian.app.ui.common.locationpicker.viewstate.CheckInLocationListState
-import com.workfort.pstuian.app.ui.common.locationpicker.viewstate.CheckInLocationState
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.repository.CheckInLocationRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Dec, 2021 at 22:30.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/14.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
- *  ****************************************************************************
- */
 
 class CheckInLocationViewModel(
     private val checkInLocationRepo: CheckInLocationRepository
@@ -37,18 +19,14 @@ class CheckInLocationViewModel(
     val checkInLocationSearchQuery = MutableStateFlow("")
 
     var checkInLocationPage = 1
-    private val _checkInLocationListState = MutableStateFlow<CheckInLocationListState>(
-        CheckInLocationListState.Idle)
-    val checkInLocationListState: StateFlow<CheckInLocationListState> get() =
-        _checkInLocationListState
+    private val _checkInLocationListState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val checkInLocationListState: StateFlow<RequestState> get() = _checkInLocationListState
 
-    private val _checkInLocationState = MutableStateFlow<CheckInLocationState>(
-        CheckInLocationState.Idle)
-    val checkInLocationState: StateFlow<CheckInLocationState> get() = _checkInLocationState
+    private val _checkInLocationState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val checkInLocationState: StateFlow<RequestState> get() = _checkInLocationState
 
-    private val _newCheckInLocationState = MutableStateFlow<CheckInLocationState>(
-        CheckInLocationState.Idle)
-    val newCheckInLocationState: StateFlow<CheckInLocationState> get() = _newCheckInLocationState
+    private val _newCheckInLocationState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val newCheckInLocationState: StateFlow<RequestState> get() = _newCheckInLocationState
 
     init {
         handleIntent()
@@ -68,33 +46,33 @@ class CheckInLocationViewModel(
 
     private fun search(query: String, page: Int) {
         viewModelScope.launch {
-            _checkInLocationListState.value = CheckInLocationListState.Loading
+            _checkInLocationListState.value = RequestState.Loading
             _checkInLocationListState.value = try {
-                CheckInLocationListState.Success(checkInLocationRepo.search(query, page))
+                RequestState.Success(checkInLocationRepo.search(query, page))
             } catch (ex: Exception) {
-                CheckInLocationListState.Error(ex.message?: "Failed to search")
+                RequestState.Error(ex.message?: "Failed to search")
             }
         }
     }
 
     private fun get(id: Int) {
         viewModelScope.launch {
-            _checkInLocationState.value = CheckInLocationState.Loading
+            _checkInLocationState.value = RequestState.Loading
             _checkInLocationState.value = try {
-                CheckInLocationState.Success(checkInLocationRepo.get(id))
+                RequestState.Success(checkInLocationRepo.get(id))
             } catch (ex: Exception) {
-                CheckInLocationState.Error(ex.message?: "Failed to search")
+                RequestState.Error(ex.message?: "Failed to search")
             }
         }
     }
 
     private fun createNewLocation(name: String) {
         viewModelScope.launch {
-            _newCheckInLocationState.value = CheckInLocationState.Loading
+            _newCheckInLocationState.value = RequestState.Loading
             _newCheckInLocationState.value = try {
-                CheckInLocationState.Success(checkInLocationRepo.insert(name))
+                RequestState.Success(checkInLocationRepo.insert(name))
             } catch (ex: Exception) {
-                CheckInLocationState.Error(ex.message?: "Failed to create!")
+                RequestState.Error(ex.message?: "Failed to create!")
             }
         }
     }
@@ -102,6 +80,6 @@ class CheckInLocationViewModel(
     // clear the state values
     fun resetSearchQueryAndNewLocation() {
         checkInLocationSearchQuery.value = ""
-        _newCheckInLocationState.value = CheckInLocationState.Idle
+        _newCheckInLocationState.value = RequestState.Idle
     }
 }

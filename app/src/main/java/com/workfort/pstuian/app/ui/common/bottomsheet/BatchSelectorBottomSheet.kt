@@ -10,16 +10,15 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.faculty.adapter.BatchesAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.BatchesState
 import com.workfort.pstuian.databinding.LayoutBatchSelectorBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.BatchEntity
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,10 +31,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 10/14/21.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -98,20 +93,21 @@ class BatchSelectorBottomSheet(
         lifecycleScope.launch {
             mViewModel.batchesState.collect {
                 when (it) {
-                    is BatchesState.Idle -> {
+                    is RequestState.Idle -> {
                     }
-                    is BatchesState.Loading -> {
+                    is RequestState.Loading -> {
                         binding.shimmerLayout.visibility = View.VISIBLE
                         binding.shimmerLayout.startShimmer()
                         binding.rvBatches.visibility = View.GONE
                     }
-                    is BatchesState.Batches -> {
+                    is RequestState.Success<*> -> {
                         binding.shimmerLayout.stopShimmer()
                         binding.shimmerLayout.visibility = View.GONE
                         binding.rvBatches.visibility = View.VISIBLE
-                        renderBatches(it.batches)
+                        val batches = it.data as List<BatchEntity>
+                        renderBatches(batches)
                     }
-                    is BatchesState.Error -> {
+                    is RequestState.Error -> {
                         binding.shimmerLayout.stopShimmer()
                         binding.shimmerLayout.visibility = View.GONE
                         binding.rvBatches.visibility = View.GONE

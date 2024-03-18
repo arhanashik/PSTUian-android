@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="deploymentTargetDropDown">
-    <targetSelectedWithDropDown>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="$USER_HOME$/.android/avd/Pixel_API_21.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-    </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-01-20T02:11:53.918078Z" />
+    <value>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="appconstant">
+        <State />
+      </entry>
+      <entry key="const">
+        <State />
+      </entry>
+      <entry key="database">
+        <State />
+      </entry>
+      <entry key="model">
+        <State />
+      </entry>
+      <entry key="networking">
+        <State />
+      </entry>
+      <entry key="repository">
+        <State />
+      </entry>
+      <entry key="sharedpref">
+        <State />
+      </entry>
+    </value>
   </component>
 </project>

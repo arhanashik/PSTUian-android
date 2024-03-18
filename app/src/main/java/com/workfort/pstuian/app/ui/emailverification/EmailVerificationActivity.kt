@@ -5,14 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
-import com.workfort.pstuian.app.ui.emailverification.viewstate.EmailVerificationState
+import com.workfort.pstuian.appconstant.NetworkConst
 import com.workfort.pstuian.databinding.ActivityEmailVerificationBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -26,10 +25,6 @@ import timber.log.Timber
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/16.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -39,7 +34,7 @@ class EmailVerificationActivity : BaseActivity<ActivityEmailVerificationBinding>
 
     override fun getToolbarId(): Int = R.id.toolbar
 
-    private var selectedUserType : String = Const.Params.UserType.STUDENT
+    private var selectedUserType : String = NetworkConst.Params.UserType.STUDENT
 
     private val mAuthViewModel by viewModel<AuthViewModel>()
     override fun afterOnCreate(savedInstanceState: Bundle?) {
@@ -49,7 +44,7 @@ class EmailVerificationActivity : BaseActivity<ActivityEmailVerificationBinding>
         with(binding.content) {
             tbUserType.addOnButtonCheckedListener { _, checkedId, _ ->
                 selectedUserType = if(checkedId == R.id.btn_student)
-                    Const.Params.UserType.STUDENT else Const.Params.UserType.TEACHER
+                    NetworkConst.Params.UserType.STUDENT else NetworkConst.Params.UserType.TEACHER
             }
             setClickListener(btnSend, btnSignIn)
         }
@@ -85,21 +80,21 @@ class EmailVerificationActivity : BaseActivity<ActivityEmailVerificationBinding>
         lifecycleScope.launch {
             mAuthViewModel.emailVerificationState.collect {
                 when (it) {
-                    is EmailVerificationState.Idle -> Unit
-                    is EmailVerificationState.Loading -> setActionUiState(true)
-                    is EmailVerificationState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
                         CommonDialog.success(
                             this@EmailVerificationActivity,
-                            message = it.message,
+                            message = it.data as String,
                             cancelable = false,
                         ) { finish() }
                     }
-                    is EmailVerificationState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         CommonDialog.error(
                             this@EmailVerificationActivity,
-                            message = it.message
+                            message = it.error.orEmpty()
                         )
                     }
                 }

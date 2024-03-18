@@ -2,18 +2,15 @@ package com.workfort.pstuian.app.ui.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.app.data.local.pref.Prefs
-import com.workfort.pstuian.app.data.repository.AuthRepository
-import com.workfort.pstuian.app.data.repository.FacultyRepository
-import com.workfort.pstuian.app.data.repository.SliderRepository
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
-import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
-import com.workfort.pstuian.app.ui.home.viewstate.SliderState
-import com.workfort.pstuian.app.ui.splash.viewstate.ClearCacheState
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.repository.AuthRepository
+import com.workfort.pstuian.repository.FacultyRepository
+import com.workfort.pstuian.repository.SliderRepository
+import com.workfort.pstuian.sharedpref.Prefs
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
@@ -25,14 +22,14 @@ class HomeViewModel(
     val intent = Channel<HomeIntent>(Channel.UNLIMITED)
 
     var sliderStateForceRefresh = false
-    private val _sliderState = MutableStateFlow<SliderState>(SliderState.Idle)
-    val sliderState: StateFlow<SliderState> get() = _sliderState
+    private val _sliderState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val sliderState: StateFlow<RequestState> get() = _sliderState
 
-    private val _deleteAllDataState = MutableStateFlow<DeleteAllState>(DeleteAllState.Idle)
-    val deleteAllDataState: StateFlow<DeleteAllState> get() = _deleteAllDataState
+    private val _deleteAllDataState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val deleteAllDataState: StateFlow<RequestState> get() = _deleteAllDataState
 
-    private val _clearCache = MutableStateFlow<ClearCacheState>(ClearCacheState.Idle)
-    val clearCache: StateFlow<ClearCacheState> get() = _clearCache
+    private val _clearCache = MutableStateFlow<RequestState>(RequestState.Idle)
+    val clearCache: StateFlow<RequestState> get() = _clearCache
 
     init {
         handleIntent()
@@ -52,18 +49,18 @@ class HomeViewModel(
 
     private fun getSliders() {
         viewModelScope.launch {
-            _sliderState.value = SliderState.Loading
+            _sliderState.value = RequestState.Loading
             _sliderState.value = try {
-                SliderState.Sliders(sliderRepo.getSliders(sliderStateForceRefresh))
+                RequestState.Success(sliderRepo.getSliders(sliderStateForceRefresh))
             } catch (e: Exception) {
-                SliderState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
 
     private fun clearAllData() {
         viewModelScope.launch {
-            _deleteAllDataState.value = DeleteAllState.Loading
+            _deleteAllDataState.value = RequestState.Loading
             _deleteAllDataState.value = try {
                 /** even if we clear the data the device id must not be removed.
                 *   because device id should be generated only once during one installation.
@@ -77,9 +74,9 @@ class HomeViewModel(
                 sliderRepo.deleteAll()
                 facultyRepo.deleteAll()
                 authRepo.updateDataRefreshState()
-                DeleteAllState.Success
+                RequestState.Success<Unit>()
             } catch (e: Exception) {
-                DeleteAllState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
@@ -89,13 +86,13 @@ class HomeViewModel(
      * */
     private fun clearCache() {
         viewModelScope.launch {
-            _clearCache.value = ClearCacheState.Loading
+            _clearCache.value = RequestState.Loading
             _clearCache.value = try {
                 sliderRepo.deleteAll()
                 facultyRepo.deleteAll()
-                ClearCacheState.Success
+                RequestState.Success<Unit>()
             } catch (e: Exception) {
-                ClearCacheState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }

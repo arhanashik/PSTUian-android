@@ -14,18 +14,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.blooddonation.CreateBloodDonationActivity
 import com.workfort.pstuian.app.ui.blooddonationrequest.intent.BloodDonationIntent
 import com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel.BloodDonationViewModel
-import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.BloodDonationState
-import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.BloodDonationsState
-import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.ItemDeleteState
 import com.workfort.pstuian.app.ui.common.blooddonationlist.adapter.BloodDonationListAdapter
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.FragmentBloodDonationListBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.BloodDonationEntity
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -98,8 +95,7 @@ class BloodDonationListDialogFragment (
             rvData.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    val isLoading = mViewModel.donationsState.value ==
-                            BloodDonationsState.Loading
+                    val isLoading = mViewModel.donationsState.value == RequestState.Loading
                     if(isLoading || endOfData) {
                         return
                     }
@@ -136,17 +132,18 @@ class BloodDonationListDialogFragment (
         lifecycleScope.launch {
             mViewModel.donationsState.collect {
                 when(it) {
-                    is BloodDonationsState.Idle -> Unit
-                    is BloodDonationsState.Loading -> setActionUiState(true)
-                    is BloodDonationsState.Donations -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        endOfData = it.data.isEmpty()
-                        renderData(it.data)
+                        val list = it.data as List<BloodDonationEntity>
+                        endOfData = list.isEmpty()
+                        renderData(list)
                     }
-                    is BloodDonationsState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         endOfData = true
-                        binding.tvMessage.text = it.message
+                        binding.tvMessage.text = it.error
                         renderData(emptyList())
                     }
                 }
@@ -200,15 +197,15 @@ class BloodDonationListDialogFragment (
         lifecycleScope.launch {
             mViewModel.updateDonationState.collect {
                 when(it) {
-                    is BloodDonationState.Idle -> Unit
-                    is BloodDonationState.Loading -> setActionUiState(true)
-                    is BloodDonationState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        mAdapter.update(it.item)
+                        mAdapter.update(it.data as BloodDonationEntity)
                     }
-                    is BloodDonationState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
-                        CommonDialog.error(requireContext(), message = it.message)
+                        CommonDialog.error(requireContext(), message = it.error ?: "Something went wrong")
                     }
                 }
             }
@@ -227,19 +224,19 @@ class BloodDonationListDialogFragment (
         lifecycleScope.launch {
             mViewModel.deleteDonationState.collect {
                 when(it) {
-                    is ItemDeleteState.Idle -> Unit
-                    is ItemDeleteState.Loading -> setActionUiState(true)
-                    is ItemDeleteState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        mAdapter.remove(it.itemId)
+                        mAdapter.remove(it.data as Int)
                         // update empty view
                         if(mAdapter.data.isEmpty()) {
                             renderData(emptyList())
                         }
                     }
-                    is ItemDeleteState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
-                        CommonDialog.error(requireContext(), message = it.message)
+                        CommonDialog.error(requireContext(), message = it.error ?: "Something went wrong, please try again")
                     }
                 }
             }

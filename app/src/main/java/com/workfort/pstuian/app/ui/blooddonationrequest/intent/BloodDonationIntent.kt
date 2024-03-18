@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.blooddonationrequest.intent
 
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
+import com.workfort.pstuian.model.BloodDonationEntity
 
 /**
  *  ****************************************************************************

@@ -2,26 +2,14 @@ package com.workfort.pstuian.app.ui.common.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.app.data.repository.AuthRepository
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
-import com.workfort.pstuian.app.ui.emailverification.viewstate.EmailVerificationState
-import com.workfort.pstuian.app.ui.forgotpassword.viewstate.ForgotPasswordState
-import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
-import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
-import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
-import com.workfort.pstuian.app.ui.signup.viewstate.StudentSignUpState
-import com.workfort.pstuian.app.ui.signup.viewstate.TeacherSignUpState
-import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
-import com.workfort.pstuian.app.ui.splash.viewstate.DeviceState
-import com.workfort.pstuian.app.ui.splash.viewstate.DevicesState
-import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
+import com.workfort.pstuian.firebase.fcm.FcmUtil.getFcmToken
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.repository.AuthRepository
 import com.workfort.pstuian.util.helper.CoilUtil
-import com.workfort.pstuian.util.lib.fcm.FcmUtil
-import com.workfort.pstuian.util.lib.fcm.callback.FcmTokenCallback
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -32,38 +20,41 @@ class AuthViewModel(
     val intent = Channel<AuthIntent>(Channel.UNLIMITED)
 
     var devicesPage = 1
-    private val _devicesState = MutableStateFlow<DevicesState>(DevicesState.Idle)
-    val devicesState: StateFlow<DevicesState> get() = _devicesState
+    private val _devicesState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val devicesState: StateFlow<RequestState> get() = _devicesState
 
-    private val _deviceRegistrationState = MutableStateFlow<DeviceState>(DeviceState.Idle)
-    val deviceRegistrationState: StateFlow<DeviceState> get() = _deviceRegistrationState
+    private val _deviceRegistrationState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val deviceRegistrationState: StateFlow<RequestState> get() = _deviceRegistrationState
 
-    private val _configState = MutableStateFlow<ConfigState>(ConfigState.Idle)
-    val configState: StateFlow<ConfigState> get() = _configState
+    private val _configState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val configState: StateFlow<RequestState> get() = _configState
 
-    private val _signInUserState = MutableStateFlow<SignInUserState>(SignInUserState.Idle)
-    val signInUserState: StateFlow<SignInUserState> get() = _signInUserState
+    private val _signInUserState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val signInUserState: StateFlow<RequestState> get() = _signInUserState
 
-    private val _signInState = MutableStateFlow<SignInState>(SignInState.Idle)
-    val signInState: StateFlow<SignInState> get() = _signInState
+    private val _signInState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val signInState: StateFlow<RequestState> get() = _signInState
 
-    private val _studentSignUpState = MutableStateFlow<StudentSignUpState>(StudentSignUpState.Idle)
-    val studentSignUpState: StateFlow<StudentSignUpState> get() = _studentSignUpState
+    private val _studentSignUpState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val studentSignUpState: StateFlow<RequestState> get() = _studentSignUpState
 
-    private val _teacherSignUpState = MutableStateFlow<TeacherSignUpState>(TeacherSignUpState.Idle)
-    val teacherSignUpState: StateFlow<TeacherSignUpState> get() = _teacherSignUpState
+    private val _teacherSignUpState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val teacherSignUpState: StateFlow<RequestState> get() = _teacherSignUpState
 
-    private val _signOutState = MutableStateFlow<SignOutState>(SignOutState.Idle)
-    val signOutState: StateFlow<SignOutState> get() = _signOutState
+    private val _signOutState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val signOutState: StateFlow<RequestState> get() = _signOutState
 
-    private val _changePasswordState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
-    val changePasswordState: StateFlow<ChangeProfileInfoState> get() = _changePasswordState
+    private val _changePasswordState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val changePasswordState: StateFlow<RequestState> get() = _changePasswordState
 
-    private val _forgotPasswordState = MutableStateFlow<ForgotPasswordState>(ForgotPasswordState.Idle)
-    val forgotPasswordState: StateFlow<ForgotPasswordState> get() = _forgotPasswordState
+    private val _forgotPasswordState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val forgotPasswordState: StateFlow<RequestState> get() = _forgotPasswordState
 
-    private val _emailVerificationState = MutableStateFlow<EmailVerificationState>(EmailVerificationState.Idle)
-    val emailVerificationState: StateFlow<EmailVerificationState> get() = _emailVerificationState
+    private val _emailVerificationState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val emailVerificationState: StateFlow<RequestState> get() = _emailVerificationState
+
+    private val _accountDeleteState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val accountDeleteState: StateFlow<RequestState> get() = _accountDeleteState
 
     init {
         handleIntent()
@@ -83,66 +74,63 @@ class AuthViewModel(
                     is AuthIntent.ChangePassword -> changePassword(it.oldPassword, it.newPassword)
                     is AuthIntent.EmailVerification -> emailVerification(it.userType, it.email)
                     is AuthIntent.SignOut -> signOut(it.fromAllDevices)
+                    is AuthIntent.DeleteAccount -> deleteAccount(it.password)
                 }
             }
         }
     }
 
     private fun getAllDevices(page: Int) {
-        _devicesState.value = DevicesState.Loading
+        _devicesState.value = RequestState.Loading
         viewModelScope.launch {
             _devicesState.value = try {
-                DevicesState.Success(authRepo.getAllDevices(page))
+                RequestState.Success(authRepo.getAllDevices(page))
             } catch (e: Exception) {
-                DevicesState.Error(e.message?: "Failed to get devices")
+                RequestState.Error(e.message?: "Failed to get devices")
             }
         }
     }
 
     private fun registerDevice() {
-        _deviceRegistrationState.value = DeviceState.Loading
-        FcmUtil.getFcmToken(object: FcmTokenCallback {
-            override fun onResponse(token: String?, error: String?) {
-                // Some device cannot generate fcm token(for example PocoPhone F1)
-                // In that case, we should not make the app unusable.
-                // We will register the app without the token.
+        _deviceRegistrationState.value = RequestState.Loading
+        getFcmToken { token, _ ->
+            Timber.e("testR token $token")
+            // Some device cannot generate fcm token(for example PocoPhone F1)
+            // In that case, we should not make the app unusable.
+            // We will register the app without the token.
 //                if(error != null) {
 //                    val errorMsg = "FCM Registration Failed: $error"
 //                    _deviceRegistrationState.value = DeviceState.Error(errorMsg)
 //                    return
 //                }
-                viewModelScope.launch {
-                    _deviceRegistrationState.value = try {
-                        DeviceState.Success(authRepo.registerDevice(
-                            token?: "Unknown"
-                        ))
-                    } catch (e: Exception) {
-                        DeviceState.Error(e.message?: "Couldn't register the device")
-                    }
+            viewModelScope.launch {
+                _deviceRegistrationState.value = try {
+                    RequestState.Success(authRepo.registerDevice(token?: "Unknown"))
+                } catch (e: Exception) {
+                    RequestState.Error(e.message?: "Couldn't register the device")
                 }
             }
-        })
+        }
     }
 
     private fun getConfig() {
         viewModelScope.launch {
-            _configState.value = ConfigState.Loading
+            _configState.value = RequestState.Loading
             _configState.value = try {
-                ConfigState.Success(authRepo.getConfig())
+                RequestState.Success(authRepo.getConfig())
             } catch (e: Exception) {
-                ConfigState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
 
     private fun getSignedInUser() {
         viewModelScope.launch {
-            _signInUserState.value = SignInUserState.Loading
+            _signInUserState.value = RequestState.Loading
             _signInUserState.value = try {
-                SignInUserState.User(authRepo.getSignInUser())
+                RequestState.Success(authRepo.getSignInUser())
             } catch (e: Exception) {
-                Timber.e(e)
-                SignInUserState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
@@ -153,12 +141,12 @@ class AuthViewModel(
         userType: String
     ) {
         viewModelScope.launch {
-            _signInState.value = SignInState.Loading
+            _signInState.value = RequestState.Loading
             _signInState.value = try {
                 val response = authRepo.signIn(email, password, userType)
-                SignInState.Success(response)
+                RequestState.Success(response)
             } catch (e: Exception) {
-                SignInState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
@@ -173,13 +161,13 @@ class AuthViewModel(
         email: String,
     ) {
         viewModelScope.launch {
-            _studentSignUpState.value = StudentSignUpState.Loading
+            _studentSignUpState.value = RequestState.Loading
             _studentSignUpState.value = try {
                 val response = authRepo.signUpStudent(name, id, reg, facultyId, batchId,
                     session, email)
-                StudentSignUpState.Success(response)
+                RequestState.Success(response)
             } catch (e: Exception) {
-                StudentSignUpState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
@@ -193,61 +181,74 @@ class AuthViewModel(
         facultyId: Int,
     ) {
         viewModelScope.launch {
-            _teacherSignUpState.value = TeacherSignUpState.Loading
+            _teacherSignUpState.value = RequestState.Loading
             _teacherSignUpState.value = try {
                 val response = authRepo.signUpTeacher(name, designation, department, email,
                     password, facultyId)
-                TeacherSignUpState.Success(response)
+                RequestState.Success(response)
             } catch (e: Exception) {
-                TeacherSignUpState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
 
     private fun signOut(fromAllDevices: Boolean) {
         viewModelScope.launch {
-            _signOutState.value = SignOutState.Loading
+            _signOutState.value = RequestState.Loading
             _signOutState.value = try {
                 val response = authRepo.signOut(fromAllDevices)
                 CoilUtil.clearCache()
-                SignOutState.Success(response)
+                RequestState.Success(response)
             } catch (e: Exception) {
-                SignOutState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
 
     private fun changePassword(oldPassword: String, newPassword: String) {
         viewModelScope.launch {
-            _changePasswordState.value = ChangeProfileInfoState.Loading
+            _changePasswordState.value = RequestState.Loading
             _changePasswordState.value = try {
                 val response = authRepo.changePassword(oldPassword, newPassword)
-                ChangeProfileInfoState.Success(response)
+                RequestState.Success(response)
             } catch (e: Exception) {
-                ChangeProfileInfoState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
 
     fun forgotPassword(userType: String, email: String) {
         viewModelScope.launch {
-            _forgotPasswordState.value = ForgotPasswordState.Loading
+            _forgotPasswordState.value = RequestState.Loading
             _forgotPasswordState.value = try {
                 val response = authRepo.forgotPassword(userType, email)
-                ForgotPasswordState.Success(response)
+                RequestState.Success(response)
             } catch (e: Exception) {
-                ForgotPasswordState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
 
     private fun emailVerification(userType: String, email: String) {
         viewModelScope.launch {
-            _emailVerificationState.value = EmailVerificationState.Loading
+            _emailVerificationState.value = RequestState.Loading
             _emailVerificationState.value = try {
-                EmailVerificationState.Success(authRepo.emailVerification(userType, email))
+                RequestState.Success(authRepo.emailVerification(userType, email))
             } catch (e: Exception) {
-                EmailVerificationState.Error(e.message ?: "Couldn't send verification email!")
+                RequestState.Error(e.message ?: "Couldn't send verification email!")
+            }
+        }
+    }
+
+    private fun deleteAccount(password: String) {
+        viewModelScope.launch {
+            _accountDeleteState.value = RequestState.Loading
+            _accountDeleteState.value = try {
+                val response = authRepo.deleteAccount(password)
+                CoilUtil.clearCache()
+                RequestState.Success(response)
+            } catch (e: Exception) {
+                RequestState.Error(e.message)
             }
         }
     }

@@ -8,25 +8,25 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.bottomsheet.BatchSelectorBottomSheet
 import com.workfort.pstuian.app.ui.common.bottomsheet.FacultySelectorBottomSheet
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.emailverification.EmailVerificationActivity
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.forgotpassword.ForgotPasswordActivity
-import com.workfort.pstuian.app.ui.signin.viewstate.SignInState
 import com.workfort.pstuian.app.ui.signup.StudentSignUpActivity
 import com.workfort.pstuian.app.ui.signup.TeacherSignUpActivity
+import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.appconstant.NetworkConst
 import com.workfort.pstuian.databinding.ActivitySignInBinding
 import com.workfort.pstuian.databinding.PromptSelectUserTypeBinding
+import com.workfort.pstuian.model.BatchEntity
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -39,7 +39,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     override fun getToolbarId(): Int = R.id.toolbar
 
-    private var selectedUserType : String = Const.Params.UserType.STUDENT
+    private var selectedUserType : String = NetworkConst.Params.UserType.STUDENT
 
     override fun afterOnCreate(savedInstanceState: Bundle?) {
         setHomeEnabled()
@@ -47,7 +47,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         with(binding.content) {
             tbUserType.addOnButtonCheckedListener { _, checkedId, _ ->
                 selectedUserType = if(checkedId == R.id.btn_student)
-                    Const.Params.UserType.STUDENT else Const.Params.UserType.TEACHER
+                    NetworkConst.Params.UserType.STUDENT else NetworkConst.Params.UserType.TEACHER
             }
 
             setClickListener(btnSignIn, btnSignUp, btnForgetPassword, btnEmailVerification)
@@ -97,17 +97,17 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         lifecycleScope.launch {
             mViewModel.signInState.collect {
                 when (it) {
-                    is SignInState.Idle -> Unit
-                    is SignInState.Loading -> setActionUiState(true)
-                    is SignInState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
                         Toaster.show("Successfully signed in!")
                         finish()
                     }
-                    is SignInState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         var msg = it.error?: "Failed to Sign in. "
-                        if(selectedUserType == Const.Params.UserType.STUDENT)
+                        if(selectedUserType == NetworkConst.Params.UserType.STUDENT)
                             msg += getString(R.string.error_msg_sign_in)
                         CommonDialog.error(this@SignInActivity, message = msg)
                     }
@@ -134,10 +134,10 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             .setView(binding.root)
             .create()
 
-        var userType = Const.Params.UserType.STUDENT
+        var userType = NetworkConst.Params.UserType.STUDENT
         binding.tbUserType.addOnButtonCheckedListener { _, checkedId, _ ->
             userType = if(checkedId == R.id.btn_student)
-                Const.Params.UserType.STUDENT else Const.Params.UserType.TEACHER
+                NetworkConst.Params.UserType.STUDENT else NetworkConst.Params.UserType.TEACHER
         }
         binding.btnSelect.setOnClickListener {
             dialog.dismiss()
@@ -150,7 +150,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     private fun selectFaculty(userType: String) {
         FacultySelectorBottomSheet { faculty ->
-            if(userType == Const.Params.UserType.STUDENT) {
+            if(userType == NetworkConst.Params.UserType.STUDENT) {
                 selectBatch(faculty)
             } else {
                 gotoTeacherSignUp(faculty)

@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.workfort.pstuian.model.BloodDonationRequestEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationRequestEntity
 import com.workfort.pstuian.databinding.ItemChipBinding
 import com.workfort.pstuian.databinding.RowBloodDonationRequestBinding
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.dialog.CommonDialog
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 
 /**
  *  ****************************************************************************

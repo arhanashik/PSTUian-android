@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import com.workfort.pstuian.app.data.local.course.CourseEntity
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.fragment.BaseFragment
 import com.workfort.pstuian.app.ui.faculty.adapter.CourseAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.CourseScheduleClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.CourseState
 import com.workfort.pstuian.databinding.FragmentCourseScheduleBinding
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.CourseEntity
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -62,13 +61,13 @@ class CourseFragment(private val faculty: FacultyEntity)
         lifecycleScope.launch {
             mViewModel.courseState.collect {
                 when (it) {
-                    is CourseState.Idle -> Unit
-                    is CourseState.Loading -> setActionUiState(true)
-                    is CourseState.Courses -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        renderCourses(it.course)
+                        renderCourses(it.data as List<CourseEntity>)
                     }
-                    is CourseState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         renderCourses(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"

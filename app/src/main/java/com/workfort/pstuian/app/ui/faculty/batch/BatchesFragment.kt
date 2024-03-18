@@ -6,18 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.fragment.BaseFragment
 import com.workfort.pstuian.app.ui.faculty.adapter.BatchesAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.BatchesState
 import com.workfort.pstuian.app.ui.students.StudentsActivity
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.FragmentBatchesBinding
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.BatchEntity
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -68,13 +67,14 @@ class BatchesFragment(private val faculty: FacultyEntity)
         lifecycleScope.launch {
             mViewModel.batchesState.collect {
                 when (it) {
-                    is BatchesState.Idle -> Unit
-                    is BatchesState.Loading -> setActionUiState(true)
-                    is BatchesState.Batches -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        renderBatches(it.batches)
+                        val batches = it.data as List<BatchEntity>
+                        renderBatches(batches)
                     }
-                    is BatchesState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         renderBatches(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"

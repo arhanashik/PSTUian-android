@@ -11,20 +11,18 @@ import android.view.View
 import android.widget.ArrayAdapter
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
-import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
 import com.workfort.pstuian.app.ui.teacherprofile.viewmodel.TeacherProfileViewModel
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.ActivityEditTeacherProfileBinding
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.model.TeacherEntity
 import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -124,15 +122,16 @@ class EditTeacherProfileActivity: BaseActivity<ActivityEditTeacherProfileBinding
         lifecycleScope.launch {
             mFacultyViewModel.facultyState.collect {
                 when (it) {
-                    is FacultyState.Idle -> Unit
-                    is FacultyState.Loading -> setActionUiState(isActionRunning = true)
-                    is FacultyState.Faculties -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(isActionRunning = true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
+                        val faculties = it.data as List<FacultyEntity>
                         mFaculties.clear()
-                        mFaculties.addAll(it.faculties)
-                        renderFaculties(it.faculties)
+                        mFaculties.addAll(faculties)
+                        renderFaculties(faculties)
                     }
-                    is FacultyState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         Timber.e("Can't load data")
                     }
@@ -228,19 +227,19 @@ class EditTeacherProfileActivity: BaseActivity<ActivityEditTeacherProfileBinding
         lifecycleScope.launch {
             mViewModel.changeAcademicInfoState.collect {
                 when (it) {
-                    is ChangeProfileInfoState.Idle -> Unit
-                    is ChangeProfileInfoState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileInfoState.Success<*> -> {
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
-                        if(it.data is TeacherEntity) mTeacher = it.data
+                        mTeacher = it.data as TeacherEntity
                         getSelectedFacultyEntity()?.let { faculty ->
                             setActivityResult(mTeacher, faculty)
                         }
                         CommonDialog.success(this@EditTeacherProfileActivity)
                     }
-                    is ChangeProfileInfoState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
                         CommonDialog.error(this@EditTeacherProfileActivity, message = msg)
@@ -273,18 +272,17 @@ class EditTeacherProfileActivity: BaseActivity<ActivityEditTeacherProfileBinding
         lifecycleScope.launch {
             mViewModel.changeConnectInfoState.collect {
                 when (it) {
-                    is ChangeProfileInfoState.Idle -> {
-                    }
-                    is ChangeProfileInfoState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileInfoState.Success<*> -> {
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
-                        if(it.data is TeacherEntity) mTeacher = it.data
+                        mTeacher = it.data as TeacherEntity
                         setActivityResult(mTeacher)
                         CommonDialog.success(this@EditTeacherProfileActivity)
                     }
-                    is ChangeProfileInfoState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
                         CommonDialog.error(this@EditTeacherProfileActivity, message = msg)

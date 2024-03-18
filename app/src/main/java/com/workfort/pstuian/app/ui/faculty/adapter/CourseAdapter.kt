@@ -8,13 +8,12 @@ import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.CourseEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.course.CourseEntity
 import com.workfort.pstuian.app.ui.faculty.listener.CourseScheduleClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewholder.CourseViewHolder
 import com.workfort.pstuian.databinding.RowCourseBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 class CourseAdapter :
     RecyclerView.Adapter<CourseViewHolder>(), Filterable {

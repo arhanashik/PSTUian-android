@@ -8,13 +8,12 @@ import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.DonorEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.donor.DonorEntity
 import com.workfort.pstuian.app.ui.donors.viewholder.DonorsViewHolder
 import com.workfort.pstuian.app.ui.faculty.listener.DonorClickEvent
 import com.workfort.pstuian.databinding.RowDonorBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 class DonorsAdapter : RecyclerView.Adapter<DonorsViewHolder>(), Filterable {
 

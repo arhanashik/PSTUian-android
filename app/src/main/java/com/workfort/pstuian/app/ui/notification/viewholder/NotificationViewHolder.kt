@@ -1,9 +1,9 @@
 package com.workfort.pstuian.app.ui.notification.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.model.NotificationEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.notification.NotificationEntity
 import com.workfort.pstuian.databinding.RowNotificationBinding
 import com.workfort.pstuian.util.helper.DateUtil
 

@@ -8,17 +8,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.blooddonationrequest.BloodDonationRequestEntity
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.blooddonationrequest.adapter.BloodDonationRequestAdapter
 import com.workfort.pstuian.app.ui.blooddonationrequest.intent.BloodDonationIntent
 import com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel.BloodDonationViewModel
-import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.BloodDonationRequestsState
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.ActivityBloodDonationRequestBinding
+import com.workfort.pstuian.model.BloodDonationRequestEntity
+import com.workfort.pstuian.model.RequestState
 import com.workfort.pstuian.util.extension.launchActivity
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -83,8 +82,7 @@ class BloodDonationRequestActivity : BaseActivity<ActivityBloodDonationRequestBi
         binding.rvData.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val isLoading = mViewModel.donationRequestsState.value ==
-                        BloodDonationRequestsState.Loading
+                val isLoading = mViewModel.donationRequestsState.value == RequestState.Loading
                 if(isLoading || endOfData) {
                     return
                 }
@@ -113,18 +111,19 @@ class BloodDonationRequestActivity : BaseActivity<ActivityBloodDonationRequestBi
         lifecycleScope.launch {
             mViewModel.donationRequestsState.collect {
                 when (it) {
-                    is BloodDonationRequestsState.Idle -> Unit
-                    is BloodDonationRequestsState.Loading -> setActionUiState(true)
-                    is BloodDonationRequestsState.DonationRequests -> {
-                        endOfData = it.data.isEmpty()
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
+                        val list = it.data as List<BloodDonationRequestEntity>
+                        endOfData = list.isEmpty()
                         setActionUiState(false)
-                        renderData(it.data)
+                        renderData(list)
                     }
-                    is BloodDonationRequestsState.Error -> {
+                    is RequestState.Error -> {
                         endOfData = true
                         setActionUiState(false)
                         renderData(emptyList())
-                        binding.tvMessage.text = it.message
+                        binding.tvMessage.text = it.error
                     }
                 }
             }
