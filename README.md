@@ -70,6 +70,15 @@ Here is an overview on the branches:
 - release_***: Contains the code for that particular release
 
 ## CHANGELOG
+2.1.0 - Account Delete option
+----------------------
+- User can now send request to delete account. After the action user won't be able to 
+  use the account any more and if doesn't request for recovery within 3 days it might get
+  permanently deleted
+- Code improvement with modules and a lot more
+- Minor UI improvements
+- Version updates for used libraries
+
 2.0.2 - Firebase token issue
 ----------------------
 - Some device does not support fcm(for example Poco phone f1). Those device can now register 
