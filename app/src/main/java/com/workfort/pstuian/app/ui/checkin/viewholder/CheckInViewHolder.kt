@@ -1,30 +1,15 @@
 package com.workfort.pstuian.app.ui.checkin.viewholder
 
 import android.content.Context
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
 import com.workfort.pstuian.databinding.RowCheckInUserBinding
+import com.workfort.pstuian.model.CheckInEntity
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.Toaster
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 13 Dec, 2021 at 13:00.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/13.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
- *  ****************************************************************************
- */
 
 class CheckInViewHolder (val binding: RowCheckInUserBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -37,7 +22,11 @@ class CheckInViewHolder (val binding: RowCheckInUserBinding) :
             }
             tvName.text = item.name
             tvBatch.text = item.batch
-            btnCall.setOnClickListener { promptCall(root.context, item.phone.trim()) }
+            btnCall.isVisible = item.phone.isNullOrEmpty().not()
+            btnCall.setOnClickListener(null)
+            item.phone?.trim()?.let { phone ->
+                btnCall.setOnClickListener { promptCall(root.context, phone) }
+            }
 
             root.setOnClickListener { onClickItem(item) }
         }

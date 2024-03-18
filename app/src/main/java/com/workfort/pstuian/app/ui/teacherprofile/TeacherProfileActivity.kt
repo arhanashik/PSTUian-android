@@ -11,43 +11,41 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import androidx.work.WorkInfo
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
-import com.workfort.pstuian.app.data.local.teacher.TeacherProfile
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoAction
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoClickEvent
 import com.workfort.pstuian.app.ui.common.adapter.ProfileInfoItem
 import com.workfort.pstuian.app.ui.common.devicelist.DeviceListDialogFragment
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.fragment.ProfilePagerItemFragment
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
-import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
 import com.workfort.pstuian.app.ui.editprofile.EditTeacherProfileActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
+import com.workfort.pstuian.app.ui.home.HomeActivity
 import com.workfort.pstuian.app.ui.imagepreview.ImagePreviewActivity
-import com.workfort.pstuian.app.ui.signup.viewstate.SignOutState
-import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
-import com.workfort.pstuian.app.ui.studentprofile.viewstate.GetProfileState
 import com.workfort.pstuian.app.ui.teacherprofile.viewmodel.TeacherProfileViewModel
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
+import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.appconstant.NetworkConst
 import com.workfort.pstuian.databinding.ActivityTeacherProfileBinding
+import com.workfort.pstuian.model.ProgressRequestState
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.model.TeacherEntity
+import com.workfort.pstuian.model.TeacherProfile
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
 import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.dialog.CommonDialog
+import com.workfort.pstuian.workmanager.FileHandlerViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 
 class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
     override val bindingInflater: (LayoutInflater) -> ActivityTeacherProfileBinding
@@ -86,6 +84,7 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         observeBioChange()
         observeSignOut()
         observePasswordChange()
+        observeAccountDelete()
         lifecycleScope.launch {
             mAuthViewModel.intent.send(AuthIntent.GetSignInUser)
         }
@@ -99,19 +98,19 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         lifecycleScope.launch {
             mViewModel.getProfileState.collect {
                 when (it) {
-                    is GetProfileState.Idle -> Unit
-                    is GetProfileState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         binding.loaderOverlay.visibility = View.VISIBLE
                         binding.loader.visibility = View.VISIBLE
                     }
-                    is GetProfileState.Success<*> -> {
+                    is RequestState.Success<*> -> {
                         binding.loaderOverlay.visibility = View.GONE
                         binding.loader.visibility = View.GONE
                         profile = it.data as TeacherProfile
                         setUiData()
                         initTabs()
                     }
-                    is GetProfileState.Error -> {
+                    is RequestState.Error -> {
                         binding.loaderOverlay.visibility = View.GONE
                         binding.loader.visibility = View.GONE
                         val msg = it.error?: "Failed to load data"
@@ -147,7 +146,8 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                     val intent = Intent(this@TeacherProfileActivity,
                         ImagePreviewActivity::class.java)
                     intent.putExtra(Const.Key.URL, teacher.imageUrl)
-                    intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                    intent.putExtra(
+                        Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
                         imgAvatar.transitionName)
                     startActivity(intent)
                 }
@@ -245,6 +245,7 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                 when (item.action) {
                     ProfileInfoAction.Password -> { promptChangePassword() }
                     ProfileInfoAction.SignedInDevices -> { promptSignedInDevices() }
+                    ProfileInfoAction.DeleteAccount -> { promptDeleteAccount() }
                     else -> Unit
                 }
             }
@@ -293,6 +294,10 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
                 getString(R.string.txt_devices), getString(R.string.txt_signed_in_devices),
                 R.drawable.ic_pencil_circular_outline, ProfileInfoAction.SignedInDevices, "~"
             ),
+            ProfileInfoItem(
+                getString(R.string.txt_account), getString(R.string.txt_delete_account),
+                R.drawable.ic_delete_outline_red, ProfileInfoAction.DeleteAccount, "~"
+            ),
         )
     }
 
@@ -338,82 +343,55 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         }, {
             binding.content.imgAvatar.load(imgUri.toString())
             proPicChangeDialog?.dismiss()
-            compressProfileImage(imgUri)
+            compressAndUploadProfileImage(imgUri)
         })
     }
 
     // the compressed file should be stored in the cache folder
-    private fun compressProfileImage(uri: Uri) {
+    private fun compressAndUploadProfileImage(uri: Uri) {
         val fileName = "${profile.teacher.id}.jpeg"
-        mFileHandlerVM.compressImage(this, uri, fileName).observe(this, {
-            when (it.state) {
-                WorkInfo.State.ENQUEUED,
-                WorkInfo.State.RUNNING -> {
-                    setActionUiState(isActionRunning = true)
-                }
-                WorkInfo.State.SUCCEEDED -> {
-                    setActionUiState(isActionRunning = false)
-                    val file = File(cacheDir, fileName)
-                    if(file.exists()) {
-                        uploadProfileImage(fileName)
-                    } else {
-                        CommonDialog.error(this, message = "Failed to resize the image")
+        mFileHandlerVM.compressAndUploadImage(
+            this,
+            uri,
+            fileName,
+            cacheDir,
+            NetworkConst.Params.UserType.TEACHER,
+        )
+        lifecycleScope.launch {
+            mFileHandlerVM.compressAndUploadImageState.collect {
+                when (it) {
+                    is ProgressRequestState.Idle -> Unit
+                    is ProgressRequestState.Loading -> {
+                        if (it.progress == 0) {
+                            setActionUiState(isActionRunning = true, isLoaderIndeterminate = false)
+                        }
+                        binding.content.loaderLarger.progress = it.progress
+                    }
+                    is ProgressRequestState.Success<*> -> {
+                        setActionUiState(isActionRunning = false)
+                        mViewModel.changeProfileImage(profile.teacher, it.data as String)
+                    }
+                    is ProgressRequestState.Error -> {
+                        setActionUiState(isActionRunning = false)
+                        val msg = it.error ?: getString(R.string.default_error_dialog_message)
+                        CommonDialog.error(this@TeacherProfileActivity, "Upload Failed", msg)
                     }
                 }
-                WorkInfo.State.FAILED -> {
-                    setActionUiState(isActionRunning = false)
-                    CommonDialog.error(this, "Failed to resize the image")
-                }
-                else -> setActionUiState(isActionRunning = false)
             }
-        })
-    }
-
-    // The file should be exist in the cache directory
-    private fun uploadProfileImage(fileName: String) {
-        mFileHandlerVM.uploadImage(this, Const.Params.UserType.TEACHER, fileName)
-            .observe(this, {
-            when (it.state) {
-                WorkInfo.State.ENQUEUED,
-                WorkInfo.State.RUNNING -> {
-                    val progress = it.progress.getInt(Const.Key.PROGRESS, 0)
-                    if (progress == 0) {
-                        setActionUiState(isActionRunning = true, isLoaderIndeterminate = false)
-                    }
-                    binding.content.loaderLarger.progress = progress
-                }
-                WorkInfo.State.SUCCEEDED -> {
-                    setActionUiState(isActionRunning = false)
-                    val data = it.outputData.getString(Const.Key.URL)
-                    if(data.isNullOrEmpty()) {
-                        CommonDialog.error(this, message = "Failed to upload the image")
-                    } else {
-                        mViewModel.changeProfileImage(profile.teacher, data)
-                    }
-                }
-                WorkInfo.State.FAILED -> {
-                    setActionUiState(isActionRunning = false)
-                    val data = it.outputData.getString(Const.Key.MESSAGE)
-                    val message = if(data.isNullOrEmpty())
-                        getString(R.string.default_error_dialog_message) else data
-                    CommonDialog.error(this, "Upload Failed", message)
-                }
-                else -> setActionUiState(isActionRunning = false)
-            }
-        })
+        }
     }
 
     private fun observeProfileImageChange() {
         lifecycleScope.launch {
             mViewModel.changeProfileImageState.collect {
                 when (it) {
-                    is ChangeProfileInfoState.Idle -> Unit
-                    is ChangeProfileInfoState.Loading -> setActionUiState(isActionRunning = true)
-                    is ChangeProfileInfoState.Success<*> -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(isActionRunning = true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
                         CommonDialog.success(this@TeacherProfileActivity)
                     }
-                    is ChangeProfileInfoState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         setUiData()
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
@@ -436,19 +414,19 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         lifecycleScope.launch {
             mViewModel.changeNameState.collect {
                 when (it) {
-                    is ChangeProfileInfoState.Idle -> Unit
-                    is ChangeProfileInfoState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileInfoState.Success<*> -> {
+                    is RequestState.Success<*> -> {
                         setActivityResult()
                         profile.teacher.name = it.data as String
-                        title = it.data
+                        title = it.data as String
                         //notify name change in academic tab
                         initTabs()
                         setActionUiState(isActionRunning = false)
                     }
-                    is ChangeProfileInfoState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         setUiData()
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
@@ -471,17 +449,17 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         lifecycleScope.launch {
             mViewModel.changeBioState.collect {
                 when (it) {
-                    is ChangeProfileInfoState.Idle -> Unit
-                    is ChangeProfileInfoState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileInfoState.Success<*> -> {
+                    is RequestState.Success<*> -> {
                         setActivityResult()
                         profile.teacher.bio = it.data as String
-                        binding.content.tvBio.text = it.data
+                        binding.content.tvBio.text = it.data as String
                         setActionUiState(isActionRunning = false)
                     }
-                    is ChangeProfileInfoState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         setUiData()
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
@@ -523,16 +501,18 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         lifecycleScope.launch {
             mAuthViewModel.signOutState.collect {
                 when (it) {
-                    is SignOutState.Idle -> Unit
-                    is SignOutState.Loading -> setActionUiState(isActionRunning = true)
-                    is SignOutState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(isActionRunning = true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
                         profile.isSignedIn = false
-                        setSignInUiState(isSignedIn = false)
-                        initTabs()
-                        Toaster.show(it.message)
+//                        setSignInUiState(isSignedIn = false)
+//                        initTabs()
+                        Toaster.show(it.data as String)
+                        launchActivity<HomeActivity>()
+                        finish()
                     }
-                    is SignOutState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
                         CommonDialog.error(this@TeacherProfileActivity, message = msg)
@@ -604,14 +584,16 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
         lifecycleScope.launch {
             mAuthViewModel.changePasswordState.collect {
                 when (it) {
-                    is ChangeProfileInfoState.Idle -> Unit
-                    is ChangeProfileInfoState.Loading -> setActionUiState(isActionRunning = true)
-                    is ChangeProfileInfoState.Success<*> -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(isActionRunning = true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
-                        CommonDialog.success(this@TeacherProfileActivity,
-                            message = it.data as String)
+                        CommonDialog.success(
+                            this@TeacherProfileActivity,
+                            message = it.data as String,
+                        )
                     }
-                    is ChangeProfileInfoState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
                         CommonDialog.error(this@TeacherProfileActivity, message = msg)
@@ -624,6 +606,39 @@ class TeacherProfileActivity : BaseActivity<ActivityTeacherProfileBinding>() {
     private fun promptSignedInDevices() {
         DeviceListDialogFragment.show(supportFragmentManager) {
             signOut(true)
+        }
+    }
+
+    private fun promptDeleteAccount() {
+        CommonDialog.deleteAccount(this) { password ->
+            lifecycleScope.launch {
+                mAuthViewModel.intent.send(AuthIntent.DeleteAccount(password))
+            }
+        }
+    }
+
+    private fun observeAccountDelete() {
+        lifecycleScope.launch {
+            mAuthViewModel.accountDeleteState.collect {
+                when (it) {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
+                        setActionUiState(isActionRunning = true)
+                    }
+                    is RequestState.Success<*> -> {
+                        setActionUiState(isActionRunning = false)
+                        profile.isSignedIn = false
+                        Toaster.show("Account deleted successfully!")
+                        launchActivity<HomeActivity>()
+                        finish()
+                    }
+                    is RequestState.Error -> {
+                        setActionUiState(isActionRunning = false)
+                        val msg = it.error?: getString(R.string.default_error_dialog_message)
+                        CommonDialog.error(this@TeacherProfileActivity, message = msg)
+                    }
+                }
+            }
         }
     }
 

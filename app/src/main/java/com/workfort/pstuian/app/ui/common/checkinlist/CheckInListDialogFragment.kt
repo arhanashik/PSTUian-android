@@ -10,18 +10,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
 import com.workfort.pstuian.app.ui.checkin.intent.CheckInIntent
 import com.workfort.pstuian.app.ui.checkin.viewmodel.CheckInViewModel
-import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInDeleteState
-import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInListState
-import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInState
 import com.workfort.pstuian.app.ui.common.bottomsheet.CheckInAction
 import com.workfort.pstuian.app.ui.common.bottomsheet.MyCheckInDetailsBottomSheet
 import com.workfort.pstuian.app.ui.common.checkinlist.adapter.CheckInListAdapter
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.databinding.FragmentCheckInListBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.CheckInEntity
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -34,10 +31,6 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/15.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -91,8 +84,7 @@ class CheckInListDialogFragment (
             rvData.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    val isLoading = mViewModel.userCheckInListState.value ==
-                            CheckInListState.Loading
+                    val isLoading = mViewModel.userCheckInListState.value == RequestState.Loading
                     if(isLoading || endOfData) {
                         return
                     }
@@ -122,17 +114,18 @@ class CheckInListDialogFragment (
         lifecycleScope.launch {
             mViewModel.userCheckInListState.collect {
                 when(it) {
-                    is CheckInListState.Idle -> Unit
-                    is CheckInListState.Loading -> setActionUiState(true)
-                    is CheckInListState.CheckInList -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        endOfData = it.list.isEmpty()
-                        renderData(it.list)
+                        val list = it.data as List<CheckInEntity>
+                        endOfData = list.isEmpty()
+                        renderData(list)
                     }
-                    is CheckInListState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         endOfData = true
-                        binding.tvMessage.text = it.message
+                        binding.tvMessage.text = it.error
                         renderData(emptyList())
                     }
                 }
@@ -177,15 +170,15 @@ class CheckInListDialogFragment (
         lifecycleScope.launch {
             mViewModel.checkInPrivacyState.collect {
                 when(it) {
-                    is CheckInState.Idle -> Unit
-                    is CheckInState.Loading -> setActionUiState(true)
-                    is CheckInState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        mAdapter.update(it.data)
+                        mAdapter.update(it.data as CheckInEntity)
                     }
-                    is CheckInState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
-                        CommonDialog.error(requireContext(), message = it.message)
+                        CommonDialog.error(requireContext(), message = it.error.orEmpty())
                     }
                 }
             }
@@ -204,19 +197,19 @@ class CheckInListDialogFragment (
         lifecycleScope.launch {
             mViewModel.checkInDeleteState.collect {
                 when(it) {
-                    is CheckInDeleteState.Idle -> Unit
-                    is CheckInDeleteState.Loading -> setActionUiState(true)
-                    is CheckInDeleteState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        mAdapter.remove(it.itemId)
+                        mAdapter.remove(it.data as Int)
                         // update empty view
                         if(mAdapter.data.isEmpty()) {
                             renderData(emptyList())
                         }
                     }
-                    is CheckInDeleteState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
-                        CommonDialog.error(requireContext(), message = it.message)
+                        CommonDialog.error(requireContext(), message = it.error.orEmpty())
                     }
                 }
             }

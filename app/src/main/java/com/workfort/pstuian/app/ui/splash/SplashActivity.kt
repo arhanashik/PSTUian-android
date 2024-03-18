@@ -4,33 +4,23 @@ import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.google.android.play.core.appupdate.AppUpdateInfo
-import com.google.android.play.core.install.InstallStateUpdatedListener
-import com.google.android.play.core.install.model.InstallStatus
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.config.ConfigEntity
-import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.home.HomeActivity
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
-import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
-import com.workfort.pstuian.app.ui.splash.viewstate.ClearCacheState
-import com.workfort.pstuian.app.ui.splash.viewstate.ConfigState
-import com.workfort.pstuian.app.ui.splash.viewstate.DeviceState
 import com.workfort.pstuian.databinding.ActivitySplashBinding
+import com.workfort.pstuian.model.ConfigEntity
+import com.workfort.pstuian.model.RequestState
 import com.workfort.pstuian.util.extension.launchActivity
-import com.workfort.pstuian.util.helper.InAppUpdateUtil
-import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.dialog.CommonDialog
+import com.workfort.pstuian.util.helper.PlayStoreUtil
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -48,16 +38,8 @@ import timber.log.Timber
  *      -> If cache data clear failed, show blocking error message.
  *      -> If successful goto next step
  *
- * -> Check for app update "checkForUpdate()", and observe the result
- *      -> If update available
- *          -> If force update necessary, show blocking update option "requestForceUpdate()"
- *          -> If flexible update, show cancelable update option "requestFlexibleUpdate()"
- *               -> Check update result in "onActivityResult()".
- *               -> If failed, check for update again "checkForUpdate()".
- *               -> If successful, go to next step.
- *      -> If no update available, (or failed to check update), go to next step
  *
- * -> After app update, request for app config "requestConfig()" and observe result
+ * -> After that, request for app config "requestConfig()" and observe result
  *    in "observeConfig()"
  *      -> If failed, show blocking dialog with retry option.
  *      -> If successful, check config in "handleConfig()"
@@ -81,9 +63,7 @@ class SplashActivity : AppCompatActivity() {
 
     private val mHomeViewModel: HomeViewModel by viewModel()
     private val mAuthViewModel: AuthViewModel by viewModel()
-
-    private val mUpdateUtil: InAppUpdateUtil by lazy { InAppUpdateUtil(this) }
-    private var mUpdateListener: InstallStateUpdatedListener? = null
+    private val mPlayStoreUtil: PlayStoreUtil by lazy { PlayStoreUtil(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,38 +78,6 @@ class SplashActivity : AppCompatActivity() {
         observeConfig()
         observeClearCache()
         observeDeleteAllData()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mUpdateUtil.checkForUpdate(object: InAppUpdateUtil.AppUpdateCheckCallback() {
-            override fun onDownloadedUpdateAvailable() {
-                requestUpdateInstallPermission()
-            }
-
-            override fun onAlreadyInProgress(appUpdateInfo: AppUpdateInfo) {
-                mUpdateUtil.requestUpdate(
-                    this@SplashActivity,
-                    appUpdateInfo,
-                    true,
-                    Const.RequestCode.IN_APP_UPDATE
-                )
-            }
-        })
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == Const.RequestCode.IN_APP_UPDATE) {
-            if (resultCode != RESULT_OK) {
-                Toaster.show("Update failed, please try again!")
-                Timber.e("Update flow failed! Result code: $resultCode")
-                checkForUpdate()
-            } else {
-                Toaster.show("App Updated Successfully!")
-                requestConfig()
-            }
-        }
     }
 
     private fun loadAnimations() {
@@ -158,18 +106,18 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mAuthViewModel.deviceRegistrationState.collect {
                 when (it) {
-                    is DeviceState.Idle -> Unit
-                    is DeviceState.Loading -> setActionUiState(true)
-                    is DeviceState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
                         clearCache()
                     }
-                    is DeviceState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         CommonDialog.error(
                             this@SplashActivity,
                             title = "Device Registration Error",
-                            message = it.message,
+                            message = it.error.orEmpty(),
                             btnText = getString(R.string.txt_retry),
                             cancelable = false,
                         ) { registerDevice() }
@@ -189,15 +137,15 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mHomeViewModel.clearCache.collect {
                 when (it) {
-                    is ClearCacheState.Idle -> Unit
-                    is ClearCacheState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         binding.loader.visibility = View.VISIBLE
                     }
-                    is ClearCacheState.Success -> {
+                    is RequestState.Success<*> -> {
                         binding.loader.visibility = View.GONE
-                        checkForUpdate()
+                        requestConfig()
                     }
-                    is ClearCacheState.Error -> {
+                    is RequestState.Error -> {
                         binding.loader.visibility = View.GONE
                         Timber.e(it.error)
                         val msg = it.error?: "Couldn't clear cache"
@@ -207,7 +155,7 @@ class SplashActivity : AppCompatActivity() {
                             message = msg,
                             btnText = getString(R.string.txt_retry),
                             cancelable = false,
-                        ) {clearCache()}
+                        ) { clearCache() }
                     }
                 }
             }
@@ -229,17 +177,17 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mAuthViewModel.configState.collect {
                 when (it) {
-                    is ConfigState.Idle -> {
+                    is RequestState.Idle -> {
                         binding.loader.visibility = View.INVISIBLE
                     }
-                    is ConfigState.Loading -> {
+                    is RequestState.Loading -> {
                         binding.loader.visibility = View.VISIBLE
                     }
-                    is ConfigState.Success -> {
+                    is RequestState.Success<*> -> {
                         binding.loader.visibility = View.INVISIBLE
-                        handleConfig(it.config)
+                        handleConfig(it.data as ConfigEntity)
                     }
-                    is ConfigState.Error -> {
+                    is RequestState.Error -> {
                         binding.loader.visibility = View.INVISIBLE
                         val msg = it.error?: "Couldn't get app config"
                         CommonDialog.error(
@@ -262,21 +210,37 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun handleConfig(config: ConfigEntity) {
-        if(config.forceRefresh == 0 || config.forceRefreshDone) {
-            launchActivity<HomeActivity>()
-            finish()
+        if(config.forceUpdate != 0 && config.forceUpdateDone.not()) {
+            CommonDialog.error(
+                context = this,
+                title = getString(R.string.title_force_update_dialog),
+                message = getString(R.string.message_force_update_dialog),
+                btnText = getString(R.string.txt_update),
+                false,
+            ) {
+                mPlayStoreUtil.openStore()
+                finish()
+            }
             return
         }
 
-        val title = getString(R.string.title_force_refresh_dialog)
-        val message = getString(R.string.message_force_refresh_dialog)
-        val btnText = getString(R.string.txt_refresh)
-        CommonDialog.error(this, title, message, btnText, false) {
-            refreshData()
+        if(config.forceRefresh != 0 && config.forceRefreshDone.not()) {
+            CommonDialog.error(
+                context = this,
+                title = getString(R.string.title_force_refresh_dialog),
+                message = getString(R.string.message_force_refresh_dialog),
+                btnText = getString(R.string.txt_refresh),
+                false,
+            ) { refreshData() }
+            return
         }
+
+        launchActivity<HomeActivity>()
+        finish()
     }
 
     private fun refreshData() {
+        mHomeViewModel.sliderStateForceRefresh = true
         lifecycleScope.launch {
             mHomeViewModel.intent.send(HomeIntent.DeleteAllData)
         }
@@ -286,17 +250,16 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mHomeViewModel.deleteAllDataState.collect {
                 when (it) {
-                    is DeleteAllState.Idle -> {
-                    }
-                    is DeleteAllState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         binding.loader.visibility = View.VISIBLE
                     }
-                    is DeleteAllState.Success -> {
+                    is RequestState.Success<*> -> {
                         binding.loader.visibility = View.INVISIBLE
                         finishAffinity()
                         launchActivity<SplashActivity> {}
                     }
-                    is DeleteAllState.Error -> {
+                    is RequestState.Error -> {
                         binding.loader.visibility = View.INVISIBLE
                         val msg = it.error?: "Couldn't refresh app data"
                         CommonDialog.error(
@@ -309,98 +272,6 @@ class SplashActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
-    }
-
-    private fun checkForUpdate() {
-        mUpdateUtil.checkForUpdate(object: InAppUpdateUtil.AppUpdateCheckCallback() {
-            override fun onUpdated() {
-                //app is UP-TO-DATE. So, continue normal operation
-                requestConfig()
-            }
-            override fun onAvailable(
-                appUpdateInfo: AppUpdateInfo,
-                needForceUpdate: Boolean,
-                isImmediate: Boolean
-            ) {
-                if(needForceUpdate) {
-                    requestForceUpdate(appUpdateInfo)
-                }else {
-                    requestFlexibleUpdate(appUpdateInfo)
-                }
-            }
-
-            override fun onAlreadyInProgress(appUpdateInfo: AppUpdateInfo) {
-                mUpdateUtil.requestUpdate(
-                    this@SplashActivity,
-                    appUpdateInfo,
-                    true,
-                    Const.RequestCode.IN_APP_UPDATE
-                )
-            }
-
-            override fun onError(exception: Exception) {
-                Timber.e(exception)
-                Toaster.show("Ops, failed to check for update")
-                // App update check is failed, so just continue without it
-                requestConfig()
-            }
-        })
-    }
-
-    private fun requestFlexibleUpdate(appUpdateInfo: AppUpdateInfo) {
-        mUpdateListener = InstallStateUpdatedListener { state ->
-            when(state.installStatus()) {
-                InstallStatus.DOWNLOADING -> {
-//                    val bytesDownloaded = state.bytesDownloaded()
-//                    val totalBytesToDownload = state.totalBytesToDownload()
-                    // Show update progress bar.
-                    binding.loader.visibility = View.VISIBLE
-                }
-                InstallStatus.DOWNLOADED -> {
-                    binding.loader.visibility = View.GONE
-                    mUpdateListener?.let { mUpdateUtil.removeListener(it) }
-                    requestUpdateInstallPermission()
-                }
-                else -> {
-                    binding.loader.visibility = View.GONE
-                }
-            }
-        }
-        val title = getString(R.string.title_flexible_update_dialog)
-        val message = getString(R.string.message_flexible_update_dialog)
-        val btnText = getString(R.string.txt_update)
-        CommonDialog.success(this, title, message, btnText) {
-            mUpdateUtil.requestUpdate(
-                this@SplashActivity,
-                appUpdateInfo,
-                false,
-                Const.RequestCode.IN_APP_UPDATE,
-                mUpdateListener
-            )
-        }
-    }
-
-    private fun requestForceUpdate(appUpdateInfo: AppUpdateInfo) {
-        val title = getString(R.string.title_force_update_dialog)
-        val message = getString(R.string.message_force_update_dialog)
-        val btnText = getString(R.string.txt_update)
-        CommonDialog.error(this, title, message, btnText) {
-            mUpdateUtil.requestUpdate(
-                this@SplashActivity,
-                appUpdateInfo,
-                true,
-                Const.RequestCode.IN_APP_UPDATE
-            )
-        }
-    }
-
-    private fun requestUpdateInstallPermission() {
-        val title = getString(R.string.title_install_update_dialog)
-        val message = getString(R.string.message_install_update_dialog)
-        val btnText = getString(R.string.txt_install)
-        CommonDialog.success(this, title, message, btnText, cancelable = false) {
-            mUpdateUtil.completeUpdate()
         }
     }
 

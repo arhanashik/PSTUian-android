@@ -9,10 +9,6 @@ package com.workfort.pstuian.app.ui.common.locationpicker.intent
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/14.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 

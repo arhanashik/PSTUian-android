@@ -16,24 +16,8 @@ import com.workfort.pstuian.PstuianApp
 import java.net.Inet4Address
 import java.net.NetworkInterface
 import java.net.SocketException
-import java.util.*
+import java.util.Locale
 import kotlin.random.Random
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 28 Oct, 2021 at 13:38.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/10/28.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
- *  ****************************************************************************
- */
 
 object AndroidUtil {
     val randomColor: Int = Color.argb(
@@ -81,14 +65,13 @@ object AndroidUtil {
     }
 
     private fun capitalize(s: String?): String {
-        if (s == null || s.isEmpty()) {
+        if (s.isNullOrEmpty()) {
             return ""
         }
-        val first = s[0]
-        return if (Character.isUpperCase(first)) {
+        return if (Character.isUpperCase(s.first())) {
             s
         } else {
-            Character.toUpperCase(first) + s.substring(1)
+            Character.toUpperCase(s.first()) + s.substring(1)
         }
     }
 

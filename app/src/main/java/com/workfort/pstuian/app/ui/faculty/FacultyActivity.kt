@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.model.FacultyEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.PagerAdapter
 import com.workfort.pstuian.app.ui.faculty.batch.BatchesFragment

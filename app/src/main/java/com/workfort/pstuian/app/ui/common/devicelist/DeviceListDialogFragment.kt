@@ -10,14 +10,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.device.DeviceEntity
 import com.workfort.pstuian.app.ui.common.devicelist.adapter.DeviceAdapter
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
-import com.workfort.pstuian.app.ui.splash.viewstate.DevicesState
 import com.workfort.pstuian.databinding.FragmentDeviceListBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.DeviceEntity
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -91,7 +90,7 @@ class DeviceListDialogFragment (private val onClickSignOutAll : () -> Unit) : Di
             rvData.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    val isLoading = mViewModel.devicesState.value == DevicesState.Loading
+                    val isLoading = mViewModel.devicesState.value == RequestState.Loading
                     if(isLoading || endOfData) {
                         return
                     }
@@ -121,17 +120,18 @@ class DeviceListDialogFragment (private val onClickSignOutAll : () -> Unit) : Di
         lifecycleScope.launch {
             mViewModel.devicesState.collect {
                 when(it) {
-                    is DevicesState.Idle -> Unit
-                    is DevicesState.Loading -> setActionUiState(true)
-                    is DevicesState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        endOfData = it.data.isEmpty()
-                        renderData(it.data)
+                        val list = it.data as List<DeviceEntity>
+                        endOfData = list.isEmpty()
+                        renderData(list)
                     }
-                    is DevicesState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         endOfData = true
-                        binding.tvMessage.text = it.message
+                        binding.tvMessage.text = it.error
                         renderData(emptyList())
                     }
                 }

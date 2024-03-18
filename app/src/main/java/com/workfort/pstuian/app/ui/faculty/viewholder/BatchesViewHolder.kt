@@ -3,7 +3,7 @@ package com.workfort.pstuian.app.ui.faculty.viewholder
 import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
+import com.workfort.pstuian.model.BatchEntity
 import com.workfort.pstuian.databinding.RowBatchBinding
 
 class BatchesViewHolder (val binding: RowBatchBinding) :

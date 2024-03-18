@@ -8,18 +8,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.notification.NotificationEntity
-import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.notification.adapter.NotificationAdapter
 import com.workfort.pstuian.app.ui.notification.intent.NotificationIntent
 import com.workfort.pstuian.app.ui.notification.viewmodel.NotificationViewModel
-import com.workfort.pstuian.app.ui.notification.viewstate.NotificationsState
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.ActivityNotificationBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.NotificationEntity
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.sharedpref.Prefs
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,10 +31,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/10/29.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -78,8 +73,7 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
         binding.rvData.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val isLoading = mViewModel.notificationsState.value ==
-                        NotificationsState.Loading
+                val isLoading = mViewModel.notificationsState.value == RequestState.Loading
                 if(isLoading || endOfData) {
                     return
                 }
@@ -108,15 +102,16 @@ class NotificationActivity : BaseActivity<ActivityNotificationBinding>() {
         lifecycleScope.launch {
             mViewModel.notificationsState.collect {
                 when (it) {
-                    is NotificationsState.Idle -> Unit
-                    is NotificationsState.Loading -> setActionUiState(true)
-                    is NotificationsState.Notifications -> {
-                        endOfData = it.notifications.isEmpty()
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
+                        val list = it.data as List<NotificationEntity>
+                        endOfData = list.isEmpty()
                         setActionUiState(false)
                         Prefs.hasNewNotification = false
-                        renderData(it.notifications)
+                        renderData(list)
                     }
-                    is NotificationsState.Error -> {
+                    is RequestState.Error -> {
                         endOfData = true
                         setActionUiState(false)
                         renderData(emptyList())

@@ -7,15 +7,13 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.TeacherEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.faculty.listener.TeacherClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewholder.TeachersViewHolder
 import com.workfort.pstuian.databinding.RowTeacherBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
 
@@ -52,8 +50,7 @@ class TeachersAdapter : RecyclerView.Adapter<TeachersViewHolder>(), Filterable {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeachersViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil.inflate(inflater, R.layout.row_teacher, parent, false)
-                as RowTeacherBinding
+        val binding = RowTeacherBinding.inflate(inflater, parent, false)
         return TeachersViewHolder(binding)
     }
 

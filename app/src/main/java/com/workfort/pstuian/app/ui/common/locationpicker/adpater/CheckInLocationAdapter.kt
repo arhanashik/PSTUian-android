@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.workfort.pstuian.app.data.local.checkinlocation.CheckInLocationEntity
+import com.workfort.pstuian.model.CheckInLocationEntity
 import com.workfort.pstuian.app.ui.common.locationpicker.viewholder.CheckInLocationViewHolder
 import com.workfort.pstuian.app.ui.common.locationpicker.viewholder.CreateCheckInLocationViewHolder
 import com.workfort.pstuian.databinding.RowCreateLocationBinding
@@ -19,10 +19,6 @@ import com.workfort.pstuian.databinding.RowLocationBinding
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/14.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 

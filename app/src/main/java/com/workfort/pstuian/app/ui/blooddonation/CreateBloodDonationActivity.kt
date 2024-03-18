@@ -12,17 +12,16 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.blooddonationrequest.intent.BloodDonationIntent
 import com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel.BloodDonationViewModel
-import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.BloodDonationState
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.ActivityCreateBloodDonationBinding
+import com.workfort.pstuian.model.BloodDonationEntity
+import com.workfort.pstuian.model.RequestState
 import com.workfort.pstuian.util.helper.DateUtil
 import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -35,10 +34,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/16.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -150,18 +145,18 @@ class CreateBloodDonationActivity : BaseActivity<ActivityCreateBloodDonationBind
         lifecycleScope.launch {
             mViewModel.createDonationState.collect {
                 when (it) {
-                    is BloodDonationState.Idle -> Unit
-                    is BloodDonationState.Loading -> setActionUi(isLoading = true)
-                    is BloodDonationState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUi(isLoading = true)
+                    is RequestState.Success<*> -> {
                         setActionUi(isLoading = false)
                         Toaster.show("Blood donation created successfully!")
-                        setActivityResult(it.item, false)
+                        setActivityResult(it.data as BloodDonationEntity, false)
                         finish()
                     }
-                    is BloodDonationState.Error -> {
+                    is RequestState.Error -> {
                         setActionUi(isLoading = false)
                         CommonDialog.error(this@CreateBloodDonationActivity,
-                            message = it.message)
+                            message = it.error ?: "Something went wrong")
                     }
                 }
             }
@@ -172,18 +167,18 @@ class CreateBloodDonationActivity : BaseActivity<ActivityCreateBloodDonationBind
         lifecycleScope.launch {
             mViewModel.updateDonationState.collect {
                 when (it) {
-                    is BloodDonationState.Idle -> Unit
-                    is BloodDonationState.Loading -> setActionUi(isLoading = true)
-                    is BloodDonationState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUi(isLoading = true)
+                    is RequestState.Success<*> -> {
                         setActionUi(isLoading = false)
                         Toaster.show("Blood donation updated successfully!")
-                        setActivityResult(it.item, true)
+                        setActivityResult(it.data as BloodDonationEntity, true)
                         finish()
                     }
-                    is BloodDonationState.Error -> {
+                    is RequestState.Error -> {
                         setActionUi(isLoading = false)
                         CommonDialog.error(this@CreateBloodDonationActivity,
-                            message = it.message)
+                            message = it.error ?: "Something went wrong")
                     }
                 }
             }

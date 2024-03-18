@@ -9,15 +9,11 @@ package com.workfort.pstuian.app.ui.home.intent
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 9/30/21.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
 sealed class HomeIntent {
-    object GetSliders : HomeIntent()
-    object DeleteAllData : HomeIntent()
-    object ClearCache : HomeIntent()
+    data object GetSliders : HomeIntent()
+    data object DeleteAllData : HomeIntent()
+    data object ClearCache : HomeIntent()
 }

@@ -2,8 +2,8 @@ package com.workfort.pstuian.app.ui.common.locationpicker.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.workfort.pstuian.model.CheckInLocationEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.checkinlocation.CheckInLocationEntity
 import com.workfort.pstuian.databinding.RowLocationBinding
 import com.workfort.pstuian.util.helper.MathUtil
 
@@ -16,10 +16,6 @@ import com.workfort.pstuian.util.helper.MathUtil
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/14.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 

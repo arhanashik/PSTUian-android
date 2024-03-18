@@ -1,7 +1,5 @@
 package com.workfort.pstuian.app.ui.base.callback
 
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
-
 /**
  *  ****************************************************************************
  *  * Created by : arhan on 29 Oct, 2021 at 21:22.

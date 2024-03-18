@@ -9,13 +9,9 @@ package com.workfort.pstuian.app.ui.students.intent
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 10/02/21.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
 sealed class StudentsIntent {
-    object GetStudents : StudentsIntent()
+    data object GetStudents : StudentsIntent()
 }

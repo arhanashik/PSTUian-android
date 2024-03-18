@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.workfort.pstuian.app.data.local.device.DeviceEntity
+import com.workfort.pstuian.model.DeviceEntity
 import com.workfort.pstuian.app.ui.common.devicelist.viewholder.DeviceViewHolder
 import com.workfort.pstuian.databinding.RowDeviceBinding
 
@@ -17,10 +17,6 @@ import com.workfort.pstuian.databinding.RowDeviceBinding
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/23.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 

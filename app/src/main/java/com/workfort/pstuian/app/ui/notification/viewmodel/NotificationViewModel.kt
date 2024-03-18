@@ -2,13 +2,12 @@ package com.workfort.pstuian.app.ui.notification.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.app.data.repository.NotificationRepository
 import com.workfort.pstuian.app.ui.notification.intent.NotificationIntent
-import com.workfort.pstuian.app.ui.notification.viewstate.NotificationsState
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.repository.NotificationRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
@@ -21,20 +20,14 @@ import kotlinx.coroutines.launch
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/10/29.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
-class NotificationViewModel(
-    private val repo: NotificationRepository
-) : ViewModel() {
+class NotificationViewModel(private val repo: NotificationRepository) : ViewModel() {
     val intent = Channel<NotificationIntent>(Channel.UNLIMITED)
 
     var notificationsPage = 1
-    private val _notificationsState = MutableStateFlow<NotificationsState>(NotificationsState.Idle)
-    val notificationsState: StateFlow<NotificationsState> get() = _notificationsState
+    private val _notificationsState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val notificationsState: StateFlow<RequestState> get() = _notificationsState
 
     init {
         handleIntent()
@@ -52,11 +45,11 @@ class NotificationViewModel(
 
     private fun getAll(page: Int) {
         viewModelScope.launch {
-            _notificationsState.value = NotificationsState.Loading
+            _notificationsState.value = RequestState.Loading
             _notificationsState.value = try {
-                NotificationsState.Notifications(repo.getAll(page))
+                RequestState.Success(repo.getAll(page))
             } catch (e: Exception) {
-                NotificationsState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }

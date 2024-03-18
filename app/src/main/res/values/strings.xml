@@ -186,6 +186,9 @@
     <string name="txt_need_blood">Need Blood?</string>
     <string name="txt_check_in">Check In</string>
     <string name="txt_coming_soon">Coming soon…</string>
+    <string name="txt_account">Account</string>
+    <string name="txt_delete_account">Delete Account</string>
+    <string name="txt_notification">Notification</string>
 
     <string name="description_app_logo" translatable="false">App logo</string>
     <string name="description_ic_call" translatable="false">Icon call</string>
@@ -369,6 +372,10 @@
     <string name="txt_sign_out_from_all">Sign out from all</string>
     <string name="msg_sign_out_from_all">Are you surely want to sign out from all devices? You will have to sign in again.</string>
     <string name="msg_sign_out">Are you surely want to sign out?</string>
+    <string name="msg_delete_account">
+        Are you surely want to delete your account?
+        If you don\'t request for recovery within 3days the account might be permanently deleted!
+    </string>
 
     <array name="blood_group">
         <item>A+</item>

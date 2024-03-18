@@ -15,28 +15,25 @@ import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import androidx.work.WorkInfo
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
-import com.workfort.pstuian.app.ui.common.viewmodel.FileHandlerViewModel
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.BatchesState
-import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.studentprofile.intent.StudentProfileIntent
 import com.workfort.pstuian.app.ui.studentprofile.viewmodel.StudentProfileViewModel
-import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.ActivityEditStudentProfileBinding
+import com.workfort.pstuian.model.BatchEntity
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.ProgressRequestState
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.model.StudentEntity
 import com.workfort.pstuian.util.helper.PermissionUtil
 import com.workfort.pstuian.util.helper.Toaster
 import com.workfort.pstuian.util.helper.nameFilter
-import com.workfort.pstuian.util.view.dialog.CommonDialog
+import com.workfort.pstuian.workmanager.FileHandlerViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -160,18 +157,18 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
         lifecycleScope.launch {
             mFacultyViewModel.facultyState.collect {
                 when (it) {
-                    is FacultyState.Idle -> {
-                    }
-                    is FacultyState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is FacultyState.Faculties -> {
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
+                        val faculties = it.data as List<FacultyEntity>
                         mFaculties.clear()
-                        mFaculties.addAll(it.faculties)
-                        renderFaculties(it.faculties)
+                        mFaculties.addAll(faculties)
+                        renderFaculties(faculties)
                     }
-                    is FacultyState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         Timber.e("Can't load data")
                     }
@@ -198,18 +195,18 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
         lifecycleScope.launch {
             mFacultyViewModel.batchesState.collect {
                 when (it) {
-                    is BatchesState.Idle -> {
-                    }
-                    is BatchesState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is BatchesState.Batches -> {
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
+                        val batches = it.data as List<BatchEntity>
                         mBatches.clear()
-                        mBatches.addAll(it.batches)
-                        renderBatches(it.batches)
+                        mBatches.addAll(batches)
+                        renderBatches(batches)
                     }
-                    is BatchesState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         renderBatches(emptyList())
                         Timber.e("Can't load data")
@@ -335,18 +332,18 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
         lifecycleScope.launch {
             mStudentViewModel.changeAcademicInfoState.collect {
                 when (it) {
-                    is ChangeProfileInfoState.Idle -> {
+                    is RequestState.Idle -> {
                     }
-                    is ChangeProfileInfoState.Loading -> {
+                    is RequestState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileInfoState.Success<*> -> {
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
-                        if(it.data is StudentEntity) mStudent = it.data
+                        mStudent = it.data as StudentEntity
                         setActivityResult()
                         CommonDialog.success(this@EditStudentProfileActivity)
                     }
-                    is ChangeProfileInfoState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
                         CommonDialog.error(this@EditStudentProfileActivity, message = msg)
@@ -382,18 +379,17 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
         lifecycleScope.launch {
             mStudentViewModel.changeConnectInfoState.collect {
                 when (it) {
-                    is ChangeProfileInfoState.Idle -> {
-                    }
-                    is ChangeProfileInfoState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         setActionUiState(isActionRunning = true)
                     }
-                    is ChangeProfileInfoState.Success<*> -> {
+                    is RequestState.Success<*> -> {
                         setActionUiState(isActionRunning = false)
-                        if(it.data is StudentEntity) mStudent = it.data
+                        mStudent = it.data as StudentEntity
                         setActivityResult()
                         CommonDialog.success(this@EditStudentProfileActivity)
                     }
-                    is ChangeProfileInfoState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(isActionRunning = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
                         CommonDialog.error(this@EditStudentProfileActivity, message = msg)
@@ -438,40 +434,34 @@ class EditStudentProfileActivity: BaseActivity<ActivityEditStudentProfileBinding
     }
 
     private fun uploadPdf(pdfUri: Uri, fileName: String) {
-        mFileHandlerViewModel.uploadPdf(this, pdfUri, fileName).observe(this, {
-            when (it.state) {
-                WorkInfo.State.ENQUEUED,
-                WorkInfo.State.RUNNING -> {
-                    val progress = it.progress.getInt(Const.Key.PROGRESS, 0)
-                    if (progress == 0) {
-                        setActionUiState(isActionRunning = true, isLoaderIndeterminate = false)
+        mFileHandlerViewModel.uploadPdf(this, pdfUri, fileName)
+        lifecycleScope.launch {
+            mFileHandlerViewModel.uploadFileState.collect {
+                when (it) {
+                    is ProgressRequestState.Idle -> Unit
+                    is ProgressRequestState.Loading -> {
+                        if (it.progress == 0) {
+                            setActionUiState(isActionRunning = true, isLoaderIndeterminate = false)
+                        }
+                        binding.loader.progress = it.progress
                     }
-                    binding.loader.progress = progress
-                }
-                WorkInfo.State.SUCCEEDED -> {
-                    setActionUiState(isActionRunning = false)
-                    val data = it.outputData.getString(Const.Key.URL)
-                    if(data.isNullOrEmpty()) {
-                        CommonDialog.error(this, message = "Failed to upload the pdf")
-                    } else {
-                        binding.content.etCv.setText(data)
+                    is ProgressRequestState.Success<*> -> {
+                        setActionUiState(isActionRunning = false)
+                        val link = it.data as String
+                        binding.content.etCv.setText(link)
                         val message = "Pdf uploaded successfully. You MUST have to, " +
                                 "Save Changes to save the new cv link."
-                        CommonDialog.success(this, message = message)
+                        CommonDialog.success(this@EditStudentProfileActivity, message = message)
+                    }
+                    is ProgressRequestState.Error -> {
+                        setActionUiState(isActionRunning = false)
+                        val msg = if(it.error.isNullOrEmpty())
+                            getString(R.string.default_error_dialog_message) else it.error
+                        CommonDialog.error(this@EditStudentProfileActivity, "Upload Failed", msg!!)
                     }
                 }
-                WorkInfo.State.FAILED -> {
-                    setActionUiState(isActionRunning = false)
-                    val data = it.outputData.getString(Const.Key.MESSAGE)
-                    val message = if(data.isNullOrEmpty())
-                        getString(R.string.default_error_dialog_message) else data
-                    CommonDialog.error(this, "Upload Failed", message)
-                }
-                else -> {
-                    setActionUiState(isActionRunning = false)
-                }
             }
-        })
+        }
     }
 
     private fun setActivityResult(dataChanged: Boolean = true) {

@@ -8,12 +8,11 @@ import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.BloodDonationEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
 import com.workfort.pstuian.app.ui.common.blooddonationlist.viewholder.BloodDonationViewHolder
 import com.workfort.pstuian.databinding.RowBloodDonationBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 /**
  *  ****************************************************************************
@@ -24,10 +23,6 @@ import kotlin.collections.ArrayList
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/16.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 

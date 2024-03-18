@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.common.broadcastreceiver
+package com.workfort.pstuian.app.ui.base.broadcastreceiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

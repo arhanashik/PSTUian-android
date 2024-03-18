@@ -8,19 +8,18 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.student.StudentEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.StudentClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
 import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.app.ui.students.adapter.StudentsAdapter
-import com.workfort.pstuian.app.ui.students.viewstate.StudentsState
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.ActivityStudentsBinding
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.BatchEntity
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.model.StudentEntity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -91,13 +90,13 @@ class StudentsActivity : BaseActivity<ActivityStudentsBinding>() {
         lifecycleScope.launch {
             mViewModel.studentsState.collect {
                 when (it) {
-                    is StudentsState.Idle -> Unit
-                    is StudentsState.Loading -> setActionUiState(true)
-                    is StudentsState.Students -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        renderStudents(it.students)
+                        renderStudents(it.data as List<StudentEntity>)
                     }
-                    is StudentsState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         renderStudents(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"

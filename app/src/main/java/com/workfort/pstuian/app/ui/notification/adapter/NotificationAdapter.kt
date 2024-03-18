@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.NotificationEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.notification.NotificationEntity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
 import com.workfort.pstuian.app.ui.notification.viewholder.NotificationViewHolder
 import com.workfort.pstuian.databinding.RowNotificationBinding
@@ -20,10 +20,6 @@ import com.workfort.pstuian.databinding.RowNotificationBinding
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/10/29.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
