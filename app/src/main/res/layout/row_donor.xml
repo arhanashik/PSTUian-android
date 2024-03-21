@@ -1,67 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+<com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_16dp"
+        android:layout_marginTop="@dimen/space_8dp"
+        android:layout_marginEnd="@dimen/space_16dp"
+        android:layout_marginBottom="@dimen/space_8dp"
+        app:cardElevation="@dimen/space_5dp"
+        app:cardCornerRadius="@dimen/default_space">
 
-    <com.google.android.material.card.MaterialCardView
+    <FrameLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_16dp"
-            android:layout_marginTop="@dimen/space_8dp"
-            android:layout_marginEnd="@dimen/space_16dp"
-            android:layout_marginBottom="@dimen/space_8dp"
-            app:cardElevation="@dimen/space_5dp"
-            app:cardCornerRadius="@dimen/default_space">
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_gradient10">
 
-        <FrameLayout
-                android:id="@+id/container"
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/bg_gradient10">
+                android:padding="@dimen/space_16dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="@dimen/space_16dp">
+            <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_16dp"
+                    tools:text="@tools:sample/lorem/random"
+                    android:singleLine="true"
+                    android:textAppearance="@android:style/TextAppearance.Medium"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ic_donor"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-                <TextView
-                        android:id="@+id/tv_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/space_16dp"
-                        tools:text="@tools:sample/lorem/random"
-                        android:singleLine="true"
-                        android:textAppearance="@android:style/TextAppearance.Medium"
-                        android:textColor="@android:color/black"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/ic_donor"
-                        app:layout_constraintTop_toTopOf="parent"/>
+            <TextView
+                    android:id="@+id/tv_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_16dp"
+                    android:paddingTop="@dimen/space_5dp"
+                    tools:text="@tools:sample/lorem/random"
+                    android:lines="2"
+                    android:ellipsize="end"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@android:color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ic_donor"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_name"/>
 
-                <TextView
-                        android:id="@+id/tv_info"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/space_16dp"
-                        android:paddingTop="@dimen/space_5dp"
-                        tools:text="@tools:sample/lorem/random"
-                        android:lines="2"
-                        android:ellipsize="end"
-                        android:textAppearance="@android:style/TextAppearance.Small"
-                        android:textColor="@android:color/black"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/ic_donor"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_name"/>
-
-                <ImageView
-                        android:id="@+id/ic_donor"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_account_heart_outline"
-                        app:tint="@android:color/darker_gray"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        tools:ignore="ContentDescription" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </FrameLayout>
-    </com.google.android.material.card.MaterialCardView>
-</layout>
+            <ImageView
+                    android:id="@+id/ic_donor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_account_heart_outline"
+                    app:tint="@android:color/darker_gray"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:ignore="ContentDescription" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -2,16 +2,14 @@ package com.workfort.pstuian.app.ui.studentprofile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.app.data.local.student.StudentEntity
-import com.workfort.pstuian.app.data.repository.StudentRepository
 import com.workfort.pstuian.app.ui.studentprofile.intent.StudentProfileIntent
-import com.workfort.pstuian.app.ui.studentprofile.viewstate.ChangeProfileInfoState
-import com.workfort.pstuian.app.ui.studentprofile.viewstate.GetProfileState
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.model.StudentEntity
+import com.workfort.pstuian.repository.StudentRepository
 import com.workfort.pstuian.util.helper.CoilUtil
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
@@ -24,35 +22,29 @@ import kotlinx.coroutines.launch
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 10/20/21.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
-class StudentProfileViewModel(
-    private val studentRepo: StudentRepository
-) : ViewModel() {
+class StudentProfileViewModel(private val studentRepo: StudentRepository) : ViewModel() {
     val intent = Channel<StudentProfileIntent>(Channel.UNLIMITED)
 
-    private val _getProfileState = MutableStateFlow<GetProfileState>(GetProfileState.Idle)
-    val getProfileState: StateFlow<GetProfileState> get() = _getProfileState
+    private val _getProfileState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val getProfileState: StateFlow<RequestState> get() = _getProfileState
 
-    private val _changeProfileImageState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
-    val changeProfileImageState: StateFlow<ChangeProfileInfoState> get() = _changeProfileImageState
+    private val _changeProfileImageState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val changeProfileImageState: StateFlow<RequestState> get() = _changeProfileImageState
 
-    private val _changeNameState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
-    val changeNameState: StateFlow<ChangeProfileInfoState> get() = _changeNameState
+    private val _changeNameState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val changeNameState: StateFlow<RequestState> get() = _changeNameState
 
-    private val _changeBioState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
-    val changeBioState: StateFlow<ChangeProfileInfoState> get() = _changeBioState
+    private val _changeBioState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val changeBioState: StateFlow<RequestState> get() = _changeBioState
 
-    private val _changeAcademicInfoState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
-    val changeAcademicInfoState: StateFlow<ChangeProfileInfoState> get() = _changeAcademicInfoState
+    private val _changeAcademicInfoState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val changeAcademicInfoState: StateFlow<RequestState> get() = _changeAcademicInfoState
 
-    private val _changeConnectInfoState = MutableStateFlow<ChangeProfileInfoState>(ChangeProfileInfoState.Idle)
-    val changeConnectInfoState: StateFlow<ChangeProfileInfoState> get() = _changeConnectInfoState
+    private val _changeConnectInfoState = MutableStateFlow<RequestState>(RequestState.Idle)
+    val changeConnectInfoState: StateFlow<RequestState> get() = _changeConnectInfoState
 
     init {
         handleIntent()
@@ -78,28 +70,25 @@ class StudentProfileViewModel(
 
     private fun getProfile(studentId: Int) {
         viewModelScope.launch {
-            _getProfileState.value = GetProfileState.Loading
+            _getProfileState.value = RequestState.Loading
             _getProfileState.value = try {
-                GetProfileState.Success(studentRepo.getProfile(studentId))
+                RequestState.Success(studentRepo.getProfile(studentId))
             } catch (e: Exception) {
-                GetProfileState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
 
-    private fun changeProfileImage(
-        student: StudentEntity,
-        imageUrl: String
-    ) {
+    private fun changeProfileImage(student: StudentEntity, imageUrl: String) {
         viewModelScope.launch {
-            _changeProfileImageState.value = ChangeProfileInfoState.Loading
+            _changeProfileImageState.value = RequestState.Loading
             _changeProfileImageState.value = try {
                 studentRepo.changeProfileImage(student, imageUrl)
                 CoilUtil.clearUrlCache(imageUrl)
                 CoilUtil.clearCache()
-                ChangeProfileInfoState.Success(imageUrl)
+                RequestState.Success(imageUrl)
             } catch (e: Exception) {
-                ChangeProfileInfoState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
@@ -109,12 +98,12 @@ class StudentProfileViewModel(
         newName: String
     ) {
         viewModelScope.launch {
-            _changeNameState.value = ChangeProfileInfoState.Loading
+            _changeNameState.value = RequestState.Loading
             _changeNameState.value = try {
                 studentRepo.changeName(student, newName)
-                ChangeProfileInfoState.Success(newName)
+                RequestState.Success(newName)
             } catch (e: Exception) {
-                ChangeProfileInfoState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
@@ -124,12 +113,12 @@ class StudentProfileViewModel(
         newBio: String
     ) {
         viewModelScope.launch {
-            _changeBioState.value = ChangeProfileInfoState.Loading
+            _changeBioState.value = RequestState.Loading
             _changeBioState.value = try {
                 studentRepo.changeBio(student, newBio)
-                ChangeProfileInfoState.Success(newBio)
+                RequestState.Success(newBio)
             } catch (e: Exception) {
-                ChangeProfileInfoState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
@@ -145,13 +134,13 @@ class StudentProfileViewModel(
         batchId: Int
     ) {
         viewModelScope.launch {
-            _changeAcademicInfoState.value = ChangeProfileInfoState.Loading
+            _changeAcademicInfoState.value = RequestState.Loading
             _changeAcademicInfoState.value = try {
                 val newStudent = studentRepo.changeAcademicInfo(student, name, id, reg, blood,
                     facultyId, session, batchId)
-                ChangeProfileInfoState.Success(newStudent)
+                RequestState.Success(newStudent)
             } catch (e: Exception) {
-                ChangeProfileInfoState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }
@@ -166,13 +155,13 @@ class StudentProfileViewModel(
         facebook: String
     ) {
         viewModelScope.launch {
-            _changeConnectInfoState.value = ChangeProfileInfoState.Loading
+            _changeConnectInfoState.value = RequestState.Loading
             _changeConnectInfoState.value = try {
                 val newStudent = studentRepo.changeConnectInfo(student,
                     address, phone, email, cvLink, linkedIn, facebook)
-                ChangeProfileInfoState.Success(newStudent)
+                RequestState.Success(newStudent)
             } catch (e: Exception) {
-                ChangeProfileInfoState.Error(e.message)
+                RequestState.Error(e.message)
             }
         }
     }

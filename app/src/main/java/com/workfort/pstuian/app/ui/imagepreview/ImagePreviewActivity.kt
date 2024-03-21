@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import coil.load
-import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.databinding.ActivityImagePreviewBinding
 
@@ -18,10 +18,6 @@ import com.workfort.pstuian.databinding.ActivityImagePreviewBinding
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/11/01.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
@@ -37,9 +33,7 @@ class ImagePreviewActivity : BaseActivity<ActivityImagePreviewBinding>() {
 
         //get shared image view transition name
         intent?.getStringExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME)?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                binding.ivPreview.transitionName = it
-            }
+            binding.ivPreview.transitionName = it
         }
 
         //load the image

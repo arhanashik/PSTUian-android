@@ -3,23 +3,8 @@ package com.workfort.pstuian.util.helper
 import android.text.format.DateUtils
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 29 Oct, 2021 at 22:00.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/10/29.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
- *  ****************************************************************************
- */
+import java.util.Calendar
+import java.util.Locale
 
 object DateUtil {
     /**

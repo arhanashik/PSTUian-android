@@ -7,8 +7,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.annotation.StringRes
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
 import com.workfort.pstuian.util.extension.launchActivity
 

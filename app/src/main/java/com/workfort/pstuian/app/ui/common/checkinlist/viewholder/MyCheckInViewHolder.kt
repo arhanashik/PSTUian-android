@@ -2,9 +2,9 @@ package com.workfort.pstuian.app.ui.common.checkinlist.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.workfort.pstuian.appconstant.NetworkConst
+import com.workfort.pstuian.model.CheckInEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.databinding.RowMyCheckInBinding
 import com.workfort.pstuian.util.helper.DateUtil
 import com.workfort.pstuian.util.helper.MathUtil
@@ -35,7 +35,7 @@ class MyCheckInViewHolder (private val binding : RowMyCheckInBinding) :
             val checkInCountStr = "$formattedCount check in"
             tvCheckInCount.text = checkInCountStr
             tvPrivacy.text = when(item.privacy) {
-                Const.Params.CheckInPrivacy.ONLY_ME -> "Only Me"
+                NetworkConst.Params.CheckInPrivacy.ONLY_ME -> "Only Me"
                 else -> "Public"
             }
 

@@ -186,6 +186,9 @@
     <string name="txt_need_blood">Need Blood?</string>
     <string name="txt_check_in">Check In</string>
     <string name="txt_coming_soon">Coming soon…</string>
+    <string name="txt_account">Account</string>
+    <string name="txt_delete_account">Delete Account</string>
+    <string name="txt_notification">Notification</string>
 
     <string name="description_app_logo" translatable="false">App logo</string>
     <string name="description_ic_call" translatable="false">Icon call</string>
@@ -193,7 +196,9 @@
     <string name="description_img_profile" translatable="false">Profile Image</string>
 
     <string name="default_error_dialog_title">Ops, something went wrong!</string>
-    <string name="default_error_dialog_message">Please check if everything is alright and try again. Sorry for the inconvenience.</string>
+    <string name="default_error_dialog_message">
+        Please check if everything is alright and try again. Sorry for the inconvenience.
+    </string>
     <string name="error_msg_sign_in">
         If you are trying to login for the first time, please try to use your student id as
         your password. If not, please check if the email and password is correct. Also, please
@@ -343,7 +348,9 @@
     <string name="txt_my_donation_list">My Donation List</string>
     <string name="txt_change_privacy">Change Privacy</string>
     <string name="txt_delete">Delete</string>
-    <string name="msg_delete_permanent">Are you surely want to delete? You cannot restore it again.</string>
+    <string name="msg_delete_permanent">
+        Are you surely want to delete? You cannot restore it again.
+    </string>
     <string name="hint_request_id">Request id</string>
     <string name="label_create_blood_donation_activity">Create donation</string>
     <string name="hint_donation_date">Donation date</string>
@@ -365,6 +372,10 @@
     <string name="txt_sign_out_from_all">Sign out from all</string>
     <string name="msg_sign_out_from_all">Are you surely want to sign out from all devices? You will have to sign in again.</string>
     <string name="msg_sign_out">Are you surely want to sign out?</string>
+    <string name="msg_delete_account">
+        Are you surely want to delete your account?
+        If you don\'t request for recovery within 3days the account might be permanently deleted!
+    </string>
 
     <array name="blood_group">
         <item>A+</item>

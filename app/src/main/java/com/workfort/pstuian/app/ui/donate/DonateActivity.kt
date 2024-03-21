@@ -8,17 +8,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.donors.intent.DonorsIntent
 import com.workfort.pstuian.app.ui.donors.viewmodel.DonorsViewModel
-import com.workfort.pstuian.app.ui.donors.viewstate.DonationOptionState
-import com.workfort.pstuian.app.ui.donors.viewstate.DonationState
 import com.workfort.pstuian.databinding.ActivityDonateBinding
 import com.workfort.pstuian.databinding.PromptDonationMessageBinding
-import com.workfort.pstuian.util.extension.launchActivity
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.sharedpref.Prefs
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -65,14 +62,14 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
         lifecycleScope.launch {
             mViewModel.donationOptionState.collect {
                 when (it) {
-                    is DonationOptionState.Idle -> Unit
-                    is DonationOptionState.Loading -> setActionUi(isLoading = true)
-                    is DonationOptionState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUi(isLoading = true)
+                    is RequestState.Success<*> -> {
                         setActionUi(isLoading = false)
                         setUiData()
                         showInfoDialog()
                     }
-                    is DonationOptionState.Error -> {
+                    is RequestState.Error -> {
                         setActionUi(isLoading = false)
                         val msg = it.error?: getString(R.string.default_error_dialog_message)
                         CommonDialog.error(this@DonateActivity, message = msg)
@@ -105,13 +102,13 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
         lifecycleScope.launch {
             mViewModel.donationState.collect {
                 when (it) {
-                    is DonationState.Idle -> Unit
-                    is DonationState.Loading -> setActionUi(isLoading = true)
-                    is DonationState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUi(isLoading = true)
+                    is RequestState.Success<*> -> {
                         setActionUi(isLoading = false)
-                        CommonDialog.success(this@DonateActivity, message = it.message)
+                        CommonDialog.success(this@DonateActivity, message = it.data as String)
                     }
-                    is DonationState.Error -> {
+                    is RequestState.Error -> {
                         setActionUi(isLoading = false)
                         val error = it.error?: "Donation failed!"
                         CommonDialog.error(this@DonateActivity, message = error)

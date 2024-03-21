@@ -6,17 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.signin.SignInActivity
-import com.workfort.pstuian.app.ui.signup.viewstate.TeacherSignUpState
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
+import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.appconstant.NetworkConst
 import com.workfort.pstuian.databinding.ActivityTeacherSignUpBinding
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
 import com.workfort.pstuian.util.extension.launchActivity
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -50,10 +50,12 @@ class TeacherSignUpActivity : BaseActivity<ActivityTeacherSignUpBinding>() {
         when(v) {
             binding.btnSignUp -> signUp()
             binding.btnSignIn -> gotToSignIn()
-            binding.btnTermsAndConditions -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
-                Const.Remote.TERMS_AND_CONDITIONS))
-            binding.btnPrivacyPolicy -> launchActivity<WebViewActivity>(Pair(Const.Key.URL,
-                Const.Remote.PRIVACY_POLICY))
+            binding.btnTermsAndConditions -> launchActivity<WebViewActivity>(Pair(
+                Const.Key.URL,
+                NetworkConst.Remote.TERMS_AND_CONDITIONS))
+            binding.btnPrivacyPolicy -> launchActivity<WebViewActivity>(Pair(
+                Const.Key.URL,
+                NetworkConst.Remote.PRIVACY_POLICY))
             else -> Timber.e("Who clicked me!")
         }
     }
@@ -105,13 +107,13 @@ class TeacherSignUpActivity : BaseActivity<ActivityTeacherSignUpBinding>() {
         lifecycleScope.launch {
             mViewModel.teacherSignUpState.collect {
                 when (it) {
-                    is TeacherSignUpState.Idle -> Unit
-                    is TeacherSignUpState.Loading -> setActionUiState(true)
-                    is TeacherSignUpState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
                         doSuccessAction()
                     }
-                    is TeacherSignUpState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         val title = "Sign up failed!"
                         val msg = it.error?: getString(R.string.default_error_dialog_message)

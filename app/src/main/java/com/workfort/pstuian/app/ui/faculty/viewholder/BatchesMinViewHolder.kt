@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.ui.faculty.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
+import com.workfort.pstuian.model.BatchEntity
 import com.workfort.pstuian.databinding.RowBatchMinBinding
 
 class BatchesMinViewHolder (val binding: RowBatchMinBinding) :

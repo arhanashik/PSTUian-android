@@ -1,16 +1,14 @@
 package com.workfort.pstuian.app.ui.webview
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
-import androidx.annotation.Nullable
 import androidx.core.content.ContextCompat
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.activity.BaseAgentWebActivity
 import com.workfort.pstuian.databinding.ActivityWebViewBinding
 import com.workfort.pstuian.util.helper.LinkUtil
@@ -25,16 +23,12 @@ import com.workfort.pstuian.util.helper.LinkUtil
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/10/24.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 
 class WebViewActivity : BaseAgentWebActivity() {
     private lateinit var binding: ActivityWebViewBinding
-    override fun onCreate(@Nullable savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWebViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -59,7 +53,9 @@ class WebViewActivity : BaseAgentWebActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        super.onBackPressed()
         goPreviousOrFinish()
     }
 
@@ -90,9 +86,7 @@ class WebViewActivity : BaseAgentWebActivity() {
         errorResponse: WebResourceResponse?
     ) {
         super.onHttpError(view, request, errorResponse)
-        val statusCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            errorResponse?.statusCode
-        } else -1
+        val statusCode = errorResponse?.statusCode
 
         val errorMessage = getString(when(statusCode) {
             404 -> R.string.msg_404_error

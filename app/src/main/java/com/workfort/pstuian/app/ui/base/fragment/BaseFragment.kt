@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.workfort.pstuian.app.data.local.constant.Const
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.app.ui.base.callback.BaseLocationCallback
 import com.workfort.pstuian.util.helper.NetworkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
@@ -131,9 +131,9 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), View.OnClickListener
 
     private fun observeConnectivity() {
         context?.let {
-            NetworkUtil.from(it).observe(viewLifecycleOwner, { connected ->
+            NetworkUtil.from(it).observe(viewLifecycleOwner) { connected ->
                 onConnectivityChanged(connected)
-            })
+            }
         }
     }
 

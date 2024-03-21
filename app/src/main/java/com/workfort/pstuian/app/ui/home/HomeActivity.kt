@@ -10,16 +10,11 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
-import com.workfort.pstuian.app.data.local.pref.Prefs
-import com.workfort.pstuian.app.data.local.slider.SliderEntity
-import com.workfort.pstuian.app.data.local.student.StudentEntity
-import com.workfort.pstuian.app.data.local.teacher.TeacherEntity
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.base.callback.ItemClickEvent
 import com.workfort.pstuian.app.ui.blooddonationrequest.BloodDonationRequestActivity
 import com.workfort.pstuian.app.ui.checkin.CheckInActivity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.intent.AuthIntent
 import com.workfort.pstuian.app.ui.common.viewmodel.AuthViewModel
 import com.workfort.pstuian.app.ui.donate.DonateActivity
@@ -28,13 +23,9 @@ import com.workfort.pstuian.app.ui.faculty.FacultyActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.FacultyAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.FacultyState
 import com.workfort.pstuian.app.ui.home.adapter.SliderAdapter
 import com.workfort.pstuian.app.ui.home.intent.HomeIntent
 import com.workfort.pstuian.app.ui.home.viewmodel.HomeViewModel
-import com.workfort.pstuian.app.ui.home.viewstate.DeleteAllState
-import com.workfort.pstuian.app.ui.home.viewstate.SignInUserState
-import com.workfort.pstuian.app.ui.home.viewstate.SliderState
 import com.workfort.pstuian.app.ui.imagepreview.ImagePreviewActivity
 import com.workfort.pstuian.app.ui.notification.NotificationActivity
 import com.workfort.pstuian.app.ui.settings.SettingsActivity
@@ -44,14 +35,20 @@ import com.workfort.pstuian.app.ui.studentprofile.StudentProfileActivity
 import com.workfort.pstuian.app.ui.support.SupportActivity
 import com.workfort.pstuian.app.ui.teacherprofile.TeacherProfileActivity
 import com.workfort.pstuian.app.ui.webview.WebViewActivity
+import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.appconstant.NetworkConst
 import com.workfort.pstuian.databinding.ActivityHomeBinding
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.model.SliderEntity
+import com.workfort.pstuian.model.StudentEntity
+import com.workfort.pstuian.model.TeacherEntity
+import com.workfort.pstuian.sharedpref.Prefs
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.PlayStoreUtil
 import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import com.workfort.pstuian.util.view.imageslider.SliderAnimations
-import com.workfort.pstuian.util.view.imageslider.indicatorview.animation.type.IndicatorAnimationType
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.view.imageslider.SliderAnimations
+import com.workfort.pstuian.view.imageslider.indicatorview.animation.type.IndicatorAnimationType
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -126,7 +123,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     val intent = Intent(this@HomeActivity,
                         ImagePreviewActivity::class.java)
                     intent.putExtra(Const.Key.URL, item.imageUrl)
-                    intent.putExtra(Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
+                    intent.putExtra(
+                        Const.Key.EXTRA_IMAGE_TRANSITION_NAME,
                         getString(R.string.transition_image_preview))
                     startActivity(intent)
                 }
@@ -162,7 +160,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             cardDonationList.setOnClickListener { launchActivity<DonorsActivity>() }
             cardAdmissionSupport.setOnClickListener {
                 launchActivity<WebViewActivity>(
-                    Pair(Const.Key.URL, Const.Remote.ADMISSION_SUPPORT))
+                    Pair(Const.Key.URL, NetworkConst.Remote.ADMISSION_SUPPORT))
             }
             cardHelp.setOnClickListener { launchActivity<SupportActivity>() }
             btnDonate.setOnClickListener { launchActivity<DonateActivity>() }
@@ -178,19 +176,19 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         lifecycleScope.launch {
             mAuthViewModel.signInUserState.collect {
                 when (it) {
-                    is SignInUserState.Idle -> Unit
-                    is SignInUserState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         binding.btnSignInSignUp.visibility = View.GONE
                         binding.btnAccount.visibility = View.GONE
                     }
-                    is SignInUserState.User -> {
+                    is RequestState.Success<*> -> {
                         with(binding) {
-                            mSignedInUser = it.user
+                            mSignedInUser = it.data
                             btnSignInSignUp.visibility = View.GONE
                             btnAccount.visibility = View.VISIBLE
-                            val imageUrl = when(it.user) {
-                                is StudentEntity -> it.user.imageUrl
-                                is TeacherEntity -> it.user.imageUrl
+                            val imageUrl = when(it.data) {
+                                is StudentEntity -> (it.data as StudentEntity).imageUrl
+                                is TeacherEntity -> (it.data as TeacherEntity).imageUrl
                                 else -> null
                             }
                             if(imageUrl.isNullOrEmpty()) {
@@ -203,7 +201,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                             }
                         }
                     }
-                    is SignInUserState.Error -> {
+                    is RequestState.Error -> {
                         mSignedInUser = null
                         binding.btnSignInSignUp.visibility = View.VISIBLE
                         binding.btnAccount.visibility = View.GONE
@@ -218,18 +216,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         lifecycleScope.launch {
             mViewModel.sliderState.collect {
                 when (it) {
-                    is SliderState.Idle -> {
-                    }
-                    is SliderState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         binding.sliderLoader.visibility = View.VISIBLE
                         binding.imageSlider.visibility = View.INVISIBLE
                     }
-                    is SliderState.Sliders -> {
+                    is RequestState.Success<*> -> {
                         binding.sliderLoader.visibility = View.GONE
                         binding.imageSlider.visibility = View.VISIBLE
-                        renderSliders(it.sliders)
+                        renderSliders(it.data as List<SliderEntity>)
                     }
-                    is SliderState.Error -> {
+                    is RequestState.Error -> {
                         binding.sliderLoader.visibility = View.GONE
                         binding.imageSlider.visibility = View.INVISIBLE
                         Timber.e(it.error ?: "Can't load sliders")
@@ -250,9 +247,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         lifecycleScope.launch {
             mFacultyViewModel.facultyState.collect {
                 when (it) {
-                    is FacultyState.Idle -> {
-                    }
-                    is FacultyState.Loading -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {
                         constraintSet.connect(
                             R.id.tv_information_title,
                             ConstraintSet.TOP,
@@ -266,7 +262,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                         binding.rvFaculties.visibility = View.GONE
                         binding.tvMessage.visibility = View.GONE
                     }
-                    is FacultyState.Faculties -> {
+                    is RequestState.Success<*> -> {
                         constraintSet.connect(
                             R.id.tv_information_title,
                             ConstraintSet.TOP,
@@ -279,7 +275,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                         binding.shimmerLayout.visibility = View.GONE
                         binding.tvMessage.visibility = View.GONE
                         binding.rvFaculties.visibility = View.VISIBLE
-                        renderFaculties(it.faculties)
+                        val faculties = it.data as List<FacultyEntity>
+                        renderFaculties(faculties)
                         /**
                          * For some weird reason, the sign in user gets loaded. But after the
                          * faculties are loaded the user is gone :D. So, for now, calling this
@@ -287,7 +284,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                          * */
                         loadSignInUser()
                     }
-                    is FacultyState.Error -> {
+                    is RequestState.Error -> {
                         constraintSet.connect(
                             R.id.tv_information_title,
                             ConstraintSet.TOP,
@@ -332,9 +329,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         lifecycleScope.launch {
             mViewModel.deleteAllDataState.collect {
                 when (it) {
-                    is DeleteAllState.Idle -> Unit
-                    is DeleteAllState.Loading -> Unit
-                    is DeleteAllState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> Unit
+                    is RequestState.Success<*> -> {
                         finishAffinity()
                         startActivity(
                             Intent(
@@ -343,7 +340,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                             )
                         )
                     }
-                    is DeleteAllState.Error -> {
+                    is RequestState.Error -> {
                         Toaster.show(it.error ?: "Deletion failed!")
                     }
                 }
@@ -400,7 +397,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     private fun showSignInRequiredDialog() {
-        CommonDialog.error(
+        CommonDialog.confirmation(
             this,
             getString(R.string.txt_sign_in_required),
             getString(R.string.msg_sign_in_required),

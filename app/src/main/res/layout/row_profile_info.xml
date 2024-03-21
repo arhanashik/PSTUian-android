@@ -32,7 +32,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_download"
-            app:tint="@color/colorPrimary"
             android:contentDescription="@string/description_ic_call"
             app:layout_constraintTop_toTopOf="@id/label_info"
             app:layout_constraintEnd_toEndOf="parent"

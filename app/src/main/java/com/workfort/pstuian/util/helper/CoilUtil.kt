@@ -3,23 +3,6 @@ package com.workfort.pstuian.util.helper
 import coil.imageLoader
 import coil.util.CoilUtils
 import com.workfort.pstuian.PstuianApp
-import timber.log.Timber
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 22 Oct, 2021 at 2:17.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/10/22.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
- *  ****************************************************************************
- */
 
 object CoilUtil {
     fun clearCache(memory: Boolean = true, file: Boolean= true) {
@@ -41,7 +24,6 @@ object CoilUtil {
         val cacheIterator = CoilUtils.createDefaultCache(context).urls()
         while (cacheIterator.hasNext()) {
             val cacheUrl = cacheIterator.next()
-            Timber.e(cacheUrl)
             if(cacheUrl == url) {
                 cacheIterator.remove()
                 return

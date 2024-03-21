@@ -13,20 +13,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.checkinlocation.CheckInLocationEntity
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.locationpicker.adpater.CheckInLocationAdapter
 import com.workfort.pstuian.app.ui.common.locationpicker.intent.CheckInLocationIntent
 import com.workfort.pstuian.app.ui.common.locationpicker.viewmodel.CheckInLocationViewModel
-import com.workfort.pstuian.app.ui.common.locationpicker.viewstate.CheckInLocationListState
-import com.workfort.pstuian.app.ui.common.locationpicker.viewstate.CheckInLocationState
 import com.workfort.pstuian.databinding.FragmentLocationPickerBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
+import com.workfort.pstuian.model.CheckInLocationEntity
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import timber.log.Timber
 
 /**
  *  ****************************************************************************
@@ -122,8 +119,7 @@ class LocationPickerDialogFragment(
             rvData.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    val isLoading = mViewModel.checkInLocationListState.value ==
-                            CheckInLocationListState.Loading
+                    val isLoading = mViewModel.checkInLocationListState.value == RequestState.Loading
                     if(isLoading || endOfData) {
                         return
                     }
@@ -164,15 +160,13 @@ class LocationPickerDialogFragment(
         lifecycleScope.launch {
             mViewModel.checkInLocationListState.collect {
                 when(it) {
-                    is CheckInLocationListState.Idle -> Unit
-                    is CheckInLocationListState.Loading -> {}
-                    is CheckInLocationListState.Success -> {
-                        renderData(it.data)
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {}
+                    is RequestState.Success<*> -> {
+                        renderData(it.data as List<CheckInLocationEntity>)
                     }
-                    is CheckInLocationListState.Error -> {
-                        Timber.e(it.message)
-                        if(mAdapter.data.isEmpty())
-                            mAdapter.showDefaultView(true)
+                    is RequestState.Error -> {
+                        if(mAdapter.data.isEmpty()) mAdapter.showDefaultView(true)
                     }
                 }
             }
@@ -209,14 +203,14 @@ class LocationPickerDialogFragment(
         lifecycleScope.launch {
             mViewModel.newCheckInLocationState.collect {
                 when(it) {
-                    is CheckInLocationState.Idle -> Unit
-                    is CheckInLocationState.Loading -> {}
-                    is CheckInLocationState.Success -> {
-                        onPickLocation(it.data)
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> {}
+                    is RequestState.Success<*> -> {
+                        onPickLocation(it.data as CheckInLocationEntity)
                         dismiss()
                     }
-                    is CheckInLocationState.Error -> {
-                        CommonDialog.error(requireContext(), message = it.message)
+                    is RequestState.Error -> {
+                        CommonDialog.error(requireContext(), message = it.error.orEmpty())
                     }
                 }
             }

@@ -8,15 +8,14 @@ import android.view.animation.AnimationUtils
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.BatchEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.batch.BatchEntity
 import com.workfort.pstuian.app.ui.faculty.listener.BatchClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewholder.BatchesMinViewHolder
 import com.workfort.pstuian.app.ui.faculty.viewholder.BatchesViewHolder
 import com.workfort.pstuian.databinding.RowBatchBinding
 import com.workfort.pstuian.databinding.RowBatchMinBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 class BatchesAdapter(
     private val isExpandView: Boolean = true

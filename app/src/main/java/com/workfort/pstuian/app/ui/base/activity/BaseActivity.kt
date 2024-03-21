@@ -22,17 +22,17 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewbinding.ViewBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.constant.Const
 import com.workfort.pstuian.app.ui.base.BaseSuggestionProvider
+import com.workfort.pstuian.app.ui.base.broadcastreceiver.BroadcastReceiver
+import com.workfort.pstuian.app.ui.base.broadcastreceiver.BroadcastReceiverCallback
 import com.workfort.pstuian.app.ui.base.callback.BaseLocationCallback
-import com.workfort.pstuian.app.ui.common.broadcastreceiver.BroadcastReceiver
-import com.workfort.pstuian.app.ui.common.broadcastreceiver.BroadcastReceiverCallback
 import com.workfort.pstuian.app.ui.notification.NotificationActivity
 import com.workfort.pstuian.util.extension.launchActivity
 import com.workfort.pstuian.util.helper.NetworkUtil
 import com.workfort.pstuian.util.helper.PermissionUtil
-import com.workfort.pstuian.util.view.dialog.CommonDialog
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -395,7 +395,7 @@ abstract class BaseActivity<VB : ViewBinding>: AppCompatActivity(), View.OnClick
             else -> R.drawable.ic_bell_badge_filled
         }
         val title = intent.getStringExtra(Const.Fcm.DataKey.TITLE)
-            ?: getString(R.string.default_success_dialog_title)
+            ?: getString(R.string.txt_notification)
         val message = intent.getStringExtra(Const.Fcm.DataKey.MESSAGE)
             ?: "New notification received!"
         CommonDialog.success(

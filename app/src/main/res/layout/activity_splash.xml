@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <com.workfort.pstuian.util.view.animatedtextview.line.LineTextView
+    <com.workfort.pstuian.view.animatedtextview.line.LineTextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

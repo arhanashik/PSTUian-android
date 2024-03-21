@@ -3,10 +3,10 @@ package com.workfort.pstuian.app.ui.common.blooddonationlist.viewholder
 import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.workfort.pstuian.model.BloodDonationEntity
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.blooddonation.BloodDonationEntity
 import com.workfort.pstuian.databinding.RowBloodDonationBinding
-import com.workfort.pstuian.util.view.dialog.CommonDialog
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 
 /**
  *  ****************************************************************************
@@ -17,10 +17,6 @@ import com.workfort.pstuian.util.view.dialog.CommonDialog
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 2021/12/16.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 

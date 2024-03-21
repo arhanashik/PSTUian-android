@@ -9,26 +9,24 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.local.checkin.CheckInEntity
-import com.workfort.pstuian.app.data.local.checkinlocation.CheckInLocationEntity
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.pref.Prefs
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.checkin.adapter.CheckInAdapter
 import com.workfort.pstuian.app.ui.checkin.intent.CheckInIntent
 import com.workfort.pstuian.app.ui.checkin.viewmodel.CheckInViewModel
-import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInListState
-import com.workfort.pstuian.app.ui.checkin.viewstate.CheckInState
 import com.workfort.pstuian.app.ui.common.bottomsheet.MyCheckInDetailsBottomSheet
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.app.ui.common.locationpicker.LocationPickerDialogFragment
 import com.workfort.pstuian.app.ui.common.locationpicker.intent.CheckInLocationIntent
 import com.workfort.pstuian.app.ui.common.locationpicker.viewmodel.CheckInLocationViewModel
-import com.workfort.pstuian.app.ui.common.locationpicker.viewstate.CheckInLocationState
+import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.appconstant.NetworkConst
 import com.workfort.pstuian.databinding.ActivityCheckInBinding
+import com.workfort.pstuian.model.CheckInEntity
+import com.workfort.pstuian.model.CheckInLocationEntity
+import com.workfort.pstuian.model.RequestState
+import com.workfort.pstuian.sharedpref.Prefs
 import com.workfort.pstuian.util.helper.Toaster
-import com.workfort.pstuian.util.view.dialog.CommonDialog
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -96,14 +94,14 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
          * */
         val lastCheckInLocationId = Prefs.lastShownCheckInLocationId
         loadCheckInLocation(
-            if(lastCheckInLocationId == -1) Const.Params.CheckInLocation.MAIN_CAMPUS
+            if(lastCheckInLocationId == -1) NetworkConst.Params.CheckInLocation.MAIN_CAMPUS
             else lastCheckInLocationId
         )
     }
 
     override fun onClick(v: View?) {
         // don't allow any click action while loading data
-        val isLoading = mViewModel.checkInListState.value == CheckInListState.Loading
+        val isLoading = mViewModel.checkInListState.value == RequestState.Loading
         if(isLoading) return
 
         with(binding) {
@@ -125,15 +123,15 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
         lifecycleScope.launch {
             mCheckInLocationViewModel.checkInLocationState.collect {
                 when (it) {
-                    is CheckInLocationState.Idle -> Unit
-                    is CheckInLocationState.Loading -> setActionUiState(true)
-                    is CheckInLocationState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        changeLocationAndReload(it.data)
+                        changeLocationAndReload(it.data as CheckInLocationEntity)
                     }
-                    is CheckInLocationState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
-                        CommonDialog.error(this@CheckInActivity, message = it.message)
+                        CommonDialog.error(this@CheckInActivity, message = it.error.orEmpty())
                     }
                 }
             }
@@ -164,8 +162,7 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
         binding.rvData.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val isLoading = mViewModel.checkInListState.value ==
-                        CheckInListState.Loading
+                val isLoading = mViewModel.checkInListState.value == RequestState.Loading
                 if(isLoading || endOfData) {
                     return
                 }
@@ -198,18 +195,19 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
         lifecycleScope.launch {
             mViewModel.checkInListState.collect {
                 when (it) {
-                    is CheckInListState.Idle -> Unit
-                    is CheckInListState.Loading -> setActionUiState(true)
-                    is CheckInListState.CheckInList -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        endOfData = it.list.isEmpty()
-                        renderData(it.list)
+                        val  list = it.data as List<CheckInEntity>
+                        endOfData = list.isEmpty()
+                        renderData(list)
                     }
-                    is CheckInListState.Error -> {
+                    is RequestState.Error -> {
                         endOfData = true
                         setActionUiState(false)
                         renderData(emptyList())
-                        binding.tvMessage.text = it.message?: "Can't load data"
+                        binding.tvMessage.text = it.error?: "Can't load data"
                     }
                 }
             }
@@ -259,15 +257,15 @@ class CheckInActivity : BaseActivity<ActivityCheckInBinding>() {
         lifecycleScope.launch {
             mViewModel.checkInState.collect {
                 when (it) {
-                    is CheckInState.Idle -> Unit
-                    is CheckInState.Loading -> setActionUiState(true)
-                    is CheckInState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        loadCheckInLocation(it.data.locationId)
+                        loadCheckInLocation((it.data as CheckInEntity).locationId)
                     }
-                    is CheckInState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
-                        Toaster.show(it.message)
+                        Toaster.show(it.error.orEmpty())
                     }
                 }
             }

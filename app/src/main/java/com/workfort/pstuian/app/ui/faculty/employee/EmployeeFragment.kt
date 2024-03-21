@@ -6,18 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import com.workfort.pstuian.app.data.local.constant.Const
-import com.workfort.pstuian.app.data.local.employee.EmployeeEntity
-import com.workfort.pstuian.app.data.local.faculty.FacultyEntity
 import com.workfort.pstuian.app.ui.base.fragment.BaseFragment
 import com.workfort.pstuian.app.ui.employeeprofile.EmployeeProfileActivity
 import com.workfort.pstuian.app.ui.faculty.adapter.EmployeeAdapter
 import com.workfort.pstuian.app.ui.faculty.intent.FacultyIntent
 import com.workfort.pstuian.app.ui.faculty.listener.EmployeeClickEvent
 import com.workfort.pstuian.app.ui.faculty.viewmodel.FacultyViewModel
-import com.workfort.pstuian.app.ui.faculty.viewstate.EmployeeState
+import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.databinding.FragmentEmployeesBinding
-import kotlinx.coroutines.flow.collect
+import com.workfort.pstuian.model.EmployeeEntity
+import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.model.RequestState
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -68,13 +67,13 @@ class EmployeeFragment(private val faculty: FacultyEntity)
         lifecycleScope.launch {
             mViewModel.employeeState.collect {
                 when (it) {
-                    is EmployeeState.Idle -> Unit
-                    is EmployeeState.Loading ->  setActionUiState(true)
-                    is EmployeeState.Employees -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading ->  setActionUiState(true)
+                    is RequestState.Success<*> -> {
                         setActionUiState(false)
-                        renderEmployees(it.employees)
+                        renderEmployees(it.data as List<EmployeeEntity>)
                     }
-                    is EmployeeState.Error -> {
+                    is RequestState.Error -> {
                         setActionUiState(false)
                         renderEmployees(emptyList())
                         binding.tvMessage.text = it.error?: "Can't load data"

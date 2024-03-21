@@ -14,11 +14,10 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.base.activity.BaseActivity
 import com.workfort.pstuian.app.ui.blooddonationrequest.intent.BloodDonationIntent
 import com.workfort.pstuian.app.ui.blooddonationrequest.viewmodel.BloodDonationViewModel
-import com.workfort.pstuian.app.ui.blooddonationrequest.viewstate.BloodDonationRequestState
+import com.workfort.pstuian.app.ui.common.dialog.CommonDialog
 import com.workfort.pstuian.databinding.ActivityCreateBloodDonationRequestBinding
+import com.workfort.pstuian.model.RequestState
 import com.workfort.pstuian.util.helper.DateUtil
-import com.workfort.pstuian.util.view.dialog.CommonDialog
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -118,9 +117,9 @@ class CreateBloodDonationRequestActivity : BaseActivity<ActivityCreateBloodDonat
         lifecycleScope.launch {
             mViewModel.createDonationRequestState.collect {
                 when (it) {
-                    is BloodDonationRequestState.Idle -> Unit
-                    is BloodDonationRequestState.Loading -> setActionUi(isLoading = true)
-                    is BloodDonationRequestState.Success -> {
+                    is RequestState.Idle -> Unit
+                    is RequestState.Loading -> setActionUi(isLoading = true)
+                    is RequestState.Success<*> -> {
                         setActionUi(isLoading = false)
                         val message = "Blood donation request created successfully!"
                         CommonDialog.success(
@@ -129,10 +128,10 @@ class CreateBloodDonationRequestActivity : BaseActivity<ActivityCreateBloodDonat
                             cancelable = false,
                         ) { finish() }
                     }
-                    is BloodDonationRequestState.Error -> {
+                    is RequestState.Error -> {
                         setActionUi(isLoading = false)
                         CommonDialog.error(this@CreateBloodDonationRequestActivity,
-                            message = it.message)
+                            message = it.error.orEmpty())
                     }
                 }
             }

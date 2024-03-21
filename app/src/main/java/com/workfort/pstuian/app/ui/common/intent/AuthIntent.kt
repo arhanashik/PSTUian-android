@@ -9,17 +9,13 @@ package com.workfort.pstuian.app.ui.common.intent
  *  * 1.
  *  * 2.
  *  * 3.
- *  *
- *  * Last edited by : arhan on 10/14/21.
- *  *
- *  * Last Reviewed by : <Reviewer Name> on <mm/dd/yy>
  *  ****************************************************************************
  */
 sealed class AuthIntent {
     data class GetAllDevices(val page: Int) : AuthIntent()
-    object RegisterDevice : AuthIntent()
-    object GetConfig : AuthIntent()
-    object GetSignInUser : AuthIntent()
+    data object RegisterDevice : AuthIntent()
+    data object GetConfig : AuthIntent()
+    data object GetSignInUser : AuthIntent()
     data class SignUpStudent(
         val name: String,
         val id: String,
@@ -32,4 +28,5 @@ sealed class AuthIntent {
     data class ChangePassword(val oldPassword: String, val newPassword: String) : AuthIntent()
     data class EmailVerification(val userType: String, val email: String) : AuthIntent()
     data class SignOut(val fromAllDevices: Boolean = false) : AuthIntent()
+    data class DeleteAccount(val password: String) : AuthIntent()
 }
