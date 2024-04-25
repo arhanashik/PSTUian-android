@@ -70,6 +70,12 @@ Here is an overview on the branches:
 - release_***: Contains the code for that particular release
 
 ## CHANGELOG
+3.0.0 - Compose
+----------------------
+- Project is converted to use jetpack compose and ui state
+- It makes the app easier to maintain and improves the performance
+- Several ui improvement to make the UX better
+
 2.1.0 - Account Delete option
 ----------------------
 - User can now send request to delete account. After the action user won't be able to 
