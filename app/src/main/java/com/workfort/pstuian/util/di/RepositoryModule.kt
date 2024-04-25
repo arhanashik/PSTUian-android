@@ -1,24 +1,30 @@
 package com.workfort.pstuian.util.di
 
-import com.workfort.pstuian.database.service.BatchService
-import com.workfort.pstuian.database.service.ConfigService
-import com.workfort.pstuian.database.service.CourseService
-import com.workfort.pstuian.database.service.EmployeeService
-import com.workfort.pstuian.database.service.FacultyService
-import com.workfort.pstuian.database.service.SliderService
-import com.workfort.pstuian.database.service.StudentService
-import com.workfort.pstuian.database.service.TeacherService
-import com.workfort.pstuian.networking.impl.BloodDonationRequestApiHelperImpl
-import com.workfort.pstuian.networking.impl.CheckInApiHelperImpl
-import com.workfort.pstuian.networking.impl.CheckInLocationApiHelperImpl
-import com.workfort.pstuian.networking.impl.DonationApiHelperImpl
-import com.workfort.pstuian.networking.impl.FacultyApiHelperImpl
-import com.workfort.pstuian.networking.impl.NotificationApiHelperImpl
-import com.workfort.pstuian.networking.impl.StudentApiHelperImpl
-import com.workfort.pstuian.networking.impl.SupportApiHelperImpl
-import com.workfort.pstuian.networking.impl.TeacherApiHelperImpl
-import com.workfort.pstuian.app.data.database.AppDatabase
 import com.workfort.pstuian.app.data.repository.AuthRepositoryImpl
+import com.workfort.pstuian.app.data.repository.SettingsRepository
+import com.workfort.pstuian.networking.domain.AuthApiHelper
+import com.workfort.pstuian.networking.domain.BloodDonationApiHelper
+import com.workfort.pstuian.networking.domain.BloodDonationRequestApiHelper
+import com.workfort.pstuian.networking.domain.CheckInApiHelper
+import com.workfort.pstuian.networking.domain.CheckInLocationApiHelper
+import com.workfort.pstuian.networking.domain.DonationApiHelper
+import com.workfort.pstuian.networking.domain.FacultyApiHelper
+import com.workfort.pstuian.networking.domain.NotificationApiHelper
+import com.workfort.pstuian.networking.domain.SliderApiHelper
+import com.workfort.pstuian.networking.domain.StudentApiHelper
+import com.workfort.pstuian.networking.domain.SupportApiHelper
+import com.workfort.pstuian.networking.domain.TeacherApiHelper
+import com.workfort.pstuian.networking.infrastructure.AuthApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.BloodDonationApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.BloodDonationRequestApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.CheckInApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.CheckInLocationApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.DonationApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.FacultyApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.NotificationApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.StudentApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.SupportApiHelperImpl
+import com.workfort.pstuian.networking.infrastructure.TeacherApiHelperImpl
 import com.workfort.pstuian.repository.AuthRepository
 import com.workfort.pstuian.repository.BloodDonationRepository
 import com.workfort.pstuian.repository.BloodDonationRequestRepository
@@ -33,71 +39,56 @@ import com.workfort.pstuian.repository.SupportRepository
 import com.workfort.pstuian.repository.TeacherRepository
 import org.koin.dsl.module
 
-private val db = AppDatabase.getDatabase()
-val repositoryModule = module {
-    // db services injection
-    single { ConfigService(db.configDao()) }
-    single { SliderService(db.sliderDao()) }
-    single { FacultyService(db.facultyDao()) }
-    single { BatchService(db.batchDao()) }
-    single { StudentService(db.studentDao()) }
-    single { TeacherService(db.teacherDao()) }
-    single { CourseService(db.courseScheduleDao()) }
-    single { EmployeeService(db.employeeDao()) }
 
+val repositoryModule = module {
     // auth repository injections
-    single<com.workfort.pstuian.networking.AuthApiHelper> {
-        com.workfort.pstuian.networking.impl.AuthApiHelperImpl(
-            get()
-        )
-    }
+    single<AuthApiHelper> { AuthApiHelperImpl(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
 
     // slider repository injections
-    single { com.workfort.pstuian.networking.SliderApiHelper(get()) }
+    single { SliderApiHelper(get()) }
     single { SliderRepository(get(), get()) }
 
     // faculty repository injections
-    single<com.workfort.pstuian.networking.FacultyApiHelper> { FacultyApiHelperImpl(get()) }
+    single<FacultyApiHelper> { FacultyApiHelperImpl(get()) }
     single { FacultyRepository(get(), get(), get(), get(), get(), get(), get()) }
 
     // student repository injections
-    single<com.workfort.pstuian.networking.StudentApiHelper> { StudentApiHelperImpl(get()) }
+    single<StudentApiHelper> { StudentApiHelperImpl(get()) }
     single { StudentRepository(get(), get(), get(), get()) }
 
     // teacher repository injections
-    single<com.workfort.pstuian.networking.TeacherApiHelper> { TeacherApiHelperImpl(get()) }
+    single<TeacherApiHelper> { TeacherApiHelperImpl(get()) }
     single { TeacherRepository(get(), get(), get(), get()) }
 
     // donation repository injections
-    single<com.workfort.pstuian.networking.DonationApiHelper> { DonationApiHelperImpl(get()) }
+    single<DonationApiHelper> { DonationApiHelperImpl(get()) }
     single { DonationRepository(get()) }
 
     // support repository injections
-    single<com.workfort.pstuian.networking.SupportApiHelper> { SupportApiHelperImpl(get()) }
+    single<SupportApiHelper> { SupportApiHelperImpl(get()) }
     single { SupportRepository(get()) }
 
     // notification repository injections
-    single<com.workfort.pstuian.networking.NotificationApiHelper> { NotificationApiHelperImpl(get()) }
+    single<NotificationApiHelper> { NotificationApiHelperImpl(get()) }
     single { NotificationRepository(get(), get()) }
 
     // blood donation repository injections
-    single<com.workfort.pstuian.networking.BloodDonationApiHelper> {
-        com.workfort.pstuian.networking.impl.BloodDonationApiHelperImpl(
-            get()
-        )
-    }
+    single<BloodDonationApiHelper> { BloodDonationApiHelperImpl(get()) }
     single { BloodDonationRepository(get(), get()) }
 
     // blood donation request repository injections
-    single<com.workfort.pstuian.networking.BloodDonationRequestApiHelper> { BloodDonationRequestApiHelperImpl(get()) }
+    single<BloodDonationRequestApiHelper> { BloodDonationRequestApiHelperImpl(get()) }
     single { BloodDonationRequestRepository(get(), get()) }
 
     // check in repository injections
-    single<com.workfort.pstuian.networking.CheckInApiHelper> { CheckInApiHelperImpl(get()) }
+    single<CheckInApiHelper> { CheckInApiHelperImpl(get()) }
     single { CheckInRepository(get(), get()) }
 
     // check in location repository injections
-    single<com.workfort.pstuian.networking.CheckInLocationApiHelper> { CheckInLocationApiHelperImpl(get()) }
+    single<CheckInLocationApiHelper> { CheckInLocationApiHelperImpl(get()) }
     single { CheckInLocationRepository(get(), get()) }
+
+    // settings repository
+    single { SettingsRepository() }
 }

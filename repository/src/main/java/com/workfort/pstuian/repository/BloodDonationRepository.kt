@@ -1,23 +1,12 @@
 package com.workfort.pstuian.repository
 
 import com.workfort.pstuian.model.BloodDonationEntity
-import com.workfort.pstuian.networking.BloodDonationApiHelper
+import com.workfort.pstuian.networking.domain.BloodDonationApiHelper
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 01 Oct, 2021 at 1:50 AM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
 
 class BloodDonationRepository(
     private val authRepo: AuthRepository,
-    private val helper: com.workfort.pstuian.networking.BloodDonationApiHelper,
+    private val helper: BloodDonationApiHelper,
 ) {
     suspend fun getAll(userId: Int, userType: String, page: Int) =
         helper.getAll(userId, userType, page)

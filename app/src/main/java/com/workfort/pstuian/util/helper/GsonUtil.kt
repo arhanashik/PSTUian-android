@@ -4,17 +4,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Oct, 2021 at 12:23 PM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
 
 object GsonUtil {
     fun toJson(obj: Any): String {
@@ -30,6 +19,4 @@ object GsonUtil {
     }
 
     inline fun <reified T> getType(): Type = object: TypeToken<T>() {}.type
-
-//    inline fun <reified T> Gson.fromJson(json: String) = this.fromJson<T>(json, object: TypeToken<T>() {}.type)
 }

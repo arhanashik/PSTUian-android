@@ -6,21 +6,26 @@
         com.workfort.pstuian.BaseSuggestionProvider
     </string>
     <string name="default_notification_channel_id">default-notification-channel</string>
+    <string name="default_notification_channel_name">Default</string>
 
     <string name="title_activity_students">Students</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="title_activity_donors">Donors</string>
+    <string name="label_settings_screen">Settings</string>
+    <string name="label_donors_screen">Donors</string>
     <string name="title_activity_student_profile">Profile</string>
     <string name="title_activity_teacher_profile">Profile</string>
     <string name="title_activity_employee_profile">Profile</string>
     <string name="title_activity_edit_profile">Edit</string>
-    <string name="title_activity_donate">Donate</string>
+    <string name="label_donate_screen">Donate</string>
     <string name="title_activity_support">Support</string>
-    <string name="title_activity_notification">Notification</string>
+    <string name="label_notification_screen">Notification</string>
     <string name="title_force_refresh_dialog">Refresh required</string>
     <string name="title_force_update_dialog">Update required</string>
     <string name="title_flexible_update_dialog">Update Available!</string>
     <string name="title_install_update_dialog">Ready To Install</string>
+    <string name="label_location_picker_screen">Location Picker</string>
+    <string name="label_download_cv_screen">Download CV</string>
+    <string name="label_upload_cv_screen">Upload CV</string>
+    <string name="label_upload_image_screen">Upload Image</string>
 
     <string name="hint_search">Search</string>
     <string name="hint_search_teacher">Search teacher</string>
@@ -58,6 +63,7 @@
     <string name="hint_department">Department</string>
     <string name="hint_old_password">Old Password</string>
     <string name="hint_new_password">New Password</string>
+    <string name="hint_confirm_password">Confirm Password</string>
 
     <string name="helper_text_password">Minimum length is 6</string>
     <string name="helper_txt_max_length_donation_message">Maximum 250 characters</string>
@@ -96,7 +102,7 @@
     <string name="label_options">Options</string>
     <string name="label_sign_in_activity">Sign In</string>
     <string name="label_sign_up_activity">Sign Up</string>
-    <string name="label_forgot_password_activity">Forgot Password</string>
+    <string name="label_forgot_password_screen">Forgot Password</string>
     <string name="label_others">Others</string>
     <string name="label_contact_us">Contact Us</string>
 
@@ -125,6 +131,8 @@
     <string name="txt_forgot_password">Forgot password?</string>
     <string name="txt_or">Or</string>
     <string name="txt_send">Send</string>
+    <string name="txt_send_verification_email">Send verification email</string>
+    <string name="txt_send_reset_link">Send reset link</string>
     <string name="txt_sign_up_conditions">
         By signing up you will automatically agree to the
     </string>
@@ -151,7 +159,7 @@
     <string name="txt_title_email">Email</string>
     <string name="txt_msg_email">Are you surely want to send an email?</string>
     <string name="txt_call">Call</string>
-    <string name="txt_msg_download_cv">Are you surely want to download the cv?</string>
+    <string name="msg_download_cv">Are you surely want to download the cv?</string>
     <string name="txt_error_download_cv">Ops, no link found to download the cv!</string>
     <string name="txt_title_download_cv">Download CV</string>
     <string name="txt_download">Download</string>
@@ -189,6 +197,11 @@
     <string name="txt_account">Account</string>
     <string name="txt_delete_account">Delete Account</string>
     <string name="txt_notification">Notification</string>
+    <string name="txt_confirmation">Confirmation</string>
+    <string name="txt_confirm">Confirm</string>
+    <string name="txt_information">Information</string>
+    <string name="txt_go_back">Go Back</string>
+    <string name="txt_allow">Allow</string>
 
     <string name="description_app_logo" translatable="false">App logo</string>
     <string name="description_ic_call" translatable="false">Icon call</string>
@@ -229,13 +242,14 @@
     <string name="app_link" translatable="false">https://play.google.com/store/apps/details?id=</string>
 
     <string name="about_it">
-        <b>PSTUian</b> is a small tribute to our beloved university. It\'s an step to connect every
-        teacher, students, employees and everything else in a single place.
+        <b>PSTUian</b> is a small tribute to our beloved university. It\'s an step to connect
+        honorable teachers, students, employees and everything else in a single place.
     </string>
 
     <string name="data_load_policy">
         All data are sync from our remote server. So, to get the data of any
-        options(like faculty, students etc) you will need a data connection(internet/wifi).
+        options(like faculty, students etc) you will need a data connection(internet/wifi). If you
+        can\'t find any particular data please try to clear all data and restart the app.
     </string>
 
     <string name="donation_request_message">
@@ -272,7 +286,7 @@
     <string name="saving_donation_message">Saving donation. Please wait…</string>
 
     <string name="dev_team">
-        DEVELOPED BY\n\n
+        DEVELOPED BY\n
         WORK FORT\n
         Where Innovation Meets Passion
     </string>
@@ -291,11 +305,13 @@
         For the first time login, please use your student id as password.
         We STRONGLY recommend to change the password after signing in.
     </string>
-    <string name="error_msg_server_issue">It seems there could be an issue with the server.
+    <string name="error_msg_server_issue">
+        It seems there could be an issue with the server.
         Or there might not be enough data available. In either case, please send us a complain
         from the help option. We promise to check it ASAP. You might also check your network
         connection. Or try to Clear Data from the home menu(You will need a active network
-        connection to reload the data).</string>
+        connection to reload the data).
+    </string>
     <string name="message_force_refresh_dialog">The data between the app and the server must
         need to be synchronized. Please keep your network connection on and click on refresh
         button. Sorry for the inconvenience.
@@ -318,7 +334,7 @@
     </string>
     <string name="txt_be_first_donor">Be the first donor</string>
     <string name="txt_total_registered_students">Registered Students</string>
-    <string name="label_blood_donation_request_activity">Donation Requests</string>
+    <string name="label_blood_donation_request_list_screen">Donation Requests</string>
     <string name="hint_search_donation_request">Search donation request</string>
     <string name="txt_request_donation">Request Donation</string>
     <string name="hint_need_before">Need before</string>
@@ -330,11 +346,11 @@
         list.
     </string>
     <string name="txt_create_request">Create Request</string>
-    <string name="label_create_blood_donation_request_activity">Create Request</string>
+    <string name="label_create_blood_donation_request_screen">Create Request</string>
     <string name="msg_sign_in_required">You need to sign in first to complete this action.</string>
     <string name="txt_sign_in_required">Sign In Required</string>
     <string name="txt_say_hi">Say Hi</string>
-    <string name="label_check_in_activity">Check In</string>
+    <string name="label_check_in_screen">Check In</string>
     <string name="txt_public">Public</string>
     <string name="txt_only_me">Only Me</string>
     <string name="hint_privacy_public">Visible to everyone</string>
@@ -352,7 +368,7 @@
         Are you surely want to delete? You cannot restore it again.
     </string>
     <string name="hint_request_id">Request id</string>
-    <string name="label_create_blood_donation_activity">Create donation</string>
+    <string name="label_blood_donation_create_screen">Create donation</string>
     <string name="hint_donation_date">Donation date</string>
     <string name="helper_text_blood_donation_request_id">
         You can find the request id from the blood donation requests list.
@@ -366,7 +382,7 @@
     </string>
     <string name="hint_email_verification">Email not verified yet?</string>
     <string name="txt_verify_now">Verify now</string>
-    <string name="label_email_verification_activity">Email Verification</string>
+    <string name="label_email_verification_screen">Email Verification</string>
     <string name="txt_devices">Devices</string>
     <string name="txt_signed_in_devices">Signed In Devices</string>
     <string name="txt_sign_out_from_all">Sign out from all</string>
@@ -375,6 +391,16 @@
     <string name="msg_delete_account">
         Are you surely want to delete your account?
         If you don\'t request for recovery within 3days the account might be permanently deleted!
+    </string>
+    <string name="msg_upload_profile_image">
+        This will replace your current profile photo.
+    </string>
+    <string name="msg_confirm_check_in">
+        Are you surely want to check in to the selected location?
+    </string>
+    <string name="msg_request_notification_permission">
+        Please allow permission to get notification for blood donation, important events in the
+        campus and updates about app. You can always change it back in settings.
     </string>
 
     <array name="blood_group">

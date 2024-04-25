@@ -6,16 +6,6 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 object MathUtil {
-    inline fun <reified T>shuffle(array: ArrayList<T>) {
-        var i = 0
-        repeat(array.size) {
-            val j = floor(Math.random() * (i + 1)).toInt()
-            val temp = array[i]
-            array[i] = array[j]
-            array[j] = temp
-            i++
-        }
-    }
 
     fun prettyCount(number: Number): String {
         val suffix = charArrayOf(' ', 'k', 'M', 'B', 'T', 'P', 'E')

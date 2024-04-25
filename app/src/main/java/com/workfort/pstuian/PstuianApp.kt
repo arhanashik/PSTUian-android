@@ -4,12 +4,8 @@ import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import com.workfort.pstuian.app.data.database.AppDatabase
-import com.workfort.pstuian.networking.di.networkModule
 import com.workfort.pstuian.sharedpref.Prefs
-import com.workfort.pstuian.util.di.appModule
-import com.workfort.pstuian.util.di.repositoryModule
-import com.workfort.pstuian.util.di.viewModelModule
-import com.workfort.pstuian.workmanager.di.workManagerModule
+import com.workfort.pstuian.util.di.appModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -53,13 +49,7 @@ class PstuianApp  : MultiDexApplication() {
         startKoin {
             androidContext(this@PstuianApp)
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
-            modules(
-                appModule,
-                repositoryModule,
-                networkModule,
-                viewModelModule,
-                workManagerModule,
-            )
+            modules(appModules)
         }
     }
 

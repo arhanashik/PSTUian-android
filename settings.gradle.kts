@@ -7,6 +7,7 @@ include(
     ":networking",
     ":repository",
     ":sharedpref",
+    ":util",
     ":view",
     ":workmanager",
 )

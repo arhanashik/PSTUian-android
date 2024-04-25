@@ -67,17 +67,52 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
+    }
 }
 
 dependencies {
-    // std lib
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    // app libs
-    implementation(AppDependencies.appLibraries)
+    implementation(AppDependencies.coreKtx)
+    implementation(AppDependencies.kotlinStdLib)
+    // compose
+    implementation(platform(AppDependencies.composeBom))
+    implementation(AppDependencies.composeMaterial3)
+    implementation(AppDependencies.composeActivity)
+    implementation(AppDependencies.composeNavigation)
+    implementation(AppDependencies.composeViewModel)
+    debugImplementation(AppDependencies.composeTooling)
+    debugImplementation(AppDependencies.composeToolingPreview)
+    // coroutine
+    implementation(AppDependencies.coroutinesCore)
+    implementation(AppDependencies.coroutinesAndroid)
     // room
     implementation(AppDependencies.room)
-    ksp(listOf(AppDependencies.roomCompiler))
+    ksp(AppDependencies.roomCompiler)
     implementation(AppDependencies.roomKtx)
+    // datastore
+    implementation(AppDependencies.datastorePreferences)
+    // koin
+    implementation(AppDependencies.koin)
+    // gson converter
+    implementation(AppDependencies.retrofitConverter)
+    // image loader
+    implementation(AppDependencies.coilCompose)
+    // animation loader
+    implementation(AppDependencies.lottie)
+    // multidex
+    implementation(AppDependencies.multidex)
+    // logger
+    implementation(AppDependencies.timber)
+
+    implementation(AppDependencies.documentFile)
+
     // sdk
     implementation(project(":appconstant"))
     implementation(project(":database"))
@@ -86,10 +121,17 @@ dependencies {
     implementation(project(":networking"))
     implementation(project(":repository"))
     implementation(project(":sharedpref"))
+    implementation(project(":util"))
     implementation(project(":view"))
     implementation(project(":workmanager"))
+
     // test libs
-    testImplementation(AppDependencies.testLibraries)
-    androidTestImplementation(AppDependencies.androidTestLibraries)
+    testImplementation(AppDependencies.junit)
+    testImplementation(AppDependencies.koinTest)
+    testImplementation(AppDependencies.roomTesting)
+    testImplementation(AppDependencies.workManagerTesting)
+    androidTestImplementation(AppDependencies.extJUnit)
+    androidTestImplementation(AppDependencies.runner)
+    androidTestImplementation(AppDependencies.espressoCore)
 }
 

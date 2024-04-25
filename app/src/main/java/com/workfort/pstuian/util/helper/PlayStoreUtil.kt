@@ -7,12 +7,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.annotation.StringRes
-import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.ui.webview.WebViewActivity
-import com.workfort.pstuian.util.extension.launchActivity
 
 class PlayStoreUtil (val context: Context) {
+
     fun openStore(appId: String = context.packageName) {
         val url = "https://play.google.com/store/apps/details?id=$appId"
         val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -23,7 +21,7 @@ class PlayStoreUtil (val context: Context) {
             != null) {
             context.startActivity(intent)
         } else {
-            context.launchActivity<WebViewActivity>(Pair(Const.Key.URL, url))
+            LinkUtil(context).openBrowser(url)
         }
     }
 

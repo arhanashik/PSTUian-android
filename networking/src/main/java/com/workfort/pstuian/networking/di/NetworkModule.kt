@@ -1,6 +1,6 @@
 package com.workfort.pstuian.networking.di
 
-import com.workfort.pstuian.networking.service.RetrofitBuilder
+import com.workfort.pstuian.networking.RetrofitBuilder
 import org.koin.dsl.module
 
 val networkModule = module {

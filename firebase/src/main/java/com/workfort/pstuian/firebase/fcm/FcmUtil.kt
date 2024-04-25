@@ -1,38 +1,20 @@
 package com.workfort.pstuian.firebase.fcm
 
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 object FcmUtil {
-    fun getFcmToken(onResponse: (token: String?, error: String?) -> Unit) {
+
+    suspend fun getFcmToken(): String = suspendCoroutine { continuation ->
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            val (token, error) = if (!task.isSuccessful) {
-                null to (task.exception?.message ?: "Failed to get registration token")
+            if (!task.isSuccessful || task.result.isNullOrEmpty()) {
+                val error = task.exception?.message ?: "Failed to get registration token"
+                continuation.resumeWithException(Throwable(message = error))
             } else {
-                // Get new FCM registration token
-                val token = task.result
-                if (token.isNullOrEmpty()) {
-                    null to "Couldn't get registration token"
-                } else {
-                    token to null
-                }
+                continuation.resume(task.result)
             }
-
-            onResponse(token, error)
         }
-    }
-
-    fun subscribeToTopic(topic: String, onComplete: (success: Boolean) -> Unit) {
-        FirebaseMessaging.getInstance().subscribeToTopic(topic)
-            .addOnCompleteListener { task ->
-                onComplete(task.isSuccessful)
-            }
-    }
-
-    fun unsubscribeFromTopic(topic: String, onComplete: (success: Boolean) -> Unit) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
-            .addOnCompleteListener { task ->
-                onComplete(task.isSuccessful)
-            }
     }
 }

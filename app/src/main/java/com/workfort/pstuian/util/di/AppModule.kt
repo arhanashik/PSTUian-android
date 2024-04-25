@@ -1,9 +1,15 @@
 package com.workfort.pstuian.util.di
 
-import com.workfort.pstuian.firebase.fcm.callback.FcmCallback
-import com.workfort.pstuian.util.service.FcmCallbackImpl
-import org.koin.dsl.module
+import com.workfort.pstuian.networking.di.networkModule
+import com.workfort.pstuian.workmanager.di.workManagerModule
 
-val appModule = module {
-    single<FcmCallback> { FcmCallbackImpl(get()) }
-}
+val appModules = listOf(
+    databaseModule,
+    firebaseModule,
+    networkModule,
+    repositoryModule,
+    stateReducerModule,
+    useCaseModule,
+    viewModelModule,
+    workManagerModule,
+)

@@ -1,23 +1,12 @@
 package com.workfort.pstuian.repository
 
 import com.workfort.pstuian.model.CheckInLocationEntity
-import com.workfort.pstuian.networking.CheckInLocationApiHelper
+import com.workfort.pstuian.networking.domain.CheckInLocationApiHelper
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Dec, 2021 at 21:35.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
 
 class CheckInLocationRepository(
     private val authRepo: AuthRepository,
-    private val helper: com.workfort.pstuian.networking.CheckInLocationApiHelper,
+    private val helper: CheckInLocationApiHelper,
 ) {
     suspend fun getAll(page: Int) = helper.getAll(page)
     suspend fun get(id: Int) = helper.get(id)
@@ -27,7 +16,7 @@ class CheckInLocationRepository(
         details: String? = "",
         imageUrl: String? = "",
         link: String? = "",
-    ) : CheckInLocationEntity {
+    ): CheckInLocationEntity {
         val userIdAndType = authRepo.getUserIdAndType()
 
         return helper.insert(
