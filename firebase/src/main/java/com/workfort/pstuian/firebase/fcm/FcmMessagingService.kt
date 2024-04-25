@@ -1,14 +1,12 @@
 package com.workfort.pstuian.firebase.fcm
 
-import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.firebase.fcm.callback.FcmCallback
 import org.koin.android.ext.android.inject
 
 class FcmMessagingService: FirebaseMessagingService() {
-    val callback by inject<FcmCallback>()
+    private val callback by inject<FcmCallback>()
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
@@ -18,17 +16,17 @@ class FcmMessagingService: FirebaseMessagingService() {
             action = it.clickAction
         }
         remoteMessage.data.let {
-            val type = it[Const.Fcm.DataKey.TYPE]
-            val title = it[Const.Fcm.DataKey.TITLE]
-            val message = it[Const.Fcm.DataKey.MESSAGE]
+            val type = it[FcmKey.DataKey.TYPE]
+            val title = it[FcmKey.DataKey.TITLE]
+            val message = it[FcmKey.DataKey.MESSAGE]
 
-            val intent = Intent(Const.IntentAction.NOTIFICATION).apply {
-                putExtra(Const.Fcm.DataKey.TYPE, type)
-                putExtra(Const.Fcm.DataKey.TITLE, title)
-                putExtra(Const.Fcm.DataKey.MESSAGE, message)
-                putExtra(Const.Fcm.DataKey.ACTION, action)
-            }
-            callback.onMessageReceived(intent)
+            val data = FcmMessageData(
+                title.orEmpty(),
+                message.orEmpty(),
+                type,
+                action
+            )
+            callback.onMessageReceived(data)
         }
     }
 

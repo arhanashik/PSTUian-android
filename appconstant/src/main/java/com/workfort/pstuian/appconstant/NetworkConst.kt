@@ -72,17 +72,14 @@ object NetworkConst {
             const val SECOND_CAMPUS = 2
         }
 
-        object CheckInPrivacy {
-            const val PUBLIC = "public"
-            const val ONLY_ME = "only_me"
-        }
-
         object Default {
             const val PAGE_SIZE = 20
         }
     }
 
     object Remote {
+        const val PSTU_WEBSITE = "https://www.pstu.ac.bd/"
+
         private const val LOCAL_SERVER = "http://192.168.0.18:8888/PSTUian-web/"
         private const val DEV_SERVER = "https://dev.pstuian.com/"
         private const val LIVE_SERVER = "https://pstuian.com/"
@@ -206,26 +203,5 @@ object NetworkConst {
                 const val UPDATE = "${CHECK_IN_LOCATION_API_PATH}update"
             }
         }
-    }
-
-    object Fcm {
-        object DataKey {
-            const val TYPE ="type"
-            const val TITLE ="title"
-            const val MESSAGE ="message"
-            const val ACTION ="action"
-        }
-    }
-
-    object IntentAction {
-        private const val APP_ID = BuildConfig.APPLICATION_ID
-        const val NOTIFICATION = "$APP_ID.NOTIFICATION"
-    }
-
-    object NotificationType {
-        const val DEFAULT = "default"
-        const val BLOOD_DONATION = "blood_donation"
-        const val NEWS = "news"
-        const val HELP = "help"
     }
 }

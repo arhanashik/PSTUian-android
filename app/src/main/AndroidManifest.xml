@@ -6,15 +6,17 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
-<!--    <queries>-->
-<!--        <intent>-->
-<!--            <action android:name="android.intent.action.PICK" />-->
-<!--            <data android:mimeType="image/jpeg" />-->
-<!--        </intent>-->
-<!--    </queries>-->
+    <!-- Devices running Android 12L (API level 32) or lower  -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <!-- Devices running Android 13 (API level 33) or higher -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- To handle the reselection within the app on devices running Android 14
+         or higher if your app targets Android 14 (API level 34) or higher.  -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
             android:name=".PstuianApp"
@@ -25,12 +27,9 @@
             android:networkSecurityConfig="@xml/network_security_config"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
-            tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
-
-        <provider
-                android:name=".app.ui.base.BaseSuggestionProvider"
-                android:authorities="com.workfort.pstuian.BaseSuggestionProvider"
-                android:exported="false" />
+            android:enableOnBackInvokedCallback="true"
+            android:usesCleartextTraffic="true"
+            tools:ignore="DiscouragedApi,GoogleAppIndexingWarning,UnusedAttribute">
 
         <!--    Firebase service    -->
         <service
@@ -43,7 +42,7 @@
         <!-- Set custom default icon. -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@drawable/ic_email" />
+                android:resource="@drawable/ic_bell_filled" />
         <!-- Set color used with incoming notification messages. -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_color"
@@ -54,271 +53,13 @@
                 android:value="@string/default_notification_channel_id" />
 
         <activity
-                android:name=".app.ui.splash.SplashActivity"
-                android:theme="@style/AppTheme.Splash"
+                android:name=".app.ui.MainActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
-        <activity
-                android:name=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.Home">
-        </activity>
-        <activity
-                android:name=".app.ui.faculty.FacultyActivity"
-                android:parentActivityName=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:exported="false">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
-        <activity
-                android:name=".app.ui.students.StudentsActivity"
-                android:label="@string/title_activity_students"
-                android:parentActivityName=".app.ui.faculty.FacultyActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:exported="false">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.faculty.FacultyActivity"/>
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-            <meta-data
-                    android:name="android.app.searchable"
-                    android:resource="@xml/searchable" />
-        </activity>
-        <activity
-                android:name=".app.ui.studentprofile.StudentProfileActivity"
-                android:parentActivityName=".app.ui.students.StudentsActivity"
-                android:label="@string/title_activity_student_profile"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.students.StudentsActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.editprofile.EditStudentProfileActivity"
-                android:parentActivityName=".app.ui.studentprofile.StudentProfileActivity"
-                android:label="@string/title_activity_edit_profile"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.studentprofile.StudentProfileActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.editprofile.EditTeacherProfileActivity"
-                android:parentActivityName=".app.ui.teacherprofile.TeacherProfileActivity"
-                android:label="@string/title_activity_edit_profile"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.teacherprofile.TeacherProfileActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.teacherprofile.TeacherProfileActivity"
-                android:parentActivityName=".app.ui.faculty.FacultyActivity"
-                android:label="@string/title_activity_teacher_profile"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.faculty.FacultyActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.employeeprofile.EmployeeProfileActivity"
-                android:parentActivityName=".app.ui.faculty.FacultyActivity"
-                android:label="@string/title_activity_employee_profile"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.faculty.FacultyActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.settings.SettingsActivity"
-                android:label="@string/title_activity_settings"
-                android:parentActivityName=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.donors.DonorsActivity"
-                android:label="@string/title_activity_donors"
-                android:parentActivityName=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop"
-                android:exported="false"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-            <meta-data
-                    android:name="android.app.searchable"
-                    android:resource="@xml/searchable" />
-        </activity>
-        <activity
-                android:name=".app.ui.donate.DonateActivity"
-                android:label="@string/title_activity_donate"
-                android:parentActivityName=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.signin.SignInActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_sign_in_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.home.HomeActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.signup.StudentSignUpActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_sign_up_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.signin.SignInActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.signin.SignInActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.signup.TeacherSignUpActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_sign_up_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.signin.SignInActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.signin.SignInActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.forgotpassword.ForgotPasswordActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_forgot_password_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.signin.SignInActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.signin.SignInActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.webview.WebViewActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
-                android:name=".app.ui.support.SupportActivity"
-                android:label="@string/title_activity_support"
-                android:parentActivityName=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.notification.NotificationActivity"
-                android:label="@string/title_activity_notification"
-                android:parentActivityName=".app.ui.home.HomeActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.imagepreview.ImagePreviewActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity
-                android:name=".app.ui.blooddonationrequest.BloodDonationRequestActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_blood_donation_request_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.home.HomeActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-        </activity>
-
-        <activity
-                android:name=".app.ui.blooddonationrequest.CreateBloodDonationRequestActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_create_blood_donation_request_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.blooddonationrequest.BloodDonationRequestActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.blooddonationrequest.BloodDonationRequestActivity"/>
-        </activity>
-
-        <activity
-                android:name=".app.ui.checkin.CheckInActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_check_in_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.home.HomeActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.home.HomeActivity"/>
-        </activity>
-
-        <activity
-                android:name=".app.ui.blooddonation.CreateBloodDonationActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_create_blood_donation_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.studentprofile.StudentProfileActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.studentprofile.StudentProfileActivity"/>
-        </activity>
-        <activity
-                android:name=".app.ui.emailverification.EmailVerificationActivity"
-                android:launchMode="singleTop"
-                android:label="@string/label_email_verification_activity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:parentActivityName=".app.ui.signin.SignInActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".app.ui.signin.SignInActivity"/>
         </activity>
     </application>
 </manifest>

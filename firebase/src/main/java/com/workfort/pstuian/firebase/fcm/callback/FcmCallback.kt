@@ -1,8 +1,8 @@
 package com.workfort.pstuian.firebase.fcm.callback
 
-import android.content.Intent
+import com.workfort.pstuian.firebase.fcm.FcmMessageData
 
 interface FcmCallback {
-    fun onMessageReceived(data: Intent)
+    fun onMessageReceived(data: FcmMessageData)
     fun onNewToken(token: String)
 }

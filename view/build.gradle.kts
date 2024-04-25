@@ -1,12 +1,11 @@
 plugins {
     id("com.android.library")
-    id("kotlin-parcelize")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
     namespace = "com.workfort.pstuian.view"
-    compileSdk = AppConfig.MIN_SDK
+    compileSdk = AppConfig.COMPILE_SDK
 
     defaultConfig {
         minSdk = AppConfig.MIN_SDK
@@ -33,8 +32,4 @@ android {
 }
 
 dependencies {
-    implementation(AppDependencies.coreKtx)
-    implementation(AppDependencies.appcompat)
-    implementation(AppDependencies.constraintLayout)
-    implementation(AppDependencies.material)
 }

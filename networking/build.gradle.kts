@@ -23,8 +23,12 @@ android {
 }
 
 dependencies {
-    implementation(AppDependencies.networkingLibraries)
     implementation(AppDependencies.koin)
+    implementation(AppDependencies.okhttp)
+    implementation(AppDependencies.okhttpLogging)
+    implementation(AppDependencies.retrofit)
+    implementation(AppDependencies.retrofitAdapter)
+    implementation(AppDependencies.retrofitConverter)
     implementation(AppDependencies.timber)
     // sdks
     implementation(project(":appconstant"))

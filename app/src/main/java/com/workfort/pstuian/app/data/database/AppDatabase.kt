@@ -23,15 +23,20 @@ import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.R
 
-@Database(entities = [
-    ConfigEntity::class,
-    SliderEntity::class,
-    FacultyEntity::class,
-    StudentEntity::class,
-    TeacherEntity::class,
-    BatchEntity::class,
-    EmployeeEntity::class,
-    CourseEntity::class], version = BuildConfig.VERSION_CODE_DB, exportSchema = false)
+@Database(
+    entities = [
+        ConfigEntity::class,
+        SliderEntity::class,
+        FacultyEntity::class,
+        StudentEntity::class,
+        TeacherEntity::class,
+        BatchEntity::class,
+        EmployeeEntity::class,
+        CourseEntity::class,
+    ],
+    version = BuildConfig.VERSION_CODE_DB,
+    exportSchema = false,
+)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile

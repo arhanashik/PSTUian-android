@@ -5,18 +5,6 @@ import com.google.gson.annotations.SerializedName
 import com.workfort.pstuian.appconstant.NetworkConst
 import kotlinx.parcelize.Parcelize
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 29 Oct, 2021 at 20:39.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
-
 @Parcelize
 data class NotificationEntity(
     var id: Int,

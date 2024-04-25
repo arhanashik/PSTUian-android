@@ -1,32 +1,21 @@
 package com.workfort.pstuian.repository
 
-import com.workfort.pstuian.database.service.TeacherService
+import com.workfort.pstuian.database.service.TeacherDbService
 import com.workfort.pstuian.model.TeacherEntity
 import com.workfort.pstuian.model.TeacherProfile
-import com.workfort.pstuian.networking.TeacherApiHelper
+import com.workfort.pstuian.networking.domain.TeacherApiHelper
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 01 Nov, 2021 at 1:17 PM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
 
 class TeacherRepository(
     private val authRepo: AuthRepository,
     private val facultyRepo: FacultyRepository,
-    private val teacherDbService: TeacherService,
-    private val helper: com.workfort.pstuian.networking.TeacherApiHelper,
+    private val teacherDbService: TeacherDbService,
+    private val helper: TeacherApiHelper,
 ) {
     suspend fun getProfile(teacherId: Int): TeacherProfile {
         // get teacher
         var teacher = teacherDbService.get(teacherId)
-        if(teacher == null) {
+        if (teacher == null) {
             teacher = helper.get(teacherId)
             teacherDbService.insert(teacher)
         }
@@ -45,7 +34,7 @@ class TeacherRepository(
 
     suspend fun changeProfileImage(teacher: TeacherEntity, imageUrl: String): Boolean {
         val isChanged = helper.changeProfileImage(teacher.id, imageUrl)
-        if(isChanged) {
+        if (isChanged) {
             teacher.imageUrl = imageUrl
             authRepo.storeSignInTeacher(teacher)
             teacherDbService.update(teacher)
@@ -55,7 +44,7 @@ class TeacherRepository(
 
     suspend fun changeName(teacher: TeacherEntity, name: String): Boolean {
         val isChanged = helper.changeName(teacher.id, name)
-        if(isChanged) {
+        if (isChanged) {
             teacher.name = name
             authRepo.storeSignInTeacher(teacher)
             teacherDbService.update(teacher)
@@ -65,7 +54,7 @@ class TeacherRepository(
 
     suspend fun changeBio(teacher: TeacherEntity, bio: String): Boolean {
         val isChanged = helper.changeBio(teacher.id, bio)
-        if(isChanged) {
+        if (isChanged) {
             teacher.bio = bio
             authRepo.storeSignInTeacher(teacher)
             teacherDbService.update(teacher)
@@ -98,7 +87,7 @@ class TeacherRepository(
         linkedIn: String,
         fbLink: String
     ): TeacherEntity {
-        val oldEmail = teacher.email?: ""
+        val oldEmail = teacher.email ?: ""
         helper.changeConnectInfo(
             teacher.id, address, phone, email, oldEmail, linkedIn, fbLink
         ).let { updatedTeacher ->

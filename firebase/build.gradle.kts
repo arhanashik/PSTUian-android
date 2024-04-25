@@ -37,8 +37,4 @@ dependencies {
     implementation(AppDependencies.firebaseMessaging)
     implementation(AppDependencies.firebaseAnalytics)
     implementation(AppDependencies.koin)
-
-    implementation(project(":appconstant"))
-    implementation(project(":sharedpref"))
-    implementation(project(":repository"))
 }

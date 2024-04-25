@@ -23,7 +23,7 @@ interface EmployeeDao {
 
     @Query("SELECT * FROM " + TableNames.EMPLOYEE
             + " WHERE " + ColumnNames.Employee.ID + "=:id LIMIT 1")
-    fun get(id: String): EmployeeEntity
+    fun get(id: Int): EmployeeEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(employeeEntity: EmployeeEntity)

@@ -16,9 +16,6 @@ interface PrefProp {
     val keyAuthToken: String
         get() = "auth_token"
 
-    val keyDonateOption: String
-        get() = "donation_option"
-
     val keyDonationId: String
         get() = "donation_id"
 

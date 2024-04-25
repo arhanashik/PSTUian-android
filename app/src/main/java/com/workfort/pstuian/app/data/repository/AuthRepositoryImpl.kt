@@ -6,13 +6,15 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.appconstant.NetworkConst
-import com.workfort.pstuian.database.service.ConfigService
+import com.workfort.pstuian.database.service.ConfigDbService
 import com.workfort.pstuian.model.ConfigEntity
 import com.workfort.pstuian.model.DeviceEntity
 import com.workfort.pstuian.model.StudentEntity
 import com.workfort.pstuian.model.TeacherEntity
+import com.workfort.pstuian.networking.domain.AuthApiHelper
 import com.workfort.pstuian.repository.AuthRepository
 import com.workfort.pstuian.sharedpref.Prefs
 import com.workfort.pstuian.util.helper.AndroidUtil
@@ -21,21 +23,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Oct, 2021 at 4:03 PM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
-
 class AuthRepositoryImpl(
-    private val dbService: ConfigService,
-    private val helper: com.workfort.pstuian.networking.AuthApiHelper,
+    private val dbService: ConfigDbService,
+    private val helper: AuthApiHelper,
 ) : AuthRepository {
 
     private val Context.authStore: DataStore<Preferences> by preferencesDataStore(AUTH_PREFERENCES)
@@ -87,8 +77,8 @@ class AuthRepositoryImpl(
             fcmToken = fcmToken,
             model = AndroidUtil.getDeviceName(),
             androidVersion = AndroidUtil.getDeviceVersionName,
-            appVersionCode = AndroidUtil.getVersionCode,
-            appVersionName = AndroidUtil.getVersionName,
+            appVersionCode = BuildConfig.VERSION_CODE,
+            appVersionName = BuildConfig.VERSION_NAME,
             ipAddress = AndroidUtil.getLocalIpAddress(),
             lat = lat,
             lng = lng,
@@ -215,16 +205,15 @@ class AuthRepositoryImpl(
             NetworkConst.Params.UserType.TEACHER -> helper.signInTeacher(email, password, deviceId)
             else -> throw Exception("Invalid User Type!")
         }
-        data.first.let { user ->
-            when (user) {
-                is StudentEntity -> storeSignInStudent(user)
-                is TeacherEntity -> storeSignInTeacher(user)
-                else -> throw Exception("Invalid User Type!")
-            }
+        val user = data.first
+        when (user) {
+            is StudentEntity -> storeSignInStudent(user)
+            is TeacherEntity -> storeSignInTeacher(user)
+            else -> throw Exception("Invalid User Type!")
         }
         storeAuthToken(data.second)
 
-        return data.first
+        return user
     }
 
     override suspend fun signUpStudent(
@@ -238,8 +227,16 @@ class AuthRepositoryImpl(
     ): StudentEntity {
         val deviceId = Prefs.deviceId
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        val data = helper.signUpStudent(name, id, reg, facultyId, batchId, session,
-            email, deviceId)
+        val data = helper.signUpStudent(
+            name,
+            id,
+            reg,
+            facultyId,
+            batchId,
+            session,
+            email,
+            deviceId,
+        )
 //        storeSignInStudent(data.first)
 //        storeAuthToken(data.second)
 

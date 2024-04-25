@@ -24,7 +24,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":appconstant"))
     implementation(AppDependencies.retrofitConverter)
     implementation(AppDependencies.room)
+    // sdks
+    implementation(project(":appconstant"))
 }

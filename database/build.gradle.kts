@@ -23,8 +23,8 @@ android {
 }
 
 dependencies {
+    implementation(AppDependencies.room)
+
     implementation(project(":appconstant"))
     implementation(project(":model"))
-
-    implementation(AppDependencies.room)
 }

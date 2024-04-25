@@ -1,32 +1,20 @@
 package com.workfort.pstuian.repository
 
-import com.workfort.pstuian.database.service.StudentService
+import com.workfort.pstuian.database.service.StudentDbService
 import com.workfort.pstuian.model.StudentEntity
 import com.workfort.pstuian.model.StudentProfile
-import com.workfort.pstuian.networking.StudentApiHelper
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Oct, 2021 at 4:03 PM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
+import com.workfort.pstuian.networking.domain.StudentApiHelper
 
 class StudentRepository(
     private val authRepo: AuthRepository,
     private val facultyRepo: FacultyRepository,
-    private val studentDbService: StudentService,
-    private val helper: com.workfort.pstuian.networking.StudentApiHelper,
+    private val studentDbService: StudentDbService,
+    private val helper: StudentApiHelper,
 ) {
     suspend fun getProfile(studentId: Int): StudentProfile {
         // get student
         var student = studentDbService.get(studentId)
-        if(student == null) {
+        if (student == null) {
             student = helper.get(studentId)
             studentDbService.insert(student)
         }
@@ -47,7 +35,7 @@ class StudentRepository(
 
     suspend fun changeProfileImage(student: StudentEntity, imageUrl: String): Boolean {
         val isChanged = helper.changeProfileImage(student.id, imageUrl)
-        if(isChanged) {
+        if (isChanged) {
             student.imageUrl = imageUrl
             authRepo.storeSignInStudent(student)
             studentDbService.update(student)
@@ -57,7 +45,7 @@ class StudentRepository(
 
     suspend fun changeName(student: StudentEntity, name: String): Boolean {
         val isChanged = helper.changeName(student.id, name)
-        if(isChanged) {
+        if (isChanged) {
             student.name = name
             authRepo.storeSignInStudent(student)
             studentDbService.update(student)
@@ -67,7 +55,7 @@ class StudentRepository(
 
     suspend fun changeBio(student: StudentEntity, bio: String): Boolean {
         val isChanged = helper.changeBio(student.id, bio)
-        if(isChanged) {
+        if (isChanged) {
             student.bio = bio
             authRepo.storeSignInStudent(student)
             studentDbService.update(student)
@@ -89,7 +77,7 @@ class StudentRepository(
             name, student.id, id, reg, blood, facultyId, session, batchId
         ).let { updatedStudent ->
             authRepo.storeSignInStudent(updatedStudent)
-            if(student.id != id) {
+            if (student.id != id) {
                 studentDbService.delete(student)
                 studentDbService.insert(updatedStudent)
             } else {
@@ -108,7 +96,7 @@ class StudentRepository(
         linkedIn: String,
         facebook: String
     ): StudentEntity {
-        val oldEmail = student.email?: ""
+        val oldEmail = student.email ?: ""
         helper.changeConnectInfo(
             student.id, address, phone, email, oldEmail, cvLink, linkedIn, facebook
         ).let { updatedStudent ->

@@ -6,8 +6,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.workfort.pstuian.appconstant.Const
-import com.workfort.pstuian.networking.service.RetrofitBuilder
-import com.workfort.pstuian.workmanager.ProgressRequestBody
+import com.workfort.pstuian.networking.RetrofitBuilder
+import com.workfort.pstuian.workmanager.util.ProgressRequestBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -35,7 +35,7 @@ class PdfUploadWorker(
     }
 
     private suspend fun upload(context: Context, pdfUriStr: String, fileName: String): Result {
-        val file = createTempFile(context, pdfUriStr, fileName)?: return Result.failure()
+        val file = createTempFile(context, pdfUriStr, fileName) ?: return Result.failure()
         val fileRequestBody = file.asRequestBody("application/pdf".toMediaType())
         val requestBody = ProgressRequestBody(fileRequestBody) { bytesWritten, contentLength ->
             val progress = 100 * bytesWritten / contentLength
@@ -51,7 +51,7 @@ class PdfUploadWorker(
             file = MultipartBody.Part.createFormData(
                 name = "file",
                 filename = fileName,
-                body = requestBody
+                body = requestBody,
             )
         )
 

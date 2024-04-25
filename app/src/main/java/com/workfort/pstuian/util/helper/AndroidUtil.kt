@@ -2,33 +2,19 @@ package com.workfort.pstuian.util.helper
 
 import android.content.Context.VIBRATOR_MANAGER_SERVICE
 import android.content.Context.VIBRATOR_SERVICE
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.TransitionDrawable
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.view.View
-import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.PstuianApp
 import java.net.Inet4Address
 import java.net.NetworkInterface
 import java.net.SocketException
 import java.util.Locale
-import kotlin.random.Random
 
 object AndroidUtil {
-    val randomColor: Int = Color.argb(
-        255, Random.nextInt(256),
-        Random.nextInt(256),
-        Random.nextInt(256)
-    )
 
-    const val getVersionCode = BuildConfig.VERSION_CODE
-    const val getVersionName = BuildConfig.VERSION_NAME
-    val getDeviceVersionName: String = Build.VERSION.RELEASE?: Build.VERSION.SDK_INT.toString()
+    val getDeviceVersionName: String = Build.VERSION.RELEASE ?: Build.VERSION.SDK_INT.toString()
 
     fun getLocaleLanguage(): String = Locale.getDefault().language
 
@@ -91,49 +77,6 @@ object AndroidUtil {
                 VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
             vibrator.vibrate(longArrayOf(0, 150), -1)
-        }
-    }
-
-    fun generateGradientDrawable(
-        colors: ArrayList<String>,
-        orientationStr: String = "BL_TR"
-    ): GradientDrawable {
-        val colorsInt = IntArray(colors.size)
-
-        for(i in 0 until colors.size) {
-            val colorStr = colors[i]
-            colorsInt[i] = Color.parseColor(colorStr)
-        }
-
-        val orientation = GradientDrawable.Orientation.valueOf(orientationStr)
-
-        return generateGradientDrawable(colorsInt, orientation)
-    }
-
-    fun generateGradientDrawable(
-        colors: IntArray,
-        orientation: GradientDrawable.Orientation = GradientDrawable.Orientation.BL_TR
-    ): GradientDrawable {
-        return GradientDrawable(orientation, colors).apply {
-            cornerRadius = 0f
-        }
-    }
-
-    fun setBackgroundAnimated(
-        root: View,
-        newBackground: Drawable,
-        durationMills: Int = 250
-    ) {
-        val currentBG: Drawable? = root.background
-
-        if (currentBG == null) {
-            root.background = newBackground
-        } else {
-            val transitionDrawable = TransitionDrawable(arrayOf(currentBG, newBackground))
-//            transitionDrawable.isCrossFadeEnabled = true
-
-            root.background = transitionDrawable
-            transitionDrawable.startTransition(durationMills)
         }
     }
 }

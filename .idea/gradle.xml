@@ -29,6 +29,7 @@
             <option value="$PROJECT_DIR$/networking" />
             <option value="$PROJECT_DIR$/repository" />
             <option value="$PROJECT_DIR$/sharedpref" />
+            <option value="$PROJECT_DIR$/util" />
             <option value="$PROJECT_DIR$/view" />
             <option value="$PROJECT_DIR$/workmanager" />
           </set>
