@@ -12,35 +12,42 @@ dimension = "environment"
 
 # App Level
 gradle = "8.3.1"
-kotlin = "1.9.23"
-ksp = "1.9.23-1.0.20"
-googleServices = "4.4.1"
+ksp = "2.0.21-1.0.28"
 
 # Compose
-composeBom = "2024.03.00"
 composeActivity = "1.8.2"
-lifecycle = "2.7.0"
-composeViewModel = "2.6.1"
-composeNavigation = "2.5.3"
 
 # Libraries
-coreKtx = "1.2.0"
+coreKtx = "1.15.0"
 room = "2.7.0-alpha07"
-coroutines = "1.6.0"
 multidex = "2.0.1"
 datastorePreferences = "1.0.0"
 workManager = "2.9.0"
 datetime = "0.6.0"
 ktor = "2.3.10"
 multiplatformSettings = "1.1.1"
-firebaseBom = "32.7.4"
-koin = "3.5.3"
-coilCompose = "2.6.0"
 retrofit = "2.9.0"
 okhttp = "4.12.0"
 timber = "4.7.1"
 lottie = "4.0.0"
 documentFile = "1.0.1"
+
+compose-multiplatform = "1.6.11"
+compose-material3 = "1.6.11"
+compose-material-icons = "1.6.11"
+androidx-lifecycle = "2.8.2"
+androidx-core = "1.15.0"
+compose-navigation-version = "2.8.0-alpha10"
+coil-version = "3.0.4"
+firebase-bom-version = "33.1.1"
+google-services-version = "4.4.4"
+voyager = "1.1.0-beta03"
+coroutines = "1.9.0"
+koin = "4.0.0"
+kotlin = "2.0.21"
+kotlinx-serialization = "1.7.3"
+kotlinx-datetime = "0.6.1"
+napier = "2.7.1"
 
 # Test
 junit = "4.12"
@@ -52,23 +59,34 @@ runner = "1.5.2"
 # Build Logic
 gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "gradle" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
-google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
+google-services = { group = "com.google.gms", name = "google-services", version.ref = "google-services-version" }
 
 # Std Lib
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlin" }
 
 # Android
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
 
 # Compose
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+# androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+# androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
-androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
-androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+# androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+# androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
+# androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
+# androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+# androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-material3" }
+compose-material-icons = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "compose-material-icons" }
+compose-animation = { group = "org.jetbrains.compose.animation", name = "animation", version.ref = "compose-multiplatform" }
+compose-components-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "compose-multiplatform" }
+compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose-multiplatform" }
+compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "compose-multiplatform" }
+compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "compose-navigation-version" }
 
 # Room
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
@@ -91,8 +109,8 @@ androidx-work-testing = { group = "androidx.work", name = "work-testing", versio
 # Utilities
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentFile" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
-kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.6.3" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 # Multiplatform Settings
 multiplatform-settings = { group = "com.russhwolf", name = "multiplatform-settings", version.ref = "multiplatformSettings" }
@@ -107,7 +125,7 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 
 # Firebase
-google-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+google-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom-version" }
 google-firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 google-firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 
@@ -125,7 +143,8 @@ squareup-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref
 squareup-okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 # Image Loader
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+# coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+coil3-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil-version" }
 
 # Logger
 jakewharton-timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
@@ -142,10 +161,12 @@ androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espres
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
 android-library = { id = "com.android.library", version.ref = "gradle" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services-version" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

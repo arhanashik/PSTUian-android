@@ -1,14 +1,14 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlin.compose)
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
 
@@ -29,6 +29,16 @@ kotlin {
                 api(project(":util"))
                 api(project(":appconstant"))
                 api(project(":shared"))
+
+                implementation(libs.compose.ui)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.animation)
+                implementation(libs.compose.components.resources)
+                implementation(libs.compose.viewmodel)
+                implementation(libs.compose.navigation)
+                implementation(libs.coil3.compose)
             }
         }
         val commonTest by getting {
@@ -38,12 +48,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation(project.dependencies.platform(libs.androidx.compose.bom))
-                implementation(libs.androidx.compose.material3)
-                implementation(libs.androidx.compose.ui.tooling.preview)
-                implementation(libs.androidx.lifecycle.viewmodel.compose)
-                implementation(libs.androidx.navigation.compose)
-                implementation(libs.coil.compose)
+                implementation(libs.compose.ui.tooling.preview)
                 implementation(libs.airbnb.android.lottie.compose)
             }
         }
@@ -66,15 +71,11 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
     }
 }

@@ -21,10 +21,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Size
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.size.Size
 import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
 import com.workfort.pstuian.view.ui.common.component.AnimatedImagePlaceholderView
 import com.workfort.pstuian.view.ui.common.theme.LottieAnimation
@@ -84,7 +84,7 @@ private fun ImagePreviewScreenComponent(
                 .build()
         )
 
-        when (painter.state) {
+        when (val state = painter.state) {
             is AsyncImagePainter.State.Success -> {
                 Image(
                     modifier = modifier.fillMaxWidth(),
@@ -100,6 +100,7 @@ private fun ImagePreviewScreenComponent(
             is AsyncImagePainter.State.Error -> {
                 AnimatedErrorView(modifier = Modifier.width(LottieAnimation.errorWidth))
             }
+            else -> {}
         }
     }
 }

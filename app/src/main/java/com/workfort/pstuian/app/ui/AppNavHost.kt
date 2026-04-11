@@ -44,7 +44,7 @@ import com.workfort.pstuian.model.UserType
 import com.workfort.pstuian.view.ui.common.facultypicker.FacultyPickerScreen
 import com.workfort.pstuian.view.ui.common.locationpicker.LocationPickerScreen
 import com.workfort.pstuian.viewmodel.FacultyPickerViewModel
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -62,7 +62,7 @@ fun AppNavHost(
         composable(NavItem.Splash.route) {
             SplashScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -70,7 +70,7 @@ fun AppNavHost(
         composable(NavItem.Home.route) {
             HomeScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -78,7 +78,7 @@ fun AppNavHost(
         composable(NavItem.SignIn.route) {
             SignInScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -86,7 +86,7 @@ fun AppNavHost(
         composable(NavItem.SignUp.route) {
             SignUpScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -94,7 +94,7 @@ fun AppNavHost(
         composable(NavItem.Notification.route) {
             NotificationScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -108,7 +108,7 @@ fun AppNavHost(
             it.arguments?.getInt(NavParam.FACULTY_ID)?.let { id ->
                 FacultyScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(parameters = { parametersOf(id) }),
+                    viewModel = koinViewModel(parameters = { parametersOf(id) }),
                     navController = navController,
                 )
             }
@@ -123,7 +123,7 @@ fun AppNavHost(
             it.arguments?.getInt(NavParam.BATCH_ID)?.let { id ->
                 StudentsScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(parameters = { parametersOf(id) }),
+                    viewModel = koinViewModel(parameters = { parametersOf(id) }),
                     navController = navController,
                 )
             }
@@ -138,7 +138,7 @@ fun AppNavHost(
             it.arguments?.getInt(NavParam.USER_ID)?.let { userId ->
                 StudentProfileScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(parameters = { parametersOf(userId) }),
+                    viewModel = koinViewModel(parameters = { parametersOf(userId) }),
                     navController = navController,
                 )
             }
@@ -158,7 +158,7 @@ fun AppNavHost(
                     ProfileEditMode.create(actionInt)?.let { action ->
                         StudentProfileEditScreen(
                             modifier = modifier,
-                            viewModel = getViewModel(parameters = { parametersOf(userId, action) }),
+                            viewModel = koinViewModel(parameters = { parametersOf(userId, action) }),
                             navController = navController,
                         )
                     }
@@ -175,7 +175,7 @@ fun AppNavHost(
             it.arguments?.getInt(NavParam.USER_ID)?.let { userId ->
                 TeacherProfileScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(parameters = { parametersOf(userId) }),
+                    viewModel = koinViewModel(parameters = { parametersOf(userId) }),
                     navController = navController,
                 )
             }
@@ -195,7 +195,7 @@ fun AppNavHost(
                     ProfileEditMode.create(actionInt)?.let { action ->
                         TeacherProfileEditScreen(
                             modifier = modifier,
-                            viewModel = getViewModel(parameters = { parametersOf(userId, action) }),
+                            viewModel = koinViewModel(parameters = { parametersOf(userId, action) }),
                             navController = navController,
                         )
                     }
@@ -212,7 +212,7 @@ fun AppNavHost(
             it.arguments?.getInt(NavParam.USER_ID)?.let { userId ->
                 EmployeeProfileScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(parameters = { parametersOf(userId) }),
+                    viewModel = koinViewModel(parameters = { parametersOf(userId) }),
                     navController = navController,
                 )
             }
@@ -221,7 +221,7 @@ fun AppNavHost(
         composable(NavItem.EmailVerification.route) {
             EmailVerificationScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -229,7 +229,7 @@ fun AppNavHost(
         composable(NavItem.ForgotPassword.route) {
             ForgotPasswordScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -237,7 +237,7 @@ fun AppNavHost(
         composable(NavItem.CheckInList.route) {
             CheckInListScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -263,7 +263,7 @@ fun AppNavHost(
                 val userType = UserType.create(userTypeStr)
                 MyCheckInListScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(
+                    viewModel = koinViewModel(
                         parameters = { parametersOf(userId, userType) },
                     ),
                     navController = navController,
@@ -285,7 +285,7 @@ fun AppNavHost(
         composable(NavItem.ContactUs.route) {
             ContactUsScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -293,7 +293,7 @@ fun AppNavHost(
         composable(NavItem.Donors.route) {
             DonorsScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -301,7 +301,7 @@ fun AppNavHost(
         composable(NavItem.Donate.route) {
             DonateScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -309,7 +309,7 @@ fun AppNavHost(
         composable(NavItem.Settings.route) {
             SettingsScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -317,7 +317,7 @@ fun AppNavHost(
         composable(NavItem.BloodDonationCreate.route) {
             BloodDonationCreateScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -343,7 +343,7 @@ fun AppNavHost(
                 val userType = UserType.create(userTypeStr)
                 MyBloodDonationListScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(
+                    viewModel = koinViewModel(
                         parameters = { parametersOf(userId, userType) },
                     ),
                     navController = navController,
@@ -354,7 +354,7 @@ fun AppNavHost(
         composable(NavItem.BloodDonationRequestCreate.route) {
             BloodDonationRequestCreateScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -362,7 +362,7 @@ fun AppNavHost(
         composable(NavItem.BloodDonationRequestList.route) {
             BloodDonationRequestListScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -393,7 +393,7 @@ fun AppNavHost(
                 ?: FacultyPickerViewModel.INVALID_ID
             FacultyPickerScreen(
                 modifier = modifier,
-                viewModel = getViewModel(
+                viewModel = koinViewModel(
                     parameters = { parametersOf(mode, facultyId, batchId) },
                 ),
                 navController = navController,
@@ -403,7 +403,7 @@ fun AppNavHost(
         composable(NavItem.MyDeviceList.route) {
             MyDeviceListScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -421,7 +421,7 @@ fun AppNavHost(
             val isCheckInMode = it.arguments?.getBoolean(NavParam.IS_CHECK_IN_MODE)?.or(false)
             LocationPickerScreen(
                 modifier = modifier,
-                viewModel = getViewModel(parameters = { parametersOf(isCheckInMode) }),
+                viewModel = koinViewModel(parameters = { parametersOf(isCheckInMode) }),
                 navController = navController,
             )
         }
@@ -429,7 +429,7 @@ fun AppNavHost(
         composable(NavItem.ChangePassword.route) {
             ChangePasswordScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -437,7 +437,7 @@ fun AppNavHost(
         composable(NavItem.DeleteAccount.route) {
             DeleteAccountScreen(
                 modifier = modifier,
-                viewModel = getViewModel(),
+                viewModel = koinViewModel(),
                 navController = navController,
             )
         }
@@ -463,7 +463,7 @@ fun AppNavHost(
                 val userType = UserType.create(userTypeStr)
                 CvUploadScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(
+                    viewModel = koinViewModel(
                         parameters = { parametersOf(userId, userType) },
                     ),
                     navController = navController,
@@ -498,7 +498,7 @@ fun AppNavHost(
                 val userType = UserType.create(userTypeStr)
                 CvDownloadScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(
+                    viewModel = koinViewModel(
                         parameters = { parametersOf(userId, userType, url) },
                     ),
                     navController = navController,
@@ -527,7 +527,7 @@ fun AppNavHost(
                 val userType = UserType.create(userTypeStr)
                 ImageUploadScreen(
                     modifier = modifier,
-                    viewModel = getViewModel(
+                    viewModel = koinViewModel(
                         parameters = { parametersOf(userId, userType) },
                     ),
                     navController = navController,
