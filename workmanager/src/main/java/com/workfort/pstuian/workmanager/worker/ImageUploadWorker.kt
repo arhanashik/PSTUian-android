@@ -5,14 +5,11 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.workfort.pstuian.appconstant.Const
-import com.workfort.pstuian.networking.RetrofitBuilder
-import com.workfort.pstuian.workmanager.util.ProgressRequestBody
+import com.workfort.pstuian.networking.service.FileHandlerApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import java.io.File
 
 
@@ -30,7 +27,7 @@ import java.io.File
 
 class ImageUploadWorker(
     private val context: Context, workerParams: WorkerParameters
-): CoroutineWorker(context, workerParams) {
+): CoroutineWorker(context, workerParams), KoinComponent {
     override suspend fun doWork(): Result {
         val userType = inputData.getString(Const.Key.USER_TYPE)
         val fileName = inputData.getString(Const.Key.NAME)
@@ -46,26 +43,15 @@ class ImageUploadWorker(
     private suspend fun upload(context: Context, userType: String, fileName: String): Result {
         val file = File(context.cacheDir, fileName)
         if(!file.exists()) {
-            Result.failure()
+            return Result.failure()
         }
-        val fileRequestBody = file.asRequestBody("image/jpeg".toMediaType())
-        val requestBody = ProgressRequestBody(fileRequestBody) { bytesWritten, contentLength ->
-            val progress = 100 * bytesWritten / contentLength
-            setProgressAsync(workDataOf(Const.Key.PROGRESS to progress))
-            if (progress >= 1.0) {
-                return@ProgressRequestBody
-            }
-        }
+        val fileBytes = file.readBytes()
 
-        val service = RetrofitBuilder.createFileHandlerApiService()
+        val service = get<FileHandlerApiService>()
         val response = service.uploadImage(
-            userType = userType.toPlainTextBody(),
-            filename = fileName.toPlainTextBody(),
-            file = MultipartBody.Part.createFormData(
-                name = "file",
-                filename = fileName,
-                body = requestBody
-            )
+            userType = userType,
+            filename = fileName,
+            fileBytes = fileBytes
         )
 
         return if(response.success) {
@@ -76,6 +62,4 @@ class ImageUploadWorker(
             Result.failure(data)
         }
     }
-
-    private fun String.toPlainTextBody() = toRequestBody("text/plain".toMediaType())
 }

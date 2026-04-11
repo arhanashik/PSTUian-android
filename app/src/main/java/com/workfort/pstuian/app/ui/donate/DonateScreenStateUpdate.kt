@@ -2,7 +2,7 @@ package com.workfort.pstuian.app.ui.donate
 
 import com.workfort.pstuian.model.DonationInput
 import com.workfort.pstuian.model.DonationInputValidationError
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface DonateScreenStateUpdate : StateUpdate<DonateScreenState> {
 

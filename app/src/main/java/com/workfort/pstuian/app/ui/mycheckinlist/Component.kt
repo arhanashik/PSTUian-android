@@ -25,14 +25,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.ui.common.component.DotView
-import com.workfort.pstuian.app.ui.common.component.LoadAsyncImage
-import com.workfort.pstuian.app.ui.common.component.MaterialButtonToggleGroup
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.model.CheckInEntity
 import com.workfort.pstuian.model.CheckInPrivacy
 import com.workfort.pstuian.util.DateUtil
 import com.workfort.pstuian.util.helper.MathUtil
+import com.workfort.pstuian.view.ui.common.component.DotView
+import com.workfort.pstuian.view.ui.common.component.LoadAsyncImage
+import com.workfort.pstuian.view.ui.common.component.MaterialButtonToggleGroup
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 import kotlinx.coroutines.launch
 
 

@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.ui.imageupload
 
 import android.net.Uri
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 
 sealed interface ImageUploadScreenStateUpdate : StateUpdate<ImageUploadScreenState> {

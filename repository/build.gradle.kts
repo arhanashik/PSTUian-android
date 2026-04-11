@@ -1,30 +1,56 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
+}
+
+kotlin {
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "repository"
+            export(project(":appconstant"))
+            export(project(":model"))
+            export(project(":networking"))
+            export(project(":sharedpref"))
+            export(project(":database"))
+            export(project(":util"))
+        }
+    }
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(project(":appconstant"))
+                implementation(project(":model"))
+                implementation(project(":networking"))
+                implementation(project(":sharedpref"))
+                implementation(project(":database"))
+                implementation(project(":util"))
+                implementation(libs.koin.core)
+            }
+        }
+        val androidMain by getting
+        val iosMain by creating {
+            dependsOn(commonMain)
+        }
+    }
 }
 
 android {
     namespace = "com.workfort.pstuian.repository"
-    compileSdk = AppConfig.COMPILE_SDK
-
+    compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
-        minSdk = AppConfig.MIN_SDK
-
-        consumerProguardFiles("consumer-rules.pro")
+        minSdk = libs.versions.minSdk.get().toInt()
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
-dependencies {
-    implementation(project(":database"))
-    implementation(project(":model"))
-    implementation(project(":networking"))
-    implementation(project(":sharedpref"))
 }

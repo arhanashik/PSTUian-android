@@ -12,12 +12,8 @@ import com.workfort.pstuian.app.ui.checkinlist.CheckInListScreenStateReducer
 import com.workfort.pstuian.app.ui.checkinlist.CheckInListViewModel
 import com.workfort.pstuian.app.ui.common.domain.usecase.ClearAllDataUseCase
 import com.workfort.pstuian.app.ui.common.domain.usecase.RegisterDeviceUseCase
-import com.workfort.pstuian.app.ui.common.facultypicker.FacultyPickerScreenStateReducer
-import com.workfort.pstuian.app.ui.common.facultypicker.FacultyPickerViewModel
 import com.workfort.pstuian.app.ui.common.infrastructure.usecase.ClearAllDataUseCaseImpl
 import com.workfort.pstuian.app.ui.common.infrastructure.usecase.RegisterDeviceUseCaseImpl
-import com.workfort.pstuian.app.ui.common.locationpicker.LocationPickerScreenStateReducer
-import com.workfort.pstuian.app.ui.common.locationpicker.LocationPickerViewModel
 import com.workfort.pstuian.app.ui.contactus.ContactUsScreenStateReducer
 import com.workfort.pstuian.app.ui.contactus.ContactUsViewModel
 import com.workfort.pstuian.app.ui.cvdownload.CvDownloadScreenStateReducer
@@ -71,11 +67,16 @@ import com.workfort.pstuian.app.ui.teacherprofileedit.TeacherProfileEditViewMode
 import com.workfort.pstuian.model.FacultySelectionMode
 import com.workfort.pstuian.model.ProfileEditMode
 import com.workfort.pstuian.model.UserType
+import com.workfort.pstuian.reducer.ui.common.facultypicker.FacultyPickerScreenStateReducer
+import com.workfort.pstuian.reducer.ui.common.locationpicker.LocationPickerScreenStateReducer
+import com.workfort.pstuian.viewmodel.FacultyPickerViewModel
+import com.workfort.pstuian.viewmodel.LocationPickerViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 val useCaseModule = module {
-    factory<ClearAllDataUseCase> { ClearAllDataUseCaseImpl(get(), get(), get()) }
+    factory<ClearAllDataUseCase> { ClearAllDataUseCaseImpl(get(), get(), get(), get()) }
     factory<RegisterDeviceUseCase> { RegisterDeviceUseCaseImpl(get()) }
 }
 
@@ -168,7 +169,7 @@ val viewModelModule = module {
         EmployeeProfileViewModel(userId, get(), get())
     }
     viewModel { ContactUsViewModel(get(), get()) }
-    viewModel { DonateViewModel(get(), get()) }
+    viewModel { DonateViewModel(get(), get(), get()) }
     viewModel { NotificationViewModel(get(), get()) }
     viewModel { BloodDonationCreateViewModel(get(), get()) }
     viewModel { (userId: Int, userType: UserType) ->
@@ -176,13 +177,7 @@ val viewModelModule = module {
     }
     viewModel { BloodDonationRequestCreateViewModel(get(), get()) }
     viewModel { BloodDonationRequestListViewModel(get(), get()) }
-    viewModel {
-        CheckInListViewModel(
-            checkInRepo = get(),
-            checkInLocationRepo = get(),
-            reducer = get(),
-        )
-    }
+    viewModelOf(::CheckInListViewModel)
     viewModel { (userId: Int, userType: UserType) ->
         MyCheckInListViewModel(
             userId = userId,

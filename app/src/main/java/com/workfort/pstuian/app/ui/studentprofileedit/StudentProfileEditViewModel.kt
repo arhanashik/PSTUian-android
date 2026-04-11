@@ -7,6 +7,7 @@ import com.workfort.pstuian.model.ProfileEditMode
 import com.workfort.pstuian.model.StudentAcademicInfoInputError
 import com.workfort.pstuian.model.StudentConnectInfoInputError
 import com.workfort.pstuian.model.StudentProfile
+import com.workfort.pstuian.model.dto.toDto
 import com.workfort.pstuian.repository.FacultyRepository
 import com.workfort.pstuian.repository.StudentRepository
 import com.workfort.pstuian.util.isValidEmail
@@ -85,7 +86,7 @@ class StudentProfileEditViewModel(
                 newProfileCache?.let {
                     val newProfile = it.copy(
                         student = it.student.copy(facultyId = faculty.id),
-                        faculty = faculty,
+                        faculty = faculty.toDto(),
                     )
                     newProfileCache = newProfile
                     messageConsumed()
@@ -116,8 +117,8 @@ class StudentProfileEditViewModel(
                 newProfileCache?.let {
                     val newProfile = it.copy(
                         student = it.student.copy(batchId = batch.id, facultyId = faculty.id),
-                        batch = batch,
-                        faculty = faculty,
+                        batch = batch.toDto(),
+                        faculty = faculty.toDto(),
                     )
                     newProfileCache = newProfile
                     messageConsumed()
@@ -199,7 +200,7 @@ class StudentProfileEditViewModel(
                 when (mode) {
                     ProfileEditMode.ACADEMIC -> {
                         studentRepo.changeAcademicInfo(
-                            student = oldProfile.student,
+                            student = oldProfile.student.toEntity(),
                             name = newProfile.student.name,
                             id = newProfile.student.id,
                             reg = newProfile.student.reg,
@@ -211,7 +212,7 @@ class StudentProfileEditViewModel(
                     }
                     ProfileEditMode.CONNECT -> {
                         studentRepo.changeConnectInfo(
-                            student = oldProfile.student,
+                            student = oldProfile.student.toEntity(),
                             address = newProfile.student.address.orEmpty(),
                             phone = newProfile.student.phone.orEmpty(),
                             email = newProfile.student.email.orEmpty(),

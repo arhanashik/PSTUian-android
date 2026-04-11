@@ -3,7 +3,7 @@ package com.workfort.pstuian.app.ui.studentprofileedit
 import com.workfort.pstuian.model.StudentAcademicInfoInputError
 import com.workfort.pstuian.model.StudentConnectInfoInputError
 import com.workfort.pstuian.model.StudentProfile
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface StudentProfileEditScreenStateUpdate : StateUpdate<StudentProfileEditScreenState> {
 

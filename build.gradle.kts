@@ -1,29 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id("com.google.devtools.ksp") version Versions.KSP apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.androidx.room) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
 }
 
 buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
     dependencies {
-        classpath("com.android.tools.build:gradle:${Versions.GRADLE}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}")
-        classpath("com.google.gms:google-services:${Versions.GOOGLE_SERVICES}")
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven {
-            url = uri("https://jitpack.io")
-        }
+        classpath("androidx.room:room-gradle-plugin:2.7.0-alpha01")
     }
 }
 

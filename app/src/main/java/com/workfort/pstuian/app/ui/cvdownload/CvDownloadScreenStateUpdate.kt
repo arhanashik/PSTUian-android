@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.cvdownload
 
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 
 sealed interface CvDownloadScreenStateUpdate : StateUpdate<CvDownloadScreenState> {

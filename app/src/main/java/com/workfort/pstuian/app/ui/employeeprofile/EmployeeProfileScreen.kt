@@ -37,15 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.NavItem
-import com.workfort.pstuian.app.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.app.ui.common.component.LoadAsyncUserImage
-import com.workfort.pstuian.app.ui.common.component.ProfileInfoListView
-import com.workfort.pstuian.app.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.app.ui.common.component.TabView
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.model.EmployeeProfile
 import com.workfort.pstuian.model.ProfileInfoItemAction
 import com.workfort.pstuian.util.helper.LinkUtil
+import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
+import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
+import com.workfort.pstuian.view.ui.common.component.ProfileInfoListView
+import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.view.ui.common.component.TabView
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 import kotlinx.coroutines.launch
 
 
@@ -137,7 +137,7 @@ private fun ProfileView(
     onUiEvent: (EmployeeProfileScreenUiEvent) -> Unit,
 ) {
     val context = LocalContext.current
-    val userImageUrl = profile.emplyee.imageUrl
+    val userImageUrl = profile.employee.imageUrl
     val scope = rememberCoroutineScope()
     val tabs = listOf(
         context.getString(R.string.txt_academic),
@@ -185,7 +185,7 @@ private fun ProfileView(
         }
         TitleTextSmall(
             modifier = Modifier.padding(start = 16.dp, top = 10.dp, end = 16.dp),
-            text = profile.emplyee.name,
+            text = profile.employee.name,
         )
         TabView(
             modifier = Modifier.padding(top = 16.dp),

@@ -1,14 +1,14 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace = "com.workfort.pstuian.workmanager"
-    compileSdk = AppConfig.COMPILE_SDK
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = AppConfig.MIN_SDK
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -33,9 +33,9 @@ android {
 }
 
 dependencies {
-    implementation(AppDependencies.koin)
-    implementation(AppDependencies.okhttp)
-    implementation(AppDependencies.workManager)
+    implementation(libs.koin.android)
+    implementation(libs.squareup.okhttp)
+    implementation(libs.androidx.work.runtime.ktx)
 
     implementation(project(":appconstant"))
     implementation(project(":model"))

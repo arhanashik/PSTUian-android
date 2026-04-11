@@ -37,7 +37,7 @@ class EmployeeProfileViewModel(
         )
     )
 
-    fun onClickCall() = profileCache()?.emplyee?.phone?.let { phoneNumber ->
+    fun onClickCall() = profileCache()?.employee?.phone?.let { phoneNumber ->
         if (phoneNumber.isEmpty()) return@let
         updateScreenState(
             EmployeeProfileScreenStateUpdate.UpdateMessageState(

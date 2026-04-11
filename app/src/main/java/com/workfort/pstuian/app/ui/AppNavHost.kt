@@ -12,9 +12,6 @@ import com.workfort.pstuian.app.ui.blooddonationrequestcreate.BloodDonationReque
 import com.workfort.pstuian.app.ui.blooddonationrequestlist.BloodDonationRequestListScreen
 import com.workfort.pstuian.app.ui.changepassword.ChangePasswordScreen
 import com.workfort.pstuian.app.ui.checkinlist.CheckInListScreen
-import com.workfort.pstuian.app.ui.common.facultypicker.FacultyPickerScreen
-import com.workfort.pstuian.app.ui.common.facultypicker.FacultyPickerViewModel
-import com.workfort.pstuian.app.ui.common.locationpicker.LocationPickerScreen
 import com.workfort.pstuian.app.ui.contactus.ContactUsScreen
 import com.workfort.pstuian.app.ui.cvdownload.CvDownloadScreen
 import com.workfort.pstuian.app.ui.cvupload.CvUploadScreen
@@ -44,6 +41,9 @@ import com.workfort.pstuian.app.ui.teacherprofileedit.TeacherProfileEditScreen
 import com.workfort.pstuian.model.FacultySelectionMode
 import com.workfort.pstuian.model.ProfileEditMode
 import com.workfort.pstuian.model.UserType
+import com.workfort.pstuian.view.ui.common.facultypicker.FacultyPickerScreen
+import com.workfort.pstuian.view.ui.common.locationpicker.LocationPickerScreen
+import com.workfort.pstuian.viewmodel.FacultyPickerViewModel
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 

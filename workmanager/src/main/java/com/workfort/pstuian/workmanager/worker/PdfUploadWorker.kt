@@ -6,22 +6,19 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.workfort.pstuian.appconstant.Const
-import com.workfort.pstuian.networking.RetrofitBuilder
-import com.workfort.pstuian.workmanager.util.ProgressRequestBody
+import com.workfort.pstuian.networking.service.FileHandlerApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import okio.FileNotFoundException
-import okio.IOException
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.IOException
 
 class PdfUploadWorker(
     private val context: Context, workerParams: WorkerParameters
-): CoroutineWorker(context, workerParams) {
+): CoroutineWorker(context, workerParams), KoinComponent {
     override suspend fun doWork(): Result {
         val pdfUriStr = inputData.getString(Const.Key.URI)
         val fileName = inputData.getString(Const.Key.NAME)
@@ -36,23 +33,12 @@ class PdfUploadWorker(
 
     private suspend fun upload(context: Context, pdfUriStr: String, fileName: String): Result {
         val file = createTempFile(context, pdfUriStr, fileName) ?: return Result.failure()
-        val fileRequestBody = file.asRequestBody("application/pdf".toMediaType())
-        val requestBody = ProgressRequestBody(fileRequestBody) { bytesWritten, contentLength ->
-            val progress = 100 * bytesWritten / contentLength
-            setProgressAsync(workDataOf(Const.Key.PROGRESS to progress))
-            if (progress >= 1.0) {
-                return@ProgressRequestBody
-            }
-        }
+        val fileBytes = file.readBytes()
 
-        val service = RetrofitBuilder.createFileHandlerApiService()
+        val service = get<FileHandlerApiService>()
         val response = service.uploadPdf(
-            filename = fileName.toPlainTextBody(),
-            file = MultipartBody.Part.createFormData(
-                name = "file",
-                filename = fileName,
-                body = requestBody,
-            )
+            filename = fileName,
+            fileBytes = fileBytes
         )
 
         return if(response.success) {
@@ -91,6 +77,4 @@ class PdfUploadWorker(
             return null
         }
     }
-
-    private fun String.toPlainTextBody() = toRequestBody("text/plain".toMediaType())
 }

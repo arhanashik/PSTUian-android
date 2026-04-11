@@ -2,7 +2,7 @@ package com.workfort.pstuian.app.ui.contactus
 
 import com.workfort.pstuian.model.ContactUsInput
 import com.workfort.pstuian.model.ContactUsInputValidationError
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface ContactUsScreenStateUpdate : StateUpdate<ContactUsScreenState> {
 

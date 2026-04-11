@@ -82,7 +82,7 @@ class BloodDonationRequestListViewModel(
                 ),
             )
             runCatching {
-                val list = donationRequestRepo.getAll(requestListPage)
+                val list = donationRequestRepo.getAll(requestListPage).map { it.toEntity() }
                 if (list.isEmpty()) {
                     endOfRequestListData = true
                 } else {

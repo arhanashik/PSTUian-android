@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.ui.students
 
 import com.workfort.pstuian.model.StudentEntity
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface StudentsScreenStateUpdate : StateUpdate<StudentsScreenState> {
 

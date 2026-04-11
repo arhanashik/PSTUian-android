@@ -10,6 +10,8 @@ val firebaseModule = module {
         FcmCallbackImpl(
             authRepo = get(),
             settingsRepo = get(),
+            prefs = get(),
+            platformUtil = get(),
         )
     }
 }

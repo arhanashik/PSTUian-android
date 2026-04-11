@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 class DonateViewModel(
     private val donationRepo: DonationRepository,
     private val reducer: DonateScreenStateReducer,
+    private val prefs: Prefs,
 ) : ViewModel() {
 
     private val _screenState = MutableStateFlow(reducer.initial)
@@ -74,7 +75,7 @@ class DonateViewModel(
                     reference = input.reference,
                     info = input.message,
                 )
-                Prefs.donationId = response.toString()
+                prefs.donationId = response.toString()
                 updateScreenState(DonateScreenStateUpdate.ShowLoading(false))
                 updateScreenState(
                     DonateScreenStateUpdate.UpdateMessageState(

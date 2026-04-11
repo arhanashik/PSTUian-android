@@ -18,13 +18,14 @@ class CheckInListViewModel(
     private val checkInRepo : CheckInRepository,
     private val checkInLocationRepo: CheckInLocationRepository,
     private val reducer: CheckInListScreenStateReducer,
+    private val prefs: Prefs,
 ) : ViewModel() {
 
     /**
      * Load default check in location - last selected check in location
      * If not selected yet show for Main Campus
      * */
-    private fun getLastCheckInLocationId(): Int = Prefs.lastShownCheckInLocationId.let { locationId ->
+    private fun getLastCheckInLocationId(): Int = prefs.lastShownCheckInLocationId.let { locationId ->
         if(locationId == -1) NetworkConst.Params.CheckInLocation.MAIN_CAMPUS
         else locationId
     }
@@ -86,7 +87,7 @@ class CheckInListViewModel(
             return
         }
         checkInLocationCache = null
-        Prefs.lastShownCheckInLocationId = locationId
+        prefs.lastShownCheckInLocationId = locationId
         loadCheckInList(refresh = true)
     }
 
@@ -104,7 +105,7 @@ class CheckInListViewModel(
         viewModelScope.launch {
             runCatching {
                 val locationId = getLastCheckInLocationId()
-                checkInLocationCache = checkInLocationRepo.get(locationId)
+                checkInLocationCache = checkInLocationRepo.get(locationId).toEntity()
                 updateScreenState(
                     CheckInListScreenStateUpdate.ShowCheckInListLocation(
                         checkInLocation = checkInLocationCache,
@@ -138,7 +139,7 @@ class CheckInListViewModel(
         viewModelScope.launch {
             runCatching {
                 val locationId = getLastCheckInLocationId()
-                val list = checkInRepo.getAll(locationId, checkInListPage)
+                val list = checkInRepo.getAll(locationId, checkInListPage).map { it.toEntity() }
                 if (list.isEmpty()) {
                     endOfCheckInListData = true
                 } else {
@@ -178,7 +179,7 @@ class CheckInListViewModel(
             }.onSuccess {
                 updateScreenState(
                     CheckInListScreenStateUpdate.UpdateMessageState(
-                        CheckInListScreenState.DisplayState.MessageState.ConfirmCheckIn(it),
+                        CheckInListScreenState.DisplayState.MessageState.ConfirmCheckIn(it.toEntity()),
                     ),
                 )
             }.onFailure {
@@ -210,7 +211,7 @@ class CheckInListViewModel(
                     ),
                 )
                 checkInLocationCache = null
-                Prefs.lastShownCheckInLocationId = locationId
+                prefs.lastShownCheckInLocationId = locationId
                 loadCheckInList(refresh = true)
             }.onFailure {
                 val message = it.message ?: "Check in failed. Please try again."

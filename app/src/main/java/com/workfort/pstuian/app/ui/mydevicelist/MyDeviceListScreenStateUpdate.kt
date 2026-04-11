@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.ui.mydevicelist
 
 import com.workfort.pstuian.model.DeviceEntity
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface MyDeviceListScreenStateUpdate : StateUpdate<MyDeviceListScreenState> {
 

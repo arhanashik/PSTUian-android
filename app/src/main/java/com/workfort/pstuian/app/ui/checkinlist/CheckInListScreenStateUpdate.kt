@@ -2,7 +2,7 @@ package com.workfort.pstuian.app.ui.checkinlist
 
 import com.workfort.pstuian.model.CheckInEntity
 import com.workfort.pstuian.model.CheckInLocationEntity
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 
 sealed interface CheckInListScreenStateUpdate : StateUpdate<CheckInListScreenState> {

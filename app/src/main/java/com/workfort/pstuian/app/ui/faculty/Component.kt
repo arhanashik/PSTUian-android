@@ -25,13 +25,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.ui.common.component.LabelText
-import com.workfort.pstuian.app.ui.common.component.LoadAsyncUserImage
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.model.BatchEntity
 import com.workfort.pstuian.model.CourseEntity
 import com.workfort.pstuian.model.EmployeeEntity
 import com.workfort.pstuian.model.TeacherEntity
+import com.workfort.pstuian.view.ui.common.component.LabelText
+import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 
 
 @Composable

@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.ui.donors
 
 import com.workfort.pstuian.model.DonorEntity
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 
 sealed interface DonorsScreenStateUpdate : StateUpdate<DonorsScreenState> {

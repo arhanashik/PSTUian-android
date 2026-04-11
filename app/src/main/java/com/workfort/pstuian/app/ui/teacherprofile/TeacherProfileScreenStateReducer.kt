@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.teacherprofile
 
-import com.workfort.pstuian.view.service.StateReducer
+import com.workfort.pstuian.reducer.service.StateReducer
 
 
 class TeacherProfileScreenStateReducer : StateReducer<TeacherProfileScreenState, TeacherProfileScreenStateUpdate> {

@@ -47,15 +47,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.NavItem
-import com.workfort.pstuian.app.ui.common.component.AnimatedEmptyView
-import com.workfort.pstuian.app.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.app.ui.common.component.AppBar
-import com.workfort.pstuian.app.ui.common.component.LabelText
-import com.workfort.pstuian.app.ui.common.component.LoadAsyncUserImage
-import com.workfort.pstuian.app.ui.common.component.ShowSuccessDialog
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.model.StudentEntity
 import com.workfort.pstuian.util.helper.LinkUtil
+import com.workfort.pstuian.view.ui.common.component.AnimatedEmptyView
+import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
+import com.workfort.pstuian.view.ui.common.component.AppBar
+import com.workfort.pstuian.view.ui.common.component.LabelText
+import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
+import com.workfort.pstuian.view.ui.common.component.ShowSuccessDialog
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 
 @Composable
 fun StudentsScreen(

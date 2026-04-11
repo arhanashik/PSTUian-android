@@ -11,26 +11,28 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.data.repository.SettingsRepository
 import com.workfort.pstuian.firebase.fcm.FcmMessageData
 import com.workfort.pstuian.firebase.fcm.callback.FcmCallback
 import com.workfort.pstuian.model.NotificationType
 import com.workfort.pstuian.repository.AuthRepository
+import com.workfort.pstuian.repository.SettingsRepository
 import com.workfort.pstuian.sharedpref.Prefs
-import com.workfort.pstuian.util.helper.AndroidUtil
+import com.workfort.pstuian.util.helper.PlatformUtil
 import kotlinx.coroutines.runBlocking
 import kotlin.random.Random
 
 class FcmCallbackImpl(
     private val authRepo: AuthRepository,
     private val settingsRepo: SettingsRepository,
+    private val prefs: Prefs,
+    private val platformUtil: PlatformUtil,
 ) : FcmCallback {
 
     override fun onMessageReceived(data: FcmMessageData) {
         // update prefs to add new notification state
-        Prefs.hasNewNotification = true
+        prefs.hasNewNotification = true
 
-        AndroidUtil.vibrate()
+        platformUtil.vibrate()
         handleNotification(data)
     }
 

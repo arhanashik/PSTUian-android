@@ -40,12 +40,12 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.ui.common.component.AppBar
-import com.workfort.pstuian.app.ui.common.component.ErrorText
-import com.workfort.pstuian.app.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.app.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.app.ui.common.component.dashedBorder
 import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.view.ui.common.component.AppBar
+import com.workfort.pstuian.view.ui.common.component.ErrorText
+import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
+import com.workfort.pstuian.view.ui.common.component.dashedBorder
 
 
 @Composable

@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.settings
 
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface SettingsScreenStateUpdate : StateUpdate<SettingsScreenState> {
 

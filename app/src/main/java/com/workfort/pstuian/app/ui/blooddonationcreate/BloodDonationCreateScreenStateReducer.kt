@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.blooddonationcreate
 
-import com.workfort.pstuian.view.service.StateReducer
+import com.workfort.pstuian.reducer.service.StateReducer
 
 
 class BloodDonationCreateScreenStateReducer : StateReducer<BloodDonationCreateScreenState, BloodDonationCreateScreenStateUpdate> {

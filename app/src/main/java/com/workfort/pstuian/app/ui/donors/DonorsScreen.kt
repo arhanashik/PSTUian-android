@@ -43,15 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.NavItem
-import com.workfort.pstuian.app.ui.common.component.AnimatedEmptyView
-import com.workfort.pstuian.app.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.app.ui.common.component.AppBar
-import com.workfort.pstuian.app.ui.common.component.ShowInfoDialog
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
 import com.workfort.pstuian.model.DonorEntity
+import com.workfort.pstuian.view.ui.common.component.AnimatedEmptyView
+import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
+import com.workfort.pstuian.view.ui.common.component.AppBar
+import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 import kotlinx.coroutines.delay
-
 
 @Composable
 fun DonorsScreen(

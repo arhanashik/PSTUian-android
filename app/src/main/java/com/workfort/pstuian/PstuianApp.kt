@@ -3,12 +3,11 @@ package com.workfort.pstuian
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
-import com.workfort.pstuian.app.data.database.AppDatabase
-import com.workfort.pstuian.sharedpref.Prefs
+import com.workfort.pstuian.di.initKoin
 import com.workfort.pstuian.util.di.appModules
+import com.workfort.pstuian.util.helper.ContextHolder
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.logger.Level
 import timber.log.Timber
 
@@ -46,7 +45,7 @@ class PstuianApp  : MultiDexApplication() {
 
     // trigger di library koin
     private fun triggerKoin() {
-        startKoin {
+        initKoin {
             androidContext(this@PstuianApp)
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
             modules(appModules)
@@ -63,8 +62,7 @@ class PstuianApp  : MultiDexApplication() {
     }
 
     private fun initDb(context: Context) {
-        Prefs.init(context)
-        AppDatabase.getDatabase()
+        ContextHolder.init(context)
     }
 
     override fun attachBaseContext(base: Context?) {

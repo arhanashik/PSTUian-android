@@ -40,15 +40,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.NavItem
-import com.workfort.pstuian.app.ui.common.component.AppBar
-import com.workfort.pstuian.app.ui.common.component.HorizontalDividerWithLabel
-import com.workfort.pstuian.app.ui.common.component.MaterialButtonToggleGroup
-import com.workfort.pstuian.app.ui.common.component.OutlinedTextInput
-import com.workfort.pstuian.app.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.app.ui.common.component.ShowLoaderDialog
 import com.workfort.pstuian.model.UserType
 import com.workfort.pstuian.util.helper.Toaster
 import com.workfort.pstuian.util.isValidEmail
+import com.workfort.pstuian.view.ui.common.component.AppBar
+import com.workfort.pstuian.view.ui.common.component.HorizontalDividerWithLabel
+import com.workfort.pstuian.view.ui.common.component.MaterialButtonToggleGroup
+import com.workfort.pstuian.view.ui.common.component.OutlinedTextInput
+import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
+import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
 
 
 @Composable

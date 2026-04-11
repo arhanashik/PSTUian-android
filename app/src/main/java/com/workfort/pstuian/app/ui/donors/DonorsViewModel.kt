@@ -53,7 +53,7 @@ class DonorsViewModel(
         )
         viewModelScope.launch {
             runCatching {
-                val list = donationRepo.getDonors()
+                val list = donationRepo.getDonors().map { it.toEntity() }
                 donorListCache.addAll(list)
                 updateScreenState(
                     DonorsScreenStateUpdate.ShowDonorList(donorListCache, isLoading = false)

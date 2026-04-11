@@ -2,7 +2,7 @@ package com.workfort.pstuian.app.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.app.data.repository.SettingsRepository
+import com.workfort.pstuian.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

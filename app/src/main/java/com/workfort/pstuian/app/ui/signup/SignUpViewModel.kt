@@ -8,6 +8,7 @@ import com.workfort.pstuian.model.StudentSignUpInputValidationError
 import com.workfort.pstuian.model.TeacherSignUpInput
 import com.workfort.pstuian.model.TeacherSignUpInputValidationError
 import com.workfort.pstuian.model.UserType
+import com.workfort.pstuian.model.dto.toDto
 import com.workfort.pstuian.repository.AuthRepository
 import com.workfort.pstuian.repository.FacultyRepository
 import com.workfort.pstuian.util.isValidEmail
@@ -118,7 +119,7 @@ class SignUpViewModel (
         viewModelScope.launch {
             updateScreenState(SignUpScreenStateUpdate.ShowLoading(true))
             runCatching {
-                val faculty = facultyRepo.getFaculty(facultyId)
+                val faculty = facultyRepo.getFaculty(facultyId).toDto()
                 val newPanelState = when (userType) {
                     UserType.STUDENT -> {
                         studentSignUpInput = studentSignUpInput.copy(faculty = faculty)
@@ -156,8 +157,8 @@ class SignUpViewModel (
                 val batch = facultyRepo.getBatch(batchId)
                 val faculty = facultyRepo.getFaculty(batch.facultyId)
                 studentSignUpInput = studentSignUpInput.copy(
-                    faculty = faculty,
-                    batch = batch,
+                    faculty = faculty.toDto(),
+                    batch = batch.toDto(),
                 )
                 updateScreenState(
                     SignUpScreenStateUpdate.SetPanelToStudentSignUp(
@@ -215,6 +216,7 @@ class SignUpViewModel (
                     batchId = studentSignUpInput.batch!!.id,
                     session = studentSignUpInput.session,
                     email = studentSignUpInput.email,
+                    password = studentSignUpInput.password,
                 )
                 updateScreenState(SignUpScreenStateUpdate.ShowLoading(false))
                 updateScreenState(

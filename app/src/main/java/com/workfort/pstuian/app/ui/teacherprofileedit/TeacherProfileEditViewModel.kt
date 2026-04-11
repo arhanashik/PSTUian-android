@@ -7,6 +7,7 @@ import com.workfort.pstuian.model.ProfileEditMode
 import com.workfort.pstuian.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.model.TeacherConnectInfoInputError
 import com.workfort.pstuian.model.TeacherProfile
+import com.workfort.pstuian.model.dto.toDto
 import com.workfort.pstuian.repository.FacultyRepository
 import com.workfort.pstuian.repository.TeacherRepository
 import com.workfort.pstuian.util.isValidEmail
@@ -74,7 +75,7 @@ class TeacherProfileEditViewModel(
                 newProfileCache?.let {
                     val newProfile = it.copy(
                         teacher = it.teacher.copy(facultyId = faculty.id),
-                        faculty = faculty,
+                        faculty = faculty.toDto(),
                     )
                     newProfileCache = newProfile
                     messageConsumed()
@@ -154,7 +155,7 @@ class TeacherProfileEditViewModel(
                 when (mode) {
                     ProfileEditMode.ACADEMIC -> {
                         teacherRepo.changeAcademicInfo(
-                            teacher = oldProfile.teacher,
+                            teacher = oldProfile.teacher.toEntity(),
                             name = newProfile.teacher.name,
                             designation = newProfile.teacher.designation,
                             department = newProfile.teacher.department,
@@ -164,7 +165,7 @@ class TeacherProfileEditViewModel(
                     }
                     ProfileEditMode.CONNECT -> {
                         teacherRepo.changeConnectInfo(
-                            teacher = oldProfile.teacher,
+                            teacher = oldProfile.teacher.toEntity(),
                             address = newProfile.teacher.address.orEmpty(),
                             phone = newProfile.teacher.phone.orEmpty(),
                             email = newProfile.teacher.email.orEmpty(),

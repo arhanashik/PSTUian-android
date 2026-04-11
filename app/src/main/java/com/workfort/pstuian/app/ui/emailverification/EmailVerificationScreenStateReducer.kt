@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.emailverification
 
-import com.workfort.pstuian.view.service.StateReducer
+import com.workfort.pstuian.reducer.service.StateReducer
 
 
 class EmailVerificationScreenStateReducer : StateReducer<EmailVerificationScreenState, EmailVerificationScreenStateUpdate> {

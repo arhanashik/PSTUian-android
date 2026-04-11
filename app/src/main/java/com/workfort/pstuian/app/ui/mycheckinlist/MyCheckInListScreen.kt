@@ -42,21 +42,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.ui.common.component.AnimatedEmptyView
-import com.workfort.pstuian.app.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.app.ui.common.component.AppBar
-import com.workfort.pstuian.app.ui.common.component.DotView
-import com.workfort.pstuian.app.ui.common.component.LoadAsyncImage
-import com.workfort.pstuian.app.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.app.ui.common.component.ShowInfoDialog
-import com.workfort.pstuian.app.ui.common.component.ShowLoaderDialog
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
-import com.workfort.pstuian.app.ui.common.component.isLastItemVisible
 import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
 import com.workfort.pstuian.model.CheckInEntity
 import com.workfort.pstuian.model.CheckInPrivacy
 import com.workfort.pstuian.util.DateUtil
 import com.workfort.pstuian.util.helper.MathUtil
+import com.workfort.pstuian.view.ui.common.component.AnimatedEmptyView
+import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
+import com.workfort.pstuian.view.ui.common.component.AppBar
+import com.workfort.pstuian.view.ui.common.component.DotView
+import com.workfort.pstuian.view.ui.common.component.LoadAsyncImage
+import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
+import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.view.ui.common.component.isLastItemVisible
 
 
 @Composable

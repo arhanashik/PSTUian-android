@@ -4,7 +4,7 @@ import com.workfort.pstuian.model.BatchEntity
 import com.workfort.pstuian.model.CourseEntity
 import com.workfort.pstuian.model.EmployeeEntity
 import com.workfort.pstuian.model.TeacherEntity
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface FacultyScreenStateUpdate : StateUpdate<FacultyScreenState> {
 

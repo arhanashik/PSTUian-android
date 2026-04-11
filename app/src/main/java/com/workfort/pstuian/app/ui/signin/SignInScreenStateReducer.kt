@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.signin
 
-import com.workfort.pstuian.view.service.StateReducer
+import com.workfort.pstuian.reducer.service.StateReducer
 
 
 class SignInScreenStateReducer : StateReducer<SignInScreenState, SignInScreenStateUpdate> {

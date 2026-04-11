@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.ui.employeeprofile
 
 import com.workfort.pstuian.model.EmployeeProfile
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface EmployeeProfileScreenStateUpdate : StateUpdate<EmployeeProfileScreenState> {
 

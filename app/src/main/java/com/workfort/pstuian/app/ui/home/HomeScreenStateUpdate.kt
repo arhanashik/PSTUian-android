@@ -2,7 +2,7 @@ package com.workfort.pstuian.app.ui.home
 
 import com.workfort.pstuian.model.FacultyEntity
 import com.workfort.pstuian.model.SliderEntity
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 
 sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {

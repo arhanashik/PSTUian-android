@@ -18,9 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.model.DeviceEntity
 import com.workfort.pstuian.util.DateUtil
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 import kotlinx.coroutines.launch
 
 

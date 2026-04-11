@@ -40,13 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.ui.common.component.AppBar
-import com.workfort.pstuian.app.ui.common.component.ErrorText
-import com.workfort.pstuian.app.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.app.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
-import com.workfort.pstuian.app.ui.common.component.dashedBorder
 import com.workfort.pstuian.util.helper.Toaster
+import com.workfort.pstuian.view.ui.common.component.AppBar
+import com.workfort.pstuian.view.ui.common.component.ErrorText
+import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.view.ui.common.component.dashedBorder
 
 
 @Composable

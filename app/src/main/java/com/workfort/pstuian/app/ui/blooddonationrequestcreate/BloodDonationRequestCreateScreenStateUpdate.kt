@@ -2,7 +2,7 @@ package com.workfort.pstuian.app.ui.blooddonationrequestcreate
 
 import com.workfort.pstuian.model.BloodDonationRequestInput
 import com.workfort.pstuian.model.BloodDonationRequestInputError
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface BloodDonationRequestCreateScreenStateUpdate : StateUpdate<BloodDonationRequestCreateScreenState> {
 

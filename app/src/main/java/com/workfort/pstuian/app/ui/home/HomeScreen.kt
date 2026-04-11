@@ -50,16 +50,6 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.NavItem
-import com.workfort.pstuian.app.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.app.ui.common.component.ErrorText
-import com.workfort.pstuian.app.ui.common.component.FacultyView
-import com.workfort.pstuian.app.ui.common.component.LoadAsyncUserImage
-import com.workfort.pstuian.app.ui.common.component.ShimmerBox
-import com.workfort.pstuian.app.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.app.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.app.ui.common.component.SliderView
-import com.workfort.pstuian.app.ui.common.component.TitleText
-import com.workfort.pstuian.app.ui.common.component.TitleTextMedium
 import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
 import com.workfort.pstuian.appconstant.NetworkConst
 import com.workfort.pstuian.model.StudentEntity
@@ -67,6 +57,16 @@ import com.workfort.pstuian.model.TeacherEntity
 import com.workfort.pstuian.model.UserType
 import com.workfort.pstuian.util.helper.LinkUtil
 import com.workfort.pstuian.util.helper.PlayStoreUtil
+import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
+import com.workfort.pstuian.view.ui.common.component.ErrorText
+import com.workfort.pstuian.view.ui.common.component.FacultyView
+import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
+import com.workfort.pstuian.view.ui.common.component.ShimmerBox
+import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
+import com.workfort.pstuian.view.ui.common.component.SliderView
+import com.workfort.pstuian.view.ui.common.component.TitleText
+import com.workfort.pstuian.view.ui.common.component.TitleTextMedium
 
 @Composable
 fun HomeScreen(

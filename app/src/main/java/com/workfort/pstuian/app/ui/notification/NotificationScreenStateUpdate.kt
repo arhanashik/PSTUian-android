@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.ui.notification
 
 import com.workfort.pstuian.model.NotificationEntity
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 
 sealed interface NotificationScreenStateUpdate : StateUpdate<NotificationScreenState> {

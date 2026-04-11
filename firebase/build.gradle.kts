@@ -1,14 +1,14 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace = "com.workfort.pstuian.firebase"
-    compileSdk = AppConfig.COMPILE_SDK
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = AppConfig.MIN_SDK
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -33,8 +33,8 @@ android {
 }
 
 dependencies {
-    implementation(platform(AppDependencies.firebaseBom))
-    implementation(AppDependencies.firebaseMessaging)
-    implementation(AppDependencies.firebaseAnalytics)
-    implementation(AppDependencies.koin)
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.messaging.ktx)
+    implementation(libs.google.firebase.analytics.ktx)
+    implementation(libs.koin.android)
 }

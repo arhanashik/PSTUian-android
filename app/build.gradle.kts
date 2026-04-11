@@ -1,21 +1,21 @@
 plugins {
-    id("com.android.application")
-    id("com.google.devtools.ksp")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
     id("kotlin-parcelize")
-    kotlin("android")
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
-    namespace = AppConfig.APP_ID
-    compileSdk = AppConfig.COMPILE_SDK
+    namespace = libs.versions.appId.get()
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = AppConfig.APP_ID
-        minSdk = AppConfig.MIN_SDK
-        targetSdk = AppConfig.TARGET_SDK
-        versionCode = AppConfig.VERSION_CODE
-        versionName = AppConfig.VERSION_NAME
+        applicationId = libs.versions.appId.get()
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
 
         multiDexEnabled = true
         vectorDrawables {
@@ -27,27 +27,27 @@ android {
 
     buildTypes {
         buildTypes.forEach {
-            it.buildConfigField("int", "VERSION_CODE_DB", AppConfig.VERSION_CODE_DB)
+            it.buildConfigField("int", "VERSION_CODE_DB", libs.versions.versionCodeDb.get())
         }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android.txt"),
-                AppConfig.PROGUARD_RULES
+                libs.versions.proguardRules.get()
             )
         }
     }
 
-    flavorDimensions.add(AppConfig.DIMENSION)
+    flavorDimensions.add(libs.versions.dimension.get())
 
     productFlavors {
         create("staging") {
             applicationIdSuffix = ".staging"
-            dimension = AppConfig.DIMENSION
+            dimension = libs.versions.dimension.get()
         }
 
         create("production") {
-            dimension = AppConfig.DIMENSION
+            dimension = libs.versions.dimension.get()
         }
     }
 
@@ -79,41 +79,42 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(AppDependencies.coreKtx)
-    implementation(AppDependencies.kotlinStdLib)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlin.stdlib)
     // compose
-    implementation(platform(AppDependencies.composeBom))
-    implementation(AppDependencies.composeMaterial3)
-    implementation(AppDependencies.composeActivity)
-    implementation(AppDependencies.composeNavigation)
-    implementation(AppDependencies.composeViewModel)
-    debugImplementation(AppDependencies.composeTooling)
-    debugImplementation(AppDependencies.composeToolingPreview)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling.preview)
     // coroutine
-    implementation(AppDependencies.coroutinesCore)
-    implementation(AppDependencies.coroutinesAndroid)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
     // room
-    implementation(AppDependencies.room)
-    ksp(AppDependencies.roomCompiler)
-    implementation(AppDependencies.roomKtx)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
     // datastore
-    implementation(AppDependencies.datastorePreferences)
+    implementation(libs.androidx.datastore.preferences)
     // koin
-    implementation(AppDependencies.koin)
+    implementation(libs.koin.androidx.compose)
     // gson converter
-    implementation(AppDependencies.retrofitConverter)
+    implementation(libs.squareup.retrofit.converter.gson)
     // image loader
-    implementation(AppDependencies.coilCompose)
+    implementation(libs.coil.compose)
     // animation loader
-    implementation(AppDependencies.lottie)
+    implementation(libs.airbnb.android.lottie.compose)
     // multidex
-    implementation(AppDependencies.multidex)
+    implementation(libs.androidx.multidex)
     // logger
-    implementation(AppDependencies.timber)
+    implementation(libs.jakewharton.timber)
 
-    implementation(AppDependencies.documentFile)
+    implementation(libs.androidx.documentfile)
 
     // sdk
+    implementation(project(":shared"))
     implementation(project(":appconstant"))
     implementation(project(":database"))
     implementation(project(":firebase"))
@@ -126,12 +127,12 @@ dependencies {
     implementation(project(":workmanager"))
 
     // test libs
-    testImplementation(AppDependencies.junit)
-    testImplementation(AppDependencies.koinTest)
-    testImplementation(AppDependencies.roomTesting)
-    testImplementation(AppDependencies.workManagerTesting)
-    androidTestImplementation(AppDependencies.extJUnit)
-    androidTestImplementation(AppDependencies.runner)
-    androidTestImplementation(AppDependencies.espressoCore)
+    testImplementation(libs.junit)
+    testImplementation(libs.koin.test)
+    testImplementation(libs.androidx.room.testing)
+    testImplementation(libs.androidx.work.testing)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }
 

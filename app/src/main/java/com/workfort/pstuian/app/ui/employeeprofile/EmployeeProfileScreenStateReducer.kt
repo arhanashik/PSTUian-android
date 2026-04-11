@@ -1,6 +1,6 @@
 package com.workfort.pstuian.app.ui.employeeprofile
 
-import com.workfort.pstuian.view.service.StateReducer
+import com.workfort.pstuian.reducer.service.StateReducer
 
 
 class EmployeeProfileScreenStateReducer : StateReducer<EmployeeProfileScreenState, EmployeeProfileScreenStateUpdate> {

@@ -188,7 +188,7 @@ class TeacherProfileViewModel(
             )
             viewModelScope.launch {
                 runCatching {
-                    teacherRepo.changeProfileImage(cache.teacher, imageUrl)
+                    teacherRepo.changeProfileImage(cache.teacher.toEntity(), imageUrl)
                 }.onSuccess {
                     isChangingPhoto = false
                     updateScreenState(
@@ -221,7 +221,7 @@ class TeacherProfileViewModel(
         )
         viewModelScope.launch {
             runCatching {
-                teacherRepo.changeBio(teacher, newBio)
+                teacherRepo.changeBio(teacher.toEntity(), newBio)
             }.onSuccess {
                 val message = "Bio updated successfully"
                 updateScreenState(

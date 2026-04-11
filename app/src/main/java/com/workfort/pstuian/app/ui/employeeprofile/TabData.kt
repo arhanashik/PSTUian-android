@@ -10,11 +10,11 @@ import com.workfort.pstuian.model.ProfileInfoItemAction
 fun getEmployeeAcademicTabItems(context: Context, profile: EmployeeProfile) = listOf(
     ProfileInfoItem(
         context.getString(R.string.txt_designation),
-        profile.emplyee.designation,
+        profile.employee.designation,
     ),
     ProfileInfoItem(
         context.getString(R.string.txt_department),
-        profile.emplyee.department ?: "~",
+        profile.employee.department ?: "~",
     ),
     ProfileInfoItem(
         context.getString(R.string.txt_faculty),
@@ -25,15 +25,15 @@ fun getEmployeeAcademicTabItems(context: Context, profile: EmployeeProfile) = li
 fun getEmployeeConnectTabItems(context: Context, profile: EmployeeProfile) = listOf(
     ProfileInfoItem(
         context.getString(R.string.txt_address),
-        profile.emplyee.address ?: "~"
+        profile.employee.address ?: "~"
     ),
     ProfileInfoItem(
         context.getString(R.string.txt_phone),
-        profile.emplyee.phone ?: "~",
-        if (profile.emplyee.phone.isNullOrEmpty()) {
+        profile.employee.phone ?: "~",
+        if (profile.employee.phone.isNullOrEmpty()) {
             ProfileInfoItemAction.None
         } else {
-            ProfileInfoItemAction.Call(profile.emplyee.phone.orEmpty())
+            ProfileInfoItemAction.Call(profile.employee.phone.orEmpty())
         },
     ),
 )

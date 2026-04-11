@@ -85,7 +85,7 @@ class MyBloodDonationListViewModel(
                 ),
             )
             runCatching {
-                val list = donationRepo.getAll(userId, userType.type, page)
+                val list = donationRepo.getAll(userId, userType.type, page).map { it.toEntity() }
                 if (list.isEmpty()) {
                     endOfData = true
                 } else {

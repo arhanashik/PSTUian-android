@@ -5,7 +5,7 @@ import com.workfort.pstuian.model.StudentSignUpInputValidationError
 import com.workfort.pstuian.model.TeacherSignUpInput
 import com.workfort.pstuian.model.TeacherSignUpInputValidationError
 import com.workfort.pstuian.model.UserType
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface SignUpScreenStateUpdate : StateUpdate<SignUpScreenState> {
 

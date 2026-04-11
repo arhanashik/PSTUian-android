@@ -1,7 +1,7 @@
 package com.workfort.pstuian.app.ui.signin
 
 import com.workfort.pstuian.model.UserType
-import com.workfort.pstuian.view.service.StateUpdate
+import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface SignInScreenStateUpdate : StateUpdate<SignInScreenState> {
 

@@ -91,7 +91,7 @@ class MyCheckInListViewModel(
                     userId = userId,
                     userType = userType.type,
                     page = page,
-                )
+                ).map { it.toEntity() }
                 if (list.isEmpty()) {
                     endOfData = true
                 } else {

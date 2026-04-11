@@ -41,18 +41,18 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
-import com.workfort.pstuian.app.ui.common.component.AnimatedEmptyView
-import com.workfort.pstuian.app.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.app.ui.common.component.AppBar
-import com.workfort.pstuian.app.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.app.ui.common.component.ShowInfoDialog
-import com.workfort.pstuian.app.ui.common.component.ShowLoaderDialog
-import com.workfort.pstuian.app.ui.common.component.TitleTextSmall
-import com.workfort.pstuian.app.ui.common.component.isLastItemVisible
 import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
 import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.model.DeviceEntity
 import com.workfort.pstuian.util.DateUtil
+import com.workfort.pstuian.view.ui.common.component.AnimatedEmptyView
+import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
+import com.workfort.pstuian.view.ui.common.component.AppBar
+import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
+import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.view.ui.common.component.isLastItemVisible
 import kotlinx.coroutines.delay
 
 
