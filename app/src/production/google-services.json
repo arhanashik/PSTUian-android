@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "968641147735",
+    "project_id": "pstuian",
+    "storage_bucket": "pstuian.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968641147735:android:f98df9f444d78a0bf4c412",
+        "android_client_info": {
+          "package_name": "com.workfort.pstuian"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "968641147735-h5c1fsctkpu0g0bgn2s95qamimu7h0p2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWDMxY4fqfXlc6wSAdDMPOD9qljFCvw78"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "968641147735-h5c1fsctkpu0g0bgn2s95qamimu7h0p2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
