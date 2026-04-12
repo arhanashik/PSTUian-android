@@ -34,6 +34,8 @@ import com.workfort.pstuian.view.ui.common.component.LoadAsyncImage
 import com.workfort.pstuian.view.ui.common.component.MaterialButtonToggleGroup
 import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 import kotlinx.coroutines.launch
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.ic_location_placeholder
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +76,7 @@ fun MyCheckInItemBottomSheet(
                     .size(64.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 url = item.locationImageUrl,
-                placeholder = R.drawable.ic_location_placeholder,
+                placeholder = Res.drawable.ic_location_placeholder,
                 contentScale = ContentScale.Crop,
             )
             TitleTextSmall(modifier = Modifier.padding(top = 8.dp), text = item.name)

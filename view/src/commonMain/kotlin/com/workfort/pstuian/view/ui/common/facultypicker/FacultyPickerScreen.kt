@@ -45,7 +45,12 @@ import com.workfort.pstuian.view.ui.common.component.AppBar
 import com.workfort.pstuian.view.ui.common.component.FacultyView
 import com.workfort.pstuian.view.ui.faculty.BatchListItemSimpleView
 import com.workfort.pstuian.viewmodel.FacultyPickerViewModel
-import com.workfort.pstuian.view.R as AppR
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.txt_select_faculty
+import pstuian.shared.generated.resources.txt_select_batch
+import pstuian.shared.generated.resources.txt_change
+import pstuian.shared.generated.resources.txt_change_faculty
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -97,9 +102,9 @@ private fun FacultyPickerScreenContent(
 
     val title = when (displayState.panelState) {
         is FacultyPickerScreenState.DisplayState.PanelState.SelectFaculty ->
-            LocalContext.current.getString(AppR.string.txt_select_faculty)
+            stringResource(Res.string.txt_select_faculty)
         is FacultyPickerScreenState.DisplayState.PanelState.SelectBatch ->
-            LocalContext.current.getString(AppR.string.txt_select_batch)
+            stringResource(Res.string.txt_select_batch)
         else -> ""
     }
     Scaffold(
@@ -198,7 +203,7 @@ private fun FacultyPickerScreenState.DisplayState.PanelState.Handle(
                                 onUiEvent(FacultyPickerScreenUiEvent.OnClickChangeFaculty)
                             },
                         ) {
-                            Text(text = LocalContext.current.getString(AppR.string.txt_change))
+                            Text(text = stringResource(Res.string.txt_change))
                         }
                     }
                 }
@@ -224,7 +229,7 @@ private fun FacultyPickerScreenState.DisplayState.PanelState.Handle(
                         onUiEvent(FacultyPickerScreenUiEvent.OnClickChangeFaculty)
                     },
                 ) {
-                    Text(text = LocalContext.current.getString(AppR.string.txt_change_faculty))
+                    Text(text = stringResource(Res.string.txt_change_faculty))
                 }
             }
         }

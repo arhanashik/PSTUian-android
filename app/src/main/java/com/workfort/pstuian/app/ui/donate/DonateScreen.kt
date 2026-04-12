@@ -34,6 +34,7 @@ import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.model.DonationInput
 import com.workfort.pstuian.model.DonationInputValidationError
+import com.workfort.pstuian.reducer.ui.donate.DonateScreenState
 import com.workfort.pstuian.view.ui.common.component.AppBar
 import com.workfort.pstuian.view.ui.common.component.HtmlText
 import com.workfort.pstuian.view.ui.common.component.OutlinedTextInput

@@ -82,7 +82,7 @@ fun TeacherProfileScreen(
         mutableStateOf<ProfileInfoItemAction>(ProfileInfoItemAction.None)
     }
 
-    val linkUtil = LinkUtil(LocalContext.current)
+    val linkUtil = LinkUtil()
 
     LaunchedEffect(key1 = null) {
         uiEvent = TeacherProfileScreenUiEvent.OnLoadProfile

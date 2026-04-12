@@ -5,13 +5,15 @@ data class CvUploadScreenState(
     val navigationState: NavigationState? = null,
 ) {
     data class DisplayState(
-        val selectedFile: String,
+        val selectedFileUri: String,
+        val selectedFileName: String,
         val cvUploadState: CvUploadState,
         val messageState: MessageState?,
     ) {
         companion object {
             val INITIAL = DisplayState(
-                selectedFile = "",
+                selectedFileUri = "",
+                selectedFileName = "",
                 cvUploadState = CvUploadState.None,
                 messageState = null,
             )

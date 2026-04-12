@@ -76,7 +76,7 @@ fun SignUpScreen(
     var uiEvent by remember {
         mutableStateOf<SignUpScreenUiEvent>(SignUpScreenUiEvent.None)
     }
-    val linkUtil = LinkUtil(LocalContext.current)
+    val linkUtil = LinkUtil()
 
     // check for faculty picker
     navController.currentBackStackEntry

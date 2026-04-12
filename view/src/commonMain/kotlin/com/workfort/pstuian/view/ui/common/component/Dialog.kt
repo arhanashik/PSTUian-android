@@ -32,12 +32,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.workfort.pstuian.view.R
+import com.workfort.pstuian.view.ui.common.theme.bgCircle
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.txt_please_wait
+import pstuian.shared.generated.resources.txt_confirmation
+import pstuian.shared.generated.resources.label_are_you_sure
+import pstuian.shared.generated.resources.txt_confirm
+import pstuian.shared.generated.resources.txt_dismiss
+import pstuian.shared.generated.resources.default_success_dialog_title
+import pstuian.shared.generated.resources.default_success_dialog_message
+import pstuian.shared.generated.resources.default_error_dialog_title
+import pstuian.shared.generated.resources.default_error_dialog_message
+import pstuian.shared.generated.resources.txt_retry
+import pstuian.shared.generated.resources.txt_information
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ShowLoaderDialog(
     modifier: Modifier = Modifier,
-    title: String = LocalContext.current.getString(R.string.txt_please_wait),
+    title: String = stringResource(Res.string.txt_please_wait),
     cancelable: Boolean = true,
     onDismiss: () -> Unit = {},
 ) {
@@ -74,10 +87,11 @@ fun ShowLoaderDialog(
 @Composable
 fun ShowConfirmationDialog(
     icon: ImageVector? = null,
-    title: String = LocalContext.current.getString(R.string.txt_confirmation),
-    message: String = LocalContext.current.getString(R.string.label_are_you_sure),
-    confirmButtonText: String = LocalContext.current.getString(R.string.txt_confirm),
-    dismissButtonText: String? = LocalContext.current.getString(R.string.txt_dismiss),
+    iconModifier: Modifier = Modifier,
+    title: String = stringResource(Res.string.txt_confirmation),
+    message: String = stringResource(Res.string.label_are_you_sure),
+    confirmButtonText: String = stringResource(Res.string.txt_confirm),
+    dismissButtonText: String? = stringResource(Res.string.txt_dismiss),
     cancelable: Boolean = true,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
@@ -88,6 +102,7 @@ fun ShowConfirmationDialog(
             dismissOnClickOutside = cancelable,
         ),
         icon = icon,
+        iconModifier = iconModifier,
         title = title,
         message = message,
         confirmButtonText = confirmButtonText,
@@ -100,9 +115,9 @@ fun ShowConfirmationDialog(
 @Composable
 fun ShowSuccessDialog(
     icon: ImageVector = Icons.Default.CheckCircle,
-    title: String = LocalContext.current.getString(R.string.default_success_dialog_title),
-    message: String = LocalContext.current.getString(R.string.default_success_dialog_message),
-    confirmButtonText: String = LocalContext.current.getString(R.string.txt_dismiss),
+    title: String = stringResource(Res.string.default_success_dialog_title),
+    message: String = stringResource(Res.string.default_success_dialog_message),
+    confirmButtonText: String = stringResource(Res.string.txt_dismiss),
     dismissButtonText: String? = null,
     cancelable: Boolean = true,
     onConfirm: () -> Unit,
@@ -126,10 +141,10 @@ fun ShowSuccessDialog(
 @Composable
 fun ShowErrorDialog(
     icon: ImageVector = Icons.Default.Info,
-    title: String = LocalContext.current.getString(R.string.default_error_dialog_title),
-    message: String = LocalContext.current.getString(R.string.default_error_dialog_message),
-    confirmButtonText: String = LocalContext.current.getString(R.string.txt_retry),
-    dismissButtonText: String? = LocalContext.current.getString(R.string.txt_dismiss),
+    title: String = stringResource(Res.string.default_error_dialog_title),
+    message: String = stringResource(Res.string.default_error_dialog_message),
+    confirmButtonText: String = stringResource(Res.string.txt_retry),
+    dismissButtonText: String? = stringResource(Res.string.txt_dismiss),
     cancelable: Boolean = true,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
@@ -152,9 +167,9 @@ fun ShowErrorDialog(
 @Composable
 fun ShowInfoDialog(
     icon: ImageVector? = null,
-    title: String = LocalContext.current.getString(R.string.txt_information),
+    title: String = stringResource(Res.string.txt_information),
     message: String,
-    dismissButtonText: String = LocalContext.current.getString(R.string.txt_dismiss),
+    dismissButtonText: String = stringResource(Res.string.txt_dismiss),
     cancelable: Boolean = true,
     onDismiss: () -> Unit,
 ) {
@@ -177,6 +192,7 @@ fun ShowInfoDialog(
 fun ShowAlertDialog(
     properties: DialogProperties,
     icon: ImageVector?,
+    iconModifier: Modifier = Modifier,
     title: String,
     message: String,
     confirmButtonText: String,
@@ -185,7 +201,7 @@ fun ShowAlertDialog(
     onDismiss: () -> Unit,
 ) {
     AlertDialog(
-        icon = { icon?.let { Icon(it, contentDescription = null) } },
+        icon = { icon?.let { Icon(it, contentDescription = null, modifier = iconModifier) } },
         title = { Text(text = title) },
         text = { Text(text = message, textAlign = TextAlign.Center) },
         properties = properties,
@@ -229,7 +245,7 @@ fun ShowInputDialog(
     maxLines: Int = 1,
     maxLength: Int = 500,
     confirmButtonText: String,
-    dismissButtonText: String? = LocalContext.current.getString(R.string.txt_dismiss),
+    dismissButtonText: String? = stringResource(Res.string.txt_dismiss),
     cancelable: Boolean = true,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit,

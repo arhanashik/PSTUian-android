@@ -20,8 +20,12 @@ import com.workfort.pstuian.reducer.ui.donate.DonateScreenStateReducer
 import com.workfort.pstuian.reducer.ui.donors.DonorsScreenStateReducer
 import com.workfort.pstuian.reducer.ui.emailverification.EmailVerificationScreenStateReducer
 import com.workfort.pstuian.reducer.ui.mycheckinlist.MyCheckInListScreenStateReducer
+import com.workfort.pstuian.reducer.ui.mydevicelist.MyDeviceListScreenStateReducer
 import com.workfort.pstuian.reducer.ui.common.facultypicker.FacultyPickerScreenStateReducer
 import com.workfort.pstuian.reducer.ui.common.locationpicker.LocationPickerScreenStateReducer
+import com.workfort.pstuian.reducer.ui.imageupload.ImageUploadScreenStateReducer
+import com.workfort.pstuian.reducer.ui.cvupload.CvUploadScreenStateReducer
+import com.workfort.pstuian.reducer.ui.cvdownload.CvDownloadScreenStateReducer
 import org.koin.dsl.module
 
 val stateReducerModule = module {
@@ -39,6 +43,7 @@ val stateReducerModule = module {
     single { TeacherProfileEditScreenStateReducer() }
     single { CheckInListScreenStateReducer() }
     single { MyCheckInListScreenStateReducer() }
+    single { MyDeviceListScreenStateReducer() }
     single { EmailVerificationScreenStateReducer() }
     single { DonateScreenStateReducer() }
     single { DonorsScreenStateReducer() }
@@ -47,4 +52,7 @@ val stateReducerModule = module {
     single { BloodDonationCreateScreenStateReducer() }
     single { FacultyPickerScreenStateReducer() }
     single { LocationPickerScreenStateReducer() }
+    single { ImageUploadScreenStateReducer() }
+    single { CvUploadScreenStateReducer() }
+    single { CvDownloadScreenStateReducer() }
 }

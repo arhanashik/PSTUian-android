@@ -58,8 +58,8 @@ class FacultyPickerViewModel(
             }
             FacultySelectionMode.BATCH,
             FacultySelectionMode.BOTH, -> loadBatches()
+            FacultySelectionMode.NONE -> Unit
         }
-
     }
 
     fun onClickBatch(batch: BatchEntity) {
@@ -104,6 +104,7 @@ class FacultyPickerViewModel(
                         )
                     }
                     FacultySelectionMode.BATCH -> loadBatches()
+                    FacultySelectionMode.NONE -> Unit
                 }
             }.onFailure {
                 val message = it.message ?: "Failed to load data"

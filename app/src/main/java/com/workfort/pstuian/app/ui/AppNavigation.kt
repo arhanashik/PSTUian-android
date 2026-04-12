@@ -45,6 +45,7 @@ sealed class NavItem(val route: String) {
     data object Notification : NavItem(Screen.NOTIFICATION.name)
     data object Faculty : NavItem(Screen.FACULTY.name)
     data object StudentList : NavItem(Screen.STUDENT_LIST.name)
+    data object Students : NavItem(Screen.STUDENT_LIST.name)
     data object StudentProfile : NavItem(Screen.STUDENT_PROFILE.name)
     data object StudentProfileEdit : NavItem(Screen.STUDENT_PROFILE_EDIT.name)
     data object TeacherProfile : NavItem(Screen.TEACHER_PROFILE.name)
@@ -79,6 +80,7 @@ object NavParam {
     const val FACULTY_ID = "facultyId"
     const val BATCH_ID = "batchId"
     const val IS_CHECK_IN_MODE = "isCheckInMode"
+    const val EMAIL = "email"
     const val URL = "url"
     const val MODE = "mode"
 }

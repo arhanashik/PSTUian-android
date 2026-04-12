@@ -8,19 +8,19 @@ import com.workfort.pstuian.reducer.service.StateUpdate
 sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
 
     data class UpdateSliderPosition(val position: Int) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
-            val state = when (displayState.sliderState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+            val state = when (val sliderState = displayState.sliderState) {
                 is HomeScreenState.DisplayState.SliderState.Available -> {
-                    displayState.sliderState.copy(scrollPosition = position)
+                    sliderState.copy(scrollPosition = position)
                 }
-                else -> displayState.sliderState
+                else -> sliderState
             }
             copy(displayState = displayState.copy(sliderState = state))
         }
     }
 
     data object ProfileLoading : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     profileState = HomeScreenState.DisplayState.ProfileState.Loading
@@ -30,7 +30,7 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     }
 
     data class ProfileLoaded(val user: Any) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     profileState = HomeScreenState.DisplayState.ProfileState.Available(user)
@@ -40,7 +40,7 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     }
 
     data class ProfileLoadFailed(val message: String) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     profileState = HomeScreenState.DisplayState.ProfileState.Error(message)
@@ -50,7 +50,7 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     }
 
     data object SliderLoading : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     sliderState = HomeScreenState.DisplayState.SliderState.Loading
@@ -60,7 +60,7 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     }
 
     data class SliderLoaded(val sliders: List<SliderEntity>) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     sliderState = HomeScreenState.DisplayState.SliderState.Available(
@@ -73,7 +73,7 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     }
 
     data class SliderLoadFailed(val message: String) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     sliderState = HomeScreenState.DisplayState.SliderState.Error(message)
@@ -83,7 +83,7 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     }
 
     data object FacultyLoading : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     facultyState = HomeScreenState.DisplayState.FacultyState.Loading
@@ -93,7 +93,7 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     }
 
     data class FacultyLoaded(val faculties: List<FacultyEntity>) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     facultyState = HomeScreenState.DisplayState.FacultyState.Available(faculties)
@@ -103,7 +103,7 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     }
 
     data class FacultyLoadFailed(val message: String) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(
                 displayState = displayState.copy(
                     facultyState = HomeScreenState.DisplayState.FacultyState.Error(message)
@@ -115,25 +115,25 @@ sealed interface HomeScreenStateUpdate : StateUpdate<HomeScreenState> {
     data class UpdateMessageState(
         val newState: HomeScreenState.DisplayState.MessageState
     ) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(displayState = displayState.copy(messageState = newState))
         }
     }
 
     data object MessageConsumed : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(displayState = displayState.copy(messageState = null))
         }
     }
 
     data class NavigateTo(val newState: HomeScreenState.NavigationState) : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(navigationState = newState)
         }
     }
 
     data object NavigationConsumed : HomeScreenStateUpdate {
-        override operator fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
+        override fun invoke(oldState: HomeScreenState): HomeScreenState = with(oldState) {
             copy(navigationState = null)
         }
     }

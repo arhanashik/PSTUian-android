@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -63,7 +64,12 @@ import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.model.CheckInLocationEntity
 import com.workfort.pstuian.viewmodel.LocationPickerViewModel
 import com.workfort.pstuian.util.helper.MathUtil
-import com.workfort.pstuian.view.R as AppR
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.label_location_picker_screen
+import pstuian.shared.generated.resources.hint_search
+import pstuian.shared.generated.resources.txt_create_new_location
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
@@ -133,7 +139,7 @@ private fun ScreenContent(
         topBar = {
             AppBar(
                 scrollBehavior,
-                title = LocalContext.current.getString(AppR.string.label_location_picker_screen),
+                title = stringResource(Res.string.label_location_picker_screen),
                 onClickBack = {
                     onUiEvent(LocationPickerScreenUiEvent.OnClickBack)
                 },
@@ -145,7 +151,7 @@ private fun ScreenContent(
         ) {
             OutlinedTextInput(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                label = LocalContext.current.getString(AppR.string.hint_search),
+                label = stringResource(Res.string.hint_search),
                 value = searchQuery,
             ) {
                 onChangeSearchQuery(it)
@@ -202,7 +208,7 @@ private fun ListItemView(
                 .size(46.dp)
                 .clip(RoundedCornerShape(8.dp)),
             url = item.imageUrl,
-            placeholder = AppR.drawable.ic_location_placeholder,
+            placeholder = Icons.Default.LocationOn,
             contentScale = ContentScale.Crop,
         )
         Spacer(modifier = Modifier.padding(start = 8.dp))
@@ -229,10 +235,10 @@ private fun CreateCheckInLocationItemView(onClick: () -> Unit) {
             tint = Color.LightGray,
         )
         Spacer(modifier = Modifier.padding(start = 16.dp))
-        Image(
-            painterResource(id = AppR.drawable.ic_location_placeholder),
-            contentScale = ContentScale.Crop,
+        Icon(
+            imageVector = Icons.Default.LocationOn,
             contentDescription = "",
+            tint = Color.Gray,
             modifier = Modifier
                 .size(46.dp)
                 .clip(RoundedCornerShape(8.dp)),
@@ -240,7 +246,7 @@ private fun CreateCheckInLocationItemView(onClick: () -> Unit) {
         Spacer(modifier = Modifier.padding(start = 8.dp))
         Column {
             TitleTextSmall(
-                text = LocalContext.current.getString(AppR.string.txt_create_new_location),
+                text = stringResource(Res.string.txt_create_new_location),
                 fontSize = 14.sp,
             )
         }

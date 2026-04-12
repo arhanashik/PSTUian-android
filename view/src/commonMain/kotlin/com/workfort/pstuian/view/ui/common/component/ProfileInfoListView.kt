@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
@@ -23,9 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.view.R
+import pstuian.shared.generated.resources.Res
 import com.workfort.pstuian.model.ProfileInfoItem
 import com.workfort.pstuian.model.ProfileInfoItemAction
 
@@ -88,7 +88,7 @@ private fun ProfileInfoItemAction.getIcon(): ImageVector? = when (this) {
     is ProfileInfoItemAction.DownloadCv -> null
     is ProfileInfoItemAction.Link -> null
     is ProfileInfoItemAction.Password -> Icons.Default.Lock
-    is ProfileInfoItemAction.UploadCv -> ImageVector.vectorResource(id = R.drawable.ic_arrow_up)
+    is ProfileInfoItemAction.UploadCv -> Icons.Default.KeyboardArrowUp
     is ProfileInfoItemAction.BloodDonationList -> null
     is ProfileInfoItemAction.CheckInList -> Icons.Default.LocationOn
     is ProfileInfoItemAction.SignedInDevices -> null

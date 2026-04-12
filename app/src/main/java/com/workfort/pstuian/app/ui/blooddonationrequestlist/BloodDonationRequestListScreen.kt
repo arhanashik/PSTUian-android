@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -75,7 +76,7 @@ fun BloodDonationRequestListScreen(
     var uiEvent by remember {
         mutableStateOf<BloodDonationRequestListScreenUiEvent>(BloodDonationRequestListScreenUiEvent.None)
     }
-    val linkUtil = LinkUtil(LocalContext.current)
+    val linkUtil = LinkUtil()
 
     LaunchedEffect(key1 = null) {
         uiEvent = BloodDonationRequestListScreenUiEvent.OnLoadMoreData(refresh = true)
@@ -156,8 +157,8 @@ private fun ScreenContent(
                     },
                     icon = {
                         Icon(
-                            ImageVector.vectorResource(id = R.drawable.ic_blood_drop),
-                            "",
+                            Icons.Default.Favorite,
+                            contentDescription = null,
                         )
                     },
                     shape = CircleShape,

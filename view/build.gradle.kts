@@ -33,6 +33,7 @@ kotlin {
                 implementation(libs.compose.ui)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
+                implementation(libs.compose.material.icons)
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.animation)
                 implementation(libs.compose.components.resources)
@@ -41,6 +42,7 @@ kotlin {
                 implementation(libs.coil3.compose)
             }
         }
+        commonMain.resources.srcDirs("src/commonMain/composeResources")
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -48,6 +50,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(libs.androidx.activity.compose)
                 implementation(libs.compose.ui.tooling.preview)
                 implementation(libs.airbnb.android.lottie.compose)
             }

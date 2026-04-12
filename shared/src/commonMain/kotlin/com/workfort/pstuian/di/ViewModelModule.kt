@@ -21,8 +21,12 @@ import com.workfort.pstuian.viewmodel.donors.DonorsViewModel
 import com.workfort.pstuian.viewmodel.emailverification.EmailVerificationViewModel
 import com.workfort.pstuian.viewmodel.myblooddonationlist.MyBloodDonationListViewModel
 import com.workfort.pstuian.viewmodel.mycheckinlist.MyCheckInListViewModel
+import com.workfort.pstuian.viewmodel.mydevicelist.MyDeviceListViewModel
 import com.workfort.pstuian.viewmodel.FacultyPickerViewModel
 import com.workfort.pstuian.viewmodel.LocationPickerViewModel
+import com.workfort.pstuian.viewmodel.imageupload.ImageUploadViewModel
+import com.workfort.pstuian.viewmodel.cvupload.CvUploadViewModel
+import com.workfort.pstuian.viewmodel.cvdownload.CvDownloadViewModel
 import com.workfort.pstuian.model.UserType
 import com.workfort.pstuian.model.ProfileEditMode
 import com.workfort.pstuian.model.FacultySelectionMode
@@ -58,6 +62,7 @@ val viewModelModule = module {
     factory { (userId: Int, userType: UserType) ->
         MyBloodDonationListViewModel(userId, userType, get(), get())
     }
+    factory { MyDeviceListViewModel(get(), get()) }
     factory { (params: org.koin.core.parameter.ParametersHolder) ->
         FacultyPickerViewModel(
             selectionMode = params.get(),
@@ -69,5 +74,14 @@ val viewModelModule = module {
     }
     factory { (isCheckInMode: Boolean) ->
         LocationPickerViewModel(isCheckInMode, get(), get())
+    }
+    factory { (userId: Int, userType: UserType) ->
+        ImageUploadViewModel(userId, userType, get())
+    }
+    factory { (userId: Int, userType: UserType) ->
+        CvUploadViewModel(userId, userType, get())
+    }
+    factory { (userId: Int, userType: UserType, urlToDownload: String) ->
+        CvDownloadViewModel(userId, userType, urlToDownload, get())
     }
 }

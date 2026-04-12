@@ -1,30 +1,29 @@
 package com.workfort.pstuian.view.ui.common.component
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.workfort.pstuian.view.R
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.img_placeholder_profile
 
 @Composable
 fun LoadAsyncUserImage(
     modifier: Modifier = Modifier,
     url: String?,
     size: Dp,
-    @DrawableRes placeholder: Int = R.drawable.img_placeholder_profile,
+    placeholder: DrawableResource = Res.drawable.img_placeholder_profile,
     contentScale: ContentScale = ContentScale.Crop,
     shape: Shape = CircleShape,
 ) {
@@ -33,7 +32,7 @@ fun LoadAsyncUserImage(
             .clip(shape)
             .size(size),
         url = url,
-        placeholder = placeholder,
+        placeholder = painterResource(placeholder),
         contentScale = contentScale,
     )
 }
@@ -42,16 +41,46 @@ fun LoadAsyncUserImage(
 fun LoadAsyncImage(
     modifier: Modifier = Modifier,
     url: String?,
-    @DrawableRes placeholder: Int,
+    placeholder: DrawableResource,
+    contentScale: ContentScale,
+) {
+    LoadAsyncImage(
+        modifier = modifier,
+        url = url,
+        placeholder = painterResource(placeholder),
+        contentScale = contentScale,
+    )
+}
+
+@Composable
+fun LoadAsyncImage(
+    modifier: Modifier = Modifier,
+    url: String?,
+    placeholder: ImageVector,
+    contentScale: ContentScale,
+) {
+    LoadAsyncImage(
+        modifier = modifier,
+        url = url,
+        placeholder = rememberVectorPainter(placeholder),
+        contentScale = contentScale,
+    )
+}
+
+@Composable
+private fun LoadAsyncImage(
+    modifier: Modifier = Modifier,
+    url: String?,
+    placeholder: androidx.compose.ui.graphics.painter.Painter,
     contentScale: ContentScale,
 ) {
     AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
+        model = ImageRequest.Builder(coil3.compose.LocalPlatformContext.current)
             .data(url)
             .crossfade(true)
             .build(),
-        placeholder = painterResource(placeholder),
-        error = painterResource(placeholder),
+        placeholder = placeholder,
+        error = placeholder,
         contentDescription = "Async Image",
         contentScale = contentScale,
         modifier = modifier,

@@ -4,6 +4,6 @@ import com.workfort.pstuian.reducer.service.StateReducer
 
 
 class DonateScreenStateReducer : StateReducer<DonateScreenState, DonateScreenStateUpdate> {
-    override val initial: DonateScreenState
-        get() = DonateScreenState()
+ override val initial: DonateScreenState
+  get() = DonateScreenState()
 }

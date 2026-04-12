@@ -6,4 +6,8 @@ import com.workfort.pstuian.reducer.service.StateReducer
 class HomeScreenStateReducer : StateReducer<HomeScreenState, HomeScreenStateUpdate> {
     override val initial: HomeScreenState
         get() = HomeScreenState()
+
+    override fun reduce(oldState: HomeScreenState, update: HomeScreenStateUpdate): HomeScreenState {
+        return update(oldState)
+    }
 }

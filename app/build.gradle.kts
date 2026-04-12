@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons)
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.navigation)
     implementation(libs.compose.viewmodel)
@@ -103,6 +104,7 @@ dependencies {
     implementation(libs.squareup.retrofit.converter.gson)
     // image loader
     implementation(libs.coil3.compose)
+    implementation(libs.compose.components.resources)
     // animation loader
     implementation(libs.airbnb.android.lottie.compose)
     // multidex
@@ -110,6 +112,7 @@ dependencies {
     // logger
     implementation(libs.jakewharton.timber)
 
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.documentfile)
 
     // sdk

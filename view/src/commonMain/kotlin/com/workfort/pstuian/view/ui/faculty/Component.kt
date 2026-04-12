@@ -21,18 +21,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.view.ui.common.component.LabelText
-import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
-import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.model.BatchEntity
 import com.workfort.pstuian.model.CourseEntity
 import com.workfort.pstuian.model.EmployeeEntity
 import com.workfort.pstuian.model.TeacherEntity
-import com.workfort.pstuian.view.R as AppR
-
+import com.workfort.pstuian.view.ui.common.component.LabelText
+import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
+import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.view.ui.common.theme.bgCircle
+import org.jetbrains.compose.resources.stringResource
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.label_batch
+import pstuian.shared.generated.resources.txt_total_registered_students
+import pstuian.shared.generated.resources.txt_total_students
+import pstuian.shared.generated.resources.txt_designation
+import pstuian.shared.generated.resources.txt_department
+import pstuian.shared.generated.resources.txt_credit
 
 @Composable
 fun BatchListItemView(
@@ -40,7 +46,6 @@ fun BatchListItemView(
     batch: BatchEntity,
     onClickBatch: (batch: BatchEntity) -> Unit,
 ) {
-    val context = LocalContext.current
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
@@ -66,14 +71,14 @@ fun BatchListItemView(
                 Text(text = batch.name, fontSize = 16.sp)
                 Row {
                     Column(modifier = Modifier.weight(0.6f)) {
-                        LabelText(text = context.getString(AppR.string.txt_total_registered_students))
+                        LabelText(text = stringResource(Res.string.txt_total_registered_students))
                         Text(text = batch.registeredStudent.toString(), fontSize = 14.sp)
                     }
                     Column(
                         modifier = Modifier.weight(0.4f),
                         horizontalAlignment = Alignment.End,
                     ) {
-                        LabelText(text = context.getString(AppR.string.txt_total_students))
+                        LabelText(text = stringResource(Res.string.txt_total_students))
                         Text(text = batch.totalStudent.toString(), fontSize = 12.sp)
                     }
                 }
@@ -144,7 +149,6 @@ fun TeacherListItemView(
     onClickTeacher: () -> Unit,
     onClickCall: () -> Unit,
 ) {
-    val context = LocalContext.current
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
@@ -169,20 +173,24 @@ fun TeacherListItemView(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    LoadAsyncUserImage(url = teacher.imageUrl, size = 42.dp)
+                    LoadAsyncUserImage(
+                        url = teacher.imageUrl,
+                        size = 42.dp,
+                        modifier = Modifier.bgCircle(),
+                    )
                     Spacer(modifier = Modifier.padding(start = 16.dp))
                     TitleTextSmall(text = teacher.name)
                 }
                 Row {
                     Column(modifier = Modifier.weight(0.5f)) {
-                        LabelText(text = context.getString(AppR.string.txt_designation))
+                        LabelText(text = stringResource(Res.string.txt_designation))
                         Text(text = teacher.designation, fontSize = 14.sp)
                     }
                     Column(
                         modifier = Modifier.weight(0.5f),
                         horizontalAlignment = Alignment.End,
                     ) {
-                        LabelText(text = context.getString(AppR.string.txt_department))
+                        LabelText(text = stringResource(Res.string.txt_department))
                         Text(text = teacher.department, fontSize = 12.sp)
                     }
                 }
@@ -250,7 +258,7 @@ fun CourseListItemView(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(text = course.creditHour, fontSize = 18.sp)
-                LabelText(text = LocalContext.current.getString(AppR.string.txt_credit))
+                LabelText(text = stringResource(Res.string.txt_credit))
             }
         }
     }
@@ -263,7 +271,6 @@ fun EmployeeListItemView(
     onClickEmployee: () -> Unit,
     onClickCall: () -> Unit,
 ) {
-    val context = LocalContext.current
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
@@ -288,20 +295,24 @@ fun EmployeeListItemView(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    LoadAsyncUserImage(url = employee.imageUrl, size = 42.dp)
+                    LoadAsyncUserImage(
+                        url = employee.imageUrl,
+                        size = 42.dp,
+                        modifier = Modifier.bgCircle(),
+                    )
                     Spacer(modifier = Modifier.padding(start = 16.dp))
                     TitleTextSmall(text = employee.name)
                 }
                 Row {
                     Column(modifier = Modifier.weight(0.5f)) {
-                        LabelText(text = context.getString(AppR.string.txt_designation))
+                        LabelText(text = stringResource(Res.string.txt_designation))
                         Text(text = employee.designation, fontSize = 14.sp)
                     }
                     Column(
                         modifier = Modifier.weight(0.5f),
                         horizontalAlignment = Alignment.End,
                     ) {
-                        LabelText(text = context.getString(AppR.string.txt_department))
+                        LabelText(text = stringResource(Res.string.txt_department))
                         Text(text = employee.department ?: "-", fontSize = 14.sp)
                     }
                 }
@@ -326,4 +337,3 @@ fun EmployeeListItemView(
         }
     }
 }
-

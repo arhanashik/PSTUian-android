@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.model.ChangePasswordInput
 import com.workfort.pstuian.model.ChangePasswordInputError
+import com.workfort.pstuian.reducer.ui.changepassword.ChangePasswordScreenState
+import com.workfort.pstuian.reducer.ui.changepassword.ChangePasswordScreenStateReducer
+import com.workfort.pstuian.reducer.ui.changepassword.ChangePasswordScreenStateUpdate
 import com.workfort.pstuian.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

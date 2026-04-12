@@ -57,6 +57,8 @@ import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
 import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
 import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.view.ui.common.component.isLastItemVisible
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.ic_location_placeholder
 
 
 @Composable
@@ -201,7 +203,7 @@ private fun ListItemView(
                 .size(46.dp)
                 .clip(RoundedCornerShape(8.dp)),
             url = item.locationImageUrl,
-            placeholder = R.drawable.ic_location_placeholder,
+            placeholder = Res.drawable.ic_location_placeholder,
             contentScale = ContentScale.Crop,
         )
         Column(modifier = Modifier.padding(start = 8.dp)) {

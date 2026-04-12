@@ -4,11 +4,19 @@ import com.workfort.pstuian.reducer.service.StateUpdate
 
 sealed interface CvUploadScreenStateUpdate : StateUpdate<CvUploadScreenState> {
 
-    data class ShowSelectedFile(val selectedFile: String) : CvUploadScreenStateUpdate {
+    data class ShowSelectedFile(
+        val selectedFileUri: String,
+        val selectedFileName: String,
+    ) : CvUploadScreenStateUpdate {
         override fun invoke(
             oldState: CvUploadScreenState
         ): CvUploadScreenState = with(oldState) {
-            copy(displayState = displayState.copy(selectedFile = selectedFile))
+            copy(
+                displayState = displayState.copy(
+                    selectedFileUri = selectedFileUri,
+                    selectedFileName = selectedFileName,
+                )
+            )
         }
     }
 

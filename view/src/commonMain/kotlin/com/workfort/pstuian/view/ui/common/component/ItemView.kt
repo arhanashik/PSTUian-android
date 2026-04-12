@@ -13,8 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.view.R
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.ic_education_gray
 import com.workfort.pstuian.model.FacultyEntity
+import com.workfort.pstuian.view.ui.common.theme.bgCircle
 
 
 @Composable
@@ -33,10 +35,12 @@ fun FacultyView(modifier: Modifier, faculty: FacultyEntity) {
         ) {
             LoadAsyncImage(
                 modifier = Modifier
-                    .height(64.dp)
-                    .padding(top = 8.dp),
+                    .padding(top = 16.dp)
+                    .bgCircle()
+                    .padding(12.dp)
+                    .height(64.dp),
                 url = faculty.icon,
-                placeholder = R.drawable.ic_education_gray,
+                placeholder = Res.drawable.ic_education_gray,
                 contentScale = ContentScale.FillHeight,
             )
             TitleTextSmall(

@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -148,8 +149,8 @@ private fun ScreenContent(
                     },
                     icon = {
                         Icon(
-                            ImageVector.vectorResource(id = R.drawable.ic_blood_drop),
-                            "",
+                            Icons.Default.Favorite,
+                            contentDescription = null,
                         )
                     },
                     shape = CircleShape,

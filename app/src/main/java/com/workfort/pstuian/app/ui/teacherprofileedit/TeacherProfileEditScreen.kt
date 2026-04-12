@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -335,7 +336,7 @@ private fun ConnectInfoEditPanelView(
             label = context.getString(R.string.hint_linked_in),
             value = newProfile.teacher.linkedIn.orEmpty(),
             trailingIcon = {
-                Icon(ImageVector.vectorResource(R.drawable.ic_web), contentDescription = "")
+                Icon(Icons.Default.Public, contentDescription = "")
             },
             isError = validationError.linkedIn.isNotEmpty(),
             supportingText = validationError.linkedIn,
@@ -348,7 +349,7 @@ private fun ConnectInfoEditPanelView(
             label = context.getString(R.string.hint_facebook),
             value = newProfile.teacher.fbLink.orEmpty(),
             trailingIcon = {
-                Icon(ImageVector.vectorResource(R.drawable.ic_web), contentDescription = "")
+                Icon(Icons.Default.Public, contentDescription = "")
             },
             isError = validationError.facebook.isNotEmpty(),
             supportingText = validationError.facebook,

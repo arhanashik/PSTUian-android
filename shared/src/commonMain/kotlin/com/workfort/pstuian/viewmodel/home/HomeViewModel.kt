@@ -1,5 +1,6 @@
 package com.workfort.pstuian.viewmodel.home
 
+import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.model.FacultyEntity
 import com.workfort.pstuian.model.SliderEntity
 import com.workfort.pstuian.model.StudentEntity
@@ -8,14 +9,13 @@ import com.workfort.pstuian.model.UserType
 import com.workfort.pstuian.repository.AuthRepository
 import com.workfort.pstuian.repository.FacultyRepository
 import com.workfort.pstuian.repository.SliderRepository
-import com.workfort.pstuian.usecase.ClearAllDataUseCase
 import com.workfort.pstuian.reducer.ui.home.HomeScreenState
 import com.workfort.pstuian.reducer.ui.home.HomeScreenStateReducer
 import com.workfort.pstuian.reducer.ui.home.HomeScreenStateUpdate
+import com.workfort.pstuian.usecase.ClearAllDataUseCase
 import com.workfort.pstuian.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -28,7 +28,7 @@ class HomeViewModel(
 ) : BaseViewModel() {
 
     private val _homeScreenState = MutableStateFlow(stateReducer.initial)
-    val homeScreenState: StateFlow<HomeScreenState> = _homeScreenState.asStateFlow()
+    val homeScreenState: StateFlow<HomeScreenState> get() = _homeScreenState
 
     private fun updateScreenState(update: HomeScreenStateUpdate) =
         _homeScreenState.update { oldState -> stateReducer.reduce(oldState, update) }
@@ -58,11 +58,15 @@ class HomeViewModel(
     fun onClickUserProfile() {
         val state = _homeScreenState.value.displayState.profileState
         if (state is HomeScreenState.DisplayState.ProfileState.Available) {
-            val user = state.user
-            val (userType, userId) = when (user) {
-                is StudentEntity -> UserType.STUDENT to user.id
-                is TeacherEntity -> UserType.TEACHER to user.id
-                else -> null to null
+            val userType = when (state.user) {
+                is StudentEntity -> UserType.STUDENT
+                is TeacherEntity -> UserType.TEACHER
+                else -> null
+            }
+            val userId = when (state.user) {
+                is StudentEntity -> state.user.id
+                is TeacherEntity -> state.user.id
+                else -> null
             }
             if (userType != null && userId != null) {
                 updateScreenState(
@@ -82,16 +86,12 @@ class HomeViewModel(
         updateScreenState(HomeScreenStateUpdate.UpdateSliderPosition(position))
     }
 
-    fun onClickSlider(slider: SliderEntity) {
-        slider.imageUrl?.let { imageUrl ->
-            // Use a simple encoding for KMP or handle it in the UI layer
-            val encodedUrl = imageUrl.replace("/", "_")
-            updateScreenState(
-                HomeScreenStateUpdate.NavigateTo(
-                    HomeScreenState.NavigationState.ImagePreviewScreen(encodedUrl)
-                )
+    fun onClickSlider(slider: SliderEntity) = slider.imageUrl?.let { imageUrl ->
+        updateScreenState(
+            HomeScreenStateUpdate.NavigateTo(
+                HomeScreenState.NavigationState.ImagePreviewScreen(imageUrl)
             )
-        }
+        )
     }
 
     fun onClickFaculty(faculty: FacultyEntity) = updateScreenState(
@@ -176,8 +176,7 @@ class HomeViewModel(
         viewModelScope.launch {
             updateScreenState(HomeScreenStateUpdate.FacultyLoading)
             runCatching {
-                facultyRepo.getFaculties()
-            }.onSuccess { faculties ->
+                val faculties = facultyRepo.getFaculties()
                 updateScreenState(HomeScreenStateUpdate.FacultyLoaded(faculties))
             }.onFailure {
                 val message = it.message ?: "Failed to load faculties"
@@ -190,8 +189,7 @@ class HomeViewModel(
         viewModelScope.launch {
             updateScreenState(HomeScreenStateUpdate.ProfileLoading)
             runCatching {
-                authRepo.getSignInUser()
-            }.onSuccess { user ->
+                val user = authRepo.getSignInUser()
                 updateScreenState(HomeScreenStateUpdate.ProfileLoaded(user))
             }.onFailure {
                 val message = it.message ?: "Failed to load profile"

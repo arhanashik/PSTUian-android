@@ -56,7 +56,7 @@ fun SettingsScreen(
     var uiEvent by remember {
         mutableStateOf<SettingsScreenUiEvent>(SettingsScreenUiEvent.LoadInitialData)
     }
-    val linkUtil = LinkUtil(context)
+    val linkUtil = LinkUtil()
 
     with(screenState) {
         displayState.Handle(modifier = modifier) {

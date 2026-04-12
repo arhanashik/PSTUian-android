@@ -77,6 +77,8 @@ import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
 import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
 import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
 import com.workfort.pstuian.view.ui.common.component.isLastItemVisible
+import pstuian.shared.generated.resources.Res
+import pstuian.shared.generated.resources.img_placeholder_profile
 
 
 @Composable
@@ -90,7 +92,7 @@ fun CheckInListScreen(
         mutableStateOf<CheckInListScreenUiEvent>(CheckInListScreenUiEvent.None)
     }
 
-    val linkUtil = LinkUtil(LocalContext.current)
+    val linkUtil = LinkUtil()
 
     // check for location picker
     navController.currentBackStackEntry
@@ -231,7 +233,7 @@ private fun CheckInListItemView(
                         .fillMaxWidth()
                         .aspectRatio(1f),
                     url = item.imageUrl,
-                    placeholder = R.drawable.img_placeholder_profile,
+                    placeholder = Res.drawable.img_placeholder_profile,
                     contentScale = ContentScale.Crop,
                 )
                 DotView(modifier = Modifier.padding(16.dp))

@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.workfort.pstuian.view.ui.common.theme.bgLabelBadge
 
 
 @Composable
@@ -42,8 +43,7 @@ fun HorizontalDividerWithLabel(
         Box(
             modifier = Modifier
                 .weight(0.2f)
-                .clip(CircleShape)
-                .background(color),
+                .bgLabelBadge(),
         ) {
             Text(
                 label,

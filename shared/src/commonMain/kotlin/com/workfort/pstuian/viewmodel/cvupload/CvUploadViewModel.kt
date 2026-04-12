@@ -31,8 +31,8 @@ class CvUploadViewModel(
         ),
     )
 
-    fun onSelectCv(fileName: String) {
-        updateScreenState(CvUploadScreenStateUpdate.ShowSelectedFile(fileName))
+    fun onSelectCv(uri: String, fileName: String) {
+        updateScreenState(CvUploadScreenStateUpdate.ShowSelectedFile(uri, fileName))
         updateScreenState(CvUploadScreenStateUpdate.CvUploadStateNone)
     }
 
@@ -56,7 +56,7 @@ class CvUploadViewModel(
 
     fun updateUploadResult(isSuccess: Boolean, result: String) {
         if (isSuccess) {
-            updateScreenState(CvUploadScreenStateUpdate.ShowSelectedFile(""))
+            updateScreenState(CvUploadScreenStateUpdate.ShowSelectedFile("", ""))
         }
         updateScreenState(CvUploadScreenStateUpdate.CvUploadResult(isSuccess, result))
     }
