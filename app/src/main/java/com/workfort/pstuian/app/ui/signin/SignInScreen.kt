@@ -29,10 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -49,6 +47,7 @@ import com.workfort.pstuian.view.ui.common.component.MaterialButtonToggleGroup
 import com.workfort.pstuian.view.ui.common.component.OutlinedTextInput
 import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
 import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 
 
 @Composable
@@ -203,7 +202,7 @@ private fun SignInFormContent(
             value = email,
             inputType = KeyboardType.Email,
             trailingIcon = {
-                Icon(Icons.Default.Email, contentDescription = "")
+                Icon(AppIcons.Email, contentDescription = "")
             },
             isError = emailValidationError.isNullOrEmpty().not(),
             supportingText = emailValidationError,
@@ -216,13 +215,13 @@ private fun SignInFormContent(
             value = password,
             inputType = KeyboardType.Password,
             trailingIcon = {
-                val (iconRes, description) = if (passwordVisibility)
-                    R.drawable.ic_help_fill to "Hide password"
+                val (icon, description) = if (passwordVisibility)
+                    AppIcons.HelpFill to "Hide password"
                 else
-                    R.drawable.ic_help_outline to "Show password"
+                    AppIcons.HelpOutline to "Show password"
 
                 IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                    Icon(imageVector  = ImageVector.vectorResource(id = iconRes), description)
+                    Icon(imageVector = icon, description)
                 }
             },
             visualTransformation = if (passwordVisibility) {

@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 import com.workfort.pstuian.model.ChangePasswordInput
 import com.workfort.pstuian.model.ChangePasswordInputError
 import com.workfort.pstuian.reducer.ui.changepassword.ChangePasswordScreenState
@@ -135,13 +136,13 @@ private fun FormContent(
             value = newInput.oldPassword,
             inputType = KeyboardType.Password,
             trailingIcon = {
-                val (iconRes, description) = if (oldPasswordVisibility)
-                    R.drawable.ic_help_fill to "Hide password"
+                val (icon, description) = if (oldPasswordVisibility)
+                    AppIcons.HelpFill to "Hide password"
                 else
-                    R.drawable.ic_help_outline to "Show password"
+                    AppIcons.HelpOutline to "Show password"
 
                 IconButton(onClick = { oldPasswordVisibility = !oldPasswordVisibility }) {
-                    Icon(imageVector  = ImageVector.vectorResource(id = iconRes), description)
+                    Icon(imageVector = icon, description)
                 }
             },
             visualTransformation = if (oldPasswordVisibility) {
@@ -159,13 +160,13 @@ private fun FormContent(
             value = newInput.newPassword,
             inputType = KeyboardType.Password,
             trailingIcon = {
-                val (iconRes, description) = if (newPasswordVisibility)
-                    R.drawable.ic_help_fill to "Hide password"
+                val (icon, description) = if (newPasswordVisibility)
+                    AppIcons.HelpFill to "Hide password"
                 else
-                    R.drawable.ic_help_outline to "Show password"
+                    AppIcons.HelpOutline to "Show password"
 
                 IconButton(onClick = { newPasswordVisibility = !newPasswordVisibility }) {
-                    Icon(imageVector  = ImageVector.vectorResource(id = iconRes), description)
+                    Icon(imageVector = icon, description)
                 }
             },
             visualTransformation = if (newPasswordVisibility) {
@@ -183,13 +184,13 @@ private fun FormContent(
             value = newInput.confirmPassword,
             inputType = KeyboardType.Password,
             trailingIcon = {
-                val (iconRes, description) = if (confirmPasswordVisibility)
-                    R.drawable.ic_help_fill to "Hide password"
+                val (icon, description) = if (confirmPasswordVisibility)
+                    AppIcons.HelpFill to "Hide password"
                 else
-                    R.drawable.ic_help_outline to "Show password"
+                    AppIcons.HelpOutline to "Show password"
 
                 IconButton(onClick = { confirmPasswordVisibility = !confirmPasswordVisibility }) {
-                    Icon(imageVector  = ImageVector.vectorResource(id = iconRes), description)
+                    Icon(imageVector = icon, description)
                 }
             },
             visualTransformation = if (confirmPasswordVisibility) {

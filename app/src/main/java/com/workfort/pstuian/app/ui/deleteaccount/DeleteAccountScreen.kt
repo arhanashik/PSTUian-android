@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.NavItem
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 import com.workfort.pstuian.reducer.ui.deleteaccount.DeleteAccountScreenState
 import com.workfort.pstuian.view.ui.common.component.AppBar
 import com.workfort.pstuian.view.ui.common.component.OutlinedTextInput
@@ -138,13 +139,13 @@ private fun FormContent(
             value = newInput,
             inputType = KeyboardType.Password,
             trailingIcon = {
-                val (iconRes, description) = if (passwordVisibility)
-                    R.drawable.ic_help_fill to "Hide password"
+                val (icon, description) = if (passwordVisibility)
+                    AppIcons.HelpFill to "Hide password"
                 else
-                    R.drawable.ic_help_outline to "Show password"
+                    AppIcons.HelpOutline to "Show password"
 
                 IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                    Icon(imageVector  = ImageVector.vectorResource(id = iconRes), description)
+                    Icon(imageVector = icon, description)
                 }
             },
             visualTransformation = if (passwordVisibility) {

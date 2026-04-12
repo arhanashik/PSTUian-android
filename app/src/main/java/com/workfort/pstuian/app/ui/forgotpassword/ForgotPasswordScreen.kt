@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 import com.workfort.pstuian.model.UserType
 import com.workfort.pstuian.view.ui.common.component.AppBar
 import com.workfort.pstuian.view.ui.common.component.HorizontalDividerWithLabel
@@ -161,7 +162,7 @@ private fun EmailVerificationFormContent(
             value = changedEmail,
             inputType = KeyboardType.Email,
             trailingIcon = {
-                Icon(Icons.Default.Email, contentDescription = "")
+                Icon(AppIcons.Email, contentDescription = "")
             },
             isError = displayState.validationError.isNullOrEmpty().not(),
             supportingText = displayState.validationError,

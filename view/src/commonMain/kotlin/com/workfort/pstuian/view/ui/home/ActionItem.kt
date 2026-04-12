@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 import org.jetbrains.compose.resources.DrawableResource
 import pstuian.shared.generated.resources.Res
 import pstuian.shared.generated.resources.img_admission_support
@@ -71,12 +72,12 @@ val informationItems = listOf(
 val optionsItems = listOf(
     ActionItem(
         Res.string.txt_need_blood,
-        Icons.Default.Favorite,
+        AppIcons.BloodDrop,
         action = Action.RequestBloodDonation,
     ),
     ActionItem(
         Res.string.txt_check_in,
-        Icons.Default.LocationOn,
+        AppIcons.CheckIn,
         action = Action.CheckIn,
     ),
     ActionItem(

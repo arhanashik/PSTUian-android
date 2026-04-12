@@ -54,6 +54,7 @@ import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.model.ProfileInfoItemAction
 import com.workfort.pstuian.model.TeacherProfile
 import com.workfort.pstuian.util.helper.LinkUtil
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
 import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
 import com.workfort.pstuian.view.ui.common.component.ProfileInfoListView
@@ -204,7 +205,7 @@ private fun ScreenContent(
                                 )
                             )
                         },
-                        icon = { Icon(Icons.Filled.Edit,"") },
+                        icon = { Icon(AppIcons.Edit, "") },
                         shape = CircleShape,
                     )
                 }
@@ -246,7 +247,7 @@ private fun ProfileView(
             IconButton(
                 onClick = { onUiEvent(TeacherProfileScreenUiEvent.OnClickBack) },
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back button")
+                Icon(AppIcons.ArrowBack, contentDescription = "Back button")
             }
             Box(contentAlignment = Alignment.BottomEnd) {
                 val imageUrl = profile.teacher.imageUrl
@@ -263,7 +264,7 @@ private fun ProfileView(
                 )
                 if (profile.isSignedIn) {
                     Icon(
-                        ImageVector.vectorResource(id = R.drawable.ic_camera),
+                        AppIcons.Camera,
                         contentDescription = null,
                         modifier = Modifier.clickable {
                             onUiEvent(TeacherProfileScreenUiEvent.OnClickChangeImage)
@@ -284,9 +285,9 @@ private fun ProfileView(
             ) {
                 Icon(
                     if (profile.isSignedIn) {
-                        ImageVector.vectorResource(id = R.drawable.ic_sign_out)
+                        AppIcons.SignOut
                     } else {
-                        Icons.Filled.Call
+                        AppIcons.Call
                     },
                     contentDescription = "Action button",
                 )
@@ -415,7 +416,7 @@ private fun TeacherProfileScreenState.DisplayState.MessageState.Handle(
         }
         is TeacherProfileScreenState.DisplayState.MessageState.Call -> {
             ShowConfirmationDialog(
-                icon = Icons.Default.Call,
+                icon = AppIcons.Call,
                 title = context.getString(R.string.txt_title_call),
                 message = context.getString(R.string.txt_msg_call).plus(" $phoneNumber"),
                 confirmButtonText = context.getString(R.string.txt_call),
@@ -429,7 +430,7 @@ private fun TeacherProfileScreenState.DisplayState.MessageState.Handle(
         }
         is TeacherProfileScreenState.DisplayState.MessageState.Email -> {
             ShowConfirmationDialog(
-                icon = Icons.Default.Email,
+                icon = AppIcons.Email,
                 title = context.getString(R.string.txt_title_email),
                 message = context.getString(R.string.txt_msg_email).plus(" $email"),
                 confirmButtonText = context.getString(R.string.txt_email),

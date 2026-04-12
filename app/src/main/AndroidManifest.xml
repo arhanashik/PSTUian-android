@@ -40,9 +40,9 @@
             </intent-filter>
         </service>
         <!-- Set custom default icon. -->
-        <meta-data
-                android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@drawable/ic_bell_filled" />
+<!--        <meta-data-->
+<!--                android:name="com.google.firebase.messaging.default_notification_icon"-->
+<!--                android:resource="@drawable/ic_bell_filled" />-->
         <!-- Set color used with incoming notification messages. -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_color"

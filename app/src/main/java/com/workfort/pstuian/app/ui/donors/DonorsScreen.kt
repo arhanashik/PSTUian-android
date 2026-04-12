@@ -35,10 +35,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
@@ -50,6 +48,7 @@ import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
 import com.workfort.pstuian.view.ui.common.component.AppBar
 import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
 import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 import kotlinx.coroutines.delay
 
 @Composable
@@ -134,7 +133,7 @@ private fun ScreenContent(
                     },
                     icon = {
                         Icon(
-                            ImageVector.vectorResource(id = R.drawable.ic_hand_heart),
+                            AppIcons.HandHeart,
                             "",
                         )
                     },
@@ -197,7 +196,7 @@ private fun DonorListItemView(
                 .padding(16.dp),
         ) {
             Icon(
-                ImageVector.vectorResource(id = R.drawable.ic_account_heart_outline),
+                AppIcons.AccountHeartOutline,
                 contentDescription = null,
                 tint = Color.Gray,
             )
@@ -269,7 +268,7 @@ private fun DonorsScreenState.DisplayState.MessageState.Handle(
         is DonorsScreenState.DisplayState.MessageState.ShowDetails -> {
             val message = "Email: ${item.email}\n${item.info}\nReference${item.reference}"
             ShowInfoDialog(
-                icon = ImageVector.vectorResource(id = R.drawable.ic_account_heart_outline),
+                icon = AppIcons.AccountHeartOutline,
                 title = item.name ?: "Donation Info",
                 message = message,
                 onDismiss = {

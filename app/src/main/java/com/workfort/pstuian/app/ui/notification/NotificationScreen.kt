@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 import com.workfort.pstuian.model.NotificationEntity
 import com.workfort.pstuian.model.NotificationType
 import com.workfort.pstuian.util.DateUtil
@@ -116,7 +117,7 @@ private fun NotificationScreenContent(
             AppBar(
                 scrollBehavior,
                 title = LocalContext.current.getString(R.string.label_notification_screen),
-                actionIcon = Icons.Filled.Refresh,
+                actionIcon = AppIcons.Reload,
                 onClickBack = {
                     onUiEvent(NotificationUiEvent.OnClickBack)
                 },
@@ -160,10 +161,10 @@ private fun NotificationView(
         ) {
             val type = NotificationType.create(notification.type) ?: NotificationType.DEFAULT
             val icon = when(type) {
-                NotificationType.DEFAULT -> Icons.Default.Notifications
-                NotificationType.BLOOD_DONATION -> Icons.Default.Favorite
-                NotificationType.NEWS -> Icons.Default.Notifications
-                NotificationType.HELP -> Icons.Default.Favorite
+                NotificationType.DEFAULT -> AppIcons.BellFilled
+                NotificationType.BLOOD_DONATION -> AppIcons.HandHeart
+                NotificationType.NEWS -> AppIcons.Newspaper
+                NotificationType.HELP -> AppIcons.HandHeart
             }
             Icon(
                 icon,
@@ -252,7 +253,7 @@ private fun NotificationScreenState.DisplayState.MessageState.Handle(
     when (this) {
         is NotificationScreenState.DisplayState.MessageState.NotificationDetails -> {
             ShowSuccessDialog(
-                icon = Icons.Default.Notifications,
+                icon = AppIcons.BellFilled,
                 title = notification.title?: "Notification",
                 message = notification.message,
                 onConfirm = {

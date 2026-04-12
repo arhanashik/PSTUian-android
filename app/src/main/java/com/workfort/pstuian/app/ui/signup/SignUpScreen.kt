@@ -36,10 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -64,6 +62,7 @@ import com.workfort.pstuian.view.ui.common.component.OutlinedTextInput
 import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
 import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
 import com.workfort.pstuian.view.ui.common.component.ShowSuccessDialog
+import com.workfort.pstuian.view.ui.common.icons.AppIcons
 
 
 @Composable
@@ -318,7 +317,7 @@ private fun SignUpStudentFormContent(
                 value = signUpInput.faculty?.shortTitle.orEmpty(),
                 readOnly = true,
                 trailingIcon = {
-                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = "")
+                    Icon(AppIcons.KeyboardArrowDown, contentDescription = "")
                 },
                 isError = validationError.faculty.isNotEmpty(),
                 supportingText = validationError.faculty,
@@ -346,7 +345,7 @@ private fun SignUpStudentFormContent(
             value = signUpInput.batch?.name.orEmpty(),
             readOnly = true,
             trailingIcon = {
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "")
+                Icon(AppIcons.KeyboardArrowDown, contentDescription = "")
             },
             isError = validationError.batch.isNotEmpty(),
             supportingText = validationError.batch,
@@ -357,7 +356,7 @@ private fun SignUpStudentFormContent(
             value = currentSignUpInput.email,
             inputType = KeyboardType.Email,
             trailingIcon = {
-                Icon(Icons.Default.Email, contentDescription = "")
+                Icon(AppIcons.Email, contentDescription = "")
             },
             isError = validationError.email.isNotEmpty(),
             supportingText = validationError.email,
@@ -369,13 +368,13 @@ private fun SignUpStudentFormContent(
             value = currentSignUpInput.password,
             inputType = KeyboardType.Password,
             trailingIcon = {
-                val (iconRes, description) = if (passwordVisibility)
-                    R.drawable.ic_help_fill to "Hide password"
+                val (icon, description) = if (passwordVisibility)
+                    AppIcons.HelpFill to "Hide password"
                 else
-                    R.drawable.ic_help_outline to "Show password"
+                    AppIcons.HelpOutline to "Show password"
 
                 IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                    Icon(imageVector  = ImageVector.vectorResource(id = iconRes), description)
+                    Icon(imageVector = icon, description)
                 }
             },
             visualTransformation = if (passwordVisibility) {
@@ -451,7 +450,7 @@ private fun SignUpTeacherFormContent(
             value = currentSignUpInput.faculty?.shortTitle.orEmpty(),
             readOnly = true,
             trailingIcon = {
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "")
+                Icon(AppIcons.KeyboardArrowDown, contentDescription = "")
             },
             isError = validationError.faculty.isNotEmpty(),
             supportingText = validationError.faculty,
@@ -470,7 +469,7 @@ private fun SignUpTeacherFormContent(
             value = currentSignUpInput.email,
             inputType = KeyboardType.Email,
             trailingIcon = {
-                Icon(Icons.Default.Email, contentDescription = "")
+                Icon(AppIcons.Email, contentDescription = "")
             },
             isError = validationError.email.isNotEmpty(),
             supportingText = validationError.email,
@@ -482,13 +481,13 @@ private fun SignUpTeacherFormContent(
             value = currentSignUpInput.password,
             inputType = KeyboardType.Password,
             trailingIcon = {
-                val (iconRes, description) = if (passwordVisibility)
-                    R.drawable.ic_help_fill to "Hide password"
+                val (icon, description) = if (passwordVisibility)
+                    AppIcons.HelpFill to "Hide password"
                 else
-                    R.drawable.ic_help_outline to "Show password"
+                    AppIcons.HelpOutline to "Show password"
 
                 IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                    Icon(imageVector  = ImageVector.vectorResource(id = iconRes), description)
+                    Icon(imageVector = icon, description)
                 }
             },
             visualTransformation = if (passwordVisibility) {
