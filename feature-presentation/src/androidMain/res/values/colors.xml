@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App theme + XML drawables; align brand colors with commonMain .../app/ui/common/theme/Color.kt -->
+    <color name="colorPrimary">#FF008577</color>
+    <color name="colorPrimaryDark">#FF00574B</color>
+    <color name="colorAccent">#FFD81B60</color>
+
+    <color name="colorWhite">#FFFFFFFF</color>
+
+    <!-- Material palette (used by app res color/drawable selectors) -->
+    <color name="md_grey_200">#FFEEEEEE</color>
+    <color name="md_grey_500">#FF9E9E9E</color>
+    <color name="md_red_50">#FFFFEBEE</color>
+    <color name="md_red_200">#FFEF9A9A</color>
+    <color name="md_green_A700">#FF00C853</color>
+</resources>

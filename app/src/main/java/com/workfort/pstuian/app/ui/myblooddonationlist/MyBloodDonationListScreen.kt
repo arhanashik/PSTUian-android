@@ -42,10 +42,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -53,15 +51,15 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.NavItem
 import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
 import com.workfort.pstuian.model.BloodDonationEntity
-import com.workfort.pstuian.view.ui.common.component.AnimatedEmptyView
-import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.view.ui.common.component.AppBar
-import com.workfort.pstuian.view.ui.common.component.LabelText
-import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
-import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
-import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
-import com.workfort.pstuian.view.ui.common.component.isLastItemVisible
+import com.workfort.pstuian.common.component.AnimatedEmptyView
+import com.workfort.pstuian.common.component.AnimatedErrorView
+import com.workfort.pstuian.common.component.AppBar
+import com.workfort.pstuian.common.component.LabelText
+import com.workfort.pstuian.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.common.component.ShowInfoDialog
+import com.workfort.pstuian.common.component.ShowLoaderDialog
+import com.workfort.pstuian.common.component.TitleTextSmall
+import com.workfort.pstuian.common.component.isLastItemVisible
 import kotlinx.coroutines.delay
 
 

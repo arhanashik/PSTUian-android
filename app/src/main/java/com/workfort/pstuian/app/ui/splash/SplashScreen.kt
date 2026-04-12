@@ -27,9 +27,9 @@ import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.app.ui.NavItem
 import com.workfort.pstuian.util.helper.PlayStoreUtil
-import com.workfort.pstuian.view.ui.common.component.CardWithAnimatedBorder
-import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.view.ui.common.component.TitleTextMedium
+import com.workfort.pstuian.common.component.CardWithAnimatedBorder
+import com.workfort.pstuian.common.component.ShowErrorDialog
+import com.workfort.pstuian.common.component.TitleTextMedium
 import kotlinx.coroutines.delay
 
 @Composable

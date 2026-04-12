@@ -43,15 +43,15 @@ import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.model.StudentAcademicInfoInputError
 import com.workfort.pstuian.model.StudentConnectInfoInputError
 import com.workfort.pstuian.model.StudentProfile
-import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.view.ui.common.component.AnimatedListLoaderView
-import com.workfort.pstuian.view.ui.common.component.AppBar
-import com.workfort.pstuian.view.ui.common.component.DropDownMenuBox
-import com.workfort.pstuian.view.ui.common.component.OutlinedTextInput
-import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
-import com.workfort.pstuian.view.ui.common.component.ShowSuccessDialog
+import com.workfort.pstuian.common.component.AnimatedErrorView
+import com.workfort.pstuian.common.component.AnimatedListLoaderView
+import com.workfort.pstuian.common.component.AppBar
+import com.workfort.pstuian.common.component.DropDownMenuBox
+import com.workfort.pstuian.common.component.OutlinedTextInput
+import com.workfort.pstuian.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.common.component.ShowErrorDialog
+import com.workfort.pstuian.common.component.ShowLoaderDialog
+import com.workfort.pstuian.common.component.ShowSuccessDialog
 import kotlinx.coroutines.delay
 
 

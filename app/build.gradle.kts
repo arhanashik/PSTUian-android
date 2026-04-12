@@ -116,7 +116,7 @@ dependencies {
     implementation(libs.androidx.documentfile)
 
     // sdk
-    implementation(project(":shared"))
+    implementation(project(":feature-presentation"))
     implementation(project(":appconstant"))
     implementation(project(":database"))
     implementation(project(":firebase"))
@@ -125,7 +125,6 @@ dependencies {
     implementation(project(":repository"))
     implementation(project(":sharedpref"))
     implementation(project(":util"))
-    implementation(project(":view"))
     implementation(project(":workmanager"))
 
     // test libs

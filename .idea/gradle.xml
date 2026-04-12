@@ -13,14 +13,13 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/appconstant" />
             <option value="$PROJECT_DIR$/database" />
+            <option value="$PROJECT_DIR$/feature-presentation" />
             <option value="$PROJECT_DIR$/firebase" />
             <option value="$PROJECT_DIR$/model" />
             <option value="$PROJECT_DIR$/networking" />
             <option value="$PROJECT_DIR$/repository" />
-            <option value="$PROJECT_DIR$/shared" />
             <option value="$PROJECT_DIR$/sharedpref" />
             <option value="$PROJECT_DIR$/util" />
-            <option value="$PROJECT_DIR$/view" />
             <option value="$PROJECT_DIR$/workmanager" />
           </set>
         </option>

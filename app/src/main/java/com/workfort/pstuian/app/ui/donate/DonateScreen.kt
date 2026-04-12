@@ -35,12 +35,12 @@ import com.workfort.pstuian.R
 import com.workfort.pstuian.model.DonationInput
 import com.workfort.pstuian.model.DonationInputValidationError
 import com.workfort.pstuian.reducer.ui.donate.DonateScreenState
-import com.workfort.pstuian.view.ui.common.component.AppBar
-import com.workfort.pstuian.view.ui.common.component.HtmlText
-import com.workfort.pstuian.view.ui.common.component.OutlinedTextInput
-import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
-import com.workfort.pstuian.view.ui.common.component.ShowSuccessDialog
+import com.workfort.pstuian.common.component.AppBar
+import com.workfort.pstuian.common.component.HtmlText
+import com.workfort.pstuian.common.component.OutlinedTextInput
+import com.workfort.pstuian.common.component.ShowErrorDialog
+import com.workfort.pstuian.common.component.ShowLoaderDialog
+import com.workfort.pstuian.common.component.ShowSuccessDialog
 
 
 @Composable

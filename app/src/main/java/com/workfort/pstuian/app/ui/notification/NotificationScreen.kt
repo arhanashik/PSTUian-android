@@ -47,14 +47,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
-import com.workfort.pstuian.view.ui.common.icons.AppIcons
+import com.workfort.pstuian.common.icons.AppIcons
 import com.workfort.pstuian.model.NotificationEntity
 import com.workfort.pstuian.model.NotificationType
 import com.workfort.pstuian.util.DateUtil
-import com.workfort.pstuian.view.ui.common.component.AppBar
-import com.workfort.pstuian.view.ui.common.component.ErrorText
-import com.workfort.pstuian.view.ui.common.component.ShowSuccessDialog
-import com.workfort.pstuian.view.ui.common.component.isLastItemVisible
+import com.workfort.pstuian.common.component.AppBar
+import com.workfort.pstuian.common.component.ErrorText
+import com.workfort.pstuian.common.component.ShowSuccessDialog
+import com.workfort.pstuian.common.component.isLastItemVisible
 
 
 @Composable

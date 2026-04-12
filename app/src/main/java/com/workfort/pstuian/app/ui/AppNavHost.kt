@@ -16,14 +16,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.workfort.pstuian.view.ui.changepassword.ChangePasswordScreen
-import com.workfort.pstuian.view.ui.changepassword.ChangePasswordUiEvent
-import com.workfort.pstuian.view.ui.common.facultypicker.FacultyPickerScreen
-import com.workfort.pstuian.view.ui.common.locationpicker.LocationPickerScreen
-import com.workfort.pstuian.view.ui.contactus.ContactUsScreen
-import com.workfort.pstuian.view.ui.contactus.ContactUsScreenUiEvent
-import com.workfort.pstuian.view.ui.checkinlist.CheckInListScreen
-import com.workfort.pstuian.view.ui.checkinlist.CheckInListScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.changepassword.ChangePasswordScreen
+import com.workfort.pstuian.app.ui.common.ui.changepassword.ChangePasswordUiEvent
+import com.workfort.pstuian.common.facultypicker.FacultyPickerScreen
+import com.workfort.pstuian.common.locationpicker.LocationPickerScreen
+import com.workfort.pstuian.app.ui.common.ui.contactus.ContactUsScreen
+import com.workfort.pstuian.app.ui.common.ui.contactus.ContactUsScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.checkinlist.CheckInListScreen
+import com.workfort.pstuian.app.ui.common.ui.checkinlist.CheckInListScreenUiEvent
 import com.workfort.pstuian.app.ui.notification.NotificationScreen
 import com.workfort.pstuian.app.ui.notification.NotificationViewModel
 import com.workfort.pstuian.model.FacultySelectionMode
@@ -33,46 +33,46 @@ import com.workfort.pstuian.reducer.ui.cvupload.CvUploadScreenUiEvent
 import com.workfort.pstuian.reducer.ui.imageupload.ImageUploadScreenUiEvent
 import com.workfort.pstuian.reducer.ui.mydevicelist.MyDeviceListScreenUiEvent
 import com.workfort.pstuian.util.helper.LinkUtil
-import com.workfort.pstuian.view.ui.blooddonationcreate.BloodDonationCreateScreen
-import com.workfort.pstuian.view.ui.blooddonationcreate.BloodDonationCreateScreenUiEvent
-import com.workfort.pstuian.view.ui.blooddonationrequestcreate.BloodDonationRequestCreateScreen
-import com.workfort.pstuian.view.ui.blooddonationrequestcreate.BloodDonationRequestCreateScreenUiEvent
-import com.workfort.pstuian.view.ui.blooddonationrequestlist.BloodDonationRequestListScreen
-import com.workfort.pstuian.view.ui.blooddonationrequestlist.BloodDonationRequestListScreenUiEvent
-import com.workfort.pstuian.view.ui.cvdownload.CvDownloadScreen
-import com.workfort.pstuian.view.ui.cvupload.CvUploadScreen
-import com.workfort.pstuian.view.ui.deleteaccount.DeleteAccountScreen
-import com.workfort.pstuian.view.ui.deleteaccount.DeleteAccountUiEvent
-import com.workfort.pstuian.view.ui.donate.DonateScreen
-import com.workfort.pstuian.view.ui.donate.DonateUiEvent
-import com.workfort.pstuian.view.ui.donors.DonorsScreen
-import com.workfort.pstuian.view.ui.donors.DonorsScreenUiEvent
-import com.workfort.pstuian.view.ui.emailverification.EmailVerificationScreen
-import com.workfort.pstuian.view.ui.emailverification.EmailVerificationScreenUiEvent
-import com.workfort.pstuian.view.ui.employeeprofile.EmployeeProfileScreen
-import com.workfort.pstuian.view.ui.faculty.FacultyScreen
-import com.workfort.pstuian.view.ui.forgotpassword.ForgotPasswordScreen
-import com.workfort.pstuian.view.ui.forgotpassword.ForgotPasswordScreenUiEvent
-import com.workfort.pstuian.view.ui.home.HomeScreen
-import com.workfort.pstuian.view.ui.imagepreview.ImagePreviewScreen
-import com.workfort.pstuian.view.ui.imageupload.ImageUploadScreen
-import com.workfort.pstuian.view.ui.myblooddonationlist.MyBloodDonationListScreen
-import com.workfort.pstuian.view.ui.myblooddonationlist.MyBloodDonationListScreenUiEvent
-import com.workfort.pstuian.view.ui.mycheckinlist.MyCheckInListScreen
-import com.workfort.pstuian.view.ui.mycheckinlist.MyCheckInListScreenUiEvent
-import com.workfort.pstuian.view.ui.mydevicelist.MyDeviceListScreen
-import com.workfort.pstuian.view.ui.settings.SettingsScreen
-import com.workfort.pstuian.view.ui.settings.SettingsScreenUiEvent
-import com.workfort.pstuian.view.ui.signin.SignInScreen
-import com.workfort.pstuian.view.ui.signup.SignUpScreen
-import com.workfort.pstuian.view.ui.splash.SplashScreen
-import com.workfort.pstuian.view.ui.studentprofile.StudentProfileScreen
-import com.workfort.pstuian.view.ui.studentprofileedit.StudentProfileEditScreen
-import com.workfort.pstuian.view.ui.studentprofileedit.StudentProfileEditScreenUiEvent
-import com.workfort.pstuian.view.ui.students.StudentsScreen
-import com.workfort.pstuian.view.ui.teacherprofile.TeacherProfileScreen
-import com.workfort.pstuian.view.ui.teacherprofileedit.TeacherProfileEditScreen
-import com.workfort.pstuian.viewmodel.FacultyPickerViewModel
+import com.workfort.pstuian.app.ui.common.ui.blooddonationcreate.BloodDonationCreateScreen
+import com.workfort.pstuian.app.ui.common.ui.blooddonationcreate.BloodDonationCreateScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.blooddonationrequestcreate.BloodDonationRequestCreateScreen
+import com.workfort.pstuian.app.ui.common.ui.blooddonationrequestcreate.BloodDonationRequestCreateScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.blooddonationrequestlist.BloodDonationRequestListScreen
+import com.workfort.pstuian.app.ui.common.ui.blooddonationrequestlist.BloodDonationRequestListScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.cvdownload.CvDownloadScreen
+import com.workfort.pstuian.app.ui.common.ui.cvupload.CvUploadScreen
+import com.workfort.pstuian.app.ui.common.ui.deleteaccount.DeleteAccountScreen
+import com.workfort.pstuian.app.ui.common.ui.deleteaccount.DeleteAccountUiEvent
+import com.workfort.pstuian.app.ui.common.ui.donate.DonateScreen
+import com.workfort.pstuian.app.ui.common.ui.donate.DonateUiEvent
+import com.workfort.pstuian.app.ui.common.ui.donors.DonorsScreen
+import com.workfort.pstuian.app.ui.common.ui.donors.DonorsScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.emailverification.EmailVerificationScreen
+import com.workfort.pstuian.app.ui.common.ui.emailverification.EmailVerificationScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.employeeprofile.EmployeeProfileScreen
+import com.workfort.pstuian.app.ui.common.ui.faculty.FacultyScreen
+import com.workfort.pstuian.app.ui.common.ui.forgotpassword.ForgotPasswordScreen
+import com.workfort.pstuian.app.ui.common.ui.forgotpassword.ForgotPasswordScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.home.HomeScreen
+import com.workfort.pstuian.app.ui.common.ui.imagepreview.ImagePreviewScreen
+import com.workfort.pstuian.app.ui.common.ui.imageupload.ImageUploadScreen
+import com.workfort.pstuian.app.ui.common.ui.myblooddonationlist.MyBloodDonationListScreen
+import com.workfort.pstuian.app.ui.common.ui.myblooddonationlist.MyBloodDonationListScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.mycheckinlist.MyCheckInListScreen
+import com.workfort.pstuian.app.ui.common.ui.mycheckinlist.MyCheckInListScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.mydevicelist.MyDeviceListScreen
+import com.workfort.pstuian.app.ui.common.ui.settings.SettingsScreen
+import com.workfort.pstuian.app.ui.common.ui.settings.SettingsScreenUiEvent
+import com.workfort.pstuian.app.ui.commonmodel.signin.SignInScreen
+import com.workfort.pstuian.app.ui.common.ui.signup.SignUpScreen
+import com.workfort.pstuian.app.ui.common.ui.splash.SplashScreen
+import com.workfort.pstuian.app.ui.common.ui.studentprofile.StudentProfileScreen
+import com.workfort.pstuian.app.ui.common.ui.studentprofileedit.StudentProfileEditScreen
+import com.workfort.pstuian.app.ui.common.ui.studentprofileedit.StudentProfileEditScreenUiEvent
+import com.workfort.pstuian.app.ui.common.ui.students.StudentsScreen
+import com.workfort.pstuian.app.ui.common.ui.teacherprofile.TeacherProfileScreen
+import com.workfort.pstuian.app.ui.common.ui.teacherprofileedit.TeacherProfileEditScreen
+import com.workfort.pstuian.app.ui.commonmodel.FacultyPickerViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -216,7 +216,7 @@ fun AppNavHost(
             ),
         ) {
             val email = it.arguments?.getString(NavParam.EMAIL) ?: ""
-            val viewModel: com.workfort.pstuian.viewmodel.emailverification.EmailVerificationViewModel =
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.emailverification.EmailVerificationViewModel =
                 koinViewModel(parameters = { parametersOf(email) })
             val screenState by viewModel.screenState.collectAsState()
             EmailVerificationScreen(
@@ -238,7 +238,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.ForgotPassword.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.forgotpassword.ForgotPasswordViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.forgotpassword.ForgotPasswordViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             ForgotPasswordScreen(
                 modifier = modifier,
@@ -403,7 +403,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.StudentProfileEdit.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.studentprofileedit.StudentProfileEditViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.studentprofileedit.StudentProfileEditViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             StudentProfileEditScreen(
                 modifier = modifier,
@@ -431,7 +431,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.TeacherProfileEdit.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.teacherprofileedit.TeacherProfileEditViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.teacherprofileedit.TeacherProfileEditViewModel = koinViewModel()
             TeacherProfileEditScreen(
                 modifier = modifier,
                 viewModel = viewModel,
@@ -445,7 +445,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.ContactUs.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.contactus.ContactUsViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.contactus.ContactUsViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             ContactUsScreen(
                 modifier = modifier,
@@ -463,7 +463,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.Donors.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.donors.DonorsViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.donors.DonorsViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             DonorsScreen(
                 modifier = modifier,
@@ -482,7 +482,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.CheckInList.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.checkinlist.CheckInListViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.checkinlist.CheckInListViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             CheckInListScreen(
                 modifier = modifier,
@@ -516,7 +516,7 @@ fun AppNavHost(
         ) {
             val userId = it.arguments?.getInt(NavParam.USER_ID) ?: 0
             val userType = it.arguments?.getString(NavParam.USER_TYPE) ?: ""
-            val viewModel: com.workfort.pstuian.viewmodel.mycheckinlist.MyCheckInListViewModel =
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.mycheckinlist.MyCheckInListViewModel =
                 koinViewModel(parameters = { parametersOf(userId, userType) })
             val screenState by viewModel.screenState.collectAsState()
             MyCheckInListScreen(
@@ -541,7 +541,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.BloodDonationCreate.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.blooddonationcreate.BloodDonationCreateViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.blooddonationcreate.BloodDonationCreateViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             BloodDonationCreateScreen(
                 modifier = modifier,
@@ -561,7 +561,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.BloodDonationRequestCreate.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.blooddonationrequestcreate.BloodDonationRequestCreateViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.blooddonationrequestcreate.BloodDonationRequestCreateViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             BloodDonationRequestCreateScreen(
                 modifier = modifier,
@@ -581,7 +581,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.BloodDonationRequestList.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.blooddonationrequestlist.BloodDonationRequestListViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.blooddonationrequestlist.BloodDonationRequestListViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             BloodDonationRequestListScreen(
                 modifier = modifier,
@@ -603,7 +603,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.MyBloodDonationList.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.myblooddonationlist.MyBloodDonationListViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.myblooddonationlist.MyBloodDonationListViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             MyBloodDonationListScreen(
                 modifier = modifier,
@@ -623,7 +623,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.Settings.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.settings.SettingsViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.settings.SettingsViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             SettingsScreen(
                 modifier = modifier,
@@ -644,7 +644,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.Donate.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.donate.DonateViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.donate.DonateViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             DonateScreen(
                 modifier = modifier,
@@ -675,7 +675,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.ImageUpload.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.imageupload.ImageUploadViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.imageupload.ImageUploadViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             val context = androidx.compose.ui.platform.LocalContext.current
             ImageUploadScreen(
@@ -699,7 +699,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.CvUpload.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.cvupload.CvUploadViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.cvupload.CvUploadViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             val context = androidx.compose.ui.platform.LocalContext.current
             CvUploadScreen(
@@ -735,7 +735,7 @@ fun AppNavHost(
             ),
         ) {
             val url = it.arguments?.getString(NavParam.URL) ?: ""
-            val viewModel: com.workfort.pstuian.viewmodel.cvdownload.CvDownloadViewModel =
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.cvdownload.CvDownloadViewModel =
                 koinViewModel(parameters = { parametersOf(url) })
             val screenState by viewModel.screenState.collectAsState()
             val context = androidx.compose.ui.platform.LocalContext.current
@@ -759,7 +759,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.MyDeviceList.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.mydevicelist.MyDeviceListViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.mydevicelist.MyDeviceListViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             MyDeviceListScreen(
                 modifier = modifier,
@@ -816,7 +816,7 @@ fun AppNavHost(
             ),
         ) {
             val isCheckInMode = it.arguments?.getBoolean(NavParam.IS_CHECK_IN_MODE)?.or(false)
-            val viewModel: com.workfort.pstuian.viewmodel.LocationPickerViewModel = koinViewModel(parameters = { parametersOf(isCheckInMode) })
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.LocationPickerViewModel = koinViewModel(parameters = { parametersOf(isCheckInMode) })
             LocationPickerScreen(
                 modifier = modifier,
                 viewModel = viewModel,
@@ -825,7 +825,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.ChangePassword.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.changepassword.ChangePasswordViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.changepassword.ChangePasswordViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             ChangePasswordScreen(
                 modifier = modifier,
@@ -842,7 +842,7 @@ fun AppNavHost(
         }
 
         composable(NavItem.DeleteAccount.route) {
-            val viewModel: com.workfort.pstuian.viewmodel.deleteaccount.DeleteAccountViewModel = koinViewModel()
+            val viewModel: com.workfort.pstuian.app.ui.commonmodel.deleteaccount.DeleteAccountViewModel = koinViewModel()
             val screenState by viewModel.screenState.collectAsState()
             DeleteAccountScreen(
                 modifier = modifier,

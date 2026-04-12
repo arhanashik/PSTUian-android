@@ -29,13 +29,13 @@ import com.workfort.pstuian.model.CheckInEntity
 import com.workfort.pstuian.model.CheckInPrivacy
 import com.workfort.pstuian.util.DateUtil
 import com.workfort.pstuian.util.helper.MathUtil
-import com.workfort.pstuian.view.ui.common.component.DotView
-import com.workfort.pstuian.view.ui.common.component.LoadAsyncImage
-import com.workfort.pstuian.view.ui.common.component.MaterialButtonToggleGroup
-import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.common.component.DotView
+import com.workfort.pstuian.common.component.LoadAsyncImage
+import com.workfort.pstuian.common.component.MaterialButtonToggleGroup
+import com.workfort.pstuian.common.component.TitleTextSmall
 import kotlinx.coroutines.launch
-import pstuian.shared.generated.resources.Res
-import pstuian.shared.generated.resources.ic_location_placeholder
+import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.ic_location_placeholder
 
 
 @OptIn(ExperimentalMaterial3Api::class)

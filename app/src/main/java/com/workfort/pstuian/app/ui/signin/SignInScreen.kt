@@ -41,13 +41,13 @@ import com.workfort.pstuian.app.ui.NavItem
 import com.workfort.pstuian.model.UserType
 import com.workfort.pstuian.util.helper.Toaster
 import com.workfort.pstuian.util.isValidEmail
-import com.workfort.pstuian.view.ui.common.component.AppBar
-import com.workfort.pstuian.view.ui.common.component.HorizontalDividerWithLabel
-import com.workfort.pstuian.view.ui.common.component.MaterialButtonToggleGroup
-import com.workfort.pstuian.view.ui.common.component.OutlinedTextInput
-import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
-import com.workfort.pstuian.view.ui.common.icons.AppIcons
+import com.workfort.pstuian.common.component.AppBar
+import com.workfort.pstuian.common.component.HorizontalDividerWithLabel
+import com.workfort.pstuian.common.component.MaterialButtonToggleGroup
+import com.workfort.pstuian.common.component.OutlinedTextInput
+import com.workfort.pstuian.common.component.ShowErrorDialog
+import com.workfort.pstuian.common.component.ShowLoaderDialog
+import com.workfort.pstuian.common.icons.AppIcons
 
 
 @Composable

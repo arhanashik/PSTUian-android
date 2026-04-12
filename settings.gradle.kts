@@ -22,9 +22,8 @@ include(
     ":networking",
     ":repository",
     ":sharedpref",
-    ":shared",
+    ":feature-presentation",
     ":util",
-    ":view",
     ":workmanager",
 )
 rootProject.name = "PSTUian"

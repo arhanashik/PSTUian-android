@@ -40,12 +40,12 @@ import com.workfort.pstuian.app.ui.NavItem
 import com.workfort.pstuian.model.EmployeeProfile
 import com.workfort.pstuian.model.ProfileInfoItemAction
 import com.workfort.pstuian.util.helper.LinkUtil
-import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
-import com.workfort.pstuian.view.ui.common.component.ProfileInfoListView
-import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.view.ui.common.component.TabView
-import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.common.component.AnimatedErrorView
+import com.workfort.pstuian.common.component.LoadAsyncUserImage
+import com.workfort.pstuian.common.component.ProfileInfoListView
+import com.workfort.pstuian.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.common.component.TabView
+import com.workfort.pstuian.common.component.TitleTextSmall
 import kotlinx.coroutines.launch
 
 

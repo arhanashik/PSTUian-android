@@ -39,10 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.R
 import com.workfort.pstuian.util.helper.LinkUtil
-import com.workfort.pstuian.view.ui.common.component.AppBar
-import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
-import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.common.component.AppBar
+import com.workfort.pstuian.common.component.ShowErrorDialog
+import com.workfort.pstuian.common.component.ShowInfoDialog
+import com.workfort.pstuian.common.component.TitleTextSmall
 
 
 @Composable

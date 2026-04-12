@@ -47,18 +47,18 @@ import com.workfort.pstuian.model.CheckInEntity
 import com.workfort.pstuian.model.CheckInPrivacy
 import com.workfort.pstuian.util.DateUtil
 import com.workfort.pstuian.util.helper.MathUtil
-import com.workfort.pstuian.view.ui.common.component.AnimatedEmptyView
-import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.view.ui.common.component.AppBar
-import com.workfort.pstuian.view.ui.common.component.DotView
-import com.workfort.pstuian.view.ui.common.component.LoadAsyncImage
-import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.view.ui.common.component.ShowInfoDialog
-import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
-import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
-import com.workfort.pstuian.view.ui.common.component.isLastItemVisible
-import pstuian.shared.generated.resources.Res
-import pstuian.shared.generated.resources.ic_location_placeholder
+import com.workfort.pstuian.common.component.AnimatedEmptyView
+import com.workfort.pstuian.common.component.AnimatedErrorView
+import com.workfort.pstuian.common.component.AppBar
+import com.workfort.pstuian.common.component.DotView
+import com.workfort.pstuian.common.component.LoadAsyncImage
+import com.workfort.pstuian.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.common.component.ShowInfoDialog
+import com.workfort.pstuian.common.component.ShowLoaderDialog
+import com.workfort.pstuian.common.component.TitleTextSmall
+import com.workfort.pstuian.common.component.isLastItemVisible
+import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.ic_location_placeholder
 
 
 @Composable

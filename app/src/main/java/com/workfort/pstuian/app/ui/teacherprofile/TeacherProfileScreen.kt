@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Edit
@@ -39,10 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,17 +51,17 @@ import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.model.ProfileInfoItemAction
 import com.workfort.pstuian.model.TeacherProfile
 import com.workfort.pstuian.util.helper.LinkUtil
-import com.workfort.pstuian.view.ui.common.icons.AppIcons
-import com.workfort.pstuian.view.ui.common.component.AnimatedErrorView
-import com.workfort.pstuian.view.ui.common.component.LoadAsyncUserImage
-import com.workfort.pstuian.view.ui.common.component.ProfileInfoListView
-import com.workfort.pstuian.view.ui.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.view.ui.common.component.ShowErrorDialog
-import com.workfort.pstuian.view.ui.common.component.ShowInputDialog
-import com.workfort.pstuian.view.ui.common.component.ShowLoaderDialog
-import com.workfort.pstuian.view.ui.common.component.ShowSuccessDialog
-import com.workfort.pstuian.view.ui.common.component.TabView
-import com.workfort.pstuian.view.ui.common.component.TitleTextSmall
+import com.workfort.pstuian.common.icons.AppIcons
+import com.workfort.pstuian.common.component.AnimatedErrorView
+import com.workfort.pstuian.common.component.LoadAsyncUserImage
+import com.workfort.pstuian.common.component.ProfileInfoListView
+import com.workfort.pstuian.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.common.component.ShowErrorDialog
+import com.workfort.pstuian.common.component.ShowInputDialog
+import com.workfort.pstuian.common.component.ShowLoaderDialog
+import com.workfort.pstuian.common.component.ShowSuccessDialog
+import com.workfort.pstuian.common.component.TabView
+import com.workfort.pstuian.common.component.TitleTextSmall
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
