@@ -11,7 +11,7 @@ proguardRules = "proguard-rules.pro"
 dimension = "environment"
 
 # App Level
-gradle = "8.3.1"
+gradle = "8.8.0"
 ksp = "2.0.21-1.0.28"
 
 # Compose
@@ -54,6 +54,9 @@ junit = "4.12"
 extJunit = "1.1.1"
 espresso = "3.2.0"
 runner = "1.5.2"
+kotlinStdlib = "2.0.21"
+kotlinTest = "2.0.21"
+core = "1.7.0"
 
 [libraries]
 # Build Logic
@@ -157,6 +160,9 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+jetbrains-kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
+androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
@@ -170,3 +176,5 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 androidx-room = { id = "androidx.room", version.ref = "room" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "gradle" }
+android-lint = { id = "com.android.lint", version.ref = "gradle" }

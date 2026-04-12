@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="feature-domain">
+    <output-path>$PROJECT_DIR$/feature-domain/build/libs</output-path>
+    <root id="archive" name="feature-domain.jar">
+      <element id="module-output" name="PSTUian.feature-domain.androidMain" />
+    </root>
+  </artifact>
+</component>
