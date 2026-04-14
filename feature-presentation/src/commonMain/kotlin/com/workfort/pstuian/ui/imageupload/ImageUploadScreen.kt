@@ -1,8 +1,6 @@
-package com.workfort.pstuian.app.ui.common.ui.imageupload
+package com.workfort.pstuian.ui.imageupload
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,36 +29,35 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
-import com.workfort.pstuian.reducer.ui.imageupload.ImageUploadScreenState
-import com.workfort.pstuian.reducer.ui.imageupload.ImageUploadScreenUiEvent
-import com.workfort.pstuian.common.component.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.dashedBorder
+import com.workfort.pstuian.common.composable.rememberImagePickerLauncher
+import com.workfort.pstuian.ui.imageupload.state.ImageUploadUiEvent
+import com.workfort.pstuian.ui.imageupload.state.ImageUploadUiState
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.img_placeholder_profile
 import pstuian.feature_presentation.generated.resources.msg_upload_profile_image
 import pstuian.feature_presentation.generated.resources.txt_browse_gallery
 import pstuian.feature_presentation.generated.resources.txt_dismiss
 import pstuian.feature_presentation.generated.resources.txt_upload
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import com.workfort.pstuian.common.component.dashedBorder
-import com.workfort.pstuian.common.component.rememberImagePickerLauncher
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImageUploadScreen(
     modifier: Modifier = Modifier,
-    screenState: ImageUploadScreenState,
-    onUiEvent: (ImageUploadScreenUiEvent) -> Unit,
+    screenState: ImageUploadUiState,
+    onUiEvent: (ImageUploadUiEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Upload Image") },
                 navigationIcon = {
-                    IconButton(onClick = { onUiEvent(ImageUploadScreenUiEvent.OnClickBack) }) {
+                    IconButton(onClick = { onUiEvent(ImageUploadUiEvent.OnClickBack) }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -82,8 +78,8 @@ fun ImageUploadScreen(
 @Composable
 private fun ScreenContent(
     modifier: Modifier = Modifier,
-    displayState: ImageUploadScreenState.DisplayState,
-    onUiEvent: (ImageUploadScreenUiEvent) -> Unit,
+    displayState: ImageUploadUiState.DisplayState,
+    onUiEvent: (ImageUploadUiEvent) -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -101,10 +97,10 @@ private fun ScreenContent(
 @Composable
 private fun ImageSelectorView(
     selectedFile: String?,
-    onUiEvent: (ImageUploadScreenUiEvent) -> Unit,
+    onUiEvent: (ImageUploadUiEvent) -> Unit,
 ) {
     val imagePickerLauncher = rememberImagePickerLauncher { uri ->
-        onUiEvent(ImageUploadScreenUiEvent.OnSelectImage(uri))
+        onUiEvent(ImageUploadUiEvent.OnSelectImage(uri))
     }
 
     Column(
@@ -151,7 +147,7 @@ private fun ImageSelectorView(
         Button(
             modifier = Modifier.size(100.dp),
             onClick = {
-                onUiEvent(ImageUploadScreenUiEvent.OnClickUpload)
+                onUiEvent(ImageUploadUiEvent.OnClickUpload)
             },
             colors = ButtonDefaults.buttonColors(
                 contentColor = if (selectedFile == null) {
@@ -178,9 +174,9 @@ private fun ImageSelectorView(
 }
 
 @Composable
-private fun ImageUploadScreenState.DisplayState.ImageUploadState.Handle(isPhotoSelected: Boolean) {
+private fun ImageUploadUiState.DisplayState.ImageUploadState.Handle(isPhotoSelected: Boolean) {
     when (this) {
-        is ImageUploadScreenState.DisplayState.ImageUploadState.None -> {
+        is ImageUploadUiState.DisplayState.ImageUploadState.None -> {
             if (isPhotoSelected) {
                 Text(
                     text = "Photo Selected",
@@ -189,7 +185,7 @@ private fun ImageUploadScreenState.DisplayState.ImageUploadState.Handle(isPhotoS
                 )
             }
         }
-        is ImageUploadScreenState.DisplayState.ImageUploadState.Uploading -> {
+        is ImageUploadUiState.DisplayState.ImageUploadState.Uploading -> {
             Row(
                 modifier = Modifier.padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -199,14 +195,14 @@ private fun ImageUploadScreenState.DisplayState.ImageUploadState.Handle(isPhotoS
                 Text(text = "Uploading... $progress%")
             }
         }
-        is ImageUploadScreenState.DisplayState.ImageUploadState.Success -> {
+        is ImageUploadUiState.DisplayState.ImageUploadState.Success -> {
             Text(
                 text = "Upload Successful!",
                 color = Color.Green,
                 modifier = Modifier.padding(16.dp)
             )
         }
-        is ImageUploadScreenState.DisplayState.ImageUploadState.Error -> {
+        is ImageUploadUiState.DisplayState.ImageUploadState.Error -> {
             Text(
                 text = "Error: $message",
                 color = Color.Red,
@@ -217,32 +213,32 @@ private fun ImageUploadScreenState.DisplayState.ImageUploadState.Handle(isPhotoS
 }
 
 @Composable
-private fun ImageUploadScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (ImageUploadScreenUiEvent) -> Unit,
+private fun ImageUploadUiState.DisplayState.MessageState.Handle(
+    onUiEvent: (ImageUploadUiEvent) -> Unit,
 ) {
     when (this) {
-        is ImageUploadScreenState.DisplayState.MessageState.ConfirmUpload -> {
+        is ImageUploadUiState.DisplayState.MessageState.ConfirmUpload -> {
             ShowConfirmationDialog(
                 message = stringResource(Res.string.msg_upload_profile_image),
                 confirmButtonText = stringResource(Res.string.txt_upload),
                 dismissButtonText = stringResource(Res.string.txt_dismiss),
                 onConfirm = {
-                    onUiEvent(ImageUploadScreenUiEvent.OnUpload)
+                    onUiEvent(ImageUploadUiEvent.OnUpload)
                 },
                 onDismiss = {
-                    onUiEvent(ImageUploadScreenUiEvent.MessageConsumed)
+                    onUiEvent(ImageUploadUiEvent.MessageConsumed)
                 }
             )
         }
-        is ImageUploadScreenState.DisplayState.MessageState.Error -> {
+        is ImageUploadUiState.DisplayState.MessageState.Error -> {
             ShowConfirmationDialog(
                 message = message,
                 confirmButtonText = "OK",
                 onConfirm = {
-                    onUiEvent(ImageUploadScreenUiEvent.MessageConsumed)
+                    onUiEvent(ImageUploadUiEvent.MessageConsumed)
                 },
                 onDismiss = {
-                    onUiEvent(ImageUploadScreenUiEvent.MessageConsumed)
+                    onUiEvent(ImageUploadUiEvent.MessageConsumed)
                 }
             )
         }

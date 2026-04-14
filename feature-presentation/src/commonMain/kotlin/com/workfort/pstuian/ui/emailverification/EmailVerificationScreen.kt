@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.common.ui.emailverification
+package com.workfort.pstuian.ui.emailverification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -12,33 +12,31 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.model.UserType
-import com.workfort.pstuian.reducer.ui.emailverification.EmailVerificationScreenState
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.HorizontalDividerWithLabel
-import com.workfort.pstuian.common.component.MaterialButtonToggleGroup
-import com.workfort.pstuian.common.component.OutlinedTextInput
-import com.workfort.pstuian.common.component.ShowErrorDialog
-import com.workfort.pstuian.common.component.ShowLoaderDialog
-import com.workfort.pstuian.common.component.ShowSuccessDialog
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.HorizontalDividerWithLabel
+import com.workfort.pstuian.common.composable.MaterialButtonToggleGroup
+import com.workfort.pstuian.common.composable.OutlinedTextInput
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.common.theme.btnBgDefault
+import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.emailverification.state.EmailVerificationUiEvent
+import com.workfort.pstuian.ui.emailverification.state.EmailVerificationUiState
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
@@ -51,13 +49,12 @@ import pstuian.feature_presentation.generated.resources.txt_send_verification_em
 import pstuian.feature_presentation.generated.resources.txt_sign_in
 import pstuian.feature_presentation.generated.resources.txt_user_types
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmailVerificationScreen(
     modifier: Modifier = Modifier,
-    screenState: EmailVerificationScreenState,
-    onUiEvent: (EmailVerificationScreenUiEvent) -> Unit,
+    screenState: EmailVerificationUiState,
+    onUiEvent: (EmailVerificationUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -68,7 +65,7 @@ fun EmailVerificationScreen(
                 scrollBehavior,
                 title = stringResource(Res.string.label_email_verification_screen),
                 onClickBack = {
-                    onUiEvent(EmailVerificationScreenUiEvent.OnClickBack)
+                    onUiEvent(EmailVerificationUiEvent.OnClickBack)
                 },
                 elevation = 0.dp,
             )
@@ -79,75 +76,55 @@ fun EmailVerificationScreen(
                 .padding(innerPadding)
                 .fillMaxSize(),
         ) {
-            Column(modifier = modifier.padding(horizontal = 16.dp)) {
-                EmailVerificationFormContent(modifier, screenState.displayState, onUiEvent)
-                EmailVerificationFooterContent(modifier, onUiEvent)
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                EmailVerificationFormContent(
+                    userType = screenState.userType,
+                    validationError = screenState.validationError,
+                    onUiEvent = onUiEvent
+                )
+                EmailVerificationFooterContent(onUiEvent = onUiEvent)
             }
-            if (screenState.displayState.isLoading) {
+            if (screenState.isLoading) {
                 ShowLoaderDialog()
             }
         }
     }
 
-    screenState.displayState.messageState?.let { messageState ->
-        when (messageState) {
-            is EmailVerificationScreenState.DisplayState.MessageState.EmailSentSuccess -> {
-                ShowSuccessDialog(
-                    message = messageState.message,
-                    confirmButtonText = stringResource(Res.string.txt_sign_in),
-                    cancelable = false,
-                    onConfirm = {
-                        onUiEvent(EmailVerificationScreenUiEvent.MessageConsumed)
-                        onUiEvent(EmailVerificationScreenUiEvent.OnClickBack)
-                    }
-                )
-            }
-            is EmailVerificationScreenState.DisplayState.MessageState.Error -> {
-                ShowErrorDialog(
-                    message = messageState.message,
-                    dismissButtonText = null,
-                    onConfirm = {
-                        onUiEvent(EmailVerificationScreenUiEvent.MessageConsumed)
-                    },
-                    onDismiss = { /* NO OP */ }
-                )
-            }
-        }
+    screenState.messageState?.let { messageState ->
+        HandleMessageState(messageState, onUiEvent)
     }
 }
 
 @Composable
 private fun EmailVerificationFormContent(
-    modifier: Modifier = Modifier,
-    displayState: EmailVerificationScreenState.DisplayState,
-    onUiEvent: (EmailVerificationScreenUiEvent) -> Unit,
+    userType: UserType,
+    validationError: String?,
+    onUiEvent: (EmailVerificationUiEvent) -> Unit,
 ) {
     val userTypes = stringArrayResource(Res.array.txt_user_types)
-    val selectedIndex = when (displayState.userType) {
+    val selectedIndex = when (userType) {
         UserType.STUDENT -> 0
         UserType.TEACHER -> 1
-        else -> 0 // Using Student as default
     }
 
     val (changedEmail, onChangeEmail) = remember { mutableStateOf("") }
 
     Column(
-        modifier = modifier,
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         MaterialButtonToggleGroup(
-            items = userTypes,
+            items = userTypes.toList(),
             selectedIndex = selectedIndex,
             cornerRadius = 32.dp,
         ) {
-            when (it) {
+            val newUserType = when (it) {
                 0 -> UserType.STUDENT
                 1 -> UserType.TEACHER
-                else -> null
-            }?.let { userType ->
-                if (displayState.userType != userType) {
-                    onUiEvent(EmailVerificationScreenUiEvent.OnClickUserTypeBtn(userType))
-                }
+                else -> UserType.STUDENT
+            }
+            if (userType != newUserType) {
+                onUiEvent(EmailVerificationUiEvent.OnClickUserTypeBtn(newUserType))
             }
         }
         OutlinedTextInput(
@@ -157,8 +134,8 @@ private fun EmailVerificationFormContent(
             trailingIcon = {
                 Icon(Icons.Default.Email, contentDescription = "")
             },
-            isError = displayState.validationError.isNullOrEmpty().not(),
-            supportingText = displayState.validationError,
+            isError = validationError.isNullOrEmpty().not(),
+            supportingText = validationError ?: "",
         ) {
             onChangeEmail(it)
         }
@@ -167,7 +144,7 @@ private fun EmailVerificationFormContent(
                 .fillMaxWidth()
                 .btnBgDefault()
                 .clickable {
-                    onUiEvent(EmailVerificationScreenUiEvent.OnClickSendEmail(changedEmail))
+                    onUiEvent(EmailVerificationUiEvent.OnClickSendEmail(changedEmail))
                 }
                 .padding(vertical = 12.dp),
             contentAlignment = Alignment.Center,
@@ -177,17 +154,19 @@ private fun EmailVerificationFormContent(
                 color = Color.White,
             )
         }
-        Text(text = stringResource(Res.string.hint_email_verification_link))
+        Text(
+            text = stringResource(Res.string.hint_email_verification_link),
+            modifier = Modifier.padding(top = 8.dp)
+        )
     }
 }
 
 @Composable
 private fun EmailVerificationFooterContent(
-    modifier: Modifier = Modifier,
-    onUiEvent: (EmailVerificationScreenUiEvent) -> Unit,
+    onUiEvent: (EmailVerificationUiEvent) -> Unit,
 ) {
     Column(
-        modifier = modifier,
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.padding(top = 16.dp))
@@ -201,10 +180,40 @@ private fun EmailVerificationFooterContent(
                 modifier = Modifier.padding(end = 8.dp),
             )
             TextButton(
-                onClick = { onUiEvent(EmailVerificationScreenUiEvent.OnClickSignIn) }
+                onClick = { onUiEvent(EmailVerificationUiEvent.OnClickSignIn) }
             ) {
                 Text(text = stringResource(Res.string.txt_sign_in))
             }
+        }
+    }
+}
+
+@Composable
+private fun HandleMessageState(
+    messageState: EmailVerificationUiState.MessageState,
+    onUiEvent: (EmailVerificationUiEvent) -> Unit,
+) {
+    when (messageState) {
+        is EmailVerificationUiState.MessageState.EmailSentSuccess -> {
+            ShowSuccessDialog(
+                message = messageState.message,
+                confirmButtonText = stringResource(Res.string.txt_sign_in),
+                cancelable = false,
+                onConfirm = {
+                    onUiEvent(EmailVerificationUiEvent.MessageConsumed)
+                    onUiEvent(EmailVerificationUiEvent.OnClickBack)
+                }
+            )
+        }
+        is EmailVerificationUiState.MessageState.Error -> {
+            ShowErrorDialog(
+                message = messageState.message,
+                dismissButtonText = null,
+                onConfirm = {
+                    onUiEvent(EmailVerificationUiEvent.MessageConsumed)
+                },
+                onDismiss = { /* NO OP */ }
+            )
         }
     }
 }

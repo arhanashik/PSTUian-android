@@ -23,8 +23,8 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.size.Size
-import com.workfort.pstuian.common.component.AnimatedErrorView
-import com.workfort.pstuian.common.component.AnimatedImagePlaceholderView
+import com.workfort.pstuian.common.composable.AnimatedErrorView
+import com.workfort.pstuian.common.composable.AnimatedImagePlaceholderView
 import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
 
 @Composable

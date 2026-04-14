@@ -1,82 +1,62 @@
-package com.workfort.pstuian.app.ui.common.ui.donors
+package com.workfort.pstuian.ui.donors
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.model.DonorEntity
-import com.workfort.pstuian.reducer.ui.donors.DonorsScreenState
-import com.workfort.pstuian.common.component.AnimatedEmptyView
-import com.workfort.pstuian.common.component.AnimatedErrorView
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.ShowInfoDialog
-import com.workfort.pstuian.common.component.TitleTextSmall
-import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
-import com.workfort.pstuian.common.theme.bgCircle
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.AppBarIconButton
+import com.workfort.pstuian.common.composable.AppScaffold
+import com.workfort.pstuian.common.composable.LoadingOverlay
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.composable.ShowInfoDialog
+import com.workfort.pstuian.common.navigation.AppNavigator
+import com.workfort.pstuian.common.navigation.AppScreen
+import com.workfort.pstuian.ui.donors.composable.DonorsContentPanel
+import com.workfort.pstuian.ui.donors.state.DonorsMessageState
+import com.workfort.pstuian.ui.donors.state.DonorsNavigationState
+import com.workfort.pstuian.ui.donors.state.DonorsUiState
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_donation_list
 import pstuian.feature_presentation.generated.resources.txt_donate
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DonorsScreen(
-    modifier: Modifier = Modifier,
-    screenState: DonorsScreenState,
-    onUiEvent: (DonorsScreenUiEvent) -> Unit,
-) {
-    LaunchedEffect(key1 = null) {
-        onUiEvent(DonorsScreenUiEvent.OnLoadData)
-    }
+internal fun DonorsScreen(viewModel: DonorsViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+    val message by viewModel.message.collectAsState()
+    val navigation by viewModel.navigation.collectAsState()
 
-    with(screenState) {
-        displayState.Handle(modifier = modifier, onUiEvent = onUiEvent)
-    }
+    DonorsScreenContent(uiState, viewModel::onUiEvent)
+
+    HandleMessageState(message, viewModel::onMessageHandled)
+    HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenContent(
-    modifier: Modifier,
-    displayState: DonorsScreenState.DisplayState,
-    onUiEvent: (DonorsScreenUiEvent) -> Unit,
+private fun DonorsScreenContent(
+    uiState: DonorsUiState,
+    onUiEvent: (DonorsUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var fabButtonExpanded by remember { mutableStateOf(true) }
@@ -86,32 +66,31 @@ private fun ScreenContent(
         fabButtonExpanded = false
     }
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    AppScaffold (
         topBar = {
             AppBar(
-                scrollBehavior,
                 title = stringResource(Res.string.label_donation_list),
-                actionIcon = Icons.Filled.Refresh,
-                onClickBack = {
-                    onUiEvent(DonorsScreenUiEvent.OnClickBack)
+                navigation = {
+                    onUiEvent(DonorsUiEvent.BackClicked)
                 },
-                onClickAction = {
-                    onUiEvent(DonorsScreenUiEvent.OnLoadData)
+                actions = {
+                    AppBarIconButton(
+                        icon = Icons.Filled.Refresh,
+                        onClick = { onUiEvent(DonorsUiEvent.Refresh) },
+                    )
                 },
+                scrollBehavior = scrollBehavior,
             )
         },
         floatingActionButton = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End,
             ) {
                 ExtendedFloatingActionButton(
                     expanded = fabButtonExpanded,
-                    text = {  Text(text = stringResource(Res.string.txt_donate)) },
-                    onClick = {
-                        onUiEvent(DonorsScreenUiEvent.OnClickDonate)
-                    },
+                    text = { Text(text = stringResource(Res.string.txt_donate)) },
+                    onClick = { onUiEvent(DonorsUiEvent.DonateClicked) },
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Favorite,
@@ -122,143 +101,63 @@ private fun ScreenContent(
                 )
             }
         },
-    ) { innerPadding ->
-        Column(modifier = modifier.padding(innerPadding)) {
-            displayState.donorListState.Handle(modifier, onUiEvent)
-        }
-    }
-}
-
-@Composable
-private fun List<DonorEntity>.DonorListView(
-    modifier: Modifier = Modifier,
-    isLoading: Boolean,
-    onUiEvent: (DonorsScreenUiEvent) -> Unit,
-) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(this@DonorListView) { item ->
-            DonorListItemView(
-                item = item,
-                onClickItem = {
-                    onUiEvent(DonorsScreenUiEvent.OnClickItem(it))
-                },
-            )
-        }
-        if (isLoading) {
-            item {
-                CircularProgressIndicator()
+        when (uiState) {
+            DonorsUiState.None -> Unit
+            DonorsUiState.Loading -> {
+                LoadingOverlay()
             }
-        }
-    }
-}
-
-@Composable
-private fun DonorListItemView(
-    item: DonorEntity,
-    onClickItem: (DonorEntity) -> Unit,
-) {
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClickItem(item) },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Default.FavoriteBorder,
-                contentDescription = null,
-                tint = Color.Gray,
-                modifier = Modifier
-                    .bgCircle()
-                    .padding(8.dp),
-            )
-            Column(modifier = Modifier.padding(start = 12.dp)) {
-                TitleTextSmall(text = item.name ?: "Donation Info")
-                item.info?.let { Text(text = it) }
-                Text(text = "Reference: ${item.reference}")
-            }
-        }
-    }
-}
-
-@Composable
-private fun DonorsScreenState.DisplayState.Handle(
-    modifier: Modifier,
-    onUiEvent: (DonorsScreenUiEvent) -> Unit,
-) {
-    ScreenContent(
-        modifier = modifier,
-        displayState = this,
-        onUiEvent = onUiEvent,
-    )
-    messageState?.Handle(onUiEvent)
-}
-
-@Composable
-private fun DonorsScreenState.DisplayState.DonorListState.Handle(
-    modifier: Modifier,
-    onUiEvent: (DonorsScreenUiEvent) -> Unit,
-) {
-    when (this) {
-        is DonorsScreenState.DisplayState.DonorListState.None -> Unit
-        is DonorsScreenState.DisplayState.DonorListState.Available -> {
-            if (donorList.isEmpty()) {
-                Column(
-                    modifier = modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        AnimatedEmptyView(modifier = Modifier.width(LottieAnimation.errorWidth))
-                    }
-                }
-            } else {
-                donorList.DonorListView(
-                    modifier = modifier,
-                    isLoading = isLoading,
+            is DonorsUiState.Content -> {
+                DonorsContentPanel(
+                    uiState = uiState,
                     onUiEvent = onUiEvent,
                 )
             }
         }
-        is DonorsScreenState.DisplayState.DonorListState.Error -> {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                AnimatedErrorView(modifier = Modifier.width(LottieAnimation.errorWidth))
+    }
+}
+
+@Composable
+private fun HandleMessageState(
+    message: DonorsMessageState?,
+    onMessageHandled: () -> Unit,
+) {
+    message?.let {
+        when (it) {
+            is DonorsMessageState.ShowDonorDetails -> {
+                val item = it.donor
+                val message = "Email: ${item.email}\n${item.info}\nReference: ${item.reference}"
+                ShowInfoDialog(
+                    title = item.name ?: "Donation Info",
+                    message = message,
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is DonorsMessageState.Error -> {
+                ShowErrorDialog(
+                    message = it.message,
+                    onConfirm = { onMessageHandled() },
+                    onDismiss = { onMessageHandled() },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun DonorsScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (DonorsScreenUiEvent) -> Unit,
+private fun HandleNavigationState(
+    navigation: DonorsNavigationState?,
+    onNavigationHandled: () -> Unit,
 ) {
-    when (this) {
-        is DonorsScreenState.DisplayState.MessageState.ShowDetails -> {
-            val message = "Email: ${item.email}\n${item.info}\nReference${item.reference}"
-            ShowInfoDialog(
-                title = item.name ?: "Donation Info",
-                message = message,
-                onDismiss = {
-                    onUiEvent(DonorsScreenUiEvent.MessageConsumed)
-                }
-            )
+    val navigator = koinInject<AppNavigator?>()
+
+    LaunchedEffect(navigation) {
+        navigation?.let {
+            when (it) {
+                DonorsNavigationState.GoBack -> navigator?.goBack()
+                DonorsNavigationState.DonateScreen -> navigator?.navigateTo(AppScreen.Donate)
+            }
+            onNavigationHandled()
         }
     }
 }

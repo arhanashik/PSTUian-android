@@ -1,9 +1,0 @@
-package com.workfort.pstuian.reducer.ui.faculty
-
-import com.workfort.pstuian.reducer.service.StateReducer
-
-
-class FacultyScreenStateReducer : StateReducer<FacultyScreenState, FacultyScreenStateUpdate> {
-    override val initial: FacultyScreenState
-        get() = FacultyScreenState()
-}

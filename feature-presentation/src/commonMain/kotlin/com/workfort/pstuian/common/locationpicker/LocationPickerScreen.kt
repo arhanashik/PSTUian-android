@@ -1,6 +1,5 @@
 package com.workfort.pstuian.common.locationpicker
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,33 +41,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.reducer.ui.common.locationpicker.LocationPickerScreenUiEvent
 import com.workfort.pstuian.reducer.ui.common.locationpicker.LocationPickerScreenState
-import com.workfort.pstuian.common.component.AnimatedEmptyView
-import com.workfort.pstuian.common.component.AnimatedErrorView
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.LoadAsyncImage
-import com.workfort.pstuian.common.component.OutlinedTextInput
-import com.workfort.pstuian.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.common.component.ShowErrorDialog
-import com.workfort.pstuian.common.component.ShowSuccessDialog
-import com.workfort.pstuian.common.component.TitleTextSmall
+import com.workfort.pstuian.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.common.composable.AnimatedErrorView
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.LoadAsyncImage
+import com.workfort.pstuian.common.composable.OutlinedTextInput
+import com.workfort.pstuian.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.common.composable.TitleTextSmall
 import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
 import com.workfort.pstuian.appconstant.Const
 import com.workfort.pstuian.model.CheckInLocationEntity
-import com.workfort.pstuian.app.ui.commonmodel.LocationPickerViewModel
+import com.workfort.pstuian.ui.locationpicker.LocationPickerViewModel
 import com.workfort.pstuian.util.helper.MathUtil
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_location_picker_screen
 import pstuian.feature_presentation.generated.resources.hint_search
 import pstuian.feature_presentation.generated.resources.txt_create_new_location
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.painterResource
 
 
 @Composable

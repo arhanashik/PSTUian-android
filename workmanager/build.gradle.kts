@@ -40,6 +40,6 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
 
     implementation(project(":appconstant"))
-    implementation(project(":model"))
-    implementation(project(":networking"))
+    implementation(project(":data"))
+    implementation(project(":feature-domain"))
 }

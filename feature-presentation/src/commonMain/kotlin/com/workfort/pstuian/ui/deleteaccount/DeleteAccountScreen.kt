@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.common.ui.deleteaccount
+package com.workfort.pstuian.ui.deleteaccount
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,27 +30,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.reducer.ui.deleteaccount.DeleteAccountScreenState
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.OutlinedTextInput
-import com.workfort.pstuian.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.common.component.ShowErrorDialog
-import com.workfort.pstuian.common.component.ShowLoaderDialog
-import com.workfort.pstuian.common.component.ShowSuccessDialog
-import com.workfort.pstuian.common.component.TitleTextSmall
-import org.jetbrains.compose.resources.painterResource
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.OutlinedTextInput
+import com.workfort.pstuian.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountUiEvent
+import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.hint_password
 import pstuian.feature_presentation.generated.resources.msg_delete_account
 import pstuian.feature_presentation.generated.resources.txt_delete_account
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteAccountScreen(
     modifier: Modifier = Modifier,
-    screenState: DeleteAccountScreenState,
+    screenState: DeleteAccountUiState,
     onUiEvent: (DeleteAccountUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -68,16 +67,20 @@ fun DeleteAccountScreen(
             )
         },
     ) { innerPadding ->
-        with(screenState.displayState) {
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
             FormContent(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                input = input,
-                validationError = validationError,
+                input = screenState.input,
+                validationError = screenState.validationError,
                 onUiEvent = onUiEvent,
             )
-            messageState?.Handle(onUiEvent)
+        }
+
+        screenState.messageState?.let {
+            HandleMessageState(it, onUiEvent)
         }
     }
 }
@@ -139,14 +142,15 @@ private fun FormContent(
 }
 
 @Composable
-private fun DeleteAccountScreenState.DisplayState.MessageState.Handle(
+private fun HandleMessageState(
+    messageState: DeleteAccountUiState.MessageState,
     onUiEvent: (DeleteAccountUiEvent) -> Unit,
 ) {
-    when (this) {
-        is DeleteAccountScreenState.DisplayState.MessageState.Loading -> {
-            ShowLoaderDialog(cancelable = cancelable)
+    when (messageState) {
+        is DeleteAccountUiState.MessageState.Loading -> {
+            ShowLoaderDialog(cancelable = messageState.cancelable)
         }
-        is DeleteAccountScreenState.DisplayState.MessageState.ConfirmAccountDelete -> {
+        is DeleteAccountUiState.MessageState.ConfirmAccountDelete -> {
             ShowConfirmationDialog(
                 title = stringResource(Res.string.txt_delete_account),
                 message = stringResource(Res.string.msg_delete_account),
@@ -158,9 +162,9 @@ private fun DeleteAccountScreenState.DisplayState.MessageState.Handle(
                 }
             )
         }
-        is DeleteAccountScreenState.DisplayState.MessageState.Success -> {
+        is DeleteAccountUiState.MessageState.Success -> {
             ShowSuccessDialog(
-                message = message,
+                message = messageState.message,
                 cancelable = false,
                 confirmButtonText = "Request Recovery",
                 dismissButtonText = "Open Home Screen",
@@ -172,9 +176,9 @@ private fun DeleteAccountScreenState.DisplayState.MessageState.Handle(
                 }
             )
         }
-        is DeleteAccountScreenState.DisplayState.MessageState.Error -> {
+        is DeleteAccountUiState.MessageState.Error -> {
             ShowErrorDialog(
-                message = message,
+                message = messageState.message,
                 onConfirm = {
                     onUiEvent(DeleteAccountUiEvent.MessageConsumed)
                 },

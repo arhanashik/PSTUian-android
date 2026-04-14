@@ -2,7 +2,7 @@ package com.workfort.pstuian.workmanager.usecase.domain
 
 import android.content.Context
 import android.net.Uri
-import com.workfort.pstuian.model.ProgressRequestState
+import com.workfort.pstuian.featuredomain.model.ProgressRequestState
 import kotlinx.coroutines.flow.Flow
 
 interface UploadPdfUseCase {

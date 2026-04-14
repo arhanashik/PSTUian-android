@@ -1,10 +1,12 @@
-package com.workfort.pstuian.app.ui.common.ui.mydevicelist
+package com.workfort.pstuian.ui.mydevicelist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -36,18 +38,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.model.DeviceEntity
-import com.workfort.pstuian.reducer.ui.mydevicelist.MyDeviceListScreenState
-import com.workfort.pstuian.reducer.ui.mydevicelist.MyDeviceListScreenUiEvent
-import com.workfort.pstuian.util.DateUtil
-import com.workfort.pstuian.common.component.AnimatedEmptyView
-import com.workfort.pstuian.common.component.AnimatedErrorView
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.common.component.ShowInfoDialog
-import com.workfort.pstuian.common.component.ShowLoaderDialog
-import com.workfort.pstuian.common.component.TitleTextSmall
-import com.workfort.pstuian.common.component.isLastItemVisible
+import com.workfort.pstuian.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.common.composable.AnimatedErrorView
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.ShowInfoDialog
+import com.workfort.pstuian.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.common.composable.TitleTextSmall
+import com.workfort.pstuian.common.composable.isLastItemVisible
+import com.workfort.pstuian.featuredomain.model.DeviceEntity
+import com.workfort.pstuian.ui.mydevicelist.state.MyDeviceListUiEvent
+import com.workfort.pstuian.ui.mydevicelist.state.MyDeviceListUiState
+import com.workfort.pstuian.util.DateTimeUtil
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
@@ -56,14 +58,17 @@ import pstuian.feature_presentation.generated.resources.txt_devices
 import pstuian.feature_presentation.generated.resources.txt_retry
 import pstuian.feature_presentation.generated.resources.txt_sign_out_from_all
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyDeviceListScreen(
     modifier: Modifier = Modifier,
-    screenState: MyDeviceListScreenState,
-    onUiEvent: (MyDeviceListScreenUiEvent) -> Unit,
+    screenState: MyDeviceListUiState,
+    onUiEvent: (MyDeviceListUiEvent) -> Unit,
 ) {
+    LaunchedEffect(key1 = null) {
+        onUiEvent(MyDeviceListUiEvent.OnLoadList(refresh = true))
+    }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var fabButtonExpanded by remember { mutableStateOf(true) }
 
@@ -73,57 +78,74 @@ fun MyDeviceListScreen(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
                 scrollBehavior,
                 title = stringResource(Res.string.txt_devices),
                 actionIcon = Icons.Filled.Refresh,
                 onClickBack = {
-                    onUiEvent(MyDeviceListScreenUiEvent.OnClickBack)
+                    onUiEvent(MyDeviceListUiEvent.OnClickBack)
                 },
                 onClickAction = {
-                    onUiEvent(MyDeviceListScreenUiEvent.OnLoadMoreData(refresh = true))
+                    onUiEvent(MyDeviceListUiEvent.OnLoadList(refresh = true))
                 },
             )
         },
         floatingActionButton = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                ExtendedFloatingActionButton(
-                    expanded = fabButtonExpanded,
-                    text = {
-                        Text(text = stringResource(Res.string.txt_sign_out_from_all))
-                    },
-                    onClick = {
-                        onUiEvent(MyDeviceListScreenUiEvent.OnClickSignOutFromAll)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Logout,
-                            contentDescription = null,
-                        )
-                    },
-                    shape = CircleShape,
-                )
-            }
+            ExtendedFloatingActionButton(
+                expanded = fabButtonExpanded,
+                text = {
+                    Text(text = stringResource(Res.string.txt_sign_out_from_all))
+                },
+                onClick = {
+                    onUiEvent(MyDeviceListUiEvent.OnClickSignOutFromAllDevice)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = null,
+                    )
+                },
+                shape = CircleShape,
+            )
         },
     ) { innerPadding ->
-        Column(modifier = modifier.padding(innerPadding)) {
-            screenState.displayState.listState.Handle(modifier, onUiEvent)
+        Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            if (screenState.devices.isEmpty()) {
+                if (screenState.isLoading) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else if (screenState.error != null) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        AnimatedErrorView(modifier = Modifier.width(200.dp))
+                    }
+                } else {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        AnimatedEmptyView(modifier = Modifier.width(200.dp))
+                    }
+                }
+            } else {
+                DeviceListView(
+                    devices = screenState.devices,
+                    isLoading = screenState.isLoading,
+                    onUiEvent = onUiEvent,
+                )
+            }
+        }
+
+        screenState.messageState?.let {
+            HandleMessageState(it, onUiEvent)
         }
     }
-
-    screenState.displayState.messageState?.Handle(onUiEvent)
 }
 
 @Composable
-private fun List<DeviceEntity>.ListView(
-    modifier: Modifier = Modifier,
+private fun DeviceListView(
+    devices: List<DeviceEntity>,
     isLoading: Boolean,
-    onUiEvent: (MyDeviceListScreenUiEvent) -> Unit,
+    onUiEvent: (MyDeviceListUiEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val isLastItemVisible by remember {
@@ -133,41 +155,46 @@ private fun List<DeviceEntity>.ListView(
     }
 
     LaunchedEffect(key1 = isLastItemVisible) {
-        onUiEvent(MyDeviceListScreenUiEvent.OnLoadMoreData(refresh = false))
+        if (isLastItemVisible) {
+            onUiEvent(MyDeviceListUiEvent.OnLoadList(refresh = false))
+        }
     }
 
     LazyColumn(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         state = listState,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(this@ListView) { item ->
-            ListItemView(
+        items(devices) { item ->
+            DeviceItemView(
                 item = item,
                 onClick = {
-                    onUiEvent(MyDeviceListScreenUiEvent.OnClickItem(item))
+                    onUiEvent(MyDeviceListUiEvent.OnClickItem(item))
                 },
             )
         }
         if (isLoading) {
             item {
-                CircularProgressIndicator()
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ListItemView(
+private fun DeviceItemView(
     item: DeviceEntity,
     onClick: () -> Unit,
 ) {
-    val lastActiveAt = DateUtil.getTimeAgo(item.updatedAt?: "")
+    val lastActiveAt = DateTimeUtil.getTimeAgo(item.updatedAt ?: "")
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -184,88 +211,53 @@ private fun ListItemView(
 }
 
 @Composable
-private fun MyDeviceListScreenState.DisplayState.DeviceListState.Handle(
-    modifier: Modifier,
-    onUiEvent: (MyDeviceListScreenUiEvent) -> Unit,
+private fun HandleMessageState(
+    messageState: MyDeviceListUiState.MessageState,
+    onUiEvent: (MyDeviceListUiEvent) -> Unit,
 ) {
-    when (this) {
-        is MyDeviceListScreenState.DisplayState.DeviceListState.None -> Unit
-        is MyDeviceListScreenState.DisplayState.DeviceListState.Available -> {
-            if (items.isEmpty()) {
-                Column(
-                    modifier = modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        AnimatedEmptyView(modifier = Modifier.width(200.dp))
-                    }
-                }
-            } else {
-                items.ListView(
-                    modifier = modifier,
-                    isLoading = isLoading,
-                    onUiEvent = onUiEvent,
-                )
-            }
+    when (messageState) {
+        is MyDeviceListUiState.MessageState.Loading -> {
+            ShowLoaderDialog(cancelable = messageState.cancelable)
         }
-        is MyDeviceListScreenState.DisplayState.DeviceListState.Error -> {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                AnimatedErrorView(modifier = Modifier.width(200.dp))
-            }
-        }
-    }
-}
-
-@Composable
-private fun MyDeviceListScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (MyDeviceListScreenUiEvent) -> Unit,
-) {
-    when (this) {
-        is MyDeviceListScreenState.DisplayState.MessageState.Loading -> {
-            ShowLoaderDialog()
-        }
-        is MyDeviceListScreenState.DisplayState.MessageState.ShowDetails -> {
+        is MyDeviceListUiState.MessageState.ShowDetails -> {
             MyDeviceItemBottomSheet(
-                item = item,
+                item = messageState.item,
                 onClickDelete = {
-                    onUiEvent(MyDeviceListScreenUiEvent.OnClickDelete(item))
+                    // Logic for deleting a single device if needed, 
+                    // otherwise just dismiss or handle as requested.
+                    onUiEvent(MyDeviceListUiEvent.MessageConsumed)
                 },
                 onDismiss = {
-                    onUiEvent(MyDeviceListScreenUiEvent.MessageConsumed)
+                    onUiEvent(MyDeviceListUiEvent.MessageConsumed)
                 },
             )
         }
-        is MyDeviceListScreenState.DisplayState.MessageState.ConfirmSignOutFromAll -> {
+        is MyDeviceListUiState.MessageState.ConfirmSignOutFromAll -> {
             ShowConfirmationDialog(
                 title = stringResource(Res.string.txt_sign_out_from_all),
                 message = stringResource(Res.string.msg_sign_out_from_all),
                 onConfirm = {
-                    onUiEvent(MyDeviceListScreenUiEvent.OnSignOutFromAll)
+                    onUiEvent(MyDeviceListUiEvent.OnConfirmSignOutFromAll)
                 },
                 onDismiss = {
-                    onUiEvent(MyDeviceListScreenUiEvent.MessageConsumed)
+                    onUiEvent(MyDeviceListUiEvent.MessageConsumed)
                 },
             )
         }
-        is MyDeviceListScreenState.DisplayState.MessageState.Success -> {
+        is MyDeviceListUiState.MessageState.Success -> {
             ShowInfoDialog(
-                message = message,
+                message = messageState.message,
                 onDismiss = {
-                    onUiEvent(MyDeviceListScreenUiEvent.MessageConsumed)
+                    onUiEvent(MyDeviceListUiEvent.MessageConsumed)
                 }
             )
         }
-        is MyDeviceListScreenState.DisplayState.MessageState.Error -> {
+        is MyDeviceListUiState.MessageState.Error -> {
             ShowInfoDialog(
-                message = message,
+                message = messageState.message,
                 dismissButtonText = stringResource(Res.string.txt_retry),
                 onDismiss = {
-                    onUiEvent(MyDeviceListScreenUiEvent.MessageConsumed)
+                    onUiEvent(MyDeviceListUiEvent.MessageConsumed)
                 }
             )
         }

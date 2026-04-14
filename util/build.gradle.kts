@@ -24,6 +24,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.koin.core)
             }
         }
         val commonTest by getting {

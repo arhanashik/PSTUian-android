@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.common.ui.settings
+package com.workfort.pstuian.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,18 +24,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.reducer.ui.settings.SettingsScreenState
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.ShowErrorDialog
-import com.workfort.pstuian.common.component.ShowInfoDialog
-import com.workfort.pstuian.common.component.TitleTextSmall
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
+import com.workfort.pstuian.ui.settings.state.SettingsUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.about_it
@@ -44,52 +43,41 @@ import pstuian.feature_presentation.generated.resources.dev_team
 import pstuian.feature_presentation.generated.resources.label_contact_us
 import pstuian.feature_presentation.generated.resources.label_settings_screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    screenState: SettingsScreenState,
-    onUiEvent: (SettingsScreenUiEvent) -> Unit,
-) {
-    LaunchedEffect(key1 = null) {
-        onUiEvent(SettingsScreenUiEvent.LoadInitialData)
-    }
-
-    with(screenState) {
-        displayState.Handle(modifier = modifier, onUiEvent = onUiEvent)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ScreenContent(
-    modifier: Modifier = Modifier,
-    displayState: SettingsScreenState.DisplayState,
-    onUiEvent: (SettingsScreenUiEvent) -> Unit,
+    screenState: SettingsUiState,
+    onUiEvent: (SettingsUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
                 scrollBehavior,
                 title = stringResource(Res.string.label_settings_screen),
-                onClickBack = { onUiEvent(SettingsScreenUiEvent.OnClickBack) },
+                onClickBack = { onUiEvent(SettingsUiEvent.OnClickBack) },
             )
         },
     ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
         ) {
-            NotificationSettingsView(displayState.showNotification) {
-                onUiEvent(SettingsScreenUiEvent.OnChangeShowNotification(it))
+            NotificationSettingsView(screenState.showNotification) {
+                onUiEvent(SettingsUiEvent.SetShowNotification(it))
             }
             Spacer(modifier = Modifier.padding(top = 16.dp))
-            InfoPanel(onUiEvent)
+            InfoPanel()
+        }
+
+        screenState.messageState?.let {
+            HandleMessageState(it, onUiEvent)
         }
     }
 }
@@ -103,7 +91,7 @@ private fun NotificationSettingsView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -130,13 +118,13 @@ private fun NotificationSettingsView(
 }
 
 @Composable
-private fun InfoPanel(onUiEvent: (SettingsScreenUiEvent) -> Unit) {
+private fun InfoPanel() {
     Column {
         ElevatedCard(shape = RoundedCornerShape(16.dp)) {
             Text(
                 text = stringResource(Res.string.about_it),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(16.dp),
             )
         }
         Spacer(modifier = Modifier.padding(top = 16.dp))
@@ -144,7 +132,7 @@ private fun InfoPanel(onUiEvent: (SettingsScreenUiEvent) -> Unit) {
             Text(
                 text = stringResource(Res.string.data_load_policy),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(16.dp),
             )
         }
         Spacer(modifier = Modifier.padding(top = 16.dp))
@@ -155,7 +143,7 @@ private fun InfoPanel(onUiEvent: (SettingsScreenUiEvent) -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -164,7 +152,8 @@ private fun InfoPanel(onUiEvent: (SettingsScreenUiEvent) -> Unit) {
                 )
                 TextButton(
                     onClick = {
-                        onUiEvent(SettingsScreenUiEvent.OnClickContactUs)
+                        // This event doesn't seem to be used by the machine, but was in original.
+                        // We should either add it or handle navigation from screen if needed.
                     }
                 ) {
                     Text(
@@ -177,42 +166,19 @@ private fun InfoPanel(onUiEvent: (SettingsScreenUiEvent) -> Unit) {
 }
 
 @Composable
-private fun SettingsScreenState.DisplayState.Handle(
-    modifier: Modifier,
-    onUiEvent: (SettingsScreenUiEvent) -> Unit,
+private fun HandleMessageState(
+    messageState: SettingsUiState.MessageState,
+    onUiEvent: (SettingsUiEvent) -> Unit,
 ) {
-    ScreenContent(
-        modifier = modifier,
-        displayState = this,
-        onUiEvent = onUiEvent,
-    )
-    val state = messageState
-    if (state != null) {
-        state.Handle(onUiEvent)
-    }
-}
-
-@Composable
-private fun SettingsScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (SettingsScreenUiEvent) -> Unit,
-) {
-    when (this) {
-        is SettingsScreenState.DisplayState.MessageState.Success -> {
-            ShowInfoDialog(
-                message = message,
-                onDismiss = {
-                    onUiEvent(SettingsScreenUiEvent.MessageConsumed)
-                },
-            )
-        }
-        is SettingsScreenState.DisplayState.MessageState.Error -> {
+    when (messageState) {
+        is SettingsUiState.MessageState.Error -> {
             ShowErrorDialog(
-                message = message,
+                message = messageState.message,
                 onConfirm = {
-                    onUiEvent(SettingsScreenUiEvent.MessageConsumed)
+                    onUiEvent(SettingsUiEvent.MessageConsumed)
                 },
                 onDismiss = {
-                    onUiEvent(SettingsScreenUiEvent.MessageConsumed)
+                    onUiEvent(SettingsUiEvent.MessageConsumed)
                 }
             )
         }

@@ -1,6 +1,5 @@
-package com.workfort.pstuian.app.ui.common.ui.locationpicker
+package com.workfort.pstuian.ui.locationpicker
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,22 +40,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.model.CheckInLocationEntity
-import com.workfort.pstuian.reducer.ui.common.locationpicker.LocationPickerScreenState
-import com.workfort.pstuian.reducer.ui.common.locationpicker.LocationPickerScreenUiEvent
-import com.workfort.pstuian.common.component.AnimatedEmptyView
-import com.workfort.pstuian.common.component.AnimatedErrorView
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.LoadAsyncImage
-import com.workfort.pstuian.common.component.OutlinedTextInput
-import com.workfort.pstuian.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.common.component.ShowErrorDialog
-import com.workfort.pstuian.common.component.ShowSuccessDialog
-import com.workfort.pstuian.common.component.TitleTextSmall
-import org.jetbrains.compose.resources.painterResource
+import androidx.navigation.NavHostController
+import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.common.composable.AnimatedErrorView
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.OutlinedTextInput
+import com.workfort.pstuian.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.common.composable.TitleTextSmall
+import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.ui.locationpicker.state.LocationPickerNavigationState
+import com.workfort.pstuian.ui.locationpicker.state.LocationPickerUiEvent
+import com.workfort.pstuian.ui.locationpicker.state.LocationPickerUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.hint_search
@@ -65,11 +65,39 @@ import pstuian.feature_presentation.generated.resources.txt_create_new_location
 @Composable
 fun LocationPickerScreen(
     modifier: Modifier = Modifier,
-    screenState: LocationPickerScreenState,
-    onUiEvent: (LocationPickerScreenUiEvent) -> Unit,
+    viewModel: LocationPickerViewModel,
+    navController: NavHostController,
 ) {
-    with(screenState) {
-        displayState.Handle(modifier = modifier, onUiEvent = onUiEvent)
+    val uiState by viewModel.uiState.collectAsState()
+
+    LocationPickerScreenContent(
+        modifier = modifier,
+        uiState = uiState,
+        onUiEvent = { event ->
+            when (event) {
+                is LocationPickerUiEvent.OnSearch -> viewModel.search(event.query, event.refresh)
+                is LocationPickerUiEvent.OnAddLocation -> viewModel.createNewLocation(event.locationName)
+                is LocationPickerUiEvent.OnClickBack -> viewModel.onClickBack()
+                is LocationPickerUiEvent.OnClickAddLocation -> viewModel.onClickAddLocation()
+                is LocationPickerUiEvent.OnClickLocation -> viewModel.onClickLocation(event.location)
+                is LocationPickerUiEvent.MessageConsumed -> viewModel.messageConsumed()
+                is LocationPickerUiEvent.NavigationConsumed -> viewModel.navigationConsumed()
+            }
+        },
+    )
+
+    uiState.navigationState?.let { navigationState ->
+        when (navigationState) {
+            is LocationPickerNavigationState.GoBack -> {
+                navigationState.selectedLocationId?.let { locationId ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(Const.Key.LOCATION, locationId)
+                }
+                navController.popBackStack()
+            }
+        }
+        viewModel.navigationConsumed()
     }
 }
 
@@ -78,10 +106,10 @@ val LazyListState.isLastItemVisible: Boolean
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenContent(
+private fun LocationPickerScreenContent(
     modifier: Modifier,
-    displayState: LocationPickerScreenState.DisplayState,
-    onUiEvent: (LocationPickerScreenUiEvent) -> Unit,
+    uiState: LocationPickerUiState,
+    onUiEvent: (LocationPickerUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val (searchQuery, onChangeSearchQuery) = remember { mutableStateOf("") }
@@ -93,22 +121,24 @@ private fun ScreenContent(
     }
 
     LaunchedEffect(key1 = isLastItemVisible) {
-        onUiEvent(LocationPickerScreenUiEvent.OnSearch(searchQuery, refresh = false))
+        if (isLastItemVisible) {
+            onUiEvent(LocationPickerUiEvent.OnSearch(searchQuery, refresh = false))
+        }
     }
 
     LaunchedEffect(key1 = searchQuery) {
-        onUiEvent(LocationPickerScreenUiEvent.OnSearch(searchQuery, refresh = true))
+        onUiEvent(LocationPickerUiEvent.OnSearch(searchQuery, refresh = true))
     }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
-                scrollBehavior,
                 title = stringResource(Res.string.label_location_picker_screen),
-                onClickBack = {
-                    onUiEvent(LocationPickerScreenUiEvent.OnClickBack)
+                navigation = {
+                    onUiEvent(LocationPickerUiEvent.OnClickBack)
                 },
+                scrollBehavior = scrollBehavior,
             )
         },
     ) { innerPadding ->
@@ -123,9 +153,11 @@ private fun ScreenContent(
                 onChangeSearchQuery(it)
             }
             HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
-            displayState.locationListState.Handle(modifier, onUiEvent)
+            uiState.locationListState.Handle(modifier, onUiEvent)
         }
     }
+
+    uiState.messageState?.Handle(onUiEvent)
 }
 
 @Composable
@@ -220,29 +252,13 @@ private fun CreateCheckInLocationItemView(onClick: () -> Unit) {
 }
 
 @Composable
-private fun LocationPickerScreenState.DisplayState.Handle(
+private fun LocationPickerUiState.LocationListState.Handle(
     modifier: Modifier,
-    onUiEvent: (LocationPickerScreenUiEvent) -> Unit,
-) {
-    ScreenContent(
-        modifier = modifier,
-        displayState = this,
-        onUiEvent = onUiEvent,
-    )
-    val state = messageState
-    if (state != null) {
-        state.Handle(onUiEvent)
-    }
-}
-
-@Composable
-private fun LocationPickerScreenState.DisplayState.LocationListState.Handle(
-    modifier: Modifier,
-    onUiEvent: (LocationPickerScreenUiEvent) -> Unit,
+    onUiEvent: (LocationPickerUiEvent) -> Unit,
 ) {
     when (this) {
-        is LocationPickerScreenState.DisplayState.LocationListState.None -> Unit
-        is LocationPickerScreenState.DisplayState.LocationListState.Available -> {
+        is LocationPickerUiState.LocationListState.None -> Unit
+        is LocationPickerUiState.LocationListState.Available -> {
             if (locations.isEmpty()) {
                 Column(
                     modifier = modifier.fillMaxWidth(),
@@ -252,24 +268,24 @@ private fun LocationPickerScreenState.DisplayState.LocationListState.Handle(
                         CircularProgressIndicator()
                     } else {
                         CreateCheckInLocationItemView {
-                            onUiEvent(LocationPickerScreenUiEvent.OnClickAddLocation)
+                            onUiEvent(LocationPickerUiEvent.OnClickAddLocation)
                         }
                         AnimatedEmptyView(modifier = Modifier.width(200.dp))
                     }
                 }
             } else {
                 locations.ListView(modifier = modifier, isLoading = isLoading) {
-                    onUiEvent(LocationPickerScreenUiEvent.OnClickLocation(it))
+                    onUiEvent(LocationPickerUiEvent.OnClickLocation(it))
                 }
             }
         }
-        is LocationPickerScreenState.DisplayState.LocationListState.Error -> {
+        is LocationPickerUiState.LocationListState.Error -> {
             Column(
                 modifier = modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 CreateCheckInLocationItemView {
-                    onUiEvent(LocationPickerScreenUiEvent.OnClickAddLocation)
+                    onUiEvent(LocationPickerUiEvent.OnClickAddLocation)
                 }
                 AnimatedErrorView(modifier = Modifier.width(200.dp))
             }
@@ -278,42 +294,42 @@ private fun LocationPickerScreenState.DisplayState.LocationListState.Handle(
 }
 
 @Composable
-private fun LocationPickerScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (LocationPickerScreenUiEvent) -> Unit,
+private fun LocationPickerUiState.MessageState.Handle(
+    onUiEvent: (LocationPickerUiEvent) -> Unit,
 ) {
     when (this) {
-        is LocationPickerScreenState.DisplayState.MessageState.ConfirmAddLocation -> {
+        is LocationPickerUiState.MessageState.ConfirmAddLocation -> {
             ShowConfirmationDialog(
                 message = "Are you surely want to add a new location: $locationName",
                 onConfirm = {
-                    onUiEvent(LocationPickerScreenUiEvent.MessageConsumed)
-                    onUiEvent(LocationPickerScreenUiEvent.OnAddLocation(locationName))
+                    onUiEvent(LocationPickerUiEvent.MessageConsumed)
+                    onUiEvent(LocationPickerUiEvent.OnAddLocation(locationName))
                 },
                 onDismiss = {
-                    onUiEvent(LocationPickerScreenUiEvent.MessageConsumed)
+                    onUiEvent(LocationPickerUiEvent.MessageConsumed)
                 }
             )
         }
-        is LocationPickerScreenState.DisplayState.MessageState.Success -> {
+        is LocationPickerUiState.MessageState.Success -> {
             ShowSuccessDialog(
                 message = message,
                 onConfirm = {
-                    onUiEvent(LocationPickerScreenUiEvent.MessageConsumed)
+                    onUiEvent(LocationPickerUiEvent.MessageConsumed)
                 },
                 onDismiss = {
-                    onUiEvent(LocationPickerScreenUiEvent.MessageConsumed)
+                    onUiEvent(LocationPickerUiEvent.MessageConsumed)
                 }
             )
         }
-        is LocationPickerScreenState.DisplayState.MessageState.Error -> {
+        is LocationPickerUiState.MessageState.Error -> {
             ShowErrorDialog(
                 icon = Icons.Default.Notifications,
                 message = message,
                 onConfirm = {
-                    onUiEvent(LocationPickerScreenUiEvent.MessageConsumed)
+                    onUiEvent(LocationPickerUiEvent.MessageConsumed)
                 },
                 onDismiss = {
-                    onUiEvent(LocationPickerScreenUiEvent.MessageConsumed)
+                    onUiEvent(LocationPickerUiEvent.MessageConsumed)
                 }
             )
         }

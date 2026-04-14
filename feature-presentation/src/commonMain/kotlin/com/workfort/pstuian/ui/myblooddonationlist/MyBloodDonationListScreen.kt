@@ -1,10 +1,12 @@
-package com.workfort.pstuian.app.ui.common.ui.myblooddonationlist
+package com.workfort.pstuian.ui.myblooddonationlist
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,19 +46,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.model.BloodDonationEntity
-import com.workfort.pstuian.reducer.ui.myblooddonationlist.MyBloodDonationListScreenState
-import com.workfort.pstuian.common.component.AnimatedEmptyView
-import com.workfort.pstuian.common.component.AnimatedErrorView
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.LabelText
-import com.workfort.pstuian.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.common.component.ShowInfoDialog
-import com.workfort.pstuian.common.component.ShowLoaderDialog
-import com.workfort.pstuian.common.component.TitleTextSmall
-import com.workfort.pstuian.common.component.isLastItemVisible
+import com.workfort.pstuian.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.common.composable.AnimatedErrorView
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.AppBarIconButton
+import com.workfort.pstuian.common.composable.LabelText
+import com.workfort.pstuian.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.ShowInfoDialog
+import com.workfort.pstuian.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.common.composable.TitleTextSmall
+import com.workfort.pstuian.common.composable.isLastItemVisible
+import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
+import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiEvent
+import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiState
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.msg_delete_permanent
@@ -66,27 +69,17 @@ import pstuian.feature_presentation.generated.resources.txt_edit
 import pstuian.feature_presentation.generated.resources.txt_my_donation_list
 import pstuian.feature_presentation.generated.resources.txt_retry
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyBloodDonationListScreen(
     modifier: Modifier = Modifier,
-    screenState: MyBloodDonationListScreenState,
-    onUiEvent: (MyBloodDonationListScreenUiEvent) -> Unit,
+    screenState: MyBloodDonationListUiState,
+    onUiEvent: (MyBloodDonationListUiEvent) -> Unit,
 ) {
     LaunchedEffect(key1 = null) {
-        onUiEvent(MyBloodDonationListScreenUiEvent.OnLoadMoreData(refresh = true))
+        onUiEvent(MyBloodDonationListUiEvent.OnLoadList(refresh = true))
     }
 
-    screenState.displayState.Handle(modifier = modifier, onUiEvent = onUiEvent)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ScreenContent(
-    modifier: Modifier,
-    displayState: MyBloodDonationListScreenState.DisplayState,
-    onUiEvent: (MyBloodDonationListScreenUiEvent) -> Unit,
-) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var fabButtonExpanded by remember { mutableStateOf(true) }
 
@@ -96,53 +89,76 @@ private fun ScreenContent(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
-                scrollBehavior,
                 title = stringResource(Res.string.txt_my_donation_list),
-                actionIcon = Icons.Filled.Refresh,
-                onClickBack = {
-                    onUiEvent(MyBloodDonationListScreenUiEvent.OnClickBack)
+                navigation = {
+                    onUiEvent(MyBloodDonationListUiEvent.OnClickBack)
                 },
-                onClickAction = {
-                    onUiEvent(MyBloodDonationListScreenUiEvent.OnLoadMoreData(refresh = true))
+                actions = {
+                    AppBarIconButton(
+                        icon = Icons.Filled.Refresh,
+                        onClick = {
+                            onUiEvent(MyBloodDonationListUiEvent.OnLoadList(refresh = true))
+                        }
+                    )
                 },
+                scrollBehavior = scrollBehavior,
             )
         },
         floatingActionButton = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                ExtendedFloatingActionButton(
-                    expanded = fabButtonExpanded,
-                    text = {  Text(text = stringResource(Res.string.txt_create_new)) },
-                    onClick = {
-                        onUiEvent(MyBloodDonationListScreenUiEvent.OnClickCreateRequest)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "",
-                        )
-                    },
-                    shape = CircleShape,
-                )
-            }
+            ExtendedFloatingActionButton(
+                expanded = fabButtonExpanded,
+                text = { Text(text = stringResource(Res.string.txt_create_new)) },
+                onClick = {
+                    onUiEvent(MyBloodDonationListUiEvent.OnClickCreateRequest)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "",
+                    )
+                },
+                shape = CircleShape,
+            )
         },
     ) { innerPadding ->
-        Column(modifier = modifier.padding(innerPadding)) {
-            displayState.listState.Handle(modifier, onUiEvent)
+        Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            if (screenState.donations.isEmpty()) {
+                if (screenState.isLoading) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else if (screenState.error != null) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        AnimatedErrorView(modifier = Modifier.width(200.dp))
+                    }
+                } else {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        AnimatedEmptyView(modifier = Modifier.width(200.dp))
+                    }
+                }
+            } else {
+                DonationListView(
+                    donations = screenState.donations,
+                    isLoading = screenState.isLoading,
+                    onUiEvent = onUiEvent,
+                )
+            }
+        }
+
+        screenState.messageState?.let {
+            HandleMessageState(it, onUiEvent)
         }
     }
 }
 
 @Composable
-private fun List<BloodDonationEntity>.ListView(
-    modifier: Modifier = Modifier,
+private fun DonationListView(
+    donations: List<BloodDonationEntity>,
     isLoading: Boolean,
-    onUiEvent: (MyBloodDonationListScreenUiEvent) -> Unit,
+    onUiEvent: (MyBloodDonationListUiEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val isLastItemVisible by remember {
@@ -152,49 +168,52 @@ private fun List<BloodDonationEntity>.ListView(
     }
 
     LaunchedEffect(key1 = isLastItemVisible) {
-        onUiEvent(MyBloodDonationListScreenUiEvent.OnLoadMoreData(refresh = false))
+        if (isLastItemVisible) {
+            onUiEvent(MyBloodDonationListUiEvent.OnLoadList(refresh = false))
+        }
     }
 
     LazyColumn(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         state = listState,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(this@ListView) { item ->
-            ListItemView(
+        items(donations) { item ->
+            DonationItemView(
                 item = item,
                 onClickEdit = {
-                    onUiEvent(MyBloodDonationListScreenUiEvent.OnClickEdit(item))
+                    onUiEvent(MyBloodDonationListUiEvent.OnClickEdit(item))
                 },
                 onClickDelete = {
-                    onUiEvent(MyBloodDonationListScreenUiEvent.OnClickDelete(item))
+                    onUiEvent(MyBloodDonationListUiEvent.OnClickDelete(item))
                 },
             )
         }
         if (isLoading) {
             item {
-                CircularProgressIndicator()
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ListItemView(
+private fun DonationItemView(
     item: BloodDonationEntity,
     onClickEdit: () -> Unit,
     onClickDelete: () -> Unit,
 ) {
-    val requestId = if(item.requestId == null || item.requestId == 0) {
+    val requestId = if (item.requestId == null || item.requestId == 0) {
         "Unregistered"
     } else {
         item.requestId.toString()
     }
     val date = item.date.split(" ")[0]
     ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -210,6 +229,7 @@ private fun ListItemView(
             item.info?.let { Text(text = it) }
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 LabelText(text = date)
                 Spacer(modifier = Modifier.weight(1f))
@@ -244,89 +264,39 @@ private fun ListItemView(
 }
 
 @Composable
-private fun MyBloodDonationListScreenState.DisplayState.Handle(
-    modifier: Modifier,
-    onUiEvent: (MyBloodDonationListScreenUiEvent) -> Unit,
+private fun HandleMessageState(
+    messageState: MyBloodDonationListUiState.MessageState,
+    onUiEvent: (MyBloodDonationListUiEvent) -> Unit,
 ) {
-    ScreenContent(
-        modifier = modifier,
-        displayState = this,
-        onUiEvent = onUiEvent,
-    )
-    messageState?.Handle(onUiEvent)
-}
-
-@Composable
-private fun MyBloodDonationListScreenState.DisplayState.BloodDonationListState.Handle(
-    modifier: Modifier,
-    onUiEvent: (MyBloodDonationListScreenUiEvent) -> Unit,
-) {
-    when (this) {
-        is MyBloodDonationListScreenState.DisplayState.BloodDonationListState.None -> Unit
-        is MyBloodDonationListScreenState.DisplayState.BloodDonationListState.Available -> {
-            if (items.isEmpty()) {
-                Column(
-                    modifier = modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        AnimatedEmptyView(modifier = Modifier.width(200.dp))
-                    }
-                }
-            } else {
-                items.ListView(
-                    modifier = modifier,
-                    isLoading = isLoading,
-                    onUiEvent = onUiEvent,
-                )
-            }
-        }
-        is MyBloodDonationListScreenState.DisplayState.BloodDonationListState.Error -> {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                AnimatedErrorView(modifier = Modifier.width(200.dp))
-            }
-        }
-    }
-}
-
-@Composable
-private fun MyBloodDonationListScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (MyBloodDonationListScreenUiEvent) -> Unit,
-) {
-    when (this) {
-        is MyBloodDonationListScreenState.DisplayState.MessageState.ConfirmDelete -> {
+    when (messageState) {
+        is MyBloodDonationListUiState.MessageState.ConfirmDelete -> {
             ShowConfirmationDialog(
                 message = stringResource(Res.string.msg_delete_permanent),
                 onConfirm = {
-                    onUiEvent(MyBloodDonationListScreenUiEvent.OnDelete(item))
+                    onUiEvent(MyBloodDonationListUiEvent.OnConfirmDelete(messageState.item))
                 },
                 onDismiss = {
-                    onUiEvent(MyBloodDonationListScreenUiEvent.MessageConsumed)
+                    onUiEvent(MyBloodDonationListUiEvent.MessageConsumed)
                 }
             )
         }
-        is MyBloodDonationListScreenState.DisplayState.MessageState.Loading -> {
-            ShowLoaderDialog(cancelable = cancelable)
+        is MyBloodDonationListUiState.MessageState.Loading -> {
+            ShowLoaderDialog(cancelable = messageState.cancelable)
         }
-        is MyBloodDonationListScreenState.DisplayState.MessageState.Success -> {
+        is MyBloodDonationListUiState.MessageState.Success -> {
             ShowInfoDialog(
-                message = message,
+                message = messageState.message,
                 onDismiss = {
-                    onUiEvent(MyBloodDonationListScreenUiEvent.MessageConsumed)
+                    onUiEvent(MyBloodDonationListUiEvent.MessageConsumed)
                 }
             )
         }
-        is MyBloodDonationListScreenState.DisplayState.MessageState.Failure -> {
+        is MyBloodDonationListUiState.MessageState.Error -> {
             ShowInfoDialog(
-                message = message,
+                message = messageState.message,
                 dismissButtonText = stringResource(Res.string.txt_retry),
                 onDismiss = {
-                    onUiEvent(MyBloodDonationListScreenUiEvent.MessageConsumed)
+                    onUiEvent(MyBloodDonationListUiEvent.MessageConsumed)
                 }
             )
         }

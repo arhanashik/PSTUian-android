@@ -33,7 +33,7 @@
 
         <!--    Firebase service    -->
         <service
-                android:name=".firebase.fcm.FcmMessagingService"
+                android:name=".app.firebase.FcmMessagingService"
                 android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -79,36 +79,37 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlin.stdlib)
+
     // compose
+    implementation(libs.androidx.activity.compose)
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.compose.runtime)
     implementation(libs.compose.navigation)
     implementation(libs.compose.viewmodel)
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.compose.ui.tooling.preview)
+
     // coroutine
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-    // room
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
+
     // datastore
     implementation(libs.androidx.datastore.preferences)
+
     // koin
     implementation(libs.koin.androidx.compose)
-    // gson converter
-    implementation(libs.squareup.retrofit.converter.gson)
+
     // image loader
     implementation(libs.coil3.compose)
     implementation(libs.compose.components.resources)
+
     // animation loader
     implementation(libs.airbnb.android.lottie.compose)
+
     // multidex
     implementation(libs.androidx.multidex)
+
     // logger
     implementation(libs.jakewharton.timber)
 
@@ -116,16 +117,15 @@ dependencies {
     implementation(libs.androidx.documentfile)
 
     // sdk
+    implementation(project(":feature-domain"))
     implementation(project(":feature-presentation"))
     implementation(project(":appconstant"))
-    implementation(project(":database"))
-    implementation(project(":firebase"))
-    implementation(project(":model"))
-    implementation(project(":networking"))
-    implementation(project(":repository"))
-    implementation(project(":sharedpref"))
     implementation(project(":util"))
     implementation(project(":workmanager"))
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging.ktx)
 
     // test libs
     testImplementation(libs.junit)

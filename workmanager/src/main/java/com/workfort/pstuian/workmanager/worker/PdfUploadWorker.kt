@@ -6,7 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.workfort.pstuian.appconstant.Const
-import com.workfort.pstuian.networking.service.FileHandlerApiService
+import com.workfort.pstuian.data.remote.service.FileHandlerApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent

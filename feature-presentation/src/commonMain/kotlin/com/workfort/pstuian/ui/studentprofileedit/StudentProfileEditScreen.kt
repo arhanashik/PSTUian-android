@@ -33,19 +33,17 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.model.StudentAcademicInfoInputError
-import com.workfort.pstuian.model.StudentConnectInfoInputError
-import com.workfort.pstuian.model.StudentProfile
-import com.workfort.pstuian.reducer.ui.studentprofileedit.StudentProfileEditScreenState
-import com.workfort.pstuian.common.component.AnimatedErrorView
-import com.workfort.pstuian.common.component.AnimatedListLoaderView
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.DropDownMenuBox
-import com.workfort.pstuian.common.component.OutlinedTextInput
-import com.workfort.pstuian.common.component.ShowConfirmationDialog
-import com.workfort.pstuian.common.component.ShowInfoDialog
-import com.workfort.pstuian.common.component.ShowLoaderDialog
-import com.workfort.pstuian.common.component.ShowSuccessDialog
+import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditUiEvent
+import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditUiState
+import com.workfort.pstuian.common.composable.AnimatedErrorView
+import com.workfort.pstuian.common.composable.AnimatedListLoaderView
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.DropDownMenuBox
+import com.workfort.pstuian.common.composable.OutlinedTextInput
+import com.workfort.pstuian.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.ShowInfoDialog
+import com.workfort.pstuian.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.common.composable.ShowSuccessDialog
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
@@ -71,11 +69,11 @@ import pstuian.feature_presentation.generated.resources.txt_save_changes
 @Composable
 fun StudentProfileEditScreen(
     modifier: Modifier = Modifier,
-    screenState: StudentProfileEditScreenState,
-    onUiEvent: (StudentProfileEditScreenUiEvent) -> Unit,
+    screenState: StudentProfileEditUiState,
+    onUiEvent: (StudentProfileEditUiEvent) -> Unit,
 ) {
     LaunchedEffect(key1 = null) {
-        onUiEvent(StudentProfileEditScreenUiEvent.OnLoadProfile)
+        onUiEvent(StudentProfileEditUiEvent.LoadProfile)
     }
 
     with(screenState) {
@@ -87,8 +85,8 @@ fun StudentProfileEditScreen(
 @Composable
 private fun ScreenContent(
     modifier: Modifier,
-    displayState: StudentProfileEditScreenState.DisplayState,
-    onUiEvent: (StudentProfileEditScreenUiEvent) -> Unit,
+    displayState: StudentProfileEditUiState.DisplayState,
+    onUiEvent: (StudentProfileEditUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var fabButtonExpanded by remember { mutableStateOf(true) }
@@ -105,7 +103,7 @@ private fun ScreenContent(
                 scrollBehavior,
                 title = stringResource(Res.string.txt_edit),
                 onClickBack = {
-                    onUiEvent(StudentProfileEditScreenUiEvent.OnClickBack)
+                    onUiEvent(StudentProfileEditUiEvent.ClickBack)
                 },
             )
         },
@@ -120,7 +118,7 @@ private fun ScreenContent(
                     expanded = fabButtonExpanded,
                     text = {  Text(text = stringResource(Res.string.txt_save_changes)) },
                     onClick = {
-                        onUiEvent(StudentProfileEditScreenUiEvent.OnClickSave)
+                        onUiEvent(StudentProfileEditUiEvent.ClickSave)
                     },
                     icon = { Icon(Icons.Outlined.CheckCircle,"") },
                     shape = CircleShape,
@@ -140,7 +138,7 @@ private fun AcademicInfoEditPanelView(
     modifier: Modifier,
     profile: StudentProfile,
     validationError: StudentAcademicInfoInputError,
-    onUiEvent: (StudentProfileEditScreenUiEvent) -> Unit,
+    onUiEvent: (StudentProfileEditUiEvent) -> Unit,
 ) {
     var newProfile by remember { mutableStateOf(profile) }
 
@@ -152,7 +150,7 @@ private fun AcademicInfoEditPanelView(
     }
 
     LaunchedEffect(key1 = newProfile) {
-        onUiEvent(StudentProfileEditScreenUiEvent.OnChangeProfile(newProfile))
+        onUiEvent(StudentProfileEditUiEvent.ChangeProfile(newProfile))
     }
 
     Column(
@@ -231,7 +229,7 @@ private fun AcademicInfoEditPanelView(
         OutlinedTextInput(
             modifier = Modifier.onFocusChanged {
                if (it.isFocused) {
-                   onUiEvent(StudentProfileEditScreenUiEvent.OnClickFaculty)
+                   onUiEvent(StudentProfileEditUiEvent.ClickFaculty)
                }
             },
             label = stringResource(Res.string.hint_faculty),
@@ -247,7 +245,7 @@ private fun AcademicInfoEditPanelView(
         OutlinedTextInput(
             Modifier.onFocusChanged {
                 if (it.isFocused) {
-                    onUiEvent(StudentProfileEditScreenUiEvent.OnClickBatch)
+                    onUiEvent(StudentProfileEditUiEvent.ClickBatch)
                 }
             },
             label = stringResource(Res.string.hint_batch),
@@ -278,12 +276,12 @@ private fun ConnectInfoEditPanelView(
     modifier: Modifier,
     profile: StudentProfile,
     validationError: StudentConnectInfoInputError,
-    onUiEvent: (StudentProfileEditScreenUiEvent) -> Unit,
+    onUiEvent: (StudentProfileEditUiEvent) -> Unit,
 ) {
     var newProfile by remember { mutableStateOf(profile) }
 
     LaunchedEffect(key1 = newProfile) {
-        onUiEvent(StudentProfileEditScreenUiEvent.OnChangeProfile(newProfile))
+        onUiEvent(StudentProfileEditUiEvent.ChangeProfile(newProfile))
     }
 
     Column(
@@ -370,9 +368,9 @@ private fun ConnectInfoEditPanelView(
 }
 
 @Composable
-private fun StudentProfileEditScreenState.DisplayState.Handle(
+private fun StudentProfileEditUiState.DisplayState.Handle(
     modifier: Modifier,
-    onUiEvent: (StudentProfileEditScreenUiEvent) -> Unit,
+    onUiEvent: (StudentProfileEditUiEvent) -> Unit,
 ) {
     ScreenContent(
         modifier = modifier,
@@ -383,13 +381,13 @@ private fun StudentProfileEditScreenState.DisplayState.Handle(
 }
 
 @Composable
-private fun StudentProfileEditScreenState.DisplayState.PanelState.Handle(
+private fun StudentProfileEditUiState.DisplayState.PanelState.Handle(
     modifier: Modifier,
-    onUiEvent: (StudentProfileEditScreenUiEvent) -> Unit,
+    onUiEvent: (StudentProfileEditUiEvent) -> Unit,
 ) {
     when (this) {
-        is StudentProfileEditScreenState.DisplayState.PanelState.None -> Unit
-        is StudentProfileEditScreenState.DisplayState.PanelState.Loading -> {
+        is StudentProfileEditUiState.DisplayState.PanelState.None -> Unit
+        is StudentProfileEditUiState.DisplayState.PanelState.Loading -> {
             Column(
                 modifier = modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -398,7 +396,7 @@ private fun StudentProfileEditScreenState.DisplayState.PanelState.Handle(
                 AnimatedListLoaderView(modifier = Modifier.fillMaxWidth())
             }
         }
-        is StudentProfileEditScreenState.DisplayState.PanelState.Academic -> {
+        is StudentProfileEditUiState.DisplayState.PanelState.Academic -> {
             AcademicInfoEditPanelView(
                 modifier = modifier,
                 profile = profile,
@@ -406,7 +404,7 @@ private fun StudentProfileEditScreenState.DisplayState.PanelState.Handle(
                 onUiEvent = onUiEvent,
             )
         }
-        is StudentProfileEditScreenState.DisplayState.PanelState.Connect -> {
+        is StudentProfileEditUiState.DisplayState.PanelState.Connect -> {
             ConnectInfoEditPanelView(
                 modifier = modifier,
                 profile = profile,
@@ -414,7 +412,7 @@ private fun StudentProfileEditScreenState.DisplayState.PanelState.Handle(
                 onUiEvent = onUiEvent,
             )
         }
-        is StudentProfileEditScreenState.DisplayState.PanelState.Error -> {
+        is StudentProfileEditUiState.DisplayState.PanelState.Error -> {
             Column(
                 modifier = modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -427,45 +425,46 @@ private fun StudentProfileEditScreenState.DisplayState.PanelState.Handle(
 }
 
 @Composable
-private fun StudentProfileEditScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (StudentProfileEditScreenUiEvent) -> Unit,
+private fun StudentProfileEditUiState.DisplayState.MessageState.Handle(
+    onUiEvent: (StudentProfileEditUiEvent) -> Unit,
 ) {
     when (this) {
-        is StudentProfileEditScreenState.DisplayState.MessageState.Loading -> {
+        is StudentProfileEditUiState.DisplayState.MessageState.Loading -> {
             ShowLoaderDialog(cancelable = cancelable)
         }
-        is StudentProfileEditScreenState.DisplayState.MessageState.ConfirmSave -> {
+        is StudentProfileEditUiState.DisplayState.MessageState.ConfirmSave -> {
             ShowConfirmationDialog(
                 message = "Are you surely want to save the changes?",
                 onConfirm = {
-                    onUiEvent(StudentProfileEditScreenUiEvent.OnSave)
+                    onUiEvent(StudentProfileEditUiEvent.Save)
                 },
                 onDismiss = {
-                    onUiEvent(StudentProfileEditScreenUiEvent.MessageConsumed)
+                    onUiEvent(StudentProfileEditUiEvent.MessageConsumed)
                 }
             )
         }
-        is StudentProfileEditScreenState.DisplayState.MessageState.Success -> {
+        is StudentProfileEditUiState.DisplayState.MessageState.Success -> {
             ShowSuccessDialog(
                 message = message,
                 confirmButtonText = "Go Back",
                 dismissButtonText = "Edit More",
                 onConfirm = {
-                    onUiEvent(StudentProfileEditScreenUiEvent.MessageConsumed)
-                    onUiEvent(StudentProfileEditScreenUiEvent.OnClickBack)
+                    onUiEvent(StudentProfileEditUiEvent.MessageConsumed)
+                    onUiEvent(StudentProfileEditUiEvent.ClickBack)
                 },
                 onDismiss = {
-                    onUiEvent(StudentProfileEditScreenUiEvent.MessageConsumed)
+                    onUiEvent(StudentProfileEditUiEvent.MessageConsumed)
                 }
             )
         }
-        is StudentProfileEditScreenState.DisplayState.MessageState.Error -> {
+        is StudentProfileEditUiState.DisplayState.MessageState.Error -> {
             ShowInfoDialog(
                 message = message,
                 onDismiss = {
-                    onUiEvent(StudentProfileEditScreenUiEvent.MessageConsumed)
+                    onUiEvent(StudentProfileEditUiEvent.MessageConsumed)
                 }
             )
         }
     }
 }
+

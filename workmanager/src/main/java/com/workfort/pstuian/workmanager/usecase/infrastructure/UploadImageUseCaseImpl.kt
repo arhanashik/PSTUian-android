@@ -8,8 +8,8 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.workfort.pstuian.appconstant.Const
-import com.workfort.pstuian.model.ProgressRequestState
-import com.workfort.pstuian.model.UserType
+import com.workfort.pstuian.featuredomain.model.ProgressRequestState
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.workmanager.usecase.domain.UploadImageUseCase
 import com.workfort.pstuian.workmanager.worker.ImageUploadWorker
 import kotlinx.coroutines.flow.Flow

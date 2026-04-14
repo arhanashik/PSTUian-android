@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.common.ui.home
+package com.workfort.pstuian.ui.home
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite

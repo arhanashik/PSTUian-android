@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App theme + XML drawables; align brand colors with commonMain .../app/ui/common/theme/Color.kt -->
+    <!-- App theme + XML drawables; align brand colors with commonMain .../app/ui/common/theme/AppColors.kt -->
     <color name="colorPrimary">#FF008577</color>
     <color name="colorPrimaryDark">#FF00574B</color>
     <color name="colorAccent">#FFD81B60</color>

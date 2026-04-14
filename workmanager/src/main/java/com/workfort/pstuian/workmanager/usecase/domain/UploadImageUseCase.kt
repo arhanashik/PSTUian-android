@@ -1,9 +1,8 @@
 package com.workfort.pstuian.workmanager.usecase.domain
 
 import android.content.Context
-import android.net.Uri
-import com.workfort.pstuian.model.ProgressRequestState
-import com.workfort.pstuian.model.UserType
+import com.workfort.pstuian.featuredomain.model.ProgressRequestState
+import com.workfort.pstuian.featuredomain.model.UserType
 import kotlinx.coroutines.flow.Flow
 
 interface UploadImageUseCase {

@@ -3,11 +3,15 @@ package com.workfort.pstuian
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
-import com.workfort.pstuian.di.initKoin
-import com.workfort.pstuian.util.di.appModules
+import com.workfort.pstuian.app.di.appModule
+import com.workfort.pstuian.data.di.dataModule
+import com.workfort.pstuian.di.featurePresentationModule
+import com.workfort.pstuian.featuredomain.di.featureDomainModule
+import com.workfort.pstuian.util.di.utilModule
 import com.workfort.pstuian.util.helper.ContextHolder
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import timber.log.Timber
 
@@ -45,10 +49,10 @@ class PstuianApp  : MultiDexApplication() {
 
     // trigger di library koin
     private fun triggerKoin() {
-        initKoin {
+        startKoin {
             androidContext(this@PstuianApp)
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
-            modules(appModules)
+            modules(koinModules)
         }
     }
 
@@ -69,4 +73,10 @@ class PstuianApp  : MultiDexApplication() {
         super.attachBaseContext(base)
         MultiDex.install(this)
     }
+
+    private val koinModules = appModule +
+            featureDomainModule +
+            featurePresentationModule +
+            dataModule +
+            utilModule
 }

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.common.ui.mydevicelist
+package com.workfort.pstuian.ui.mydevicelist
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,15 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.model.DeviceEntity
-import com.workfort.pstuian.util.DateUtil
-import com.workfort.pstuian.common.component.TitleTextSmall
+import com.workfort.pstuian.common.composable.TitleTextSmall
+import com.workfort.pstuian.featuredomain.model.DeviceEntity
+import com.workfort.pstuian.util.DateTimeUtil
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_delete
 import pstuian.feature_presentation.generated.resources.txt_dismiss
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +35,7 @@ fun MyDeviceItemBottomSheet(
     val detailsDialogSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
-    val lastActiveAt = DateUtil.getTimeAgo(item.updatedAt ?: "")
+    val lastActiveAt = DateTimeUtil.getTimeAgo(item.updatedAt ?: "")
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = detailsDialogSheetState,

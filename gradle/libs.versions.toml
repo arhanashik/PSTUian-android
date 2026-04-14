@@ -39,14 +39,15 @@ androidx-lifecycle = "2.8.2"
 androidx-core = "1.15.0"
 compose-navigation-version = "2.8.0-alpha10"
 coil-version = "3.0.4"
-firebase-bom-version = "33.1.1"
+firebase-bom = "33.1.1"
+firebase-kmm = "2.4.0"
 google-services-version = "4.4.4"
 voyager = "1.1.0-beta03"
-coroutines = "1.9.0"
+coroutines = "1.10.2"
 koin = "4.0.0"
 kotlin = "2.0.21"
-kotlinx-serialization = "1.7.3"
-kotlinx-datetime = "0.6.1"
+kotlinx-serialization = "1.10.0"
+kotlinx-datetime = "0.7.1"
 napier = "2.7.1"
 
 # Test
@@ -57,6 +58,7 @@ runner = "1.5.2"
 kotlinStdlib = "2.0.21"
 kotlinTest = "2.0.21"
 core = "1.7.0"
+firebaseMessagingKtx = "25.0.1"
 
 [libraries]
 # Build Logic
@@ -128,14 +130,20 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 
 # Firebase
-google-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom-version" }
-google-firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
-google-firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
+firebase-kmm-auth = { group = "dev.gitlive", name = "firebase-auth", version.ref = "firebase-kmm" }
+firebase-kmm-firestore = { group = "dev.gitlive", name = "firebase-firestore", version.ref = "firebase-kmm" }
+firebase-kmm-database = { group = "dev.gitlive", name = "firebase-database", version.ref = "firebase-kmm" }
 
 # Koin
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
 
 # Networking

@@ -1,7 +1,7 @@
-package com.workfort.pstuian.app.ui.common.ui.home
+package com.workfort.pstuian.ui.home
 
-import com.workfort.pstuian.model.FacultyEntity
-import com.workfort.pstuian.model.SliderEntity
+import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.SliderEntity
 
 sealed class HomeUiEvent {
     data object None : HomeUiEvent()

@@ -25,7 +25,7 @@ kotlin {
             baseName = "feature-presentation"
             isStatic = true
             // Export modules to make them visible in Swift
-            export(project(":model"))
+            export(project(":feature-domain"))
         }
     }
 
@@ -33,15 +33,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":appconstant"))
-                implementation(project(":database"))
-                api(project(":model"))
-                implementation(project(":networking"))
-                implementation(project(":repository"))
-                implementation(project(":sharedpref"))
+                api(project(":data"))
+                api(project(":feature-domain"))
                 implementation(project(":util"))
                 implementation(libs.kotlinx.coroutines.core)
 
-                api(libs.koin.core)
                 implementation(libs.compose.ui)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
@@ -52,13 +48,17 @@ kotlin {
                 implementation(libs.compose.viewmodel)
                 implementation(libs.compose.navigation)
                 implementation(libs.coil3.compose)
+
+                // Koin
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
             }
         }
         commonMain.resources.srcDirs("src/commonMain/composeResources")
         val androidMain by getting {
             dependencies {
                 api(libs.koin.android)
-                implementation(project(":firebase"))
                 implementation(libs.airbnb.android.lottie.compose)
             }
         }

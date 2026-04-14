@@ -59,8 +59,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(project(":appconstant"))
+                implementation(project(":util"))
                 implementation(libs.jetbrains.kotlin.stdlib)
-                // Add KMP dependencies here
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.koin.core)
             }
         }
 

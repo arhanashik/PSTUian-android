@@ -1,68 +1,55 @@
-package com.workfort.pstuian.app.ui.common.ui.contactus
+package com.workfort.pstuian.ui.contactus
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.model.ContactUsInput
-import com.workfort.pstuian.model.ContactUsInputValidationError
-import com.workfort.pstuian.reducer.ui.contactus.ContactUsScreenState
-import com.workfort.pstuian.common.component.AppBar
-import com.workfort.pstuian.common.component.OutlinedTextInput
-import com.workfort.pstuian.common.component.ShowErrorDialog
-import com.workfort.pstuian.common.component.ShowLoaderDialog
-import com.workfort.pstuian.common.component.ShowSuccessDialog
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.common.navigation.AppNavigator
+import com.workfort.pstuian.ui.contactus.composable.ContactUsContentPanel
+import com.workfort.pstuian.ui.contactus.state.ContactUsMessageState
+import com.workfort.pstuian.ui.contactus.state.ContactUsNavigationState
+import com.workfort.pstuian.ui.contactus.state.ContactUsUiEvent
+import com.workfort.pstuian.ui.contactus.state.ContactUsUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.helper_text_help_message_max_length
-import pstuian.feature_presentation.generated.resources.hint_email
-import pstuian.feature_presentation.generated.resources.hint_message
-import pstuian.feature_presentation.generated.resources.hint_name
 import pstuian.feature_presentation.generated.resources.label_contact_us
 import pstuian.feature_presentation.generated.resources.txt_home
-import pstuian.feature_presentation.generated.resources.txt_send
-
-
-@Composable
-fun ContactUsScreen(
-    modifier: Modifier = Modifier,
-    screenState: ContactUsScreenState,
-    onUiEvent: (ContactUsScreenUiEvent) -> Unit,
-) {
-    with(screenState) {
-        displayState.Handle(modifier = modifier, onUiEvent = onUiEvent)
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenContent(
-    modifier: Modifier = Modifier,
-    displayState: ContactUsScreenState.DisplayState,
-    onUiEvent: (ContactUsScreenUiEvent) -> Unit,
+fun ContactUsScreen(
+    viewModel: ContactUsViewModel,
+    navigator: AppNavigator,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    val message by viewModel.message.collectAsState()
+    val navigation by viewModel.navigation.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onUiReady()
+    }
+
+    LaunchedEffect(navigation) {
+        when (navigation) {
+            is ContactUsNavigationState.GoBack -> {
+                navigator.goBack()
+                viewModel.onNavigationHandled()
+            }
+            null -> Unit
+        }
+    }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -72,132 +59,47 @@ private fun ScreenContent(
                 scrollBehavior,
                 title = stringResource(Res.string.label_contact_us),
                 onClickBack = {
-                    onUiEvent(ContactUsScreenUiEvent.OnClickBack)
+                    viewModel.onUiEvent(ContactUsUiEvent.OnClickBack)
                 },
             )
         },
     ) { innerPadding ->
-        Box(
-            modifier = modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-        ) {
-            Column(modifier = modifier.padding(16.dp)) {
-                ContactUsFormContent(
-                    modifier,
-                    displayState.contactUsInput,
-                    displayState.validationError,
-                    onUiEvent,
+        when (val state = uiState) {
+            is ContactUsUiState.None -> Unit
+            is ContactUsUiState.Content -> {
+                ContactUsContentPanel(
+                    modifier = Modifier.padding(innerPadding),
+                    uiState = state,
+                    onUiEvent = viewModel::onUiEvent,
+                )
+
+                if (state.isLoading) {
+                    ShowLoaderDialog()
+                }
+            }
+        }
+    }
+
+    message?.let {
+        when (it) {
+            is ContactUsMessageState.Success -> {
+                ShowSuccessDialog(
+                    message = it.message,
+                    confirmButtonText = stringResource(Res.string.txt_home),
+                    onConfirm = {
+                        viewModel.onMessageHandled()
+                        viewModel.onUiEvent(ContactUsUiEvent.OnClickBack)
+                    },
+                    onDismiss = viewModel::onMessageHandled,
                 )
             }
-            if (displayState.isLoading) {
-                ShowLoaderDialog()
+            is ContactUsMessageState.Error -> {
+                ShowErrorDialog(
+                    message = it.message,
+                    onConfirm = viewModel::onMessageHandled,
+                    onDismiss = viewModel::onMessageHandled,
+                )
             }
-        }
-    }
-}
-
-@Composable
-private fun ContactUsFormContent(
-    modifier: Modifier = Modifier,
-    contactUsInput: ContactUsInput,
-    validationError: ContactUsInputValidationError,
-    onUiEvent: (ContactUsScreenUiEvent) -> Unit,
-) {
-    val (changedContactUsInput, onChangeInput) = remember { mutableStateOf(contactUsInput) }
-
-    LaunchedEffect(key1 = changedContactUsInput) {
-        onUiEvent(ContactUsScreenUiEvent.OnChangeContactUsInput(changedContactUsInput))
-    }
-
-    Column(modifier = modifier) {
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_name),
-            value = changedContactUsInput.name,
-            isError = validationError.name.isNotEmpty(),
-            supportingText = validationError.name,
-        ) {
-            onChangeInput(changedContactUsInput.copy(name = it))
-        }
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_email),
-            value = changedContactUsInput.email,
-            inputType = KeyboardType.Email,
-            trailingIcon = {
-                Icon(Icons.Default.Email, contentDescription = "")
-            },
-            isError = validationError.email.isNotEmpty(),
-            supportingText = validationError.email,
-        ) {
-            onChangeInput(changedContactUsInput.copy(email = it))
-        }
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_message),
-            value = changedContactUsInput.message,
-            singleLine = false,
-            minLines = 8,
-            maxLines = 10,
-            isError = validationError.message.isNotEmpty(),
-            supportingText = validationError.message.ifEmpty {
-                stringResource(Res.string.helper_text_help_message_max_length)
-            },
-        ) {
-            onChangeInput(changedContactUsInput.copy(message = it))
-        }
-        TextButton(
-            onClick = { onUiEvent(ContactUsScreenUiEvent.OnClickSend) },
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-        ) {
-            Text(
-                stringResource(Res.string.txt_send),
-                color = Color.White,
-                modifier = Modifier.padding(horizontal = 8.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun ContactUsScreenState.DisplayState.Handle(
-    modifier: Modifier,
-    onUiEvent: (ContactUsScreenUiEvent) -> Unit,
-) {
-    ScreenContent(
-        modifier = modifier,
-        displayState = this,
-        onUiEvent = onUiEvent,
-    )
-    messageState?.Handle(onUiEvent)
-}
-
-@Composable
-private fun ContactUsScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (ContactUsScreenUiEvent) -> Unit,
-) {
-    when (this) {
-        is ContactUsScreenState.DisplayState.MessageState.SendInquirySuccess -> {
-            ShowSuccessDialog(
-                message = message,
-                confirmButtonText = stringResource(Res.string.txt_home),
-                onConfirm = {
-                    onUiEvent(ContactUsScreenUiEvent.MessageConsumed)
-                    onUiEvent(ContactUsScreenUiEvent.OnClickBack)
-                },
-                onDismiss = {
-                    onUiEvent(ContactUsScreenUiEvent.MessageConsumed)
-                },
-            )
-        }
-        is ContactUsScreenState.DisplayState.MessageState.Error -> {
-            ShowErrorDialog(
-                message = message,
-                onConfirm = {
-                    onUiEvent(ContactUsScreenUiEvent.MessageConsumed)
-                },
-                onDismiss = {
-                    onUiEvent(ContactUsScreenUiEvent.MessageConsumed)
-                }
-            )
         }
     }
 }

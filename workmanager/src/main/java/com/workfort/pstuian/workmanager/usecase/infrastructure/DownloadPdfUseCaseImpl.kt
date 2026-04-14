@@ -8,7 +8,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.workfort.pstuian.appconstant.Const
-import com.workfort.pstuian.model.ProgressRequestState
+import com.workfort.pstuian.featuredomain.model.ProgressRequestState
 import com.workfort.pstuian.workmanager.usecase.domain.DownloadPdfUseCase
 import com.workfort.pstuian.workmanager.worker.FileDownloadWorker
 import kotlinx.coroutines.flow.Flow
