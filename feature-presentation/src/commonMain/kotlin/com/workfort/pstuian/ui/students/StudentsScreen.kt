@@ -38,7 +38,7 @@ internal fun StudentsScreen(viewModel: StudentsViewModel) {
     StudentsScreenContent(uiState, viewModel::onUiEvent)
 
     HandleMessageState(message, viewModel::onMessageHandled)
-    HandleNavigationState(navigation, viewModel::onNavigationConsumed)
+    HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,7 +1,6 @@
 package com.workfort.pstuian.ui.students
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.InitializationMode
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
@@ -44,7 +43,7 @@ internal class StudentsViewModel(
 
     fun onMessageHandled() = _message.update { null }
 
-    fun onNavigationConsumed() = _navigation.update { null }
+    fun onNavigationHandled() = _navigation.update { null }
 
     private fun onClickBack() {
         _navigation.update { StudentsNavigationState.GoBack }
