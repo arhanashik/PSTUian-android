@@ -5,6 +5,9 @@ import com.workfort.pstuian.featuredomain.model.UserType
 sealed class AppScreen {
     object Splash : AppScreen()
     object SignIn : AppScreen()
+    object SignUp : AppScreen()
+    object ForgotPassword : AppScreen()
+    object EmailVerification : AppScreen()
     object Home : AppScreen()
     data class Students(val batchId: Int) : AppScreen()
     data class Teachers(val userId: Int) : AppScreen()
@@ -14,4 +17,9 @@ sealed class AppScreen {
     data class Profile(val userId: Int, val userType: UserType) : AppScreen()
     object LocationPicker : AppScreen()
     object Donate : AppScreen()
+    data class FacultyPicker(
+        val mode: com.workfort.pstuian.featuredomain.model.FacultySelectionMode,
+        val facultyId: Int?,
+        val batchId: Int?,
+    ) : AppScreen()
 }

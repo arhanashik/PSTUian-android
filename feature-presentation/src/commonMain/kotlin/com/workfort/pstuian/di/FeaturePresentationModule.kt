@@ -165,17 +165,38 @@ private val myCheckInListModule = module {
 
 private val signInModule = module {
     factoryOf(::SignInUiStateMachine)
-    factoryOf(::SignInViewModel)
+    factory {
+        SignInViewModel(
+            authRepo = get(),
+            stateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
 }
 
 private val signUpModule = module {
     factoryOf(::SignUpUiStateMachine)
-    factoryOf(::SignUpViewModel)
+    factory {
+        SignUpViewModel(
+            authRepo = get(),
+            facultyRepo = get(),
+            stateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
 }
 
 private val splashModule = module {
     factoryOf(::SplashUiStateMachine)
-    factoryOf(::SplashViewModel)
+    factory {
+        SplashViewModel(
+            authRepo = get(),
+            clearAllDataUseCase = get(),
+            registerDeviceUseCase = get(),
+            stateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
 }
 
 private val studentsModule = module {

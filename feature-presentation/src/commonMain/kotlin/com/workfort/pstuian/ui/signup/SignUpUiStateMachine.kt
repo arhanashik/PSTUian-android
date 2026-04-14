@@ -1,15 +1,11 @@
 package com.workfort.pstuian.ui.signup
 
 import com.workfort.pstuian.common.uistate.UiStateMachine
-import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
-import com.workfort.pstuian.featuredomain.repository.AuthRepository
-import com.workfort.pstuian.model.FacultySelectionMode
+import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
 import com.workfort.pstuian.model.StudentSignUpInput
-import com.workfort.pstuian.model.StudentSignUpInputValidationError
 import com.workfort.pstuian.model.TeacherSignUpInput
-import com.workfort.pstuian.model.TeacherSignUpInputValidationError
 import com.workfort.pstuian.model.UserType
-import com.workfort.pstuian.util.isValidEmail
+import com.workfort.pstuian.ui.signup.state.SignUpUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,65 +19,35 @@ class SignUpUiStateMachine : UiStateMachine<SignUpUiState> {
         _uiState.update(updater)
     }
 
-    fun messageConsumed() = _uiState.update { it.copy(messageState = null) }
-
-    fun navigationConsumed() = _uiState.update { it.copy(navigationState = null) }
-
-    fun onClickBack() = _uiState.update { it.copy(navigationState = NavigationState.GoBack) }
-
     fun onClickUserTypeBtn(userType: UserType) {
         _uiState.update { it.copy(userType = userType) }
     }
 
-    fun onClickFaculty() {
+    fun getFacultySelectionMode(): FacultySelectionMode {
         val userType = _uiState.value.userType
-        val (selectionMode, facultyId) = when (userType) {
-            UserType.STUDENT -> {
-                FacultySelectionMode.BOTH to _uiState.value.studentSignUpInput.faculty?.id
-            }
-            UserType.TEACHER -> {
-                FacultySelectionMode.FACULTY to _uiState.value.teacherSignUpInput.faculty?.id
-            }
-            else -> FacultySelectionMode.FACULTY to null
-        }
-        _uiState.update {
-            it.copy(
-                navigationState = NavigationState.GoToFacultyPickerScreen(
-                    mode = selectionMode,
-                    facultyId = facultyId,
-                    batchId = null,
-                )
-            )
+        return when (userType) {
+            UserType.STUDENT -> FacultySelectionMode.BOTH
+            UserType.TEACHER -> FacultySelectionMode.FACULTY
+            else -> FacultySelectionMode.FACULTY
         }
     }
 
-    fun onClickBatch() {
+    fun getSelectedFacultyId(): Int? {
         val userType = _uiState.value.userType
-        val (facultyId, batchId) = when (userType) {
-            UserType.STUDENT -> {
-                _uiState.value.studentSignUpInput.faculty?.id to _uiState.value.studentSignUpInput.batch?.id
-            }
-            UserType.TEACHER -> {
-                _uiState.value.teacherSignUpInput.faculty?.id to null
-            }
-            else -> null to null
-        }
-        _uiState.update {
-            it.copy(
-                navigationState = NavigationState.GoToFacultyPickerScreen(
-                    mode = if (facultyId == null) {
-                        FacultySelectionMode.BOTH
-                    } else {
-                        FacultySelectionMode.BATCH
-                    },
-                    facultyId = facultyId,
-                    batchId = batchId,
-                )
-            )
+        return when (userType) {
+            UserType.STUDENT -> _uiState.value.studentSignUpInput.faculty?.id
+            UserType.TEACHER -> _uiState.value.teacherSignUpInput.faculty?.id
+            else -> null
         }
     }
 
-    fun onClickSignIn() = _uiState.update { it.copy(navigationState = NavigationState.GoBack) }
+    fun getSelectedBatchId(): Int? {
+        val userType = _uiState.value.userType
+        return when (userType) {
+            UserType.STUDENT -> _uiState.value.studentSignUpInput.batch?.id
+            else -> null
+        }
+    }
 
     fun onChangeStudentSignUpInput(signUpInput: StudentSignUpInput) {
         _uiState.update { it.copy(studentSignUpInput = signUpInput) }

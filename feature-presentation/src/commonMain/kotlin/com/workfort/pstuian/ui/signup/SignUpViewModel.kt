@@ -3,45 +3,90 @@ package com.workfort.pstuian.ui.signup
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
+import com.workfort.pstuian.featuredomain.model.StudentSignUpInput
+import com.workfort.pstuian.featuredomain.model.StudentSignUpInputValidationError
+import com.workfort.pstuian.featuredomain.model.TeacherSignUpInput
+import com.workfort.pstuian.featuredomain.model.TeacherSignUpInputValidationError
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
-import com.workfort.pstuian.model.FacultySelectionMode
-import com.workfort.pstuian.model.StudentSignUpInput
-import com.workfort.pstuian.model.StudentSignUpInputValidationError
-import com.workfort.pstuian.model.TeacherSignUpInput
-import com.workfort.pstuian.model.TeacherSignUpInputValidationError
-import com.workfort.pstuian.model.UserType
+import com.workfort.pstuian.ui.signup.state.SignUpMessageState
+import com.workfort.pstuian.ui.signup.state.SignUpNavigationState
+import com.workfort.pstuian.ui.signup.state.SignUpUiEvent
+import com.workfort.pstuian.ui.signup.state.SignUpUiState
 import com.workfort.pstuian.util.isValidEmail
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(
     private val authRepo: AuthRepository,
     private val facultyRepo: FacultyRepositoryImpl,
     private val stateMachine: SignUpUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SignUpUiState>(stateMachine) {
+
+    private val _message = MutableStateFlow<SignUpMessageState?>(null)
+    val message: StateFlow<SignUpMessageState?> = _message.asStateFlow()
+
+    private val _navigation = MutableStateFlow<SignUpNavigationState?>(null)
+    val navigation: StateFlow<SignUpNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {}
 
     fun onEvent(event: SignUpUiEvent) {
         when (event) {
-            is SignUpUiEvent.None -> Unit
-            is SignUpUiEvent.OnClickBack -> stateMachine.onClickBack()
-            is SignUpUiEvent.OnClickUserTypeBtn -> stateMachine.onClickUserTypeBtn(event.userType)
-            is SignUpUiEvent.OnClickSignUpStudent -> signUpStudent()
-            is SignUpUiEvent.OnClickSignUpTeacher -> signUpTeacher()
-            is SignUpUiEvent.OnClickFaculty -> stateMachine.onClickFaculty()
-            is SignUpUiEvent.OnClickBatch -> stateMachine.onClickBatch()
-            is SignUpUiEvent.OnClickSignIn -> stateMachine.onClickSignIn()
-            is SignUpUiEvent.OnClickTermsAndConditions -> Unit // Handled in Screen
-            is SignUpUiEvent.OnClickPrivacyPolicy -> Unit // Handled in Screen
-            is SignUpUiEvent.OnChangeFaculty -> onChangeFaculty(event.facultyId ?: 0)
-            is SignUpUiEvent.OnChangeBatch -> onChangeBatch(event.batchId ?: 0)
-            is SignUpUiEvent.OnChangeStudentSignUpInput ->
+            is SignUpUiEvent.BackClicked -> {
+                _navigation.update { SignUpNavigationState.GoBack }
+            }
+            is SignUpUiEvent.UserTypeBtnClicked -> stateMachine.onClickUserTypeBtn(event.userType)
+            is SignUpUiEvent.SignUpStudentClicked -> signUpStudent()
+            is SignUpUiEvent.SignUpTeacherClicked -> signUpTeacher()
+            is SignUpUiEvent.FacultyClicked -> {
+                _navigation.update {
+                    SignUpNavigationState.GoToFacultyPickerScreen(
+                        mode = stateMachine.getFacultySelectionMode(),
+                        facultyId = stateMachine.getSelectedFacultyId(),
+                        batchId = null,
+                    )
+                }
+            }
+            is SignUpUiEvent.BatchClicked -> {
+                _navigation.update {
+                    SignUpNavigationState.GoToFacultyPickerScreen(
+                        mode = if (stateMachine.getSelectedFacultyId() == null) {
+                            FacultySelectionMode.BOTH
+                        } else {
+                            FacultySelectionMode.BATCH
+                        },
+                        facultyId = stateMachine.getSelectedFacultyId(),
+                        batchId = stateMachine.getSelectedBatchId(),
+                    )
+                }
+            }
+            is SignUpUiEvent.SignInClicked -> {
+                _navigation.update { SignUpNavigationState.GoBack }
+            }
+            is SignUpUiEvent.TermsAndConditionsClicked -> Unit // Handled in Screen
+            is SignUpUiEvent.PrivacyPolicyClicked -> Unit // Handled in Screen
+            is SignUpUiEvent.FacultyChanged -> onChangeFaculty(event.facultyId ?: 0)
+            is SignUpUiEvent.BatchChanged -> onChangeBatch(event.batchId ?: 0)
+            is SignUpUiEvent.StudentSignUpInputChanged ->
                 stateMachine.onChangeStudentSignUpInput(event.signUpInput)
-            is SignUpUiEvent.OnChangeTeacherSignUpInput ->
+            is SignUpUiEvent.TeacherSignUpInputChanged ->
                 stateMachine.onChangeTeacherSignUpInput(event.signUpInput)
-            is SignUpUiEvent.MessageConsumed -> stateMachine.messageConsumed()
-            is SignUpUiEvent.NavigationConsumed -> stateMachine.navigationConsumed()
         }
+    }
+
+    fun onMessageHandled() {
+        _message.update { null }
+    }
+
+    fun onNavigationConsumed() {
+        _navigation.update { null }
     }
 
     private fun onChangeFaculty(facultyId: Int) {
@@ -49,14 +94,13 @@ class SignUpViewModel(
         val currentFacultyId = when (userType) {
             UserType.STUDENT -> uiState.value.studentSignUpInput.faculty?.id
             UserType.TEACHER -> uiState.value.teacherSignUpInput.faculty?.id
-            else -> null
         }
         if (facultyId == currentFacultyId) return
 
         stateMachine.updateUiState { it.copy(isLoading = true) }
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineDispatcherProvider.io) {
             runCatching {
-                val faculty = facultyRepo.getFaculty(facultyId).toDto()
+                val faculty = facultyRepo.getFaculty(facultyId)
                 stateMachine.updateUiState {
                     it.copy(
                         isLoading = false,
@@ -74,12 +118,8 @@ class SignUpViewModel(
                 }
             }.onFailure {
                 val message = it.message ?: "Failed to load faculty"
-                stateMachine.updateUiState { state ->
-                    state.copy(
-                        isLoading = false,
-                        messageState = MessageState.Error(message)
-                    )
-                }
+                stateMachine.updateUiState { it.copy(isLoading = false) }
+                _message.update { SignUpMessageState.Error(message) }
             }
         }
     }
@@ -88,7 +128,7 @@ class SignUpViewModel(
         if (uiState.value.studentSignUpInput.batch?.id == batchId) return
 
         stateMachine.updateUiState { it.copy(isLoading = true) }
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineDispatcherProvider.io) {
             runCatching {
                 val batch = facultyRepo.getBatch(batchId)
                 val faculty = facultyRepo.getFaculty(batch.facultyId)
@@ -96,19 +136,15 @@ class SignUpViewModel(
                     it.copy(
                         isLoading = false,
                         studentSignUpInput = it.studentSignUpInput.copy(
-                            faculty = faculty.toDto(),
-                            batch = batch.toDto(),
+                            faculty = faculty,
+                            batch = batch,
                         )
                     )
                 }
             }.onFailure {
                 val message = it.message ?: "Failed to load batch"
-                stateMachine.updateUiState { state ->
-                    state.copy(
-                        isLoading = false,
-                        messageState = MessageState.Error(message)
-                    )
-                }
+                stateMachine.updateUiState { it.copy(isLoading = false) }
+                _message.update { SignUpMessageState.Error(message) }
             }
         }
     }
@@ -123,7 +159,7 @@ class SignUpViewModel(
             return
         }
         stateMachine.updateUiState { it.copy(isLoading = true) }
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineDispatcherProvider.io) {
             runCatching {
                 authRepo.signUpStudent(
                     name = input.name,
@@ -135,20 +171,12 @@ class SignUpViewModel(
                     email = input.email,
                     password = input.password,
                 )
-                stateMachine.updateUiState {
-                    it.copy(
-                        isLoading = false,
-                        messageState = MessageState.SignUpSuccess
-                    )
-                }
+                stateMachine.updateUiState { it.copy(isLoading = false) }
+                _message.update { SignUpMessageState.SignUpSuccess }
             }.onFailure {
                 val msg = it.message ?: "Failed to Sign up. Please try again."
-                stateMachine.updateUiState { state ->
-                    state.copy(
-                        isLoading = false,
-                        messageState = MessageState.Error(msg)
-                    )
-                }
+                stateMachine.updateUiState { it.copy(isLoading = false) }
+                _message.update { SignUpMessageState.Error(msg) }
             }
         }
     }
@@ -163,7 +191,7 @@ class SignUpViewModel(
             return
         }
         stateMachine.updateUiState { it.copy(isLoading = true) }
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineDispatcherProvider.io) {
             runCatching {
                 authRepo.signUpTeacher(
                     name = input.name,
@@ -173,20 +201,12 @@ class SignUpViewModel(
                     password = input.password,
                     facultyId = input.faculty!!.id,
                 )
-                stateMachine.updateUiState {
-                    it.copy(
-                        isLoading = false,
-                        messageState = MessageState.SignUpSuccess
-                    )
-                }
+                stateMachine.updateUiState { it.copy(isLoading = false) }
+                _message.update { SignUpMessageState.SignUpSuccess }
             }.onFailure {
                 val msg = it.message ?: "Failed to Sign up. Please try again."
-                stateMachine.updateUiState { state ->
-                    state.copy(
-                        isLoading = false,
-                        messageState = MessageState.Error(msg)
-                    )
-                }
+                stateMachine.updateUiState { it.copy(isLoading = false) }
+                _message.update { SignUpMessageState.Error(msg) }
             }
         }
     }

@@ -1,10 +1,10 @@
-package com.workfort.pstuian.ui.signup
+package com.workfort.pstuian.ui.signup.state
 
-import com.workfort.pstuian.model.StudentSignUpInput
-import com.workfort.pstuian.model.StudentSignUpInputValidationError
-import com.workfort.pstuian.model.TeacherSignUpInput
-import com.workfort.pstuian.model.TeacherSignUpInputValidationError
-import com.workfort.pstuian.model.UserType
+import com.workfort.pstuian.featuredomain.model.StudentSignUpInput
+import com.workfort.pstuian.featuredomain.model.StudentSignUpInputValidationError
+import com.workfort.pstuian.featuredomain.model.TeacherSignUpInput
+import com.workfort.pstuian.featuredomain.model.TeacherSignUpInputValidationError
+import com.workfort.pstuian.featuredomain.model.UserType
 
 data class SignUpUiState(
     val isLoading: Boolean = false,
@@ -13,6 +13,4 @@ data class SignUpUiState(
     val studentSignUpInputValidationError: StudentSignUpInputValidationError = StudentSignUpInputValidationError.INITIAL,
     val teacherSignUpInput: TeacherSignUpInput = TeacherSignUpInput.INITIAL,
     val teacherSignUpInputValidationError: TeacherSignUpInputValidationError = TeacherSignUpInputValidationError.INITIAL,
-    val messageState: MessageState? = null,
-    val navigationState: NavigationState? = null,
 )

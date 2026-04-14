@@ -2,8 +2,6 @@ package com.workfort.pstuian.ui.signin
 
 import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.ui.signin.state.MessageState
-import com.workfort.pstuian.ui.signin.state.NavigationState
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,13 +18,5 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
 
     fun updateUserType(userType: UserType) {
         _uiState.update { it.copy(userType = userType) }
-    }
-
-    fun showMessage(messageState: MessageState?) {
-        _uiState.update { it.copy(messageState = messageState) }
-    }
-
-    fun navigateTo(navigationState: NavigationState?) {
-        _uiState.update { it.copy(navigationState = navigationState) }
     }
 }

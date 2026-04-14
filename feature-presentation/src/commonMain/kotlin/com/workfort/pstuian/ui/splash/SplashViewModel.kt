@@ -2,6 +2,8 @@ package com.workfort.pstuian.ui.splash
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
 import com.workfort.pstuian.featuredomain.usecase.RegisterDeviceUseCase
@@ -9,30 +11,36 @@ import com.workfort.pstuian.ui.splash.state.SplashMessageState
 import com.workfort.pstuian.ui.splash.state.SplashNavigationState
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 internal class SplashViewModel(
     private val authRepo: AuthRepository,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val stateMachine: SplashUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SplashUiState>(stateMachine) {
+
+    private val _message = MutableStateFlow<SplashMessageState?>(null)
+    val message: StateFlow<SplashMessageState?> = _message.asStateFlow()
+
+    private val _navigation = MutableStateFlow<SplashNavigationState?>(null)
+    val navigation: StateFlow<SplashNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {
         checkAuth()
     }
 
-    fun onEvent(event: SplashUiEvent) {
-        when (event) {
-            SplashUiEvent.CheckAuth -> checkAuth()
-            SplashUiEvent.TryDeviceReg -> registerDevice()
-            SplashUiEvent.TryGetConfig -> getConfig()
-            SplashUiEvent.UpdateApp -> Unit // Handled in Screen
-            SplashUiEvent.RefreshData -> clearAllData()
-            SplashUiEvent.MessageConsumed -> messageConsumed()
-            SplashUiEvent.NavigationConsumed -> navigationConsumed()
-        }
+    fun onUiEvent(event: SplashUiEvent) {
+        // Add event handling here
     }
+
+    fun onMessageHandled() = _message.update { null }
+
+    fun onNavigationHandled() = _navigation.update { null }
 
     private fun checkAuth() {
         registerDevice()
@@ -40,56 +48,68 @@ internal class SplashViewModel(
 
     private fun registerDevice() {
         stateMachine.updateLoadingText("Checking device")
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 registerDeviceUseCase()
             }.onSuccess {
                 getConfig()
             }.onFailure {
-                stateMachine.showMessage(SplashMessageState.DeviceRegFailed)
+                _message.update {
+                    SplashMessageState.DeviceRegFailed {
+                        registerDevice()
+                    }
+                }
             }
         }
     }
 
     private fun getConfig() {
         stateMachine.updateLoadingText("Loading Configuration")
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 authRepo.getConfig()
             }.onSuccess {
                 if(it.forceUpdate != 0 && it.forceUpdateDone.not()) {
-                    stateMachine.showMessage(SplashMessageState.ForceUpdate)
+                    _message.update {
+                        SplashMessageState.ForceUpdate {
+                            // go to app/play store
+                        }
+                    }
                     return@onSuccess
                 }
                 if(it.forceRefresh != 0 && it.forceRefreshDone.not()) {
-                    stateMachine.showMessage(SplashMessageState.ForceRefresh)
+                    _message.update {
+                        SplashMessageState.ForceRefresh {
+                            clearAllData()
+                        }
+                    }
                     return@onSuccess
                 }
-                stateMachine.navigateTo(SplashNavigationState.HomeScreen)
+                _navigation.update { SplashNavigationState.HomeScreen }
             }.onFailure {
-                stateMachine.showMessage(SplashMessageState.GetConfigFailed)
+                _message.update {
+                    SplashMessageState.GetConfigFailed {
+                        getConfig()
+                    }
+                }
             }
         }
     }
 
     private fun clearAllData() {
         stateMachine.updateLoadingText("Clearing data")
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 clearAllDataUseCase()
             }.onSuccess {
-                stateMachine.navigateTo(SplashNavigationState.HomeScreen)
+                _navigation.update { SplashNavigationState.HomeScreen }
             }.onFailure {
-                stateMachine.showMessage(SplashMessageState.ForceRefresh)
+                _message.update {
+                    SplashMessageState.ForceRefresh {
+                        clearAllData()
+                    }
+                }
             }
         }
-    }
-
-    override fun messageConsumed() {
-        stateMachine.showMessage(null)
-    }
-
-    override fun navigationConsumed() {
-        stateMachine.navigateTo(null)
     }
 }

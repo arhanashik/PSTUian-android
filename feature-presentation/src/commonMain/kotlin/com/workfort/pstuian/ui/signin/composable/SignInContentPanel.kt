@@ -33,11 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.common.composable.HorizontalDividerWithLabel
 import com.workfort.pstuian.common.composable.MaterialButtonToggleGroup
 import com.workfort.pstuian.common.composable.OutlinedTextInput
-import com.workfort.pstuian.common.composable.ShowErrorDialog
 import com.workfort.pstuian.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.ui.signin.SignInUiEvent
-import com.workfort.pstuian.ui.signin.state.MessageState
+import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 import com.workfort.pstuian.util.isValidEmail
 import org.jetbrains.compose.resources.stringResource
@@ -58,8 +56,6 @@ import pstuian.feature_presentation.generated.resources.txt_verify_now
 fun SignInContentPanel(
     modifier: Modifier = Modifier,
     uiState: SignInUiState,
-    messageState: MessageState?,
-    onShowToast: (String) -> Unit,
     onUiEvent: (SignInUiEvent) -> Unit,
 ) {
     Box(
@@ -73,10 +69,6 @@ fun SignInContentPanel(
         if (uiState.isLoading) {
             ShowLoaderDialog()
         }
-    }
-
-    messageState?.let {
-        HandleMessageState(it, onShowToast, onUiEvent)
     }
 }
 
@@ -147,7 +139,7 @@ private fun SignInFormContent(
                 else -> null
             }?.let { newUserType ->
                 if (newUserType != userType) {
-                    onUiEvent(SignInUiEvent.OnClickUserTypeBtn(newUserType))
+                    onUiEvent(SignInUiEvent.UserTypeBtnClicked(newUserType))
                 }
             }
         }
@@ -196,7 +188,7 @@ private fun SignInFormContent(
             TextButton(
                 onClick = {
                     onUiEvent(
-                        SignInUiEvent.OnClickSignIn(email, password),
+                        SignInUiEvent.SignInClicked(email, password),
                     )
                 },
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
@@ -210,7 +202,7 @@ private fun SignInFormContent(
             TextButton(
                 onClick = {
                     onUiEvent(
-                        SignInUiEvent.OnClickForgotPassword,
+                        SignInUiEvent.ForgotPasswordClicked,
                     )
                 }
             ) {
@@ -248,7 +240,7 @@ private fun SignInFooterContent(
             TextButton(
                 onClick = {
                     onUiEvent(
-                        SignInUiEvent.OnClickSignUp,
+                        SignInUiEvent.SignUpClicked,
                     )
                 }
             ) {
@@ -273,7 +265,7 @@ private fun SignInFooterContent(
             TextButton(
                 onClick = {
                     onUiEvent(
-                        SignInUiEvent.OnClickEmailVerification,
+                        SignInUiEvent.EmailVerificationClicked,
                     )
                 }
             ) {
@@ -281,32 +273,6 @@ private fun SignInFooterContent(
                     text = stringResource(Res.string.txt_verify_now),
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun HandleMessageState(
-    messageState: MessageState,
-    onShowToast: (String) -> Unit,
-    onUiEvent: (SignInUiEvent) -> Unit,
-) {
-    when (messageState) {
-        is MessageState.Success -> {
-            if (messageState.showToast) {
-                onShowToast(messageState.message)
-            }
-        }
-        is MessageState.Error -> {
-            ShowErrorDialog(
-                message = messageState.message,
-                onConfirm = {
-                    onUiEvent(SignInUiEvent.MessageConsumed)
-                },
-                onDismiss = {
-                    onUiEvent(SignInUiEvent.MessageConsumed)
-                }
-            )
         }
     }
 }
