@@ -16,19 +16,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -40,26 +36,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.common.composable.AnimatedErrorView
-import com.workfort.pstuian.common.composable.AppBar
-import com.workfort.pstuian.common.composable.AppBarIconButton
 import com.workfort.pstuian.common.composable.DotView
 import com.workfort.pstuian.common.composable.LoadAsyncImage
 import com.workfort.pstuian.common.composable.MaterialButtonToggleGroup
-import com.workfort.pstuian.common.composable.NavigationButton
-import com.workfort.pstuian.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.common.composable.ShowInfoDialog
-import com.workfort.pstuian.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.common.composable.TitleTextSmall
 import com.workfort.pstuian.common.composable.isLastItemVisible
 import com.workfort.pstuian.featuredomain.model.CheckInEntity
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
-import com.workfort.pstuian.ui.mycheckinlist.state.MessageState
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiEvent
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiState
 import com.workfort.pstuian.util.DateTimeUtilImpl
@@ -67,86 +54,35 @@ import com.workfort.pstuian.util.helper.MathUtil
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.msg_delete_permanent
 import pstuian.feature_presentation.generated.resources.txt_change_privacy
 import pstuian.feature_presentation.generated.resources.txt_delete
 import pstuian.feature_presentation.generated.resources.txt_dismiss
-import pstuian.feature_presentation.generated.resources.txt_my_check_in_list
 import pstuian.feature_presentation.generated.resources.txt_only_me
 import pstuian.feature_presentation.generated.resources.txt_public
-import pstuian.feature_presentation.generated.resources.txt_retry
-import pstuian.feature_presentation.generated.resources.txt_update
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyCheckInListContentPanel(
-    uiState: MyCheckInListUiState,
-    messageState: MessageState?,
+    uiState: MyCheckInListUiState.Content,
     onUiEvent: (MyCheckInListUiEvent) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppBar(
-                title = stringResource(Res.string.txt_my_check_in_list),
-                navigation = {
-                    NavigationButton {
-                        onUiEvent(MyCheckInListUiEvent.ClickBack)
-                    }
-                },
-                actions = {
-                    AppBarIconButton(
-                        icon = Icons.Filled.Refresh,
-                        onClick = {
-                            onUiEvent(MyCheckInListUiEvent.LoadMoreData(refresh = true))
-                        }
-                    )
-                },
-            )
-        },
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            when (uiState) {
-                is MyCheckInListUiState.None -> Unit
-                is MyCheckInListUiState.Error -> {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        AnimatedErrorView(modifier = Modifier.width(200.dp))
-                    }
-                }
-                is MyCheckInListUiState.Content -> {
-                    if (uiState.items.isEmpty()) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            if (uiState.isLoading) {
-                                CircularProgressIndicator()
-                            } else {
-                                AnimatedEmptyView(modifier = Modifier.width(200.dp))
-                            }
-                        }
-                    } else {
-                        uiState.items.ListView(
-                            isLoading = uiState.isLoading,
-                            onUiEvent = onUiEvent,
-                        )
-                    }
+    Column {
+        if (uiState.items.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    AnimatedEmptyView(modifier = Modifier.width(200.dp))
                 }
             }
+        } else {
+            uiState.items.ListView(
+                isLoading = uiState.isLoading,
+                onUiEvent = onUiEvent,
+            )
         }
-    }
-
-    if (uiState is MyCheckInListUiState.Content && uiState.isOperationLoading) {
-        ShowLoaderDialog()
-    }
-
-    messageState?.let {
-        HandleMessageState(it, onUiEvent)
     }
 }
 
@@ -179,7 +115,7 @@ private fun List<CheckInEntity>.ListView(
             ListItemView(
                 item = item,
                 onClick = {
-                    onUiEvent(MyCheckInListUiEvent.ClickItem(item))
+                    onUiEvent(MyCheckInListUiEvent.ItemClicked(item))
                 },
             )
         }
@@ -236,70 +172,6 @@ private fun ListItemView(
                 DotView(color = Color.Gray)
                 Text(text = privacyTxt, fontSize = 12.sp)
             }
-        }
-    }
-}
-
-@Composable
-private fun HandleMessageState(
-    messageState: MessageState,
-    onUiEvent: (MyCheckInListUiEvent) -> Unit,
-) {
-    when (messageState) {
-        is MessageState.ShowDetails -> {
-            MyCheckInItemBottomSheet(
-                item = messageState.item,
-                onClickChangePrivacy = {
-                    onUiEvent(MyCheckInListUiEvent.ClickChangePrivacy(messageState.item, it))
-                },
-                onClickDelete = {
-                    onUiEvent(MyCheckInListUiEvent.ClickDelete(messageState.item))
-                },
-                onDismiss = {
-                    onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                },
-            )
-        }
-        is MessageState.ConfirmPrivacyChange -> {
-            ShowConfirmationDialog(
-                title = stringResource(Res.string.txt_update),
-                message = "Are you surely want to change the privacy?",
-                onConfirm = {
-                    onUiEvent(MyCheckInListUiEvent.ChangePrivacy(messageState.item, messageState.privacy))
-                },
-                onDismiss = {
-                    onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                },
-            )
-        }
-        is MessageState.ConfirmDelete -> {
-            ShowConfirmationDialog(
-                title = stringResource(Res.string.txt_delete),
-                message = stringResource(Res.string.msg_delete_permanent),
-                onConfirm = {
-                    onUiEvent(MyCheckInListUiEvent.Delete(messageState.item))
-                },
-                onDismiss = {
-                    onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                },
-            )
-        }
-        is MessageState.Success -> {
-            ShowInfoDialog(
-                message = messageState.message,
-                onDismiss = {
-                    onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                }
-            )
-        }
-        is MessageState.Error -> {
-            ShowInfoDialog(
-                message = messageState.message,
-                dismissButtonText = stringResource(Res.string.txt_retry),
-                onDismiss = {
-                    onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                }
-            )
         }
     }
 }

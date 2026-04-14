@@ -1,7 +1,6 @@
 package com.workfort.pstuian.ui.mycheckinlist
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.InitializationMode
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
@@ -9,14 +8,13 @@ import com.workfort.pstuian.featuredomain.model.CheckInEntity
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.CheckInRepository
-import com.workfort.pstuian.ui.mycheckinlist.state.MessageState
+import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInMessageState
+import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiEvent
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiState
-import com.workfort.pstuian.ui.mycheckinlist.state.NavigationState
+import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInNavigationState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 internal class MyCheckInListViewModel(
     private val userId: Int,
@@ -26,38 +24,44 @@ internal class MyCheckInListViewModel(
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<MyCheckInListUiState>(uiStateMachine) {
 
-    private val _messageState = MutableStateFlow<MessageState?>(null)
-    val messageState: StateFlow<MessageState?> = _messageState.asStateFlow()
+    private val _messageState = MutableStateFlow<MyCheckInMessageState?>(null)
+    val message = _messageState.asStateFlow()
 
-    private val _navigationState = MutableStateFlow<NavigationState?>(null)
-    val navigationState: StateFlow<NavigationState?> = _navigationState.asStateFlow()
+    private val _navigationState = MutableStateFlow<MyCheckInNavigationState?>(null)
+    val navigation = _navigationState.asStateFlow()
 
     override fun onUiReady() {
         loadCheckInList(refresh = true)
     }
 
-    fun messageConsumed() {
+    fun onUiEvent(event: MyCheckInListUiEvent) {
+        when (event) {
+            is MyCheckInListUiEvent.LoadMoreData -> loadCheckInList(event.refresh)
+            is MyCheckInListUiEvent.BackClicked -> {
+                _navigationState.update { MyCheckInNavigationState.GoBack }
+            }
+            is MyCheckInListUiEvent.ItemClicked -> {
+                _messageState.update { MyCheckInMessageState.ShowDetails(event.item) }
+            }
+            is MyCheckInListUiEvent.ChangePrivacyClicked -> {
+                _messageState.update { MyCheckInMessageState.ConfirmPrivacyChange(event.item, event.privacy) }
+            }
+            is MyCheckInListUiEvent.DeleteClicked -> {
+                _messageState.update { MyCheckInMessageState.ConfirmDelete(event.item) }
+            }
+            is MyCheckInListUiEvent.ChangePrivacy -> changePrivacy(event.item, event.privacy)
+            is MyCheckInListUiEvent.Delete -> delete(event.item)
+            is MyCheckInListUiEvent.MessageConsumed -> onMessageHandled()
+            is MyCheckInListUiEvent.NavigationConsumed -> onNavigationHandled()
+        }
+    }
+
+    fun onMessageHandled() {
         _messageState.update { null }
     }
 
-    fun navigationConsumed() {
+    fun onNavigationHandled() {
         _navigationState.update { null }
-    }
-
-    fun onClickBack() {
-        _navigationState.update { NavigationState.GoBack }
-    }
-
-    fun onClickItem(item: CheckInEntity) {
-        _messageState.update { MessageState.ShowDetails(item) }
-    }
-
-    fun onClickChangePrivacy(item: CheckInEntity, privacy: CheckInPrivacy) {
-        _messageState.update { MessageState.ConfirmPrivacyChange(item, privacy) }
-    }
-
-    fun onClickDelete(item: CheckInEntity) {
-        _messageState.update { MessageState.ConfirmDelete(item) }
     }
 
     private fun isListLoading(): Boolean {
@@ -120,12 +124,12 @@ internal class MyCheckInListViewModel(
                 checkInRepo.updatePrivacy(item.id, privacy.value)
             }.onSuccess {
                 uiStateMachine.showOperationLoading(false)
-                _messageState.update { MessageState.Success("Changed successfully") }
+                _messageState.update { MyCheckInMessageState.Success("Changed successfully") }
                 loadCheckInList(refresh = true)
             }.onFailure {
                 uiStateMachine.showOperationLoading(false)
                 val message = it.message ?: "Failed to change. Please try again."
-                _messageState.update { MessageState.Error(message) }
+                _messageState.update { MyCheckInMessageState.Error(message) }
             }
         }
     }
@@ -137,12 +141,12 @@ internal class MyCheckInListViewModel(
                 checkInRepo.delete(item.id)
             }.onSuccess {
                 uiStateMachine.showOperationLoading(false)
-                _messageState.update { MessageState.Success("Deleted successfully") }
+                _messageState.update { MyCheckInMessageState.Success("Deleted successfully") }
                 loadCheckInList(refresh = true)
             }.onFailure {
                 uiStateMachine.showOperationLoading(false)
                 val message = it.message ?: "Failed to delete. Please try again"
-                _messageState.update { MessageState.Error(message) }
+                _messageState.update { MyCheckInMessageState.Error(message) }
             }
         }
     }
