@@ -7,6 +7,4 @@ data class StudentsUiState(
     val items: List<StudentEntity> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val messageState: MessageState? = null,
-    val navigationState: NavigationState? = null,
 )

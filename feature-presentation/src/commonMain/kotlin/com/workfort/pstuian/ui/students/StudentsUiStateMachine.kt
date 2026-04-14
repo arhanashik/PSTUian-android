@@ -2,8 +2,6 @@ package com.workfort.pstuian.ui.students
 
 import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.StudentEntity
-import com.workfort.pstuian.ui.students.state.MessageState
-import com.workfort.pstuian.ui.students.state.NavigationState
 import com.workfort.pstuian.ui.students.state.StudentsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,13 +27,5 @@ internal class StudentsUiStateMachine : UiStateMachine<StudentsUiState> {
 
     fun showError(message: String) {
         _uiState.update { it.copy(error = message, isLoading = false) }
-    }
-
-    fun showMessage(messageState: MessageState?) {
-        _uiState.update { it.copy(messageState = messageState) }
-    }
-
-    fun navigateTo(navigationState: NavigationState?) {
-        _uiState.update { it.copy(navigationState = navigationState) }
     }
 }

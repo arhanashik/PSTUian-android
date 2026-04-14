@@ -43,72 +43,47 @@ import com.workfort.pstuian.common.composable.NavigationButton
 import com.workfort.pstuian.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.common.composable.TitleTextSmall
 import com.workfort.pstuian.featuredomain.model.StudentEntity
-import com.workfort.pstuian.ui.students.state.MessageState
 import com.workfort.pstuian.ui.students.state.StudentsUiEvent
 import com.workfort.pstuian.ui.students.state.StudentsUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_blood_group
-import pstuian.feature_presentation.generated.resources.txt_call
 import pstuian.feature_presentation.generated.resources.txt_id
-import pstuian.feature_presentation.generated.resources.txt_msg_call
 import pstuian.feature_presentation.generated.resources.txt_registration_number
-import pstuian.feature_presentation.generated.resources.txt_title_call
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentsContentPanel(
     uiState: StudentsUiState,
     onUiEvent: (StudentsUiEvent) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppBar(
-                title = uiState.title,
-                navigation = {
-                    NavigationButton {
-                        onUiEvent(StudentsUiEvent.ClickBack)
-                    }
-                },
-            )
-        },
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            if (uiState.error != null) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    AnimatedErrorView(modifier = Modifier.fillMaxWidth())
-                }
-            } else if (uiState.items.isEmpty()) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    if (uiState.isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
-                    }
-                }
-            } else {
-                StudentListView(
-                    students = uiState.items,
-                    isLoading = uiState.isLoading,
-                    onUiEvent = onUiEvent,
-                )
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (uiState.error != null) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                AnimatedErrorView(modifier = Modifier.fillMaxWidth())
             }
+        } else if (uiState.items.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
+                }
+            }
+        } else {
+            StudentListView(
+                students = uiState.items,
+                isLoading = uiState.isLoading,
+                onUiEvent = onUiEvent,
+            )
         }
-    }
-
-    uiState.messageState?.let {
-        HandleMessageState(it, onUiEvent)
     }
 }
 
@@ -127,10 +102,10 @@ private fun StudentListView(
             StudentListItemView(
                 student = student,
                 onClickStudent = {
-                    onUiEvent(StudentsUiEvent.ClickStudent(student))
+                    onUiEvent(StudentsUiEvent.StudentClicked(student))
                 },
                 onClickCall = {
-                    student.phone?.let { onUiEvent(StudentsUiEvent.ClickCall(it)) }
+                    student.phone?.let { onUiEvent(StudentsUiEvent.CallClicked(it)) }
                 },
             )
         }
@@ -219,29 +194,6 @@ private fun StudentListItemView(
                     contentDescription = "Call Icon",
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun HandleMessageState(
-    messageState: MessageState,
-    onUiEvent: (StudentsUiEvent) -> Unit,
-) {
-    when (messageState) {
-        is MessageState.Call -> {
-            ShowSuccessDialog(
-                icon = Icons.Default.Call,
-                title = stringResource(Res.string.txt_title_call),
-                message = stringResource(Res.string.txt_msg_call).plus(" ${messageState.phoneNumber}"),
-                confirmButtonText = stringResource(Res.string.txt_call),
-                onConfirm = {
-                    onUiEvent(StudentsUiEvent.Call(messageState.phoneNumber))
-                },
-                onDismiss = {
-                    onUiEvent(StudentsUiEvent.MessageConsumed)
-                }
-            )
         }
     }
 }

@@ -202,7 +202,12 @@ private val splashModule = module {
 private val studentsModule = module {
     factoryOf(::StudentsUiStateMachine)
     factory { (batchId: Int) ->
-        StudentsViewModel(batchId, get(), get())
+        StudentsViewModel(
+            batchId = batchId,
+            facultyRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
     }
 }
 
