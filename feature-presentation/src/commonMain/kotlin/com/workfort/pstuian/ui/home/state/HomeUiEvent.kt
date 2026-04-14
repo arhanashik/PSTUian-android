@@ -1,0 +1,21 @@
+package com.workfort.pstuian.ui.home.state
+
+import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.SliderEntity
+import com.workfort.pstuian.ui.home.ActionItem
+
+sealed interface HomeUiEvent {
+    data object LoadInitialData : HomeUiEvent
+    data object GetSliders : HomeUiEvent
+    data object GetFaculties : HomeUiEvent
+    data object GetUserProfile : HomeUiEvent
+    data object SignInClicked : HomeUiEvent
+    data object UserProfileClicked : HomeUiEvent
+    data object NotificationClicked : HomeUiEvent
+    data class ScrollSlider(val position: Int) : HomeUiEvent
+    data class SliderClicked(val slider: SliderEntity) : HomeUiEvent
+    data class FacultyClicked(val faculty: FacultyEntity) : HomeUiEvent
+    data class ActionItemClicked(val actionItem: ActionItem) : HomeUiEvent
+    data object RequestNotificationPermissionClicked : HomeUiEvent
+    data object ClearDataClicked : HomeUiEvent
+}

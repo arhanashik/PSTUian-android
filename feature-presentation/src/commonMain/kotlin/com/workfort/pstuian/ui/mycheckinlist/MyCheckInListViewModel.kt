@@ -3,6 +3,8 @@ package com.workfort.pstuian.ui.mycheckinlist
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.common.uistate.InitializationMode
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.CheckInEntity
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -21,10 +23,8 @@ internal class MyCheckInListViewModel(
     private val userType: UserType,
     private val checkInRepo: CheckInRepository,
     private val uiStateMachine: MyCheckInListUiStateMachine,
-) : UiStateMachineViewModel<MyCheckInListUiState>(
-    uiStateMachine,
-    initializationMode = InitializationMode.JustOnce,
-) {
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+) : UiStateMachineViewModel<MyCheckInListUiState>(uiStateMachine) {
 
     private val _messageState = MutableStateFlow<MessageState?>(null)
     val messageState: StateFlow<MessageState?> = _messageState.asStateFlow()
@@ -88,7 +88,7 @@ internal class MyCheckInListViewModel(
             uiStateMachine.showContent(itemsCache.toList())
         }
 
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 val list = checkInRepo.getAll(
                     userId = userId,
@@ -114,7 +114,7 @@ internal class MyCheckInListViewModel(
     }
 
     fun changePrivacy(item: CheckInEntity, privacy: CheckInPrivacy) {
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showOperationLoading(true)
             runCatching {
                 checkInRepo.updatePrivacy(item.id, privacy.value)
@@ -131,7 +131,7 @@ internal class MyCheckInListViewModel(
     }
 
     fun delete(item: CheckInEntity) {
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showOperationLoading(true)
             runCatching {
                 checkInRepo.delete(item.id)

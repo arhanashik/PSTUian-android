@@ -2,6 +2,8 @@ package com.workfort.pstuian.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.SliderEntity
 import com.workfort.pstuian.featuredomain.model.StudentEntity
@@ -12,8 +14,9 @@ import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
 import com.workfort.pstuian.ui.home.state.HomeUiState
-import com.workfort.pstuian.ui.home.state.MessageState
-import com.workfort.pstuian.ui.home.state.NavigationState
+import com.workfort.pstuian.ui.home.state.HomeMessageState
+import com.workfort.pstuian.ui.home.state.HomeNavigationState
+import com.workfort.pstuian.ui.home.state.HomeUiEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,17 +29,59 @@ internal class HomeViewModel(
     private val facultyRepo: FacultyRepository,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val uiStateMachine: HomeUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<HomeUiState>(uiStateMachine) {
 
-    private val _messageState = MutableStateFlow<MessageState?>(null)
-    val messageState: StateFlow<MessageState?> = _messageState.asStateFlow()
+    private val _message = MutableStateFlow<HomeMessageState?>(null)
+    val message: StateFlow<HomeMessageState?> = _message.asStateFlow()
 
-    private val _navigationState = MutableStateFlow<NavigationState?>(null)
-    val navigationState: StateFlow<NavigationState?> = _navigationState.asStateFlow()
+    private val _navigation = MutableStateFlow<HomeNavigationState?>(null)
+    val navigation: StateFlow<HomeNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {
         uiStateMachine.setInitialContent()
         loadInitialData()
+    }
+
+    fun onUiEvent(event: HomeUiEvent) {
+        when (event) {
+            is HomeUiEvent.LoadInitialData -> loadInitialData()
+            is HomeUiEvent.GetSliders -> getSliders()
+            is HomeUiEvent.GetFaculties -> getFaculties()
+            is HomeUiEvent.GetUserProfile -> getUserProfile()
+            is HomeUiEvent.SignInClicked -> onClickSignIn()
+            is HomeUiEvent.UserProfileClicked -> onClickUserProfile()
+            is HomeUiEvent.NotificationClicked -> onClickNotification()
+            is HomeUiEvent.ScrollSlider -> onScrollSlider(event.position)
+            is HomeUiEvent.SliderClicked -> onClickSlider(event.slider)
+            is HomeUiEvent.FacultyClicked -> onClickFaculty(event.faculty)
+            is HomeUiEvent.ActionItemClicked -> {
+                when (event.actionItem.action) {
+                    Action.AdmissionSupport -> {
+                        _navigation.update {
+                            HomeNavigationState.Browser(com.workfort.pstuian.appconstant.NetworkConst.Remote.PSTU_WEBSITE)
+                        }
+                    }
+                    Action.Donors -> onClickDonors()
+                    Action.VarsityWebsite -> {
+                        _navigation.update {
+                            HomeNavigationState.Browser(com.workfort.pstuian.appconstant.NetworkConst.Remote.PSTU_WEBSITE)
+                        }
+                    }
+                    Action.ContactUs -> onClickContactUs()
+                    Action.RequestBloodDonation -> onClickRequestBloodDonation()
+                    Action.CheckIn -> onClickCheckIn()
+                    Action.RateApp -> {
+                        _navigation.update { HomeNavigationState.Store }
+                    }
+                    Action.ClearData -> onClickClearData()
+                    Action.Settings -> onClickSettings()
+                    Action.Donate -> onClickDonate()
+                }
+            }
+            is HomeUiEvent.RequestNotificationPermissionClicked -> showNotificationPermissionConfirmation()
+            is HomeUiEvent.ClearDataClicked -> clearAllData()
+        }
     }
 
     private fun isSignedInUser(): Boolean {
@@ -44,24 +89,24 @@ internal class HomeViewModel(
         return state is HomeUiState.Content && state.profileState is HomeUiState.ProfileState.Available
     }
 
-    fun messageConsumed() {
-        _messageState.update { null }
+    fun onMessageHandled() {
+        _message.update { null }
     }
 
-    fun navigationConsumed() {
-        _navigationState.update { null }
+    fun onNavigationHandled() {
+        _navigation.update { null }
     }
 
-    fun onClickSignIn() {
-        messageConsumed()
-        _navigationState.update { NavigationState.SignInScreen }
+    private fun onClickSignIn() {
+        onMessageHandled()
+        _navigation.update { HomeNavigationState.SignInScreen }
     }
 
-    fun showNotificationPermissionConfirmation() {
-        _messageState.update { MessageState.NotificationPermission }
+    private fun showNotificationPermissionConfirmation() {
+        _message.update { HomeMessageState.NotificationPermission }
     }
 
-    fun onClickUserProfile() {
+    private fun onClickUserProfile() {
         val state = uiState.value
         if (state is HomeUiState.Content && state.profileState is HomeUiState.ProfileState.Available) {
             val user = state.profileState.user
@@ -76,67 +121,67 @@ internal class HomeViewModel(
                 else -> null
             }
             if (userType != null && userId != null) {
-                _navigationState.update { NavigationState.GoToProfileScreen(userType, userId) }
+                _navigation.update { HomeNavigationState.GoToProfileScreen(userType, userId) }
             }
         }
     }
 
-    fun onClickNotification() {
-        _navigationState.update { NavigationState.NotificationScreen }
+    private fun onClickNotification() {
+        _navigation.update { HomeNavigationState.NotificationScreen }
     }
 
-    fun onScrollSlider(position: Int) {
+    private fun onScrollSlider(position: Int) {
         uiStateMachine.updateSliderPosition(position)
     }
 
-    fun onClickSlider(slider: SliderEntity) {
+    private fun onClickSlider(slider: SliderEntity) {
         slider.imageUrl?.let { imageUrl ->
-            _navigationState.update { NavigationState.ImagePreviewScreen(imageUrl) }
+            _navigation.update { HomeNavigationState.ImagePreviewScreen(imageUrl) }
         }
     }
 
-    fun onClickFaculty(faculty: FacultyEntity) {
+    private fun onClickFaculty(faculty: FacultyEntity) {
         if (isSignedInUser()) {
-            _navigationState.update { NavigationState.FacultyScreen(faculty) }
+            _navigation.update { HomeNavigationState.FacultyScreen(faculty) }
         } else {
-            _messageState.update { MessageState.SignInNecessary }
+            _message.update { HomeMessageState.SignInNecessary }
         }
     }
 
-    fun onClickDonors() {
-        _navigationState.update { NavigationState.DonorsScreen }
+    private fun onClickDonors() {
+        _navigation.update { HomeNavigationState.DonorsScreen }
     }
 
-    fun onClickContactUs() {
-        _navigationState.update { NavigationState.ContactUsScreen }
+    private fun onClickContactUs() {
+        _navigation.update { HomeNavigationState.ContactUsScreen }
     }
 
-    fun onClickRequestBloodDonation() {
+    private fun onClickRequestBloodDonation() {
         if (isSignedInUser()) {
-            _navigationState.update { NavigationState.BloodDonationRequestScreen }
+            _navigation.update { HomeNavigationState.BloodDonationRequestScreen }
         } else {
-            _messageState.update { MessageState.SignInNecessary }
+            _message.update { HomeMessageState.SignInNecessary }
         }
     }
 
-    fun onClickCheckIn() {
+    private fun onClickCheckIn() {
         if (isSignedInUser()) {
-            _navigationState.update { NavigationState.CheckInScreen }
+            _navigation.update { HomeNavigationState.CheckInScreen }
         } else {
-            _messageState.update { MessageState.SignInNecessary }
+            _message.update { HomeMessageState.SignInNecessary }
         }
     }
 
-    fun onClickSettings() {
-        _navigationState.update { NavigationState.SettingsScreen }
+    private fun onClickSettings() {
+        _navigation.update { HomeNavigationState.SettingsScreen }
     }
 
-    fun onClickDonate() {
-        _navigationState.update { NavigationState.DonateScreen }
+    private fun onClickDonate() {
+        _navigation.update { HomeNavigationState.DonateScreen }
     }
 
-    fun onClickClearData() {
-        _messageState.update { MessageState.ClearAllData }
+    private fun onClickClearData() {
+        _message.update { HomeMessageState.ClearAllData }
     }
 
     private fun loadInitialData() {
@@ -147,7 +192,7 @@ internal class HomeViewModel(
 
     fun getSliders() {
         uiStateMachine.showSliderLoading()
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 sliderRepo.getSliders()
             }.onSuccess {
@@ -161,7 +206,7 @@ internal class HomeViewModel(
 
     fun getFaculties() {
         uiStateMachine.showFacultyLoading()
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 facultyRepo.getFaculties()
             }.onSuccess {
@@ -175,7 +220,7 @@ internal class HomeViewModel(
 
     fun getUserProfile() {
         uiStateMachine.showProfileLoading()
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 authRepo.getSignInUser()
             }.onSuccess {
@@ -188,14 +233,14 @@ internal class HomeViewModel(
     }
 
     fun clearAllData() {
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 clearAllDataUseCase()
             }.onSuccess {
-                _navigationState.update { NavigationState.SplashScreen }
+                _navigation.update { HomeNavigationState.SplashScreen }
             }.onFailure {
                 val error = it.message ?: "Failed to clear data"
-                _messageState.update { MessageState.ClearAllDataFailed(error) }
+                _message.update { HomeMessageState.ClearAllDataFailed(error) }
             }
         }
     }

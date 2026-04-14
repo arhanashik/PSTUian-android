@@ -7,6 +7,7 @@ import com.workfort.pstuian.featuredomain.model.TeacherEntity
 
 sealed interface HomeUiState {
     data object None : HomeUiState
+
     data class Content(
         val profileState: ProfileState = ProfileState.None,
         val sliderState: SliderState = SliderState.None,

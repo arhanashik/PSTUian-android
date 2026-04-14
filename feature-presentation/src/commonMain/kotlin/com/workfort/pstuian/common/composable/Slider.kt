@@ -29,10 +29,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.workfort.pstuian.featuredomain.model.SliderEntity
+import kotlinx.coroutines.delay
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.img_placeholder_profile
-import com.workfort.pstuian.model.SliderEntity
-import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
 

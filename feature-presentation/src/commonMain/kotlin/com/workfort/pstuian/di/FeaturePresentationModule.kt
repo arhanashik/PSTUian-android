@@ -153,7 +153,13 @@ private val homeModule = module {
 private val myCheckInListModule = module {
     factoryOf(::MyCheckInListUiStateMachine)
     factory { (userId: Int, userType: UserType) ->
-        MyCheckInListViewModel(userId, userType, get(), get())
+        MyCheckInListViewModel(
+            userId = userId,
+            userType = userType,
+            checkInRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
     }
 }
 

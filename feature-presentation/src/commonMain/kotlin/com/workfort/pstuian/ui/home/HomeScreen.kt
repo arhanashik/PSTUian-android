@@ -1,137 +1,231 @@
 package com.workfort.pstuian.ui.home
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.workfort.pstuian.appconstant.NetworkConst
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
-import com.workfort.pstuian.featuredomain.model.UserType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
+import com.workfort.pstuian.common.composable.AppBar
+import com.workfort.pstuian.common.composable.AppBarIconButton
+import com.workfort.pstuian.common.composable.AppScaffold
+import com.workfort.pstuian.common.composable.LoadAsyncUserImage
+import com.workfort.pstuian.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.navigation.AppNavigator
+import com.workfort.pstuian.common.navigation.AppScreen
+import com.workfort.pstuian.featuredomain.model.StudentEntity
+import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.ui.home.composable.HomeContentPanel
-import com.workfort.pstuian.ui.home.state.NavigationState
+import com.workfort.pstuian.ui.home.state.HomeMessageState
+import com.workfort.pstuian.ui.home.state.HomeNavigationState
+import com.workfort.pstuian.ui.home.state.HomeUiEvent
+import com.workfort.pstuian.ui.home.state.HomeUiState
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.app_name
+import pstuian.feature_presentation.generated.resources.data_clear_message
+import pstuian.feature_presentation.generated.resources.label_are_you_sure
+import pstuian.feature_presentation.generated.resources.msg_request_notification_permission
+import pstuian.feature_presentation.generated.resources.msg_sign_in_required
+import pstuian.feature_presentation.generated.resources.txt_allow
+import pstuian.feature_presentation.generated.resources.txt_notification
+import pstuian.feature_presentation.generated.resources.txt_sign_in
+import pstuian.feature_presentation.generated.resources.txt_sign_in_required
 
 @Composable
-fun HomeScreen(
-    modifier: Modifier = Modifier,
-    viewModel: HomeViewModel,
-    navigateToSignIn: () -> Unit,
-    navigateToProfile: (userType: UserType, userId: Int) -> Unit,
-    navigateToNotification: () -> Unit,
-    navigateToFaculty: (FacultyEntity) -> Unit,
-    navigateToImagePreview: (url: String) -> Unit,
-    navigateToContactUs: () -> Unit,
-    navigateToDonors: () -> Unit,
-    navigateToBloodDonationRequest: () -> Unit,
-    navigateToCheckIn: () -> Unit,
-    navigateToDonate: () -> Unit,
-    navigateToSettings: () -> Unit,
-    openBrowser: (url: String) -> Unit,
-    openStore: () -> Unit,
-    requestNotificationPermission: () -> Unit,
-) {
+internal fun HomeScreen(viewModel: HomeViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val messageState by viewModel.messageState.collectAsState()
-    val navigationState by viewModel.navigationState.collectAsState()
+    val message by viewModel.message.collectAsState()
+    val navigation by viewModel.navigation.collectAsState()
 
-    LaunchedEffect(key1 = navigationState) {
-        when (val state = navigationState) {
-            is NavigationState.SplashScreen -> {
-                // This is handled by a splash route or similar in KMP
-                viewModel.navigationConsumed()
+    HomeScreenContent(uiState, viewModel::onUiEvent)
+
+    HandleMessageState(message, viewModel::onUiEvent, viewModel::onMessageHandled)
+    HandleNavigationState(navigation, viewModel::onNavigationHandled)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeScreenContent(
+    uiState: HomeUiState,
+    onUiEvent: (HomeUiEvent) -> Unit,
+) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    AppScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            AppBar(
+                title = stringResource(Res.string.app_name),
+                actions = {
+                    // load signed in user
+                    (uiState as? HomeUiState.Content)?.let {
+                        ProfileView(uiState.profileState, onUiEvent)
+                    }
+
+                    AppBarIconButton(
+                        icon = Icons.Default.NotificationsActive,
+                        onClick = { onUiEvent(HomeUiEvent.NotificationClicked) },
+                    )
+                },
+                scrollBehavior = scrollBehavior,
+            )
+        }
+    ) {
+        when (uiState) {
+            is HomeUiState.None -> Unit
+            is HomeUiState.Content -> {
+                HomeContentPanel(uiState, onUiEvent)
             }
-            is NavigationState.SignInScreen -> {
-                navigateToSignIn()
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.GoToProfileScreen -> {
-                navigateToProfile(state.userType, state.userId)
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.NotificationScreen -> {
-                navigateToNotification()
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.FacultyScreen -> {
-                navigateToFaculty(state.faculty)
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.ImagePreviewScreen -> {
-                navigateToImagePreview(state.url)
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.ContactUsScreen -> {
-                navigateToContactUs()
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.DonorsScreen -> {
-                navigateToDonors()
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.BloodDonationRequestScreen -> {
-                navigateToBloodDonationRequest()
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.CheckInScreen -> {
-                navigateToCheckIn()
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.DonateScreen -> {
-                navigateToDonate()
-                viewModel.navigationConsumed()
-            }
-            is NavigationState.SettingsScreen -> {
-                navigateToSettings()
-                viewModel.navigationConsumed()
-            }
-            null -> Unit
         }
     }
+}
 
-    Scaffold { paddingValues ->
-        HomeContentPanel(
-            modifier = modifier.padding(paddingValues),
-            uiState = uiState,
-            messageState = messageState,
-            onUiEvent = { event ->
-                when (event) {
-                    is HomeUiEvent.None -> Unit
-                    is HomeUiEvent.LoadInitialData -> viewModel.onUiReady()
-                    is HomeUiEvent.GetSliders -> viewModel.getSliders()
-                    is HomeUiEvent.GetFaculties -> viewModel.getFaculties()
-                    is HomeUiEvent.GetUserProfile -> viewModel.getUserProfile()
-                    is HomeUiEvent.OnClickSignIn -> viewModel.onClickSignIn()
-                    is HomeUiEvent.OnClickUserProfile -> viewModel.onClickUserProfile()
-                    is HomeUiEvent.OnClickNotification -> viewModel.onClickNotification()
-                    is HomeUiEvent.OnScrollSlider -> viewModel.onScrollSlider(event.position)
-                    is HomeUiEvent.OnClickSlider -> viewModel.onClickSlider(event.slider)
-                    is HomeUiEvent.OnClickFaculty -> viewModel.onClickFaculty(event.faculty)
-                    is HomeUiEvent.OnClickActionItem -> {
-                        when (event.actionItem.action) {
-                            Action.AdmissionSupport -> openBrowser(NetworkConst.Remote.PSTU_WEBSITE)
-                            Action.Donors -> viewModel.onClickDonors()
-                            Action.VarsityWebsite -> openBrowser(NetworkConst.Remote.PSTU_WEBSITE)
-                            Action.ContactUs -> viewModel.onClickContactUs()
-                            Action.RequestBloodDonation -> viewModel.onClickRequestBloodDonation()
-                            Action.CheckIn -> viewModel.onClickCheckIn()
-                            Action.RateApp -> openStore()
-                            Action.ClearData -> viewModel.onClickClearData()
-                            Action.Settings -> viewModel.onClickSettings()
-                            Action.Donate -> viewModel.onClickDonate()
-                        }
-                    }
-                    is HomeUiEvent.OnSignIn -> viewModel.onClickSignIn()
-                    is HomeUiEvent.OnRequestNotificationPermission -> {
-                        viewModel.messageConsumed()
-                        requestNotificationPermission()
-                    }
-                    is HomeUiEvent.OnClearData -> viewModel.clearAllData()
-                    is HomeUiEvent.MessageConsumed -> viewModel.messageConsumed()
-                    is HomeUiEvent.NavigationConsumed -> viewModel.navigationConsumed()
+@Composable
+private fun ProfileView(state: HomeUiState.ProfileState, onUiEvent: (HomeUiEvent) -> Unit) {
+    when (state) {
+        is HomeUiState.ProfileState.None -> Unit
+        is HomeUiState.ProfileState.Loading -> Unit
+        is HomeUiState.ProfileState.Available -> {
+            val imageUrl = when(val u = state.user) {
+                is StudentEntity -> u.imageUrl
+                is TeacherEntity -> u.imageUrl
+                else -> null
+            }
+            LoadAsyncUserImage(
+                modifier = Modifier.clickable {
+                    onUiEvent(HomeUiEvent.UserProfileClicked)
+                },
+                url = imageUrl,
+                size = 24.dp,
+            )
+        }
+        is HomeUiState.ProfileState.Error -> {
+            TextButton(onClick = { onUiEvent(HomeUiEvent.SignInClicked) }) {
+                Text(text = stringResource(Res.string.txt_sign_in))
+            }
+        }
+    }
+}
+
+@Composable
+private fun HandleMessageState(
+    message: HomeMessageState?,
+    onUiEvent: (HomeUiEvent) -> Unit,
+    onMessageHandled: () -> Unit,
+) {
+    message?.let {
+        when (it) {
+            is HomeMessageState.SignInNecessary -> {
+                ShowConfirmationDialog(
+                    title = stringResource(Res.string.txt_sign_in_required),
+                    message = stringResource(Res.string.msg_sign_in_required),
+                    confirmButtonText = stringResource(Res.string.txt_sign_in),
+                    onConfirm = {
+                        onUiEvent(HomeUiEvent.SignInClicked)
+                    },
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is HomeMessageState.NotificationPermission -> {
+                ShowConfirmationDialog(
+                    title = stringResource(Res.string.txt_notification),
+                    message = stringResource(Res.string.msg_request_notification_permission),
+                    confirmButtonText = stringResource(Res.string.txt_allow),
+                    onConfirm = {
+                        // TODO request permission
+                        onMessageHandled()
+                    },
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is HomeMessageState.ClearAllData -> {
+                ShowConfirmationDialog(
+                    title = stringResource(Res.string.label_are_you_sure),
+                    message = stringResource(Res.string.data_clear_message),
+                    onConfirm = {
+                        onUiEvent(HomeUiEvent.ClearDataClicked)
+                        onMessageHandled()
+                    },
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is HomeMessageState.ClearAllDataFailed -> {
+                ShowErrorDialog(
+                    message = it.error,
+                    onConfirm = onMessageHandled,
+                    onDismiss = onMessageHandled
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HandleNavigationState(
+    navigation: HomeNavigationState?,
+    onNavigationHandled: () -> Unit,
+) {
+    val navigator = koinInject<AppNavigator?>()
+
+    LaunchedEffect(navigation) {
+        navigation?.let {
+            when (it) {
+                is HomeNavigationState.SplashScreen -> {
+                    // TODO navigate to splash
                 }
-            },
-        )
+                is HomeNavigationState.SignInScreen -> {
+                    navigator?.navigateTo(AppScreen.SignIn)
+                }
+                is HomeNavigationState.GoToProfileScreen -> {
+                    navigator?.navigateTo(AppScreen.Profile(it.userId, it.userType))
+                }
+                is HomeNavigationState.NotificationScreen -> {
+                    // TODO navigate to notification
+                }
+                is HomeNavigationState.FacultyScreen -> {
+                    // navigator?.navigateTo(AppScreen.Faculty(it.faculty.id))
+                }
+                is HomeNavigationState.ImagePreviewScreen -> {
+                    // TODO navigate to image preview
+                }
+                is HomeNavigationState.ContactUsScreen -> {
+                    // TODO navigate to contact us
+                }
+                is HomeNavigationState.DonorsScreen -> {
+                    navigator?.navigateTo(AppScreen.BloodDonationRequestList)
+                }
+                is HomeNavigationState.BloodDonationRequestScreen -> {
+                    navigator?.navigateTo(AppScreen.BloodDonationRequestCreate)
+                }
+                is HomeNavigationState.CheckInScreen -> {
+                    // TODO navigate to check in
+                }
+                is HomeNavigationState.DonateScreen -> {
+                    navigator?.navigateTo(AppScreen.Donate)
+                }
+                is HomeNavigationState.SettingsScreen -> {
+                    // TODO navigate to settings
+                }
+                is HomeNavigationState.Browser -> {
+                    // TODO open browser
+                }
+                is HomeNavigationState.Store -> {
+                    // TODO open store
+                }
+            }
+            onNavigationHandled()
+        }
     }
 }
