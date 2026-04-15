@@ -33,7 +33,6 @@ fun SignUpScreen(
     viewModel: SignUpViewModel,
     facultyId: Int?,
     batchId: Int?,
-    onOpenUrl: (String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
@@ -42,36 +41,17 @@ fun SignUpScreen(
     LaunchedEffect(key1 = facultyId, key2 = batchId) {
         if (facultyId != null) {
             if (batchId == null) {
-                viewModel.onEvent(SignUpUiEvent.FacultyChanged(facultyId))
+                viewModel.onUiEvent(SignUpUiEvent.FacultyChanged(facultyId))
             } else {
-                viewModel.onEvent(SignUpUiEvent.BatchChanged(batchId))
+                viewModel.onUiEvent(SignUpUiEvent.BatchChanged(batchId))
             }
         }
     }
 
-    SignUpScreenContent(
-        uiState = uiState,
-        onUiEvent = { event ->
-            when (event) {
-                is SignUpUiEvent.TermsAndConditionsClicked ->
-                    onOpenUrl("https://pstuian.com/terms-and-conditions")
-                is SignUpUiEvent.PrivacyPolicyClicked ->
-                    onOpenUrl("https://pstuian.com/privacy-policy")
-                else -> viewModel.onEvent(event)
-            }
-        },
-    )
+    SignUpScreenContent(uiState, viewModel::onUiEvent)
 
-    HandleMessageState(
-        message = message,
-        onUiEvent = viewModel::onEvent,
-        onMessageHandled = viewModel::onMessageHandled,
-    )
-
-    HandleNavigationState(
-        navigation = navigation,
-        onNavigationHandled = viewModel::onNavigationConsumed,
-    )
+    HandleMessageState(message, viewModel::onMessageHandled)
+    HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +83,6 @@ private fun SignUpScreenContent(
 @Composable
 private fun HandleMessageState(
     message: SignUpMessageState?,
-    onUiEvent: (SignUpUiEvent) -> Unit,
     onMessageHandled: () -> Unit,
 ) {
     message?.let {
@@ -115,7 +94,7 @@ private fun HandleMessageState(
                     cancelable = false,
                     onConfirm = {
                         onMessageHandled()
-                        onUiEvent(SignUpUiEvent.BackClicked)
+                        it.onConfirm()
                     }
                 )
             }

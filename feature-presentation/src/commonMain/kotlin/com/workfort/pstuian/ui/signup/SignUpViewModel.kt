@@ -37,11 +37,9 @@ class SignUpViewModel(
 
     override fun onUiReady() {}
 
-    fun onEvent(event: SignUpUiEvent) {
+    fun onUiEvent(event: SignUpUiEvent) {
         when (event) {
-            is SignUpUiEvent.BackClicked -> {
-                _navigation.update { SignUpNavigationState.GoBack }
-            }
+            is SignUpUiEvent.BackClicked -> _navigation.update { SignUpNavigationState.GoBack }
             is SignUpUiEvent.UserTypeBtnClicked -> stateMachine.onClickUserTypeBtn(event.userType)
             is SignUpUiEvent.SignUpStudentClicked -> signUpStudent()
             is SignUpUiEvent.SignUpTeacherClicked -> signUpTeacher()
@@ -70,8 +68,8 @@ class SignUpViewModel(
             is SignUpUiEvent.SignInClicked -> {
                 _navigation.update { SignUpNavigationState.GoBack }
             }
-            is SignUpUiEvent.TermsAndConditionsClicked -> Unit // Handled in Screen
-            is SignUpUiEvent.PrivacyPolicyClicked -> Unit // Handled in Screen
+            is SignUpUiEvent.TermsAndConditionsClicked -> onTermsAndConditionsClicked()
+            is SignUpUiEvent.PrivacyPolicyClicked -> onPrivacyPolicyClicked()
             is SignUpUiEvent.FacultyChanged -> onChangeFaculty(event.facultyId ?: 0)
             is SignUpUiEvent.BatchChanged -> onChangeBatch(event.batchId ?: 0)
             is SignUpUiEvent.StudentSignUpInputChanged ->
@@ -85,8 +83,16 @@ class SignUpViewModel(
         _message.update { null }
     }
 
-    fun onNavigationConsumed() {
+    fun onNavigationHandled() {
         _navigation.update { null }
+    }
+
+    private fun onTermsAndConditionsClicked() {
+        // open url
+    }
+
+    private fun onPrivacyPolicyClicked() {
+        // open url
     }
 
     private fun onChangeFaculty(facultyId: Int) {
@@ -173,7 +179,11 @@ class SignUpViewModel(
                     password = input.password,
                 )
                 stateMachine.updateUiState { it.copy(isLoading = false) }
-                _message.update { SignUpMessageState.SignUpSuccess }
+                _message.update {
+                    SignUpMessageState.SignUpSuccess {
+                        _navigation.update { SignUpNavigationState.GoBack }
+                    }
+                }
             }.onFailure {
                 val msg = it.message ?: "Failed to Sign up. Please try again."
                 stateMachine.updateUiState { it.copy(isLoading = false) }
@@ -203,7 +213,11 @@ class SignUpViewModel(
                     facultyId = input.faculty!!.id,
                 )
                 stateMachine.updateUiState { it.copy(isLoading = false) }
-                _message.update { SignUpMessageState.SignUpSuccess }
+                _message.update {
+                    SignUpMessageState.SignUpSuccess {
+                        _navigation.update { SignUpNavigationState.GoBack }
+                    }
+                }
             }.onFailure {
                 val msg = it.message ?: "Failed to Sign up. Please try again."
                 stateMachine.updateUiState { it.copy(isLoading = false) }

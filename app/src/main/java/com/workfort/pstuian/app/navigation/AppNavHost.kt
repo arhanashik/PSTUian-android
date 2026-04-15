@@ -86,7 +86,6 @@ fun AppNavHost(
                 viewModel = koinViewModel(),
                 facultyId = null,
                 batchId = null,
-                onOpenUrl = {}
             )
         }
         composable<AppScreen.ChangePassword> {
