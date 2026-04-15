@@ -60,6 +60,7 @@
     <string name="txt_connect">Connect</string>
     <string name="txt_option">Option</string>
     <string name="txt_blood_group">Blood Group</string>
+    <string name="txt_description">Description</string>
     <string name="txt_address">Address</string>
     <string name="txt_phone">Phone</string>
     <string name="txt_email">Email</string>
@@ -71,6 +72,7 @@
     <string name="txt_account">Account</string>
     <string name="txt_delete_account">Delete Account</string>
     <string name="txt_edit">Edit</string>
+    <string name="txt_edit_bio">Edit Bio</string>
     <string name="txt_change_bio">Change Bio</string>
     <string name="hint_bio">Bio</string>
     <string name="txt_update">Update</string>

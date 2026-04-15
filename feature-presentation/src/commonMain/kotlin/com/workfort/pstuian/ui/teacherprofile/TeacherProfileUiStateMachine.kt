@@ -2,8 +2,6 @@ package com.workfort.pstuian.ui.teacherprofile
 
 import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
-import com.workfort.pstuian.ui.teacherprofile.state.MessageState
-import com.workfort.pstuian.ui.teacherprofile.state.NavigationState
 import com.workfort.pstuian.ui.teacherprofile.state.ProfileState
 import com.workfort.pstuian.ui.teacherprofile.state.TeacherProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,13 +37,5 @@ internal class TeacherProfileUiStateMachine : UiStateMachine<TeacherProfileUiSta
 
     fun updateSignedInState(isSignedIn: Boolean) {
         _uiState.update { it.copy(isSignedIn = isSignedIn) }
-    }
-
-    fun showMessage(messageState: MessageState?) {
-        _uiState.update { it.copy(messageState = messageState) }
-    }
-
-    fun navigateTo(navigationState: NavigationState?) {
-        _uiState.update { it.copy(navigationState = navigationState) }
     }
 }

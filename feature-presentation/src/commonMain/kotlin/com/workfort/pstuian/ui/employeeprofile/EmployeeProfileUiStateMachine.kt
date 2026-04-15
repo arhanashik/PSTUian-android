@@ -3,8 +3,6 @@ package com.workfort.pstuian.ui.employeeprofile
 import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileUiState
-import com.workfort.pstuian.ui.employeeprofile.state.MessageState
-import com.workfort.pstuian.ui.employeeprofile.state.NavigationState
 import com.workfort.pstuian.ui.employeeprofile.state.ProfileState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,13 +37,5 @@ internal class EmployeeProfileUiStateMachine : UiStateMachine<EmployeeProfileUiS
 
     fun updateSignedInState(isSignedIn: Boolean) {
         _uiState.update { it.copy(isSignedIn = isSignedIn) }
-    }
-
-    fun showMessage(messageState: MessageState?) {
-        _uiState.update { it.copy(messageState = messageState) }
-    }
-
-    fun navigateTo(navigationState: NavigationState?) {
-        _uiState.update { it.copy(navigationState = navigationState) }
     }
 }

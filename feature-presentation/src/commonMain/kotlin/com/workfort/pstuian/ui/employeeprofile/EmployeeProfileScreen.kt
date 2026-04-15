@@ -1,326 +1,230 @@
-package com.workfort.pstuian.app.ui.common.ui.employeeprofile
+package com.workfort.pstuian.ui.employeeprofile
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.model.EmployeeProfile
-import com.workfort.pstuian.model.ProfileInfoItem
-import com.workfort.pstuian.model.ProfileInfoItemAction
-import com.workfort.pstuian.reducer.ui.employeeprofile.EmployeeProfileScreenState
-import com.workfort.pstuian.common.composable.AnimatedErrorView
-import com.workfort.pstuian.common.composable.LoadAsyncUserImage
-import com.workfort.pstuian.common.composable.ProfileInfoListView
+import com.workfort.pstuian.common.composable.AppScaffold
 import com.workfort.pstuian.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.common.composable.TabView
-import com.workfort.pstuian.common.composable.TitleTextSmall
-import com.workfort.pstuian.ui.employeeprofile.EmployeeProfileViewModel
-import kotlinx.coroutines.launch
+import com.workfort.pstuian.common.composable.ShowErrorDialog
+import com.workfort.pstuian.common.composable.ShowInputDialog
+import com.workfort.pstuian.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.common.navigation.AppNavigator
+import com.workfort.pstuian.common.navigation.AppScreen
+import com.workfort.pstuian.ui.employeeprofile.composable.EmployeeProfileContentPanel
+import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileMessageState
+import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileNavigationState
+import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileUiEvent
+import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileUiState
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.txt_academic
-import pstuian.feature_presentation.generated.resources.txt_address
+import pstuian.feature_presentation.generated.resources.hint_bio
+import pstuian.feature_presentation.generated.resources.msg_sign_out
 import pstuian.feature_presentation.generated.resources.txt_call
-import pstuian.feature_presentation.generated.resources.txt_connect
-import pstuian.feature_presentation.generated.resources.txt_department
-import pstuian.feature_presentation.generated.resources.txt_designation
-import pstuian.feature_presentation.generated.resources.txt_faculty
+import pstuian.feature_presentation.generated.resources.txt_change_bio
+import pstuian.feature_presentation.generated.resources.txt_edit
+import pstuian.feature_presentation.generated.resources.txt_email
 import pstuian.feature_presentation.generated.resources.txt_msg_call
-import pstuian.feature_presentation.generated.resources.txt_phone
+import pstuian.feature_presentation.generated.resources.txt_msg_email
+import pstuian.feature_presentation.generated.resources.txt_sign_out
 import pstuian.feature_presentation.generated.resources.txt_title_call
-
+import pstuian.feature_presentation.generated.resources.txt_title_email
+import pstuian.feature_presentation.generated.resources.txt_update
 
 @Composable
-fun EmployeeProfileScreen(
-    modifier: Modifier = Modifier,
-    viewModel: EmployeeProfileViewModel,
-    onCall: (String) -> Unit,
-    onBack: () -> Unit,
-    onImagePreview: (String) -> Unit,
-) {
-    val screenState by viewModel.screenState.collectAsState()
-    var uiEvent by remember {
-        mutableStateOf<EmployeeProfileScreenUiEvent>(EmployeeProfileScreenUiEvent.None)
-    }
-    var profileInfoItemAction by remember {
-        mutableStateOf<ProfileInfoItemAction>(ProfileInfoItemAction.None)
-    }
+internal fun EmployeeProfileScreen(viewModel: EmployeeProfileViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+    val message by viewModel.message.collectAsState()
+    val navigation by viewModel.navigation.collectAsState()
 
-    LaunchedEffect(key1 = null) {
-        uiEvent = EmployeeProfileScreenUiEvent.OnLoadProfile
-    }
+    EmployeeProfileScreenContent(uiState, viewModel::onUiEvent)
 
-    with(screenState) {
-        displayState.Handle(modifier = modifier) {
-            uiEvent = it
-        }
-        navigationState?.let { navigationState ->
-            LaunchedEffect(navigationState) {
-                when (navigationState) {
-                    is EmployeeProfileScreenState.NavigationState.GoBack -> onBack()
-                    is EmployeeProfileScreenState.NavigationState.ImagePreviewScreen -> {
-                        onImagePreview(navigationState.encodedImageUrl)
-                    }
-                }
-                viewModel.navigationConsumed()
-            }
-        }
-    }
-
-    with(uiEvent) {
-        when (this) {
-            is EmployeeProfileScreenUiEvent.None -> Unit
-            is EmployeeProfileScreenUiEvent.OnLoadProfile -> viewModel.loadProfile()
-            is EmployeeProfileScreenUiEvent.OnClickBack -> viewModel.onClickBack()
-            is EmployeeProfileScreenUiEvent.OnClickCall -> viewModel.onClickCall()
-            is EmployeeProfileScreenUiEvent.OnClickTab -> viewModel.onClickTab(index)
-            is EmployeeProfileScreenUiEvent.OnClickImage -> viewModel.onClickImage(url)
-            is EmployeeProfileScreenUiEvent.OnClickBio -> viewModel.onClickBio()
-            is EmployeeProfileScreenUiEvent.OnClickAction -> profileInfoItemAction = actionItem
-            is EmployeeProfileScreenUiEvent.OnCall -> onCall(phoneNumber)
-            is EmployeeProfileScreenUiEvent.MessageConsumed -> viewModel.messageConsumed()
-            is EmployeeProfileScreenUiEvent.NavigationConsumed -> viewModel.navigationConsumed()
-        }
-        uiEvent = EmployeeProfileScreenUiEvent.None
-    }
-
-    with(profileInfoItemAction) {
-        when (this) {
-            is ProfileInfoItemAction.None -> Unit
-            is ProfileInfoItemAction.Edit -> Unit
-            is ProfileInfoItemAction.Call -> viewModel.onClickCall()
-            is ProfileInfoItemAction.Email -> Unit
-            is ProfileInfoItemAction.DownloadCv -> Unit
-            is ProfileInfoItemAction.Link -> Unit
-            is ProfileInfoItemAction.Password -> Unit
-            is ProfileInfoItemAction.UploadCv -> Unit
-            is ProfileInfoItemAction.BloodDonationList -> Unit
-            is ProfileInfoItemAction.CheckInList -> Unit
-            is ProfileInfoItemAction.SignedInDevices -> Unit
-            is ProfileInfoItemAction.DeleteAccount -> Unit
-        }
-        profileInfoItemAction = ProfileInfoItemAction.None
-    }
+    HandleMessageState(message, viewModel::messageHandled)
+    HandleNavigationState(navigation, viewModel::navigationHandled)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenContent(
-    modifier: Modifier,
-    displayState: EmployeeProfileScreenState.DisplayState,
-    onUiEvent: (EmployeeProfileScreenUiEvent) -> Unit,
+private fun EmployeeProfileScreenContent(
+    uiState: EmployeeProfileUiState,
+    onUiEvent: (EmployeeProfileUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    Scaffold(
+    var fabButtonExpanded by remember { mutableStateOf(true) }
+
+    LaunchedEffect(key1 = null) {
+        delay(1000)
+        fabButtonExpanded = false
+    }
+
+    AppScaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-    ) { innerPadding ->
-        displayState.profileState.Handle(modifier.padding(innerPadding), onUiEvent)
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun ProfileView(
-    modifier: Modifier,
-    profile: EmployeeProfile,
-    onUiEvent: (EmployeeProfileScreenUiEvent) -> Unit,
-) {
-    val userImageUrl = profile.employee.imageUrl
-    val scope = rememberCoroutineScope()
-    val tabs = listOf(
-        stringResource(Res.string.txt_academic),
-        stringResource(Res.string.txt_connect),
-    )
-    val pagerState = rememberPagerState(pageCount = { tabs.size })
-    val selectedTabIndex by remember { derivedStateOf { pagerState.currentPage } }
-
-    LaunchedEffect(key1 = selectedTabIndex) {
-        onUiEvent(EmployeeProfileScreenUiEvent.OnClickTab(selectedTabIndex))
-    }
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-                .padding(horizontal = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            IconButton(
-                onClick = { onUiEvent(EmployeeProfileScreenUiEvent.OnClickBack) },
-            ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back button")
-            }
-            LoadAsyncUserImage(
-                modifier = if (userImageUrl.isNullOrEmpty()) {
-                    Modifier
-                } else {
-                    Modifier.clickable {
-                        onUiEvent(EmployeeProfileScreenUiEvent.OnClickImage(userImageUrl))
-                    }
-                },
-                url = userImageUrl,
-                size = 96.dp,
-            )
-            IconButton(
-                onClick = { onUiEvent(EmployeeProfileScreenUiEvent.OnClickCall) },
-            ) {
-                Icon(Icons.Filled.Call, contentDescription = "Action button")
-            }
-        }
-        TitleTextSmall(
-            modifier = Modifier.padding(start = 16.dp, top = 10.dp, end = 16.dp),
-            text = profile.employee.name,
-        )
-        TabView(
-            modifier = Modifier.padding(top = 16.dp),
-            tabs = tabs,
-            selectedTabIndex = selectedTabIndex,
-        ) { index ->
-            scope.launch {
-                pagerState.animateScrollToPage(index)
-            }
-        }
-        HorizontalPager(state = pagerState) { page ->
-            when (page) {
-                0 -> getEmployeeAcademicTabItems(profile).ProfileInfoListView {
-                    onUiEvent(EmployeeProfileScreenUiEvent.OnClickAction(it.action))
-                }
-                1 -> getEmployeeConnectTabItems(profile).ProfileInfoListView {
-                    onUiEvent(EmployeeProfileScreenUiEvent.OnClickAction(it.action))
+        floatingActionButton = {
+            if (uiState.isSignedIn && uiState.selectedTabIndex < 2) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    ExtendedFloatingActionButton(
+                        expanded = fabButtonExpanded,
+                        text = {
+                            Text(text = stringResource(Res.string.txt_edit))
+                        },
+                        onClick = {
+                            onUiEvent(
+                                EmployeeProfileUiEvent.EditClicked(
+                                    uiState.selectedTabIndex,
+                                )
+                            )
+                        },
+                        icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
+                        shape = CircleShape,
+                    )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun EmployeeProfileScreenState.DisplayState.Handle(
-    modifier: Modifier,
-    onUiEvent: (EmployeeProfileScreenUiEvent) -> Unit,
-) {
-    ScreenContent(
-        modifier = modifier,
-        displayState = this,
-        onUiEvent = onUiEvent,
-    )
-    messageState?.Handle(onUiEvent)
-}
-
-@Composable
-private fun EmployeeProfileScreenState.DisplayState.ProfileState.Handle(
-    modifier: Modifier,
-    onUiEvent: (EmployeeProfileScreenUiEvent) -> Unit,
-) {
-    when (this) {
-        is EmployeeProfileScreenState.DisplayState.ProfileState.None -> Unit
-        is EmployeeProfileScreenState.DisplayState.ProfileState.Loading -> {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        is EmployeeProfileScreenState.DisplayState.ProfileState.Available -> {
-            ProfileView(modifier, profile, onUiEvent)
-        }
-        is EmployeeProfileScreenState.DisplayState.ProfileState.Error -> {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                AnimatedErrorView(modifier = Modifier.fillMaxWidth())
-            }
-        }
-    }
-}
-
-@Composable
-private fun EmployeeProfileScreenState.DisplayState.MessageState.Handle(
-    onUiEvent: (EmployeeProfileScreenUiEvent) -> Unit,
-) {
-    when (this) {
-        is EmployeeProfileScreenState.DisplayState.MessageState.Call -> {
-            ShowConfirmationDialog(
-                icon = Icons.Default.Call,
-                title = stringResource(Res.string.txt_title_call),
-                message = stringResource(Res.string.txt_msg_call).plus(" $phoneNumber"),
-                confirmButtonText = stringResource(Res.string.txt_call),
-                onConfirm = {
-                    onUiEvent(EmployeeProfileScreenUiEvent.OnCall(phoneNumber))
-                },
-                onDismiss = {
-                    onUiEvent(EmployeeProfileScreenUiEvent.MessageConsumed)
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun getEmployeeAcademicTabItems(profile: EmployeeProfile) = listOf(
-    ProfileInfoItem(
-        stringResource(Res.string.txt_designation),
-        profile.employee.designation,
-    ),
-    ProfileInfoItem(
-        stringResource(Res.string.txt_department),
-        profile.employee.department ?: "~",
-    ),
-    ProfileInfoItem(
-        stringResource(Res.string.txt_faculty),
-        profile.faculty.title,
-    ),
-)
-
-@Composable
-fun getEmployeeConnectTabItems(profile: EmployeeProfile) = listOf(
-    ProfileInfoItem(
-        stringResource(Res.string.txt_address),
-        profile.employee.address ?: "~"
-    ),
-    ProfileInfoItem(
-        stringResource(Res.string.txt_phone),
-        profile.employee.phone ?: "~",
-        if (profile.employee.phone.isNullOrEmpty()) {
-            ProfileInfoItemAction.None
-        } else {
-            ProfileInfoItemAction.Call(profile.employee.phone.orEmpty())
         },
-    ),
-)
+    ) {
+        EmployeeProfileContentPanel(uiState, onUiEvent)
+    }
+}
+
+@Composable
+private fun HandleMessageState(
+    message: EmployeeProfileMessageState?,
+    onMessageHandled: () -> Unit,
+) {
+    message?.let {
+        when (message) {
+            is EmployeeProfileMessageState.Loading -> {
+                ShowLoaderDialog(cancelable = message.cancelable)
+            }
+            is EmployeeProfileMessageState.InputBio -> {
+                ShowInputDialog(
+                    title = stringResource(Res.string.txt_change_bio),
+                    label = stringResource(Res.string.hint_bio),
+                    input = message.currentBio,
+                    singleLine = false,
+                    minLines = 3,
+                    maxLines = 5,
+                    maxLength = 150,
+                    confirmButtonText = stringResource(Res.string.txt_update),
+                    onConfirm = { newBio ->
+                        onMessageHandled()
+                        message.onConfirm(newBio)
+                    },
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is EmployeeProfileMessageState.CallConfirmation -> {
+                ShowConfirmationDialog(
+                    icon = Icons.Default.Call,
+                    title = stringResource(Res.string.txt_title_call),
+                    message = stringResource(Res.string.txt_msg_call).plus(" ${message.phoneNumber}"),
+                    confirmButtonText = stringResource(Res.string.txt_call),
+                    onConfirm = {
+                        onMessageHandled()
+                        message.onConfirm()
+                    },
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is EmployeeProfileMessageState.EmailConfirmation -> {
+                ShowConfirmationDialog(
+                    icon = Icons.Default.Email,
+                    title = stringResource(Res.string.txt_title_email),
+                    message = stringResource(Res.string.txt_msg_email).plus(" ${message.email}"),
+                    confirmButtonText = stringResource(Res.string.txt_email),
+                    onConfirm = {
+                        onMessageHandled()
+                        message.onConfirm()
+                    },
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is EmployeeProfileMessageState.ConfirmSignOut -> {
+                ShowConfirmationDialog(
+                    title = stringResource(Res.string.txt_sign_out),
+                    message = stringResource(Res.string.msg_sign_out),
+                    onConfirm = {
+                        onMessageHandled()
+                        message.onConfirm()
+                    },
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is EmployeeProfileMessageState.Success -> {
+                ShowSuccessDialog(
+                    message = message.message,
+                    onConfirm = onMessageHandled,
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is EmployeeProfileMessageState.Error -> {
+                ShowErrorDialog(
+                    message = message.message,
+                    onConfirm = onMessageHandled,
+                    onDismiss = onMessageHandled,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HandleNavigationState(
+    navigation: EmployeeProfileNavigationState?,
+    onNavigationHandled: () -> Unit,
+) {
+    val navigator = koinInject<AppNavigator?>()
+
+    LaunchedEffect(key1 = navigation) {
+        navigation?.let {
+            when (it) {
+                is EmployeeProfileNavigationState.GoBack -> navigator?.goBack()
+                is EmployeeProfileNavigationState.ImagePreviewScreen -> {
+                    navigator?.navigateTo(AppScreen.ImagePreview(it.encodedImageUrl))
+                }
+                is EmployeeProfileNavigationState.ImageUploadScreen -> {
+                    navigator?.navigateTo(AppScreen.ImageUpload(it.userId, it.userType))
+                }
+                is EmployeeProfileNavigationState.ChangePasswordScreen -> {
+                    navigator?.navigateTo(AppScreen.ChangePassword)
+                }
+                is EmployeeProfileNavigationState.MyDeviceListScreen -> {
+                    navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, it.userType))
+                }
+                is EmployeeProfileNavigationState.EmployeeProfileEditScreen -> {
+                    navigator?.navigateTo(
+                        AppScreen.EmployeeProfileEdit(it.userId, it.action),
+                    )
+                }
+                is EmployeeProfileNavigationState.DeleteAccountScreen -> {
+                    navigator?.navigateTo(AppScreen.DeleteAccount(it.userId, it.userType))
+                }
+            }
+            onNavigationHandled()
+        }
+    }
+}

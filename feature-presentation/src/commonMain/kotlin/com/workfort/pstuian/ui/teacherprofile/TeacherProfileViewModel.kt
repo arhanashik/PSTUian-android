@@ -8,10 +8,15 @@ import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
-import com.workfort.pstuian.ui.teacherprofile.state.MessageState
-import com.workfort.pstuian.ui.teacherprofile.state.NavigationState
 import com.workfort.pstuian.ui.teacherprofile.state.ProfileState
+import com.workfort.pstuian.ui.teacherprofile.state.TeacherProfileMessageState
+import com.workfort.pstuian.ui.teacherprofile.state.TeacherProfileNavigationState
+import com.workfort.pstuian.ui.teacherprofile.state.TeacherProfileUiEvent
 import com.workfort.pstuian.ui.teacherprofile.state.TeacherProfileUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 internal class TeacherProfileViewModel(
@@ -24,60 +29,102 @@ internal class TeacherProfileViewModel(
     initializationMode = InitializationMode.JustOnce,
 ) {
 
+    private val _message = MutableStateFlow<TeacherProfileMessageState?>(null)
+    val message: StateFlow<TeacherProfileMessageState?> = _message.asStateFlow()
+
+    private val _navigation = MutableStateFlow<TeacherProfileNavigationState?>(null)
+    val navigation: StateFlow<TeacherProfileNavigationState?> = _navigation.asStateFlow()
+
     override fun onUiReady() {
         loadProfile()
     }
 
-    fun messageConsumed() = uiStateMachine.showMessage(null)
-
-    fun navigationConsumed() = uiStateMachine.navigateTo(null)
-
-    fun onClickBack() = uiStateMachine.navigateTo(NavigationState.GoBack)
-
-    fun onClickImage(url: String) {
-        uiStateMachine.navigateTo(NavigationState.ImagePreviewScreen(url))
-    }
-
-    fun onClickCall() = profileCache()?.teacher?.phone?.let { phoneNumber ->
-        uiStateMachine.showMessage(MessageState.Call(phoneNumber))
-    }
-
-    fun onClickEmail() = profileCache()?.teacher?.email?.let { email ->
-        uiStateMachine.showMessage(MessageState.Email(email))
-    }
-
-    fun onClickSignOut() {
-        if (profileCache()?.isSignedIn == true) {
-            uiStateMachine.showMessage(MessageState.ConfirmSignOut)
+    fun onUiEvent(event: TeacherProfileUiEvent) {
+        when (event) {
+            is TeacherProfileUiEvent.LoadProfile -> loadProfile()
+            is TeacherProfileUiEvent.BackClicked -> onClickBack()
+            is TeacherProfileUiEvent.ImageClicked -> onClickImage(event.url)
+            is TeacherProfileUiEvent.CallClicked -> onClickCall()
+            is TeacherProfileUiEvent.EmailClicked -> onClickEmail()
+            is TeacherProfileUiEvent.SignOutClicked -> onClickSignOut()
+            is TeacherProfileUiEvent.TabClicked -> onClickTab(event.index)
+            is TeacherProfileUiEvent.RefreshClicked -> onClickRefresh()
+            is TeacherProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
+            is TeacherProfileUiEvent.EditBioClicked -> onClickEditBio()
+            is TeacherProfileUiEvent.EditClicked -> onClickEdit(event.selectedTabIndex)
+            is TeacherProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
+            is TeacherProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
+            is TeacherProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
+            is TeacherProfileUiEvent.ChangeProfileImage -> changeProfileImage(event.imageUrl)
+            is TeacherProfileUiEvent.ChangeBio -> changeBio(event.newBio)
+            is TeacherProfileUiEvent.SignOut -> signOut()
         }
     }
 
-    fun onClickTab(index: Int) {
+    fun messageHandled() = _message.update { null }
+
+    fun navigationHandled() = _navigation.update { null }
+
+    private fun onClickBack() = _navigation.update { TeacherProfileNavigationState.GoBack }
+
+    private fun onClickImage(url: String) {
+        _navigation.update { TeacherProfileNavigationState.ImagePreviewScreen(url) }
+    }
+
+    private fun onClickCall() = profileCache()?.teacher?.phone?.let { phoneNumber ->
+        _message.update {
+            TeacherProfileMessageState.CallConfirmation(phoneNumber) {
+                // Handle call in screen or via navigation
+            }
+        }
+    }
+
+    private fun onClickEmail() = profileCache()?.teacher?.email?.let { email ->
+        _message.update {
+            TeacherProfileMessageState.EmailConfirmation(email) {
+                // Handle email in screen or via navigation
+            }
+        }
+    }
+
+    private fun onClickSignOut() {
+        if (profileCache()?.isSignedIn == true) {
+            _message.update {
+                TeacherProfileMessageState.ConfirmSignOut {
+                    signOut()
+                }
+            }
+        }
+    }
+
+    private fun onClickTab(index: Int) {
         uiStateMachine.updateSelectedTab(index)
     }
 
-    fun onClickRefresh() = loadProfile()
+    private fun onClickRefresh() = loadProfile()
 
-    fun onClickChangeImage() {
+    private fun onClickChangeImage() {
         if (profileCache()?.isSignedIn != true) return
         profileCache()?.teacher?.let { teacher ->
-            uiStateMachine.navigateTo(
-                NavigationState.ImageUploadScreen(
+            _navigation.update {
+                TeacherProfileNavigationState.ImageUploadScreen(
                     userId = teacher.id,
                     userType = UserType.TEACHER,
                 )
-            )
+            }
         }
     }
 
-    fun onClickEditBio() {
+    private fun onClickEditBio() {
         if (profileCache()?.isSignedIn != true) return
         profileCache()?.teacher?.let { teacher ->
-            uiStateMachine.showMessage(MessageState.InputBio(teacher.bio.orEmpty()))
+            _message.update {
+                TeacherProfileMessageState.InputBio(teacher.bio.orEmpty(), ::changeBio)
+            }
         }
     }
 
-    fun onClickEdit(selectedTabIndex: Int) {
+    private fun onClickEdit(selectedTabIndex: Int) {
         if (profileCache()?.isSignedIn != true) return
         profileCache()?.teacher?.let { teacher ->
             when (selectedTabIndex) {
@@ -85,29 +132,43 @@ internal class TeacherProfileViewModel(
                 1 -> ProfileEditMode.CONNECT
                 else -> null
             }?.let { action ->
-                uiStateMachine.navigateTo(
-                    NavigationState.TeacherProfileEditScreen(
+                _navigation.update {
+                    TeacherProfileNavigationState.TeacherProfileEditScreen(
                         userId = teacher.id,
                         action = action,
                     )
+                }
+            }
+        }
+    }
+
+    private fun onClickChangePassword() {
+        if (profileCache()?.isSignedIn != true) return
+        _navigation.update { TeacherProfileNavigationState.ChangePasswordScreen }
+    }
+
+    private fun onClickMyDeviceList() {
+        if (profileCache()?.isSignedIn != true) return
+        profileCache()?.teacher?.let { teacher ->
+            _navigation.update {
+                TeacherProfileNavigationState.MyDeviceListScreen(
+                    userId = teacher.id,
+                    userType = UserType.TEACHER,
                 )
             }
         }
     }
 
-    fun onClickChangePassword() {
+    private fun onClickDeleteAccount() {
         if (profileCache()?.isSignedIn != true) return
-        uiStateMachine.navigateTo(NavigationState.ChangePasswordScreen)
-    }
-
-    fun onClickMyDeviceList() {
-        if (profileCache()?.isSignedIn != true) return
-        uiStateMachine.navigateTo(NavigationState.MyDeviceListScreen)
-    }
-
-    fun onClickDeleteAccount() {
-        if (profileCache()?.isSignedIn != true) return
-        uiStateMachine.navigateTo(NavigationState.DeleteAccountScreen)
+        profileCache()?.teacher?.let { teacher ->
+            _navigation.update {
+                TeacherProfileNavigationState.DeleteAccountScreen(
+                    userId = teacher.id,
+                    userType = UserType.TEACHER,
+                )
+            }
+        }
     }
 
     private fun profileCache(): TeacherProfile? {
@@ -142,20 +203,20 @@ internal class TeacherProfileViewModel(
                 return
             }
             isChangingPhoto = true
-            uiStateMachine.showMessage(MessageState.Loading(cancelable = false))
+            _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
             viewModelScope.launch {
                 runCatching {
                     teacherRepo.changeProfileImage(cache.teacher.toEntity(), imageUrl)
                 }.onSuccess {
                     isChangingPhoto = false
-                    uiStateMachine.showMessage(
-                        MessageState.Success("Profile photo changed successfully!")
-                    )
+                    _message.update {
+                        TeacherProfileMessageState.Success("Profile photo changed successfully!")
+                    }
                     loadProfile()
                 }.onFailure {
                     isChangingPhoto = false
                     val message = it.message ?: "Failed to change photo. Please try again."
-                    uiStateMachine.showMessage(MessageState.Error(message))
+                    _message.update { TeacherProfileMessageState.Error(message) }
                 }
             }
         }
@@ -163,31 +224,31 @@ internal class TeacherProfileViewModel(
 
     fun changeBio(newBio: String) {
         val teacher = profileCache()?.teacher ?: return
-        uiStateMachine.showMessage(MessageState.Loading(cancelable = false))
+        _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
                 teacherRepo.changeBio(teacher.toEntity(), newBio)
             }.onSuccess {
                 val message = "Bio updated successfully"
-                uiStateMachine.showMessage(MessageState.Success(message))
+                _message.update { TeacherProfileMessageState.Success(message) }
                 loadProfile()
             }.onFailure {
                 val message = it.message ?: "Failed to update bio. Please try again."
-                uiStateMachine.showMessage(MessageState.Error(message))
+                _message.update { TeacherProfileMessageState.Error(message) }
             }
         }
     }
 
     fun signOut() {
-        uiStateMachine.showMessage(MessageState.Loading(cancelable = false))
+        _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
                 authRepo.signOut(fromAllDevice = false)
-                messageConsumed()
+                messageHandled()
                 loadProfile()
             }.onFailure {
                 val message = it.message ?: "Signing out failed. Please try again."
-                uiStateMachine.showMessage(MessageState.Error(message))
+                _message.update { TeacherProfileMessageState.Error(message) }
             }
         }
     }

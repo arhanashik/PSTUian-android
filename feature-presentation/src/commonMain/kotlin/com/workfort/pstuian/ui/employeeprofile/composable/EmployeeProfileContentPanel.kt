@@ -11,28 +11,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.common.composable.AnimatedErrorView
 import com.workfort.pstuian.common.composable.LoadAsyncUserImage
 import com.workfort.pstuian.common.composable.ProfileInfoListView
-import com.workfort.pstuian.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.common.composable.ShowErrorDialog
-import com.workfort.pstuian.common.composable.ShowLoaderDialog
-import com.workfort.pstuian.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.common.composable.TabView
 import com.workfort.pstuian.common.composable.TitleTextSmall
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
@@ -40,61 +41,62 @@ import com.workfort.pstuian.featuredomain.model.ProfileInfoItem
 import com.workfort.pstuian.featuredomain.model.ProfileInfoItemAction
 import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileUiEvent
 import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileUiState
-import com.workfort.pstuian.ui.employeeprofile.state.MessageState
 import com.workfort.pstuian.ui.employeeprofile.state.ProfileState
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_academic
+import pstuian.feature_presentation.generated.resources.txt_account
 import pstuian.feature_presentation.generated.resources.txt_address
 import pstuian.feature_presentation.generated.resources.txt_blood_group
 import pstuian.feature_presentation.generated.resources.txt_call
+import pstuian.feature_presentation.generated.resources.txt_change_password
 import pstuian.feature_presentation.generated.resources.txt_connect
-import pstuian.feature_presentation.generated.resources.txt_designation
-import pstuian.feature_presentation.generated.resources.txt_id
-import pstuian.feature_presentation.generated.resources.txt_msg_call
+import pstuian.feature_presentation.generated.resources.txt_delete_account
 import pstuian.feature_presentation.generated.resources.txt_department
+import pstuian.feature_presentation.generated.resources.txt_designation
+import pstuian.feature_presentation.generated.resources.txt_devices
+import pstuian.feature_presentation.generated.resources.txt_edit_bio
 import pstuian.feature_presentation.generated.resources.txt_faculty
+import pstuian.feature_presentation.generated.resources.txt_go_back
+import pstuian.feature_presentation.generated.resources.txt_id
 import pstuian.feature_presentation.generated.resources.txt_name
+import pstuian.feature_presentation.generated.resources.txt_option
+import pstuian.feature_presentation.generated.resources.txt_password
 import pstuian.feature_presentation.generated.resources.txt_phone
-import pstuian.feature_presentation.generated.resources.txt_title_call
+import pstuian.feature_presentation.generated.resources.txt_sign_out
+import pstuian.feature_presentation.generated.resources.txt_signed_in_devices
 
 @Composable
 fun EmployeeProfileContentPanel(
     uiState: EmployeeProfileUiState,
     onUiEvent: (EmployeeProfileUiEvent) -> Unit,
 ) {
-    Scaffold { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            when (val state = uiState.profileState) {
-                is ProfileState.None -> Unit
-                is ProfileState.Loading -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        CircularProgressIndicator()
-                    }
+    Column {
+        when (val state = uiState.profileState) {
+            is ProfileState.None -> Unit
+            is ProfileState.Loading -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CircularProgressIndicator()
                 }
-                is ProfileState.Available -> {
-                    ProfileView(state.profile, uiState.selectedTabIndex, onUiEvent)
-                }
-                is ProfileState.Error -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        AnimatedErrorView(modifier = Modifier.fillMaxWidth())
-                    }
+            }
+            is ProfileState.Available -> {
+                ProfileView(state.profile, uiState.selectedTabIndex, onUiEvent)
+            }
+            is ProfileState.Error -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    AnimatedErrorView(modifier = Modifier.fillMaxWidth())
                 }
             }
         }
-    }
-
-    uiState.messageState?.let {
-        HandleMessageState(it, onUiEvent)
     }
 }
 
@@ -106,11 +108,11 @@ private fun ProfileView(
     onUiEvent: (EmployeeProfileUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val tabs = getEmployeeTabs()
+    val tabs = getEmployeeTabs(profile.isSignedIn)
     val pagerState = rememberPagerState(pageCount = { tabs.size })
 
     LaunchedEffect(key1 = pagerState.currentPage) {
-        onUiEvent(EmployeeProfileUiEvent.ClickTab(pagerState.currentPage))
+        onUiEvent(EmployeeProfileUiEvent.TabClicked(pagerState.currentPage))
     }
 
     Column(
@@ -125,9 +127,12 @@ private fun ProfileView(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             IconButton(
-                onClick = { onUiEvent(EmployeeProfileUiEvent.ClickBack) },
+                onClick = { onUiEvent(EmployeeProfileUiEvent.BackClicked) },
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back button")
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(Res.string.txt_go_back),
+                )
             }
             Box(contentAlignment = Alignment.BottomEnd) {
                 val imageUrl = profile.employee.imageUrl
@@ -135,7 +140,7 @@ private fun ProfileView(
                     Modifier
                 } else {
                     Modifier.clickable {
-                        onUiEvent(EmployeeProfileUiEvent.ClickImage(imageUrl))
+                        onUiEvent(EmployeeProfileUiEvent.ImageClicked(imageUrl))
                     }
                 }
                 LoadAsyncUserImage(
@@ -143,11 +148,41 @@ private fun ProfileView(
                     url = imageUrl,
                     size = 96.dp,
                 )
+                if (profile.isSignedIn) {
+                    Icon(
+                        Icons.Default.PhotoCamera,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                onUiEvent(EmployeeProfileUiEvent.ChangeImageClicked)
+                            },
+                    )
+                }
             }
             IconButton(
-                onClick = { onUiEvent(EmployeeProfileUiEvent.ClickCall) },
+                onClick = {
+                    onUiEvent(
+                        if (profile.isSignedIn) {
+                            EmployeeProfileUiEvent.SignOutClicked
+                        } else {
+                            EmployeeProfileUiEvent.CallClicked
+                        }
+                    )
+                },
             ) {
-                Icon(Icons.Filled.Call, contentDescription = "Action button")
+                if (profile.isSignedIn) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = stringResource(Res.string.txt_sign_out),
+                    )
+                } else {
+                    Icon(
+                        Icons.Filled.Call,
+                        contentDescription = stringResource(Res.string.txt_call),
+                    )
+                }
             }
         }
         TitleTextSmall(
@@ -161,8 +196,21 @@ private fun ProfileView(
                 textAlign = TextAlign.Center,
             )
         }
+        if (profile.isSignedIn) {
+            Text(
+                text = stringResource(Res.string.txt_edit_bio),
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable {
+                        onUiEvent(EmployeeProfileUiEvent.EditBioClicked)
+                    }
+                    .padding(horizontal = 8.dp),
+            )
+        }
         TabView(
-            tabs = getEmployeeTabs(),
+            tabs = tabs,
             selectedTabIndex = selectedTabIndex,
         ) { index ->
             scope.launch {
@@ -172,30 +220,61 @@ private fun ProfileView(
         HorizontalPager(state = pagerState) { page ->
             when (page) {
                 0 -> getEmployeeAcademicTabItems(profile).ProfileInfoListView {
-                    HandleProfileInfoItemAction(it.action, onUiEvent)
+                    it.action.handleProfileInfoItemAction(onUiEvent)
                 }
                 1 -> getEmployeeConnectTabItems(profile).ProfileInfoListView {
-                    HandleProfileInfoItemAction(it.action, onUiEvent)
+                    it.action.handleProfileInfoItemAction(onUiEvent)
+                }
+                2 -> if (profile.isSignedIn) {
+                    getEmployeeOptionTabItems().ProfileInfoListView {
+                        it.action.handleProfileInfoItemAction(onUiEvent)
+                    }
                 }
             }
         }
     }
 }
 
-private fun HandleProfileInfoItemAction(
-    action: ProfileInfoItemAction,
+private fun ProfileInfoItemAction.handleProfileInfoItemAction(
     onUiEvent: (EmployeeProfileUiEvent) -> Unit,
 ) {
-    when (action) {
-        is ProfileInfoItemAction.Call -> onUiEvent(EmployeeProfileUiEvent.ClickCall)
+    when (this) {
+        is ProfileInfoItemAction.Call -> onUiEvent(EmployeeProfileUiEvent.CallClicked)
+        is ProfileInfoItemAction.Email -> onUiEvent(EmployeeProfileUiEvent.EmailClicked)
+        is ProfileInfoItemAction.Password -> onUiEvent(EmployeeProfileUiEvent.ChangePasswordClicked)
+        is ProfileInfoItemAction.SignedInDevices -> onUiEvent(EmployeeProfileUiEvent.MyDeviceListClicked)
+        is ProfileInfoItemAction.DeleteAccount -> onUiEvent(EmployeeProfileUiEvent.DeleteAccountClicked)
         else -> Unit
     }
 }
 
 @Composable
-private fun getEmployeeTabs() = listOf(
+private fun getEmployeeTabs(isSignedIn: Boolean) = arrayListOf(
     stringResource(Res.string.txt_academic),
     stringResource(Res.string.txt_connect),
+).also {
+    if (isSignedIn) {
+        it.add(stringResource(Res.string.txt_option))
+    }
+}
+
+@Composable
+private fun getEmployeeOptionTabItems() = listOf(
+    ProfileInfoItem(
+        stringResource(Res.string.txt_password),
+        stringResource(Res.string.txt_change_password),
+        ProfileInfoItemAction.Password,
+    ),
+    ProfileInfoItem(
+        stringResource(Res.string.txt_devices),
+        stringResource(Res.string.txt_signed_in_devices),
+        ProfileInfoItemAction.SignedInDevices,
+    ),
+    ProfileInfoItem(
+        stringResource(Res.string.txt_account),
+        stringResource(Res.string.txt_delete_account),
+        ProfileInfoItemAction.DeleteAccount,
+    ),
 )
 
 @Composable
@@ -221,53 +300,3 @@ private fun getEmployeeConnectTabItems(profile: EmployeeProfile) = listOf(
         },
     ),
 )
-
-@Composable
-private fun HandleMessageState(
-    messageState: MessageState,
-    onUiEvent: (EmployeeProfileUiEvent) -> Unit,
-) {
-    when (messageState) {
-        is MessageState.Loading -> {
-            ShowLoaderDialog(cancelable = messageState.cancelable)
-        }
-        is MessageState.Call -> {
-            ShowConfirmationDialog(
-                icon = Icons.Default.Call,
-                title = stringResource(Res.string.txt_title_call),
-                message = stringResource(Res.string.txt_msg_call).plus(" ${messageState.phoneNumber}"),
-                confirmButtonText = stringResource(Res.string.txt_call),
-                onConfirm = {
-                    onUiEvent(EmployeeProfileUiEvent.MessageConsumed)
-                    onUiEvent(EmployeeProfileUiEvent.OnCall(messageState.phoneNumber))
-                },
-                onDismiss = {
-                    onUiEvent(EmployeeProfileUiEvent.MessageConsumed)
-                }
-            )
-        }
-        is MessageState.Success -> {
-            ShowSuccessDialog(
-                message = messageState.message,
-                onConfirm = {
-                    onUiEvent(EmployeeProfileUiEvent.MessageConsumed)
-                },
-                onDismiss = {
-                    onUiEvent(EmployeeProfileUiEvent.MessageConsumed)
-                },
-            )
-        }
-        is MessageState.Error -> {
-            ShowErrorDialog(
-                message = messageState.message,
-                onConfirm = {
-                    onUiEvent(EmployeeProfileUiEvent.MessageConsumed)
-                },
-                onDismiss = {
-                    onUiEvent(EmployeeProfileUiEvent.MessageConsumed)
-                },
-            )
-        }
-        else -> Unit
-    }
-}

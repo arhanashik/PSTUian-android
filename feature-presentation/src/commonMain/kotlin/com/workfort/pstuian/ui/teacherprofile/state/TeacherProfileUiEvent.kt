@@ -2,24 +2,20 @@ package com.workfort.pstuian.ui.teacherprofile.state
 
 sealed interface TeacherProfileUiEvent {
     data object LoadProfile : TeacherProfileUiEvent
-    data object ClickBack : TeacherProfileUiEvent
-    data class ClickImage(val url: String) : TeacherProfileUiEvent
-    data object ClickCall : TeacherProfileUiEvent
-    data object ClickEmail : TeacherProfileUiEvent
-    data object ClickSignOut : TeacherProfileUiEvent
-    data class ClickTab(val index: Int) : TeacherProfileUiEvent
-    data object ClickRefresh : TeacherProfileUiEvent
-    data object ClickChangeImage : TeacherProfileUiEvent
-    data object ClickEditBio : TeacherProfileUiEvent
-    data class ClickEdit(val selectedTabIndex: Int) : TeacherProfileUiEvent
-    data object ClickChangePassword : TeacherProfileUiEvent
-    data object ClickMyDeviceList : TeacherProfileUiEvent
-    data object ClickDeleteAccount : TeacherProfileUiEvent
+    data object BackClicked : TeacherProfileUiEvent
+    data class ImageClicked(val url: String) : TeacherProfileUiEvent
+    data object CallClicked : TeacherProfileUiEvent
+    data object EmailClicked : TeacherProfileUiEvent
+    data object SignOutClicked : TeacherProfileUiEvent
+    data class TabClicked(val index: Int) : TeacherProfileUiEvent
+    data object RefreshClicked : TeacherProfileUiEvent
+    data object ChangeImageClicked : TeacherProfileUiEvent
+    data object EditBioClicked : TeacherProfileUiEvent
+    data class EditClicked(val selectedTabIndex: Int) : TeacherProfileUiEvent
+    data object ChangePasswordClicked : TeacherProfileUiEvent
+    data object MyDeviceListClicked : TeacherProfileUiEvent
+    data object DeleteAccountClicked : TeacherProfileUiEvent
     data class ChangeProfileImage(val imageUrl: String) : TeacherProfileUiEvent
     data class ChangeBio(val newBio: String) : TeacherProfileUiEvent
     data object SignOut : TeacherProfileUiEvent
-    data class OnCall(val phoneNumber: String) : TeacherProfileUiEvent
-    data class OnEmail(val email: String) : TeacherProfileUiEvent
-    data object MessageConsumed : TeacherProfileUiEvent
-    data object NavigationConsumed : TeacherProfileUiEvent
 }
