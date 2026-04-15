@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.navigation
+package com.workfort.pstuian.common.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,9 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.workfort.pstuian.common.navigation.AppNavigator
-import com.workfort.pstuian.common.navigation.AppScreen
-import com.workfort.pstuian.common.navigation.NavEvent
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.blooddonationcreate.BloodDonationCreateScreen
 import com.workfort.pstuian.ui.blooddonationrequestcreate.BloodDonationRequestCreateScreen
@@ -44,8 +41,8 @@ import com.workfort.pstuian.ui.studentprofileedit.StudentProfileEditScreen
 import com.workfort.pstuian.ui.students.StudentsScreen
 import com.workfort.pstuian.ui.teacherprofile.TeacherProfileScreen
 import com.workfort.pstuian.ui.teacherprofileedit.TeacherProfileEditScreen
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -64,7 +61,7 @@ fun AppNavHost(
                     navController.popBackStack()
                 }
                 is NavEvent.PopToRoot -> {
-                    navController.popBackStack(navController.graph.startDestinationId, false)
+                    navController.popBackStack<AppScreen.Splash>(inclusive = false)
                 }
             }
         }

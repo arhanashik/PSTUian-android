@@ -23,7 +23,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "feature-presentation"
+            baseName = "shared"
             isStatic = true
             // Export modules to make them visible in Swift
             export(project(":feature-domain"))

@@ -1,0 +1,6 @@
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+FRAMEWORK_SEARCH_PATHS = $(inherited) "$(SRCROOT)/../../feature-presentation/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+OTHER_LDFLAGS = $(inherited) -framework "shared"
+ENABLE_USER_SCRIPT_SANDBOXING = NO
