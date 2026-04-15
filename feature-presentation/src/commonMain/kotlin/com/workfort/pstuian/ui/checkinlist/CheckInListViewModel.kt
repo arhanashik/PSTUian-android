@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.checkinlist
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.appconstant.NetworkConst
+import com.workfort.pstuian.data.NetworkConst
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.data.local.keyvaluestorage.Prefs
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider

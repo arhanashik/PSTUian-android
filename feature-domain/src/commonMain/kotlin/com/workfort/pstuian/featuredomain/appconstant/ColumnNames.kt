@@ -1,4 +1,4 @@
-package com.workfort.pstuian.appconstant
+package com.workfort.pstuian.featuredomain.appconstant
 
 object ColumnNames {
     const val SL = "sl"

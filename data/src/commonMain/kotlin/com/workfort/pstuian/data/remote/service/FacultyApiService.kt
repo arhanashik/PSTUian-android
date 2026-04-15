@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.appconstant.NetworkConst
+import com.workfort.pstuian.data.NetworkConst
 import com.workfort.pstuian.data.dto.BatchDto
 import com.workfort.pstuian.data.dto.CourseDto
 import com.workfort.pstuian.data.dto.EmployeeDto

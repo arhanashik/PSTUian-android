@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
-import com.workfort.pstuian.appconstant.ColumnNames
-import com.workfort.pstuian.appconstant.TableNames
+import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
+import com.workfort.pstuian.featuredomain.appconstant.TableNames
 
 @Serializable
 @Entity(tableName = "faculty", indices = [Index(value = ["shortTitle"], unique = true)])

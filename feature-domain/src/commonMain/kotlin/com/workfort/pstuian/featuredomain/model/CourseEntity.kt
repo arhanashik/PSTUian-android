@@ -3,8 +3,8 @@ package com.workfort.pstuian.featuredomain.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.workfort.pstuian.appconstant.ColumnNames
-import com.workfort.pstuian.appconstant.TableNames
+import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
+import com.workfort.pstuian.featuredomain.appconstant.TableNames
 
 @Entity(tableName = TableNames.COURSE_SCHEDULE)
 data class CourseEntity (

@@ -34,7 +34,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":appconstant"))
                 implementation(project(":util"))
                 implementation(libs.jetbrains.kotlin.stdlib)
                 implementation(libs.androidx.room.runtime)

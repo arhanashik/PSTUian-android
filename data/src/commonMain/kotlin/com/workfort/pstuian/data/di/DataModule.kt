@@ -101,6 +101,7 @@ private val databaseModule = module {
 private val networkModule = module {
     single {
         KtorClientFactory.create(
+            platformInfo = get(),
             authTokenProvider = {
                 get<SharedPrefRepository>().getString(SharedPrefKey.AUTH_TOKEN)
             },

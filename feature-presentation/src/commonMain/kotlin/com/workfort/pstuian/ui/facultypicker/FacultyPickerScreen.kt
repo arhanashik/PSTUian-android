@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.featuredomain.appconstant.Const
 import com.workfort.pstuian.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.common.composable.AnimatedErrorView
 import com.workfort.pstuian.common.composable.AppBar

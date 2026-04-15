@@ -39,7 +39,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":appconstant"))
                 implementation(project(":feature-domain"))
                 implementation(project(":util"))
                 implementation(libs.jetbrains.kotlin.stdlib)

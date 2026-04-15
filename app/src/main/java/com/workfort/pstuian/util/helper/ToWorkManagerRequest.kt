@@ -7,7 +7,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.workDataOf
-import com.workfort.pstuian.appconstant.Const
+import com.workfort.pstuian.featuredomain.appconstant.Const
 import com.workfort.pstuian.workmanager.worker.FileDownloadWorker
 import com.workfort.pstuian.workmanager.worker.ImageUploadWorker
 import com.workfort.pstuian.workmanager.worker.PdfUploadWorker

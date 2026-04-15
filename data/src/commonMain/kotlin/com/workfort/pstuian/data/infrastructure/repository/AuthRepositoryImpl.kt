@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.appconstant.NetworkConst
+import com.workfort.pstuian.data.NetworkConst
 import com.workfort.pstuian.data.dto.toDto
 import com.workfort.pstuian.data.local.database.service.ConfigDbService
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper

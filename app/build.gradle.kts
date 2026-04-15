@@ -120,7 +120,6 @@ dependencies {
     // sdk
     implementation(project(":feature-domain"))
     implementation(project(":feature-presentation"))
-    implementation(project(":appconstant"))
     implementation(project(":util"))
     implementation(project(":workmanager"))
 

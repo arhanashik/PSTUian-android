@@ -33,7 +33,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":appconstant"))
                 api(project(":data"))
                 api(project(":feature-domain"))
                 implementation(project(":util"))

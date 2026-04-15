@@ -2,6 +2,7 @@ package com.workfort.pstuian.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.data.NetworkConst
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
@@ -59,13 +60,13 @@ class HomeViewModel(
                 when (event.actionItem.action) {
                     Action.AdmissionSupport -> {
                         _navigation.update {
-                            HomeNavigationState.Browser(com.workfort.pstuian.appconstant.NetworkConst.Remote.PSTU_WEBSITE)
+                            HomeNavigationState.Browser(NetworkConst.Remote.PSTU_WEBSITE)
                         }
                     }
                     Action.Donors -> onClickDonors()
                     Action.VarsityWebsite -> {
                         _navigation.update {
-                            HomeNavigationState.Browser(com.workfort.pstuian.appconstant.NetworkConst.Remote.PSTU_WEBSITE)
+                            HomeNavigationState.Browser(NetworkConst.Remote.PSTU_WEBSITE)
                         }
                     }
                     Action.ContactUs -> onClickContactUs()

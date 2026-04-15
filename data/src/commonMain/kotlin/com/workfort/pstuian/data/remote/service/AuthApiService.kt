@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.appconstant.NetworkConst
+import com.workfort.pstuian.data.NetworkConst
 import com.workfort.pstuian.data.dto.ConfigDto
 import com.workfort.pstuian.data.dto.DeviceDto
 import com.workfort.pstuian.data.dto.StudentDto

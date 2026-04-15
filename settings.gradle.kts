@@ -15,7 +15,6 @@ dependencyResolutionManagement {
 }
 include(
     ":app",
-    ":appconstant",
     ":data",
     ":feature-domain",
     ":feature-presentation",

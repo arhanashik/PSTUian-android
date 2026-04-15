@@ -1,4 +1,4 @@
-package com.workfort.pstuian.appconstant
+package com.workfort.pstuian.data
 
 object NetworkConst {
 
@@ -79,19 +79,12 @@ object NetworkConst {
 
     object Remote {
         const val PSTU_WEBSITE = "https://www.pstu.ac.bd/"
-
         private const val LOCAL_SERVER = "http://192.168.0.18:8888/PSTUian-web/"
-        private const val DEV_SERVER = "https://dev.pstuian.com/"
-        private const val LIVE_SERVER = "https://pstuian.com/"
+        const val DEV_SERVER = "https://dev.pstuian.com/"
+        const val LIVE_SERVER = "https://pstuian.com/"
         private const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/mobile/v1/"
-        private const val DEV_API_SERVER = "https://api-dev.pstuian.com/mobile/v1/"
-        private const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
-
-        private val BASE_URL = if(isDebug) DEV_SERVER else LIVE_SERVER
-        val BASE_API_URL = if(isDebug) DEV_API_SERVER else LIVE_API_SERVER
-        val TERMS_AND_CONDITIONS = "${BASE_URL}terms_and_conditions.php"
-        val PRIVACY_POLICY = "${BASE_URL}privacy_policy.php"
-        val ADMISSION_SUPPORT = "${BASE_URL}admission_support.php"
+        const val DEV_API_SERVER = "https://api-dev.pstuian.com/mobile/v1/"
+        const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v1/"
 
         private const val CONFIG_API_PATH = "config.php?call="
         private const val DEVICE_API_PATH = "device.php?call="

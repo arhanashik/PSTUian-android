@@ -6,8 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.workfort.pstuian.appconstant.ColumnNames
-import com.workfort.pstuian.appconstant.TableNames
+import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
+import com.workfort.pstuian.featuredomain.appconstant.TableNames
 import com.workfort.pstuian.featuredomain.model.StudentEntity
 
 @Dao
