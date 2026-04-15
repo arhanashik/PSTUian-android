@@ -2,14 +2,21 @@ package com.workfort.pstuian.ui.studentprofileedit
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.StudentAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.StudentConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
+import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditMessageState
+import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditNavigationState
 import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditUiEvent
 import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class StudentProfileEditViewModel(
@@ -18,7 +25,14 @@ class StudentProfileEditViewModel(
     private val studentRepo: StudentRepository,
     private val facultyRepo: FacultyRepository,
     private val stateMachine: StudentProfileEditUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<StudentProfileEditUiState>(stateMachine) {
+
+    private val _message = MutableStateFlow<StudentProfileEditMessageState?>(null)
+    val message: StateFlow<StudentProfileEditMessageState?> = _message
+
+    private val _navigation = MutableStateFlow<StudentProfileEditNavigationState?>(null)
+    val navigation: StateFlow<StudentProfileEditNavigationState?> = _navigation
 
     private var oldProfileCache: StudentProfile? = null
     private var newProfileCache: StudentProfile? = null
@@ -26,6 +40,7 @@ class StudentProfileEditViewModel(
     private var connectValidationError = StudentConnectInfoInputError.INITIAL
 
     override fun onUiReady() {
+        stateMachine.setInitialContent()
         onUiEvent(StudentProfileEditUiEvent.LoadProfile)
     }
 
@@ -34,30 +49,56 @@ class StudentProfileEditViewModel(
             when (event) {
                 is StudentProfileEditUiEvent.LoadProfile -> loadProfile()
                 is StudentProfileEditUiEvent.ChangeProfile -> onChangeProfile(event.profile)
-                is StudentProfileEditUiEvent.ClickBack -> stateMachine.onClickBack()
-                is StudentProfileEditUiEvent.ClickSave -> stateMachine.onClickSave()
+                is StudentProfileEditUiEvent.ClickBack -> onClickBack()
+                is StudentProfileEditUiEvent.ClickSave -> onClickSave()
                 is StudentProfileEditUiEvent.ClickFaculty -> onClickFaculty()
                 is StudentProfileEditUiEvent.ClickBatch -> onClickBatch()
                 is StudentProfileEditUiEvent.ChangeFaculty -> onChangeFaculty(event.facultyId)
                 is StudentProfileEditUiEvent.ChangeBatch -> onChangeBatch(event.batchId)
                 is StudentProfileEditUiEvent.Save -> updateProfile()
-                is StudentProfileEditUiEvent.MessageConsumed -> stateMachine.messageConsumed()
-                is StudentProfileEditUiEvent.NavigationConsumed -> stateMachine.navigationConsumed()
             }
         }
     }
 
-    private fun onClickFaculty() = newProfileCache?.let {
-        stateMachine.onClickFaculty(it)
+    fun onMessageHandled() = _message.update { null }
+
+    fun onNavigationHandled() = _navigation.update { null }
+
+    private fun onClickBack() {
+        _navigation.update { StudentProfileEditNavigationState.GoBack }
     }
 
-    private fun onClickBatch() = newProfileCache?.let {
-        stateMachine.onClickBatch(it)
+    private fun onClickSave() {
+        _message.update {
+            StudentProfileEditMessageState.ConfirmSave {
+                updateProfile()
+            }
+        }
+    }
+
+    private fun onClickFaculty() = newProfileCache?.let { profile ->
+        _navigation.update {
+            StudentProfileEditNavigationState.GoToFacultyPickerScreen(
+                mode = com.workfort.pstuian.featuredomain.model.FacultySelectionMode.BOTH,
+                facultyId = profile.student.facultyId,
+                batchId = profile.student.batchId,
+            )
+        }
+    }
+
+    private fun onClickBatch() = newProfileCache?.let { profile ->
+        _navigation.update {
+            StudentProfileEditNavigationState.GoToFacultyPickerScreen(
+                mode = com.workfort.pstuian.featuredomain.model.FacultySelectionMode.BATCH,
+                facultyId = profile.student.facultyId,
+                batchId = profile.student.batchId,
+            )
+        }
     }
 
     private suspend fun onChangeFaculty(facultyId: Int) {
         if (newProfileCache?.faculty?.id == facultyId) return
-        stateMachine.updateMessageState(StudentProfileEditUiState.DisplayState.MessageState.Loading(cancelable = false))
+        _message.update { StudentProfileEditMessageState.Loading(cancelable = false) }
         runCatching {
             val faculty = facultyRepo.getFaculty(facultyId)
             newProfileCache?.let {
@@ -66,18 +107,18 @@ class StudentProfileEditViewModel(
                     faculty = faculty,
                 )
                 newProfileCache = newProfile
-                stateMachine.messageConsumed()
+                onMessageHandled()
                 updateProfileScreenState()
             }
         }.onFailure {
             val message = it.message ?: "Failed to load faculty"
-            stateMachine.updateMessageState(StudentProfileEditUiState.DisplayState.MessageState.Error(message))
+            _message.update { StudentProfileEditMessageState.Error(message) }
         }
     }
 
     private suspend fun onChangeBatch(batchId: Int) {
         if (newProfileCache?.batch?.id == batchId) return
-        stateMachine.updateMessageState(StudentProfileEditUiState.DisplayState.MessageState.Loading(cancelable = false))
+        _message.update { StudentProfileEditMessageState.Loading(cancelable = false) }
         runCatching {
             val batch = facultyRepo.getBatch(batchId)
             val faculty = facultyRepo.getFaculty(batch.facultyId)
@@ -88,12 +129,12 @@ class StudentProfileEditViewModel(
                     faculty = faculty,
                 )
                 newProfileCache = newProfile
-                stateMachine.messageConsumed()
+                onMessageHandled()
                 updateProfileScreenState()
             }
         }.onFailure {
             val message = it.message ?: "Failed to load batch"
-            stateMachine.updateMessageState(StudentProfileEditUiState.DisplayState.MessageState.Error(message))
+            _message.update { StudentProfileEditMessageState.Error(message) }
         }
     }
 
@@ -107,7 +148,7 @@ class StudentProfileEditViewModel(
     }
 
     private suspend fun loadProfile() {
-        stateMachine.updatePanelState(StudentProfileEditUiState.DisplayState.PanelState.Loading)
+        stateMachine.updatePanelState(StudentProfileEditUiState.PanelState.Loading)
         runCatching {
             oldProfileCache = studentRepo.getProfile(userId)
             newProfileCache = oldProfileCache
@@ -124,58 +165,61 @@ class StudentProfileEditViewModel(
             updateProfileScreenState()
         }.onFailure {
             val message = it.message ?: "Failed to load profile"
-            stateMachine.updatePanelState(StudentProfileEditUiState.DisplayState.PanelState.Error(message))
+            stateMachine.updatePanelState(StudentProfileEditUiState.PanelState.Error(message))
         }
     }
 
-    private suspend fun updateProfile() {
+    private fun updateProfile() {
         if (academicValidationError.isNotEmpty() || connectValidationError.isNotEmpty()) {
-            stateMachine.updateMessageState(
-                StudentProfileEditUiState.DisplayState.MessageState.Error(
+            _message.update {
+                StudentProfileEditMessageState.Error(
                     "Please insert required fields and try again!"
                 )
-            )
+            }
             return
         }
-        stateMachine.updateMessageState(StudentProfileEditUiState.DisplayState.MessageState.Loading(cancelable = false))
+        _message.update { StudentProfileEditMessageState.Loading(cancelable = false) }
         val oldProfile = oldProfileCache ?: return
         val newProfile = newProfileCache ?: return
-        runCatching {
-            when (mode) {
-                ProfileEditMode.ACADEMIC -> {
-                    studentRepo.changeAcademicInfo(
-                        student = oldProfile.student.toEntity(),
-                        name = newProfile.student.name,
-                        id = newProfile.student.id,
-                        reg = newProfile.student.reg,
-                        blood = newProfile.student.blood.orEmpty(),
-                        facultyId = newProfile.student.facultyId,
-                        session = newProfile.student.session,
-                        batchId = newProfile.student.batchId,
+
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            runCatching {
+                when (mode) {
+                    ProfileEditMode.ACADEMIC -> {
+                        studentRepo.changeAcademicInfo(
+                            student = oldProfile.student.toEntity(),
+                            name = newProfile.student.name,
+                            id = newProfile.student.id,
+                            reg = newProfile.student.reg,
+                            blood = newProfile.student.blood.orEmpty(),
+                            facultyId = newProfile.student.facultyId,
+                            session = newProfile.student.session,
+                            batchId = newProfile.student.batchId,
+                        )
+                    }
+                    ProfileEditMode.CONNECT -> {
+                        studentRepo.changeConnectInfo(
+                            student = oldProfile.student.toEntity(),
+                            address = newProfile.student.address.orEmpty(),
+                            phone = newProfile.student.phone.orEmpty(),
+                            email = newProfile.student.email.orEmpty(),
+                            cvLink = newProfile.student.cvLink.orEmpty(),
+                            linkedIn = newProfile.student.linkedIn.orEmpty(),
+                            facebook = newProfile.student.fbLink.orEmpty(),
+                        )
+                    }
+                }
+            }.onSuccess {
+                _message.update {
+                    StudentProfileEditMessageState.Success(
+                        "Profile updated successfully!"
                     )
                 }
-                ProfileEditMode.CONNECT -> {
-                    studentRepo.changeConnectInfo(
-                        student = oldProfile.student.toEntity(),
-                        address = newProfile.student.address.orEmpty(),
-                        phone = newProfile.student.phone.orEmpty(),
-                        email = newProfile.student.email.orEmpty(),
-                        cvLink = newProfile.student.cvLink.orEmpty(),
-                        linkedIn = newProfile.student.linkedIn.orEmpty(),
-                        facebook = newProfile.student.fbLink.orEmpty(),
-                    )
-                }
+                loadProfile()
+            }.onFailure {
+                val message = it.message ?: "Failed to update. Please try again."
+                _message.update { StudentProfileEditMessageState.Error(message) }
             }
-        }.onSuccess {
-            stateMachine.updateMessageState(
-                StudentProfileEditUiState.DisplayState.MessageState.Success(
-                    "Profile updated successfully!"
-                )
-            )
-            loadProfile()
-        }.onFailure {
-            val message = it.message ?: "Failed to update. Please try again."
-            stateMachine.updateMessageState(StudentProfileEditUiState.DisplayState.MessageState.Error(message))
         }
     }
 

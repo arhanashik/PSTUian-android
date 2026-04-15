@@ -275,20 +275,30 @@ private val settingsModule = module {
 }
 
 private val studentProfileEditModule = module {
+    factoryOf(::StudentProfileEditUiStateMachine)
     factory { (userId: Int, mode: ProfileEditMode) ->
-        StudentProfileEditUiStateMachine(userId, mode, get(), get())
-    }
-    factory { (userId: Int, mode: ProfileEditMode) ->
-        StudentProfileEditViewModel(get { parametersOf(userId, mode) })
+        StudentProfileEditViewModel(
+            userId = userId,
+            mode = mode,
+            studentRepo = get(),
+            facultyRepo = get(),
+            stateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
     }
 }
 
 private val teacherProfileEditModule = module {
+    factoryOf(::TeacherProfileEditUiStateMachine)
     factory { (userId: Int, mode: ProfileEditMode) ->
-        TeacherProfileEditUiStateMachine(userId, mode, get(), get())
-    }
-    factory { (userId: Int, mode: ProfileEditMode) ->
-        TeacherProfileEditViewModel(get { parametersOf(userId, mode) })
+        TeacherProfileEditViewModel(
+            userId = userId,
+            mode = mode,
+            teacherRepo = get(),
+            facultyRepo = get(),
+            stateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
     }
 }
 

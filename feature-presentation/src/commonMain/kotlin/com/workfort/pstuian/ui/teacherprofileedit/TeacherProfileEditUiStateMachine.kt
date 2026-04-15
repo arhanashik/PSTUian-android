@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.teacherprofileedit
 
 import com.workfort.pstuian.common.uistate.UiStateMachine
-import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
+import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
@@ -12,52 +12,27 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 class TeacherProfileEditUiStateMachine : UiStateMachine<TeacherProfileEditUiState> {
-    private val _uiState = MutableStateFlow(TeacherProfileEditUiState())
+    private val _uiState = MutableStateFlow<TeacherProfileEditUiState>(TeacherProfileEditUiState.None)
     override val uiState: StateFlow<TeacherProfileEditUiState> = _uiState
 
-    fun messageConsumed() {
-        _uiState.update { it.copy(displayState = it.displayState.copy(messageState = null)) }
-    }
-
-    fun navigationConsumed() {
-        _uiState.update { it.copy(navigationState = null) }
-    }
-
-    fun onClickBack() {
-        _uiState.update {
-            it.copy(navigationState = TeacherProfileEditUiState.NavigationState.GoBack)
-        }
-    }
-
-    fun onClickSave() {
-        updateMessageState(TeacherProfileEditUiState.DisplayState.MessageState.ConfirmSave)
-    }
-
-    fun onClickFaculty(profile: TeacherProfile) {
-        _uiState.update {
-            it.copy(
-                navigationState = TeacherProfileEditUiState.NavigationState.GoToFacultyPickerScreen(
-                    mode = FacultySelectionMode.FACULTY,
-                    facultyId = profile.teacher.facultyId,
-                )
-            )
-        }
+    fun setInitialContent() {
+        _uiState.update { TeacherProfileEditUiState.Content() }
     }
 
     fun updateProfileScreenState(
         profile: TeacherProfile,
         academicValidationError: TeacherAcademicInfoInputError,
         connectValidationError: TeacherConnectInfoInputError,
-        mode: com.workfort.pstuian.featuredomain.model.ProfileEditMode,
+        mode: ProfileEditMode,
     ) {
         val panelState = when (mode) {
-            com.workfort.pstuian.featuredomain.model.ProfileEditMode.ACADEMIC -> {
-                TeacherProfileEditUiState.DisplayState.PanelState.Academic(
+            ProfileEditMode.ACADEMIC -> {
+                TeacherProfileEditUiState.PanelState.Academic(
                     profile, academicValidationError
                 )
             }
-            com.workfort.pstuian.featuredomain.model.ProfileEditMode.CONNECT -> {
-                TeacherProfileEditUiState.DisplayState.PanelState.Connect(
+            ProfileEditMode.CONNECT -> {
+                TeacherProfileEditUiState.PanelState.Connect(
                     profile, connectValidationError
                 )
             }
@@ -65,15 +40,13 @@ class TeacherProfileEditUiStateMachine : UiStateMachine<TeacherProfileEditUiStat
         updatePanelState(panelState)
     }
 
-    fun updatePanelState(panelState: TeacherProfileEditUiState.DisplayState.PanelState) {
+    fun updatePanelState(panelState: TeacherProfileEditUiState.PanelState) {
         _uiState.update {
-            it.copy(displayState = it.displayState.copy(panelState = panelState))
-        }
-    }
-
-    fun updateMessageState(messageState: TeacherProfileEditUiState.DisplayState.MessageState) {
-        _uiState.update {
-            it.copy(displayState = it.displayState.copy(messageState = messageState))
+            if (it is TeacherProfileEditUiState.Content) {
+                it.copy(panelState = panelState)
+            } else {
+                TeacherProfileEditUiState.Content(panelState = panelState)
+            }
         }
     }
 

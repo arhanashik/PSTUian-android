@@ -9,7 +9,6 @@ sealed interface TeacherProfileEditUiEvent {
     data object ClickSave : TeacherProfileEditUiEvent
     data object ClickFaculty : TeacherProfileEditUiEvent
     data class ChangeFaculty(val facultyId: Int) : TeacherProfileEditUiEvent
-    data object Save : TeacherProfileEditUiEvent
     data object MessageConsumed : TeacherProfileEditUiEvent
     data object NavigationConsumed : TeacherProfileEditUiEvent
 }

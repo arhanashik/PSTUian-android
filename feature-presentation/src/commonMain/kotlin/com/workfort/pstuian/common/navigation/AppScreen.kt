@@ -51,4 +51,5 @@ sealed interface AppScreen {
         val url: String,
     ) : AppScreen
     data class UploadCv(val userId: Int, val userType: UserType) : AppScreen
+    object Settings : AppScreen
 }

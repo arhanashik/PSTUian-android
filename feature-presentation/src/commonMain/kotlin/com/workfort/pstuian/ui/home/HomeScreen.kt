@@ -216,7 +216,7 @@ private fun HandleNavigationState(
                     navigator?.navigateTo(AppScreen.Donate)
                 }
                 is HomeNavigationState.SettingsScreen -> {
-                    // TODO navigate to settings
+                    navigator?.navigateTo(AppScreen.Settings)
                 }
                 is HomeNavigationState.Browser -> {
                     // TODO open browser
