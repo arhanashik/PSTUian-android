@@ -13,10 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.workfort.pstuian.common.theme.bgCircle
+import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.ic_education_gray
-import com.workfort.pstuian.model.FacultyEntity
-import com.workfort.pstuian.common.theme.bgCircle
 
 
 @Composable

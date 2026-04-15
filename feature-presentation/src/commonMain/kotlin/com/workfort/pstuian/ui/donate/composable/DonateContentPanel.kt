@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.common.composable.HtmlText
 import com.workfort.pstuian.common.composable.OutlinedTextInput
+import com.workfort.pstuian.common.theme.TextStyle
 import com.workfort.pstuian.common.theme.btnBgDefault
 import com.workfort.pstuian.ui.donate.state.DonateUiEvent
 import com.workfort.pstuian.ui.donate.state.DonateUiState
@@ -60,7 +61,8 @@ private fun DonateFormContent(
     }
 
     Column(modifier = Modifier.padding(vertical = 16.dp)) {
-        HtmlText(html = donationOptionInfo)
+//        HtmlText(html = donationOptionInfo)
+        Text(donationOptionInfo, style = TextStyle.body2)
         OutlinedTextInput(
             label = stringResource(Res.string.hint_name),
             value = changedInput.name,

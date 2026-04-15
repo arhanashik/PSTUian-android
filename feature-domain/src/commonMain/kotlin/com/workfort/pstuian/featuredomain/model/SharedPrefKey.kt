@@ -19,6 +19,8 @@ data class SharedPrefKey(
         val AUTH_TOKEN = create("auth_token", true)
         val FIRESTORE_CACHE_CLEARED = create("firestore_cache_cleared", true)
         val DONATION_ID = create("donation_id", true)
+        val USER_TYPE = create("user_type", true)
+        val USER = create("user", true)
 
         fun create(name: String, clearOnSignOut: Boolean): SharedPrefKey {
             return SharedPrefKey(name, clearOnSignOut).also { allKeys.add(it) }

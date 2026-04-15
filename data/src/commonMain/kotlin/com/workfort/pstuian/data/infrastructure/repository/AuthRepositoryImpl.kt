@@ -88,23 +88,24 @@ class AuthRepositoryImpl(
     override suspend fun updateFcmToken(
         fcmToken: String
     ): DeviceEntity {
-        val deviceId = prefs.deviceId
+        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Device is not registered yet!")
 
         helper.updateFcmToken(deviceId, fcmToken).also { device ->
-            prefs.fcmToken = fcmToken
+            sharedPrefRepository.putString(SharedPrefKey.FCM_TOKEN, fcmToken)
             // storeRegisteredDevice(device)
             return device.toEntity()
         }
     }
 
     override fun getSignInUserType(): String {
-        return prefs.userType ?: throw Exception("Unknown user type")
+        return sharedPrefRepository.getString(SharedPrefKey.USER_TYPE)
+            ?: throw Exception("Unknown user type")
     }
 
     override fun getSignInUser(): Any {
         val userType = getSignInUserType()
-        val jsonStr = prefs.user ?: ""
+        val jsonStr = sharedPrefRepository.getString(SharedPrefKey.USER) ?: ""
 
         return when (userType) {
             NetworkConst.Params.UserType.STUDENT -> {
@@ -133,31 +134,34 @@ class AuthRepositoryImpl(
 
     override suspend fun storeSignInStudent(student: StudentEntity) {
         val jsonStr = jsonParser.toJson(student)
-        prefs.user = jsonStr
-        prefs.userType = NetworkConst.Params.UserType.STUDENT
+        sharedPrefRepository.apply {
+            putString(SharedPrefKey.USER, jsonStr)
+            putString(SharedPrefKey.USER_TYPE, NetworkConst.Params.UserType.STUDENT)
+        }
     }
 
     override suspend fun storeSignInTeacher(teacher: TeacherEntity) {
         val jsonStr = jsonParser.toJson(teacher)
-        prefs.user = jsonStr
-        prefs.userType = NetworkConst.Params.UserType.TEACHER
+        sharedPrefRepository.apply {
+            putString(SharedPrefKey.USER, jsonStr)
+            putString(SharedPrefKey.USER_TYPE, NetworkConst.Params.UserType.TEACHER)
+        }
     }
 
     override suspend fun signIn(email: String, password: String, userType: String): Any {
-        val deviceId = prefs.deviceId
+        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        val data = when(userType) {
+        val (user, authToken) = when(userType) {
             NetworkConst.Params.UserType.STUDENT -> helper.signInStudent(email, password, deviceId)
             NetworkConst.Params.UserType.TEACHER -> helper.signInTeacher(email, password, deviceId)
             else -> throw Exception("Invalid User Type!")
         }
-        val user = data.first
         when (user) {
             is StudentEntity -> storeSignInStudent(user)
             is TeacherEntity -> storeSignInTeacher(user)
             else -> throw Exception("Invalid User Type!")
         }
-        prefs.authToken = data.second
+        sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
 
         return user
     }
@@ -172,7 +176,7 @@ class AuthRepositoryImpl(
         email: String,
         password: String,
     ): StudentEntity {
-        val deviceId = prefs.deviceId
+        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         val data = helper.signUpStudent(
             name,
@@ -196,7 +200,7 @@ class AuthRepositoryImpl(
         password: String,
         facultyId: Int,
     ): TeacherEntity {
-        val deviceId = prefs.deviceId
+        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         val data = helper.signUpTeacher(name, designation, department, email, password,
             facultyId, deviceId)
@@ -210,7 +214,7 @@ class AuthRepositoryImpl(
             is TeacherEntity -> user.id
             else -> throw Exception("Invalid account")
         }
-        val deviceId = prefs.deviceId
+        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         val data = helper.signOut(id, userType, deviceId, fromAllDevice)
         deleteAll()
@@ -225,32 +229,31 @@ class AuthRepositoryImpl(
             is TeacherEntity -> user.id
             else -> throw Exception("Invalid account")
         }
-        val deviceId = prefs.deviceId
+        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        helper.changePassword(id, userType, oldPassword, newPassword, deviceId).also {
-            it.second?.let { newAuthToken ->
-                prefs.authToken = newAuthToken
+        helper.changePassword(id, userType, oldPassword, newPassword, deviceId)
+            .also { (user, authToken) ->
+                sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
+                return user
             }
-            return it.first
-        }
     }
 
     override suspend fun forgotPassword(userType: String, email: String): String {
-        val deviceId = prefs.deviceId
+        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         return helper.forgotPassword(userType, email, deviceId)
     }
 
     override suspend fun emailVerification(userType: String, email: String): String {
-        val deviceId = prefs.deviceId
+        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         return helper.emailVerification(userType, email, deviceId)
     }
 
     override suspend fun deleteAll() {
-        prefs.authToken = ""
-        prefs.user = ""
-        prefs.userType = ""
+        sharedPrefRepository.remove(SharedPrefKey.AUTH_TOKEN)
+        sharedPrefRepository.remove(SharedPrefKey.USER)
+        sharedPrefRepository.remove(SharedPrefKey.USER_TYPE)
     }
 
     override suspend fun updateDataRefreshState() {
