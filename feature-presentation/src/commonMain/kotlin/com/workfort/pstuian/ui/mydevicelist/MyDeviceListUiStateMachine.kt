@@ -12,48 +12,6 @@ class MyDeviceListUiStateMachine : UiStateMachine<MyDeviceListUiState> {
     private val _uiState = MutableStateFlow(MyDeviceListUiState())
     override val uiState: StateFlow<MyDeviceListUiState> = _uiState.asStateFlow()
 
-    fun onClickBack() {
-        _uiState.update {
-            it.copy(
-                navigationState = MyDeviceListUiState.NavigationState.GoBack(
-                    isSignedOutFromAll = false
-                )
-            )
-        }
-    }
-
-    fun onClickItem(item: DeviceEntity) {
-        _uiState.update {
-            it.copy(
-                messageState = MyDeviceListUiState.MessageState.ShowDetails(item)
-            )
-        }
-    }
-
-    fun onClickSignOutFromAllDevice(hasDevices: Boolean) {
-        if (!hasDevices) {
-            _uiState.update {
-                it.copy(
-                    messageState = MyDeviceListUiState.MessageState.Error("No device to sign out")
-                )
-            }
-        } else {
-            _uiState.update {
-                it.copy(
-                    messageState = MyDeviceListUiState.MessageState.ConfirmSignOutFromAll
-                )
-            }
-        }
-    }
-
-    fun messageConsumed() {
-        _uiState.update { it.copy(messageState = null) }
-    }
-
-    fun navigationConsumed() {
-        _uiState.update { it.copy(navigationState = null) }
-    }
-
     fun updateLoading(isLoading: Boolean, isRefresh: Boolean) {
         _uiState.update {
             it.copy(
@@ -80,21 +38,6 @@ class MyDeviceListUiStateMachine : UiStateMachine<MyDeviceListUiState> {
                 isLoading = false,
                 isEndOfData = true,
                 error = if (isFirstPage) message else null
-            )
-        }
-    }
-
-    fun updateMessageState(messageState: MyDeviceListUiState.MessageState?) {
-        _uiState.update { it.copy(messageState = messageState) }
-    }
-
-    fun onSignedOutFromAll() {
-        _uiState.update {
-            it.copy(
-                messageState = null,
-                navigationState = MyDeviceListUiState.NavigationState.GoBack(
-                    isSignedOutFromAll = true
-                ),
             )
         }
     }

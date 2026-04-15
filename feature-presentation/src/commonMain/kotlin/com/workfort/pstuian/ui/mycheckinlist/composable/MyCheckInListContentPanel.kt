@@ -40,6 +40,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.common.composable.AnimatedErrorView
 import com.workfort.pstuian.common.composable.DotView
 import com.workfort.pstuian.common.composable.LoadAsyncImage
 import com.workfort.pstuian.common.composable.MaterialButtonToggleGroup
@@ -62,9 +63,19 @@ import pstuian.feature_presentation.generated.resources.txt_public
 
 @Composable
 fun MyCheckInListContentPanel(
-    uiState: MyCheckInListUiState.Content,
+    uiState: MyCheckInListUiState,
     onUiEvent: (MyCheckInListUiEvent) -> Unit,
 ) {
+    if (uiState.error != null) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            AnimatedErrorView(modifier = Modifier.width(200.dp))
+        }
+        return
+    }
+
     Column {
         if (uiState.items.isEmpty()) {
             Column(

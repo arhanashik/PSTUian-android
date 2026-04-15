@@ -12,44 +12,6 @@ class MyBloodDonationListUiStateMachine : UiStateMachine<MyBloodDonationListUiSt
     private val _uiState = MutableStateFlow(MyBloodDonationListUiState())
     override val uiState: StateFlow<MyBloodDonationListUiState> = _uiState.asStateFlow()
 
-    fun onClickBack() {
-        _uiState.update { it.copy(navigationState = MyBloodDonationListUiState.NavigationState.GoBack) }
-    }
-
-    fun onClickCreateRequest() {
-        _uiState.update {
-            it.copy(
-                navigationState = MyBloodDonationListUiState.NavigationState.BloodDonationRequestCreateScreen
-            )
-        }
-    }
-
-    fun onClickEdit(item: BloodDonationEntity) {
-        _uiState.update {
-            it.copy(
-                navigationState = MyBloodDonationListUiState.NavigationState.BloodDonationRequestEditScreen(
-                    item
-                )
-            )
-        }
-    }
-
-    fun onClickDelete(item: BloodDonationEntity) {
-        _uiState.update {
-            it.copy(
-                messageState = MyBloodDonationListUiState.MessageState.ConfirmDelete(item)
-            )
-        }
-    }
-
-    fun messageConsumed() {
-        _uiState.update { it.copy(messageState = null) }
-    }
-
-    fun navigationConsumed() {
-        _uiState.update { it.copy(navigationState = null) }
-    }
-
     fun updateLoading(isLoading: Boolean, isRefresh: Boolean) {
         _uiState.update {
             it.copy(
@@ -78,9 +40,5 @@ class MyBloodDonationListUiStateMachine : UiStateMachine<MyBloodDonationListUiSt
                 error = if (isFirstPage) message else null
             )
         }
-    }
-
-    fun updateMessageState(messageState: MyBloodDonationListUiState.MessageState?) {
-        _uiState.update { it.copy(messageState = messageState) }
     }
 }

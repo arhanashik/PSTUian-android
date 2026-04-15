@@ -150,19 +150,6 @@ private val homeModule = module {
     factoryOf(::HomeViewModel)
 }
 
-private val myCheckInListModule = module {
-    factoryOf(::MyCheckInListUiStateMachine)
-    factory { (userId: Int, userType: UserType) ->
-        MyCheckInListViewModel(
-            userId = userId,
-            userType = userType,
-            checkInRepo = get(),
-            uiStateMachine = get(),
-            coroutineDispatcherProvider = get(),
-        )
-    }
-}
-
 private val signInModule = module {
     factoryOf(::SignInUiStateMachine)
     factory {
@@ -228,7 +215,12 @@ private val teacherProfileModule = module {
 private val employeeProfileModule = module {
     factoryOf(::EmployeeProfileUiStateMachine)
     factory { (userId: Int) ->
-        EmployeeProfileViewModel(userId, get(), get())
+        EmployeeProfileViewModel(
+            userId = userId,
+            facultyRepo = get(),
+            authRepo = get(),
+            uiStateMachine = get(),
+        )
     }
 }
 
@@ -247,10 +239,29 @@ private val emailVerificationModule = module {
 }
 
 private val myBloodDonationListModule = module {
+    factoryOf(::MyBloodDonationListUiStateMachine)
     factory { (userId: Int, userType: UserType) ->
-        MyBloodDonationListUiStateMachine(userId, userType, get())
+        MyBloodDonationListViewModel(
+            userId = userId,
+            userType = userType,
+            donationRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
     }
-    factoryOf(::MyBloodDonationListViewModel)
+}
+
+private val myCheckInListModule = module {
+    factoryOf(::MyCheckInListUiStateMachine)
+    factory { (userId: Int, userType: UserType) ->
+        MyCheckInListViewModel(
+            userId = userId,
+            userType = userType,
+            checkInRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
 }
 
 private val myDeviceListModule = module {
@@ -296,7 +307,6 @@ val featurePresentationModule = listOf(
     facultyModule,
     forgotPasswordModule,
     homeModule,
-    myCheckInListModule,
     signInModule,
     signUpModule,
     splashModule,
@@ -307,6 +317,7 @@ val featurePresentationModule = listOf(
     deleteAccountModule,
     emailVerificationModule,
     myBloodDonationListModule,
+    myCheckInListModule,
     myDeviceListModule,
     settingsModule,
     studentProfileEditModule,

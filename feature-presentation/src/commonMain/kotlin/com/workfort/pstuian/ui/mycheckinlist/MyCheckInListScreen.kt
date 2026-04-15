@@ -1,8 +1,5 @@
 package com.workfort.pstuian.ui.mycheckinlist
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,24 +9,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.AnimatedErrorView
 import com.workfort.pstuian.common.composable.AppBar
 import com.workfort.pstuian.common.composable.AppBarIconButton
 import com.workfort.pstuian.common.composable.AppScaffold
 import com.workfort.pstuian.common.composable.LoadingOverlay
-import com.workfort.pstuian.common.composable.NavigationButton
 import com.workfort.pstuian.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.common.composable.ShowInfoDialog
 import com.workfort.pstuian.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.mycheckinlist.composable.MyCheckInItemBottomSheet
 import com.workfort.pstuian.ui.mycheckinlist.composable.MyCheckInListContentPanel
-import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInMessageState
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiEvent
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiState
+import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInMessageState
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInNavigationState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -48,20 +41,10 @@ internal fun MyCheckInListScreen(
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
 
-    MyCheckInListScreenContent(
-        uiState = uiState,
-        onUiEvent = viewModel::onUiEvent,
-    )
+    MyCheckInListScreenContent(uiState, viewModel::onUiEvent)
 
-    HandleMessageState(
-        message = message,
-        onUiEvent = viewModel::onUiEvent,
-    )
-
-    HandleNavigationState(
-        navigation = navigation,
-        onNavigationHandled = viewModel::onNavigationHandled,
-    )
+    HandleMessageState(message, viewModel::onMessageHandled)
+    HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,9 +61,7 @@ private fun MyCheckInListScreenContent(
             AppBar(
                 title = stringResource(Res.string.txt_my_check_in_list),
                 navigation = {
-                    NavigationButton {
-                        onUiEvent(MyCheckInListUiEvent.BackClicked)
-                    }
+                    onUiEvent(MyCheckInListUiEvent.BackClicked)
                 },
                 actions = {
                     AppBarIconButton(
@@ -94,26 +75,10 @@ private fun MyCheckInListScreenContent(
             )
         },
     ) {
-        when (uiState) {
-            is MyCheckInListUiState.None -> Unit
-            is MyCheckInListUiState.Content -> {
-                MyCheckInListContentPanel(
-                    uiState = uiState,
-                    onUiEvent = onUiEvent,
-                )
+        MyCheckInListContentPanel(uiState, onUiEvent)
 
-                if (uiState.isOperationLoading) {
-                    LoadingOverlay()
-                }
-            }
-            is MyCheckInListUiState.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    AnimatedErrorView(modifier = Modifier.width(200.dp))
-                }
-            }
+        if (uiState.isOperationLoading) {
+            LoadingOverlay()
         }
     }
 }
@@ -121,7 +86,7 @@ private fun MyCheckInListScreenContent(
 @Composable
 private fun HandleMessageState(
     message: MyCheckInMessageState?,
-    onUiEvent: (MyCheckInListUiEvent) -> Unit,
+    onMessageHandled: () -> Unit,
 ) {
     message?.let {
         when (it) {
@@ -129,14 +94,14 @@ private fun HandleMessageState(
                 MyCheckInItemBottomSheet(
                     item = it.item,
                     onClickChangePrivacy = { privacy ->
-                        onUiEvent(MyCheckInListUiEvent.ChangePrivacyClicked(it.item, privacy))
+                        onMessageHandled()
+                        it.onClickChangePrivacy(privacy)
                     },
                     onClickDelete = {
-                        onUiEvent(MyCheckInListUiEvent.DeleteClicked(it.item))
+                        onMessageHandled()
+                        it.onClickDelete()
                     },
-                    onDismiss = {
-                        onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                    },
+                    onDismiss = onMessageHandled,
                 )
             }
             is MyCheckInMessageState.ConfirmPrivacyChange -> {
@@ -144,11 +109,10 @@ private fun HandleMessageState(
                     title = stringResource(Res.string.txt_update),
                     message = "Are you surely want to change the privacy?",
                     onConfirm = {
-                        onUiEvent(MyCheckInListUiEvent.ChangePrivacy(it.item, it.privacy))
+                        onMessageHandled()
+                        it.onConfirm()
                     },
-                    onDismiss = {
-                        onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                    },
+                    onDismiss = onMessageHandled,
                 )
             }
             is MyCheckInMessageState.ConfirmDelete -> {
@@ -156,28 +120,20 @@ private fun HandleMessageState(
                     title = stringResource(Res.string.txt_delete),
                     message = stringResource(Res.string.msg_delete_permanent),
                     onConfirm = {
-                        onUiEvent(MyCheckInListUiEvent.Delete(it.item))
+                        onMessageHandled()
+                        it.onConfirm()
                     },
-                    onDismiss = {
-                        onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                    },
+                    onDismiss = onMessageHandled,
                 )
             }
             is MyCheckInMessageState.Success -> {
-                ShowInfoDialog(
-                    message = it.message,
-                    onDismiss = {
-                        onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                    }
-                )
+                ShowInfoDialog(message = it.message, onDismiss = onMessageHandled)
             }
             is MyCheckInMessageState.Error -> {
                 ShowInfoDialog(
                     message = it.message,
                     dismissButtonText = stringResource(Res.string.txt_retry),
-                    onDismiss = {
-                        onUiEvent(MyCheckInListUiEvent.MessageConsumed)
-                    }
+                    onDismiss = onMessageHandled,
                 )
             }
         }

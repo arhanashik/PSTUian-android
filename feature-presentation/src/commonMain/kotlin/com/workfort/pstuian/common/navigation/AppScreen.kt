@@ -18,6 +18,7 @@ sealed interface AppScreen {
     data class Employees(val userId: Int) : AppScreen
     object BloodDonationRequestList : AppScreen
     object BloodDonationRequestCreate : AppScreen
+    data class BloodDonationRequestEdit(val donationId: Int) : AppScreen
     data class Profile(val userId: Int, val userType: UserType) : AppScreen
     data class MyBloodDonationList(val userId: Int, val userType: UserType) : AppScreen
     data class MyCheckInList(val userId: Int, val userType: UserType) : AppScreen

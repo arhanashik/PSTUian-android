@@ -3,11 +3,9 @@ package com.workfort.pstuian.ui.mydevicelist.state
 import com.workfort.pstuian.featuredomain.model.DeviceEntity
 
 sealed interface MyDeviceListUiEvent {
-    data object OnClickBack : MyDeviceListUiEvent
-    data class OnClickItem(val item: DeviceEntity) : MyDeviceListUiEvent
-    data object OnClickSignOutFromAllDevice : MyDeviceListUiEvent
-    data object OnConfirmSignOutFromAll : MyDeviceListUiEvent
-    data class OnLoadList(val refresh: Boolean) : MyDeviceListUiEvent
-    data object MessageConsumed : MyDeviceListUiEvent
-    data object NavigationConsumed : MyDeviceListUiEvent
+    data object RefreshClicked : MyDeviceListUiEvent
+    data object LoadMore : MyDeviceListUiEvent
+    data object BackClicked : MyDeviceListUiEvent
+    data class ItemClicked(val item: DeviceEntity) : MyDeviceListUiEvent
+    data object SignOutFromAllDeviceClicked : MyDeviceListUiEvent
 }
