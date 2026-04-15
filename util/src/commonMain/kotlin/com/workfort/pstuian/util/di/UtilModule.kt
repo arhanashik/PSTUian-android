@@ -8,11 +8,9 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-expect val platformUtilModule: Module
-
 private val utils = module {
     factoryOf(::JsonParser)
     factoryOf(::DateTimeUtilImpl) bind DateTimeUtil::class
 }
 
-val utilModule = listOf(platformUtilModule, utils)
+val utilModule = listOf(utils)

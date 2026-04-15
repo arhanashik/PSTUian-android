@@ -1,17 +1,19 @@
 package com.workfort.pstuian.ui.cvupload
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.remember
 import com.workfort.pstuian.common.composable.AppBar
 import com.workfort.pstuian.common.composable.AppScaffold
+import com.workfort.pstuian.common.composable.AppSnackbarHost
+import com.workfort.pstuian.common.composable.HandleSnackbar
+import com.workfort.pstuian.common.composable.NavigationButton
 import com.workfort.pstuian.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.common.composable.ShowErrorDialog
-import com.workfort.pstuian.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.cvupload.composable.CvUploadContentPanel
 import com.workfort.pstuian.ui.cvupload.state.CvUploadMessageState
@@ -19,35 +21,59 @@ import com.workfort.pstuian.ui.cvupload.state.CvUploadNavigationState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiEvent
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiState
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.msg_upload_new_cv
 import pstuian.feature_presentation.generated.resources.txt_dismiss
 import pstuian.feature_presentation.generated.resources.txt_upload
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CvUploadScreen(
-    viewModel: CvUploadViewModel,
-    navigator: AppNavigator,
-) {
+internal fun CvUploadScreen(viewModel: CvUploadViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(Unit) {
-        viewModel.onUiReady()
-    }
+    ScreenContent(uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
 
-    LaunchedEffect(navigation) {
-        when (navigation) {
-            is CvUploadNavigationState.GoBack -> {
-                navigator.goBack()
-                viewModel.onNavigationHandled()
+    HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled, viewModel::onUiEvent)
+    HandleNavigationState(navigation, viewModel::onNavigationHandled)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ScreenContent(
+    uiState: CvUploadUiState,
+    snackbarHostState: SnackbarHostState,
+    onUiEvent: (CvUploadUiEvent) -> Unit,
+) {
+    AppScaffold(
+        topBar = {
+            AppBar(
+                title = "Upload CV",
+                navigation = {
+                    NavigationButton { onUiEvent(CvUploadUiEvent.BackClicked) }
+                },
+            )
+        },
+        snackbarHost = { AppSnackbarHost(snackbarHostState) }
+    ) {
+        when (uiState) {
+            is CvUploadUiState.None -> Unit
+            is CvUploadUiState.Content -> {
+                CvUploadContentPanel(uiState = uiState, onUiEvent = onUiEvent)
             }
-            null -> Unit
         }
     }
+}
 
+@Composable
+private fun HandleMessageState(
+    message: CvUploadMessageState?,
+    snackbarHostState: SnackbarHostState,
+    onMessageHandled: () -> Unit,
+    onUiEvent: (CvUploadUiEvent) -> Unit,
+) {
     message?.let {
         when (it) {
             is CvUploadMessageState.ConfirmUpload -> {
@@ -56,54 +82,41 @@ internal fun CvUploadScreen(
                     confirmButtonText = stringResource(Res.string.txt_upload),
                     dismissButtonText = stringResource(Res.string.txt_dismiss),
                     onConfirm = {
-                        viewModel.onMessageHandled()
-                        // This should trigger the actual upload in the UI layer (platform specific)
-                        // For now we assume some mechanism exists or will be added.
+                        onMessageHandled()
+                        onUiEvent(CvUploadUiEvent.ConfirmUpload)
                     },
-                    onDismiss = viewModel::onMessageHandled,
-                )
-            }
-            is CvUploadMessageState.Success -> {
-                ShowSuccessDialog(
-                    message = it.message,
-                    onConfirm = viewModel::onMessageHandled,
-                    onDismiss = viewModel::onMessageHandled,
+                    onDismiss = onMessageHandled,
                 )
             }
             is CvUploadMessageState.Error -> {
                 ShowErrorDialog(
                     message = it.message,
-                    onConfirm = viewModel::onMessageHandled,
-                    onDismiss = viewModel::onMessageHandled,
+                    onConfirm = onMessageHandled,
+                    onDismiss = onMessageHandled,
                 )
+            }
+            is CvUploadMessageState.Snackbar -> {
+                HandleSnackbar(it.message, snackbarHostState, onMessageHandled)
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CvUploadScreenContent(
-    uiState: CvUploadUiState,
-    onUiEvent: (CvUploadUiEvent) -> Unit,
+private fun HandleNavigationState(
+    navigation: CvUploadNavigationState?,
+    onNavigationHandled: () -> Unit,
 ) {
-    AppScaffold (
-        topBar = {
-            AppBar(
-                title = "Upload CV",
-                navigation = { onUiEvent(CvUploadUiEvent.OnClickBack) },
-            )
-        },
-    ) { innerPadding ->
-        when (uiState) {
-            is CvUploadUiState.None -> Unit
-            is CvUploadUiState.Content -> {
-                CvUploadContentPanel(
-                    modifier = Modifier.padding(innerPadding),
-                    uiState = uiState,
-                    onUiEvent = onUiEvent,
-                )
+    val navigator = koinInject<AppNavigator?>()
+
+    LaunchedEffect(navigation) {
+        navigation?.let {
+            when (it) {
+                is CvUploadNavigationState.GoBack -> {
+                    navigator?.goBack()
+                }
             }
+            onNavigationHandled()
         }
     }
 }

@@ -58,7 +58,7 @@ private fun CvSelectorView(
     val pdfPickerLauncher = rememberPdfPickerLauncher { uri ->
         // Assuming we can get the filename from URI or it's handled elsewhere
         // For now, using a placeholder for filename if not provided
-        onUiEvent(CvUploadUiEvent.OnSelectCv(uri, "selected_file.pdf"))
+        onUiEvent(CvUploadUiEvent.CvSelected(uri, "selected_file.pdf"))
     }
 
     Column(
@@ -99,7 +99,7 @@ private fun CvSelectorView(
         Button(
             modifier = Modifier.size(100.dp),
             onClick = {
-                onUiEvent(CvUploadUiEvent.OnClickUpload)
+                onUiEvent(CvUploadUiEvent.UploadClicked)
             },
             colors = ButtonDefaults.buttonColors(
                 contentColor = if (selectedFileName.isEmpty()) {

@@ -68,6 +68,7 @@ private fun EmailVerificationFormContent(
     val selectedIndex = when (userType) {
         UserType.STUDENT -> 0
         UserType.TEACHER -> 1
+        else -> 0
     }
 
     val (changedEmail, onChangeEmail) = remember { mutableStateOf("") }

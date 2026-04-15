@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.common.composable.AppBar
 import com.workfort.pstuian.common.composable.ShowErrorDialog
 import com.workfort.pstuian.common.composable.ShowLoaderDialog
@@ -23,18 +22,17 @@ import com.workfort.pstuian.ui.changepassword.state.ChangePasswordNavigationStat
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiState
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_change_password
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChangePasswordScreen(
-    viewModel: ChangePasswordViewModel,
-    navigator: AppNavigator,
-) {
+internal fun ChangePasswordScreen(viewModel: ChangePasswordViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
+    val navigator = koinInject<AppNavigator?>()
 
     LaunchedEffect(Unit) {
         viewModel.onUiReady()
@@ -43,7 +41,7 @@ fun ChangePasswordScreen(
     LaunchedEffect(navigation) {
         when (val state = navigation) {
             is ChangePasswordNavigationState.GoBack -> {
-                navigator.goBack()
+                navigator?.goBack()
                 viewModel.onNavigationHandled()
             }
             null -> Unit
@@ -56,12 +54,11 @@ fun ChangePasswordScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
-                scrollBehavior,
                 title = stringResource(Res.string.txt_change_password),
-                onClickBack = {
+                navigation = {
                     viewModel.onUiEvent(ChangePasswordUiEvent.BackClicked)
                 },
-                elevation = 0.dp,
+                scrollBehavior = scrollBehavior,
             )
         },
     ) { innerPadding ->

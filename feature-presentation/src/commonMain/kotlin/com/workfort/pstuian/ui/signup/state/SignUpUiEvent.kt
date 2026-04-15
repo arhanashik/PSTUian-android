@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.signup.state
 
-import com.workfort.pstuian.model.StudentSignUpInput
-import com.workfort.pstuian.model.TeacherSignUpInput
-import com.workfort.pstuian.model.UserType
+import com.workfort.pstuian.featuredomain.model.StudentSignUpInput
+import com.workfort.pstuian.featuredomain.model.TeacherSignUpInput
+import com.workfort.pstuian.featuredomain.model.UserType
 
 sealed interface SignUpUiEvent {
     data object BackClicked : SignUpUiEvent

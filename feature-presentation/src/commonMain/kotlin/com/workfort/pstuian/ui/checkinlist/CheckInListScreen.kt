@@ -26,6 +26,7 @@ import com.workfort.pstuian.ui.checkinlist.state.CheckInListNavigationState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_check_in_screen
 import pstuian.feature_presentation.generated.resources.msg_confirm_check_in
@@ -36,13 +37,11 @@ import pstuian.feature_presentation.generated.resources.txt_title_call
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckInListScreen(
-    viewModel: CheckInListViewModel,
-    navigator: AppNavigator,
-) {
+internal fun CheckInListScreen(viewModel: CheckInListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
+    val navigator = koinInject<AppNavigator?>()
 
     LaunchedEffect(Unit) {
         viewModel.onUiReady()
@@ -51,15 +50,15 @@ fun CheckInListScreen(
     LaunchedEffect(navigation) {
         when (val state = navigation) {
             is CheckInListNavigationState.GoBack -> {
-                navigator.goBack()
+                navigator?.goBack()
                 viewModel.onNavigationHandled()
             }
             is CheckInListNavigationState.ProfileScreen -> {
-                navigator.navigateTo(AppScreen.Profile(state.userId, state.userType))
+                navigator?.navigateTo(AppScreen.Profile(state.userId, state.userType))
                 viewModel.onNavigationHandled()
             }
             is CheckInListNavigationState.LocationPickerScreen -> {
-                navigator.navigateTo(AppScreen.LocationPicker)
+                navigator?.navigateTo(AppScreen.LocationPicker)
                 viewModel.onNavigationHandled()
             }
             null -> Unit
@@ -72,11 +71,11 @@ fun CheckInListScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
-                scrollBehavior,
                 title = stringResource(Res.string.label_check_in_screen),
-                onClickBack = {
+                navigation = {
                     viewModel.onUiEvent(CheckInListUiEvent.OnClickBack)
                 },
+                scrollBehavior = scrollBehavior,
             )
         },
     ) { innerPadding ->

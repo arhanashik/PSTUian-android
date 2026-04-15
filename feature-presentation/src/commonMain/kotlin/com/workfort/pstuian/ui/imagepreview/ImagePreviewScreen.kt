@@ -1,4 +1,4 @@
-package com.workfort.pstuian.app.ui.common.ui.imagepreview
+package com.workfort.pstuian.ui.imagepreview
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -20,12 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.size.Size
 import com.workfort.pstuian.common.composable.AnimatedErrorView
 import com.workfort.pstuian.common.composable.AnimatedImagePlaceholderView
-import com.workfort.pstuian.app.ui.common.theme.LottieAnimation
 
 @Composable
 fun ImagePreviewScreen(
@@ -75,13 +75,13 @@ private fun ImagePreviewScreenComponent(
         }
 
         val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(coil3.compose.LocalPlatformContext.current)
+            model = ImageRequest.Builder(LocalPlatformContext.current)
                 .data(imageUrl)
                 .size(Size.ORIGINAL)
                 .build()
         )
 
-        when (val state = painter.state) {
+        when (painter.state) {
             is AsyncImagePainter.State.Success -> {
                 Image(
                     modifier = modifier.fillMaxWidth(),
@@ -92,10 +92,10 @@ private fun ImagePreviewScreenComponent(
             }
             is AsyncImagePainter.State.Empty,
             is AsyncImagePainter.State.Loading -> {
-                AnimatedImagePlaceholderView(modifier = Modifier.width(LottieAnimation.errorWidth))
+                AnimatedImagePlaceholderView()
             }
             is AsyncImagePainter.State.Error -> {
-                AnimatedErrorView(modifier = Modifier.width(LottieAnimation.errorWidth))
+                AnimatedErrorView()
             }
             else -> {}
         }

@@ -40,6 +40,7 @@ internal fun BloodDonationRequestCreateScreen(viewModel: BloodDonationRequestCre
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScreenContent(
     uiState: BloodDonationRequestCreateUiState,

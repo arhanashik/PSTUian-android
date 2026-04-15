@@ -22,19 +22,18 @@ import com.workfort.pstuian.ui.contactus.state.ContactUsNavigationState
 import com.workfort.pstuian.ui.contactus.state.ContactUsUiEvent
 import com.workfort.pstuian.ui.contactus.state.ContactUsUiState
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_contact_us
 import pstuian.feature_presentation.generated.resources.txt_home
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactUsScreen(
-    viewModel: ContactUsViewModel,
-    navigator: AppNavigator,
-) {
+internal fun ContactUsScreen(viewModel: ContactUsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
+    val navigator = koinInject<AppNavigator?>()
 
     LaunchedEffect(Unit) {
         viewModel.onUiReady()
@@ -43,7 +42,7 @@ fun ContactUsScreen(
     LaunchedEffect(navigation) {
         when (navigation) {
             is ContactUsNavigationState.GoBack -> {
-                navigator.goBack()
+                navigator?.goBack()
                 viewModel.onNavigationHandled()
             }
             null -> Unit
@@ -56,11 +55,11 @@ fun ContactUsScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
-                scrollBehavior,
                 title = stringResource(Res.string.label_contact_us),
-                onClickBack = {
+                navigation = {
                     viewModel.onUiEvent(ContactUsUiEvent.OnClickBack)
                 },
+                scrollBehavior = scrollBehavior,
             )
         },
     ) { innerPadding ->

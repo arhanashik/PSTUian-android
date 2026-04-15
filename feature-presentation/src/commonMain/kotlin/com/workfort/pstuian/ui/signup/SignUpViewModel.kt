@@ -94,6 +94,7 @@ class SignUpViewModel(
         val currentFacultyId = when (userType) {
             UserType.STUDENT -> uiState.value.studentSignUpInput.faculty?.id
             UserType.TEACHER -> uiState.value.teacherSignUpInput.faculty?.id
+            UserType.EMPLOYEE -> uiState.value.teacherSignUpInput.faculty?.id
         }
         if (facultyId == currentFacultyId) return
 

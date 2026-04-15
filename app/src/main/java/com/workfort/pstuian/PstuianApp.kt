@@ -8,7 +8,6 @@ import com.workfort.pstuian.data.di.dataModule
 import com.workfort.pstuian.di.featurePresentationModule
 import com.workfort.pstuian.featuredomain.di.featureDomainModule
 import com.workfort.pstuian.util.di.utilModule
-import com.workfort.pstuian.util.helper.ContextHolder
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -66,7 +65,7 @@ class PstuianApp  : MultiDexApplication() {
     }
 
     private fun initDb(context: Context) {
-        ContextHolder.init(context)
+        // initialize database
     }
 
     override fun attachBaseContext(base: Context?) {

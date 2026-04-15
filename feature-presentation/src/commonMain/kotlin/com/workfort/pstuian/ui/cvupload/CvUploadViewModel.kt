@@ -1,7 +1,11 @@
 package com.workfort.pstuian.ui.cvupload
 
+import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.ui.cvupload.state.CvUploadMessageState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadNavigationState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiEvent
@@ -13,7 +17,9 @@ import kotlinx.coroutines.flow.update
 internal class CvUploadViewModel(
     private val userId: Int,
     private val userType: UserType,
+    private val authRepository: AuthRepository,
     private val uiStateMachine: CvUploadUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<CvUploadUiState>(uiStateMachine) {
 
     private val _message = MutableStateFlow<CvUploadMessageState?>(null)
@@ -28,12 +34,12 @@ internal class CvUploadViewModel(
 
     fun onUiEvent(event: CvUploadUiEvent) {
         when (event) {
-            is CvUploadUiEvent.OnClickBack -> onClickBack()
-            is CvUploadUiEvent.OnSelectCv -> onSelectCv(event.uri, event.fileName)
-            is CvUploadUiEvent.OnClickUpload -> onClickUpload()
-            is CvUploadUiEvent.OnUpdateUploadProgress -> updateUploadProgress(event.progress)
-            is CvUploadUiEvent.OnUploadResult -> updateUploadResult(event.isSuccess, event.result)
-            is CvUploadUiEvent.OnError -> updateMessageError(event.message)
+            is CvUploadUiEvent.BackClicked -> onClickBack()
+            is CvUploadUiEvent.CvSelected -> onSelectCv(event.uri, event.fileName)
+            is CvUploadUiEvent.UploadClicked -> onClickUpload()
+            is CvUploadUiEvent.ConfirmUpload -> uploadCv()
+            is CvUploadUiEvent.UploadProgress -> onUploadProgress(event.progress)
+            is CvUploadUiEvent.UploadResult -> onUploadResult(event.isSuccess, event.result)
         }
     }
 
@@ -50,27 +56,36 @@ internal class CvUploadViewModel(
     }
 
     private fun onClickUpload() {
-        val state = uiState.value as? CvUploadUiState.Content ?: return
-        if (state.progress in 1..99) {
-            return
-        }
         _message.update { CvUploadMessageState.ConfirmUpload }
     }
 
-    private fun updateUploadProgress(progress: Int) {
-        uiStateMachine.updateUploadProgress(progress)
-    }
+    private fun uploadCv() {
+        val state = uiState.value as? CvUploadUiState.Content ?: return
+        val uri = state.selectedFileUri
 
-    private fun updateUploadResult(isSuccess: Boolean, result: String) {
-        uiStateMachine.updateUploadResult(isSuccess, result)
-        if (isSuccess) {
-            _message.update { CvUploadMessageState.Success(result) }
-        } else {
-            _message.update { CvUploadMessageState.Error(result) }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+//            authRepository.uploadCv(
+//                userId,
+//                userType,
+//                uri,
+//                onProgress = { onUiEvent(CvUploadUiEvent.UploadProgress(it)) },
+//                onResult = { isSuccess, result ->
+//                    onUiEvent(CvUploadUiEvent.UploadResult(isSuccess, result))
+//                }
+//            )
         }
     }
 
-    private fun updateMessageError(message: String) {
-        _message.update { CvUploadMessageState.Error(message) }
+    private fun onUploadProgress(progress: Int) {
+        uiStateMachine.updateUploadProgress(progress)
+    }
+
+    private fun onUploadResult(isSuccess: Boolean, result: String) {
+        uiStateMachine.updateUploadResult(isSuccess, result)
+        if (isSuccess) {
+            _message.update { CvUploadMessageState.Snackbar(result) }
+        } else {
+            _message.update { CvUploadMessageState.Error(result) }
+        }
     }
 }

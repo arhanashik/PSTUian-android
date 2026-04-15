@@ -111,6 +111,7 @@ private fun SignUpFormContent(
     val selectedIndex = when (uiState.userType) {
         UserType.STUDENT -> 0
         UserType.TEACHER -> 1
+        else -> 0
     }
 
     Column(

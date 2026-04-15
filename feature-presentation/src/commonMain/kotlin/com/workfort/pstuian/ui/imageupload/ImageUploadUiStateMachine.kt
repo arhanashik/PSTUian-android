@@ -4,79 +4,56 @@ import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ImageUploadUiStateMachine : UiStateMachine<ImageUploadUiState> {
-    private val _uiState = MutableStateFlow(ImageUploadUiState())
-    override val uiState: StateFlow<ImageUploadUiState> = _uiState
+internal class ImageUploadUiStateMachine : UiStateMachine<ImageUploadUiState> {
 
-    fun messageConsumed() {
-        _uiState.update { it.copy(displayState = it.displayState.copy(messageState = null)) }
+    private val _state = MutableStateFlow<ImageUploadUiState>(ImageUploadUiState.None)
+    override val uiState: StateFlow<ImageUploadUiState> = _state.asStateFlow()
+
+    private fun updateUiState(
+        updater: ImageUploadUiState.() -> ImageUploadUiState,
+    ) = _state.update(updater)
+
+    fun setInitialContent() = updateUiState {
+        ImageUploadUiState.Content()
     }
 
-    fun navigationConsumed() {
-        _uiState.update { it.copy(navigationState = null) }
-    }
-
-    fun onClickBack() {
-        if (isUploading()) return
-        _uiState.update {
-            it.copy(navigationState = ImageUploadUiState.NavigationState.GoBack(null))
-        }
-    }
-
-    fun onSelectImage(uri: String) {
-        _uiState.update {
-            it.copy(
-                displayState = it.displayState.copy(
-                    selectedFileUri = uri,
-                    uploadState = ImageUploadUiState.DisplayState.ImageUploadState.None
-                )
+    fun onSelectImage(uri: String) = updateUiState {
+        when (this) {
+            is ImageUploadUiState.None -> this
+            is ImageUploadUiState.Content -> copy(
+                selectedFileUri = uri,
+                uploadState = ImageUploadUiState.Content.ImageUploadState.None
             )
         }
     }
 
-    fun onClickUpload() {
-        if (isUploading()) return
-        _uiState.update {
-            it.copy(
-                displayState = it.displayState.copy(
-                    messageState = ImageUploadUiState.DisplayState.MessageState.ConfirmUpload
-                )
+    fun onUploadProgress(progress: Int) = updateUiState {
+        when (this) {
+            is ImageUploadUiState.None -> this
+            is ImageUploadUiState.Content -> copy(
+                uploadState = ImageUploadUiState.Content.ImageUploadState.Uploading(progress)
             )
         }
     }
 
-    fun onUploadProgress(progress: Int) {
-        _uiState.update {
-            it.copy(
-                displayState = it.displayState.copy(
-                    uploadState = ImageUploadUiState.DisplayState.ImageUploadState.Uploading(progress)
-                )
-            )
-        }
-    }
-
-    fun onUploadResult(isSuccess: Boolean, result: String, url: String?) {
-        _uiState.update {
-            it.copy(
-                displayState = it.displayState.copy(
-                    uploadState = if (isSuccess) {
-                        ImageUploadUiState.DisplayState.ImageUploadState.Success
-                    } else {
-                        ImageUploadUiState.DisplayState.ImageUploadState.Error(result)
-                    }
-                ),
-                navigationState = if (isSuccess && url != null) {
-                    ImageUploadUiState.NavigationState.GoBack(url)
+    fun onUploadResult(isSuccess: Boolean, result: String) = updateUiState {
+        when (this) {
+            is ImageUploadUiState.None -> this
+            is ImageUploadUiState.Content -> copy(
+                uploadState = if (isSuccess) {
+                    ImageUploadUiState.Content.ImageUploadState.Success
                 } else {
-                    it.navigationState
+                    ImageUploadUiState.Content.ImageUploadState.Error(result)
                 }
             )
         }
     }
 
-    private fun isUploading(): Boolean {
-        return _uiState.value.displayState.uploadState is ImageUploadUiState.DisplayState.ImageUploadState.Uploading
+    fun isUploading(): Boolean {
+        val currentContent = _state.value as? ImageUploadUiState.Content ?: return false
+        return currentContent.uploadState is ImageUploadUiState.Content.ImageUploadState.Uploading
     }
 }

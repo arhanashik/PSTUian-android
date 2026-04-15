@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.HtmlText
 import com.workfort.pstuian.common.composable.OutlinedTextInput
 import com.workfort.pstuian.common.theme.TextStyle
 import com.workfort.pstuian.common.theme.btnBgDefault

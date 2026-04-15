@@ -35,7 +35,8 @@ fun MyDeviceItemBottomSheet(
     val detailsDialogSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
-    val lastActiveAt = DateTimeUtil.getTimeAgo(item.updatedAt ?: "")
+//    val lastActiveAt = DateTimeUtil.getTimeAgo(item.updatedAt ?: "")
+    val lastActiveAt = item.updatedAt
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = detailsDialogSheetState,

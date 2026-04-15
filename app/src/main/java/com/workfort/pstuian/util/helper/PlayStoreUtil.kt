@@ -21,7 +21,7 @@ class PlayStoreUtil (val context: Context) {
             != null) {
             context.startActivity(intent)
         } else {
-            LinkUtil().openBrowser(url)
+            // open in browser
         }
     }
 

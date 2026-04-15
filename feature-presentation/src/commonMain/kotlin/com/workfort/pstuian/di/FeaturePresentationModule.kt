@@ -114,7 +114,13 @@ private val cvDownloadModule = module {
 private val cvUploadModule = module {
     factoryOf(::CvUploadUiStateMachine)
     factory { (userId: Int, userType: UserType) ->
-        CvUploadViewModel(userId, userType, get())
+        CvUploadViewModel(
+            userId = userId,
+            userType = userType,
+            authRepository = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
     }
 }
 
