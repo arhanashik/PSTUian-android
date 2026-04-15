@@ -11,6 +11,10 @@ class AppNavigator {
         _events.emit(NavEvent.Navigate(screen))
     }
 
+    suspend fun resetTo(screen: AppScreen) {
+        _events.emit(NavEvent.Navigate(screen))
+    }
+
     suspend fun goBack() {
         _events.emit(NavEvent.Back)
     }

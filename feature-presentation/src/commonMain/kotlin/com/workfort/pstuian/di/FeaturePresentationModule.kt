@@ -234,12 +234,16 @@ private val employeeProfileModule = module {
 
 private val deleteAccountModule = module {
     factoryOf(::DeleteAccountUiStateMachine)
-    factoryOf(::DeleteAccountViewModel)
+    factory { (userId: Int, userType: UserType) ->
+        DeleteAccountViewModel(userId, userType, get(), get())
+    }
 }
 
 private val emailVerificationModule = module {
     factoryOf(::EmailVerificationUiStateMachine)
-    factoryOf(::EmailVerificationViewModel)
+    factory {
+        EmailVerificationViewModel(get(), get())
+    }
 }
 
 private val myBloodDonationListModule = module {

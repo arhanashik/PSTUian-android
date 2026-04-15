@@ -11,6 +11,7 @@ sealed interface AppScreen {
     object ChangePassword : AppScreen
     object ForgotPassword : AppScreen
     object EmailVerification : AppScreen
+    object ContactUs : AppScreen
     object Home : AppScreen
     data class Students(val batchId: Int) : AppScreen
     data class Teachers(val userId: Int) : AppScreen

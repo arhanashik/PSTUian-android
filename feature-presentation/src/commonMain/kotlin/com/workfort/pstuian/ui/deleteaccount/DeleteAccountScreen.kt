@@ -1,191 +1,137 @@
 package com.workfort.pstuian.ui.deleteaccount
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.common.composable.AppBar
-import com.workfort.pstuian.common.composable.OutlinedTextInput
+import com.workfort.pstuian.common.composable.AppScaffold
 import com.workfort.pstuian.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.common.composable.ShowErrorDialog
 import com.workfort.pstuian.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.common.composable.ShowSuccessDialog
-import com.workfort.pstuian.common.composable.TitleTextSmall
+import com.workfort.pstuian.common.navigation.AppNavigator
+import com.workfort.pstuian.common.navigation.AppScreen
+import com.workfort.pstuian.ui.deleteaccount.composable.DeleteAccountContentPanel
+import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountMessageState
+import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountNavigationState
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountUiEvent
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountUiState
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.hint_password
 import pstuian.feature_presentation.generated.resources.msg_delete_account
 import pstuian.feature_presentation.generated.resources.txt_delete_account
 
+@Composable
+fun DeleteAccountScreen(viewModel: DeleteAccountViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+    val message by viewModel.message.collectAsState()
+    val navigation by viewModel.navigation.collectAsState()
+
+    DeleteAccountScreenContent(uiState, viewModel::onUiEvent)
+
+    HandleMessageState(message, viewModel::onUiEvent)
+    HandleNavigationState(navigation, viewModel::onNavigationConsumed)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeleteAccountScreen(
-    modifier: Modifier = Modifier,
-    screenState: DeleteAccountUiState,
+private fun DeleteAccountScreenContent(
+    uiState: DeleteAccountUiState,
     onUiEvent: (DeleteAccountUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    AppScaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
-                scrollBehavior,
                 title = stringResource(Res.string.txt_delete_account),
-                onClickBack = {
-                    onUiEvent(DeleteAccountUiEvent.OnClickBack)
-                },
-                elevation = 0.dp,
+                navigation = { onUiEvent(DeleteAccountUiEvent.OnClickBack) },
+                scrollBehavior = scrollBehavior,
             )
         },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            FormContent(
-                input = screenState.input,
-                validationError = screenState.validationError,
-                onUiEvent = onUiEvent,
-            )
-        }
-
-        screenState.messageState?.let {
-            HandleMessageState(it, onUiEvent)
-        }
-    }
-}
-
-@Composable
-private fun FormContent(
-    modifier: Modifier = Modifier,
-    input: String,
-    validationError: String,
-    onUiEvent: (DeleteAccountUiEvent) -> Unit,
-) {
-    val (newInput, onChangeInput) = remember(input) { mutableStateOf(input) }
-    var passwordVisibility by remember { mutableStateOf(false) }
-
-    LaunchedEffect(newInput) {
-        onUiEvent(DeleteAccountUiEvent.OnChangeInput(newInput))
-    }
-
-    Column(modifier = modifier.padding(16.dp)) {
-        TitleTextSmall(text = stringResource(Res.string.msg_delete_account))
-        Spacer(modifier = Modifier.padding(top = 16.dp))
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_password),
-            value = newInput,
-            inputType = KeyboardType.Password,
-            trailingIcon = {
-                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                    Icon(
-                        imageVector = if (passwordVisibility) Icons.Default.Visibility
-                        else Icons.Default.VisibilityOff,
-                        contentDescription = if (passwordVisibility) "Hide password" else "Show password"
-                    )
-                }
-            },
-            visualTransformation = if (passwordVisibility) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-            isError = validationError.isNotEmpty(),
-            supportingText = validationError,
-        ) {
-            onChangeInput(it)
-        }
-        TextButton(
-            onClick = {
-                onUiEvent(DeleteAccountUiEvent.OnClickDeleteAccountBtn)
-            },
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-            enabled = validationError.isEmpty(),
-        ) {
-            Text(
-                stringResource(Res.string.txt_delete_account),
-                color = Color.White,
-                modifier = Modifier.padding(horizontal = 8.dp),
-            )
-        }
+    ) {
+        DeleteAccountContentPanel(uiState, onUiEvent)
     }
 }
 
 @Composable
 private fun HandleMessageState(
-    messageState: DeleteAccountUiState.MessageState,
+    message: DeleteAccountMessageState?,
     onUiEvent: (DeleteAccountUiEvent) -> Unit,
 ) {
-    when (messageState) {
-        is DeleteAccountUiState.MessageState.Loading -> {
-            ShowLoaderDialog(cancelable = messageState.cancelable)
+    message?.let {
+        when (it) {
+            is DeleteAccountMessageState.Loading -> {
+                ShowLoaderDialog(cancelable = it.cancelable)
+            }
+            is DeleteAccountMessageState.ConfirmAccountDelete -> {
+                ShowConfirmationDialog(
+                    title = stringResource(Res.string.txt_delete_account),
+                    message = stringResource(Res.string.msg_delete_account),
+                    onConfirm = {
+                        onUiEvent(DeleteAccountUiEvent.OnDeleteAccount)
+                    },
+                    onDismiss = {
+                        onUiEvent(DeleteAccountUiEvent.MessageConsumed)
+                    }
+                )
+            }
+            is DeleteAccountMessageState.Success -> {
+                ShowSuccessDialog(
+                    message = it.message,
+                    cancelable = false,
+                    confirmButtonText = "Request Recovery",
+                    dismissButtonText = "Open Home Screen",
+                    onConfirm = {
+                        onUiEvent(DeleteAccountUiEvent.OnRequestRecovery)
+                    },
+                    onDismiss = {
+                        onUiEvent(DeleteAccountUiEvent.OnResetToHomeScreen)
+                    }
+                )
+            }
+            is DeleteAccountMessageState.Error -> {
+                ShowErrorDialog(
+                    message = it.message,
+                    onConfirm = {
+                        onUiEvent(DeleteAccountUiEvent.MessageConsumed)
+                    },
+                    onDismiss = {
+                        onUiEvent(DeleteAccountUiEvent.MessageConsumed)
+                    }
+                )
+            }
         }
-        is DeleteAccountUiState.MessageState.ConfirmAccountDelete -> {
-            ShowConfirmationDialog(
-                title = stringResource(Res.string.txt_delete_account),
-                message = stringResource(Res.string.msg_delete_account),
-                onConfirm = {
-                    onUiEvent(DeleteAccountUiEvent.OnDeleteAccount)
-                },
-                onDismiss = {
-                    onUiEvent(DeleteAccountUiEvent.MessageConsumed)
+    }
+}
+
+@Composable
+private fun HandleNavigationState(
+    navigation: DeleteAccountNavigationState?,
+    onNavigationHandled: () -> Unit,
+) {
+    val navigator = koinInject<AppNavigator?>()
+
+    LaunchedEffect(navigation) {
+        navigation?.let {
+            when (it) {
+                is DeleteAccountNavigationState.GoBack -> navigator?.goBack()
+                is DeleteAccountNavigationState.ResetToContactUsScreen -> {
+                    navigator?.resetTo(AppScreen.ContactUs)
                 }
-            )
-        }
-        is DeleteAccountUiState.MessageState.Success -> {
-            ShowSuccessDialog(
-                message = messageState.message,
-                cancelable = false,
-                confirmButtonText = "Request Recovery",
-                dismissButtonText = "Open Home Screen",
-                onConfirm = {
-                    onUiEvent(DeleteAccountUiEvent.OnRequestRecovery)
-                },
-                onDismiss = {
-                    onUiEvent(DeleteAccountUiEvent.OnResetToHomeScreen)
+                is DeleteAccountNavigationState.ResetToHomeScreen -> {
+                    navigator?.resetTo(AppScreen.Home)
                 }
-            )
-        }
-        is DeleteAccountUiState.MessageState.Error -> {
-            ShowErrorDialog(
-                message = messageState.message,
-                onConfirm = {
-                    onUiEvent(DeleteAccountUiEvent.MessageConsumed)
-                },
-                onDismiss = {
-                    onUiEvent(DeleteAccountUiEvent.MessageConsumed)
-                }
-            )
+            }
+            onNavigationHandled()
         }
     }
 }
