@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class CvDownloadUiStateMachine : UiStateMachine<CvDownloadUiState> {
+class CvDownloadUiStateMachine : UiStateMachine<CvDownloadUiState> {
 
     private val _state = MutableStateFlow<CvDownloadUiState>(CvDownloadUiState.None)
     override val uiState: StateFlow<CvDownloadUiState> = _state.asStateFlow()

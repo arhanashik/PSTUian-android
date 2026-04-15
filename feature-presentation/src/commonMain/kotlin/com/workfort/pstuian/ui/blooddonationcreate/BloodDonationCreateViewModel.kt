@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-internal class BloodDonationCreateViewModel(
+class BloodDonationCreateViewModel(
     private val repo: BloodDonationRepository,
     private val dateTimeUtil: DateTimeUtil,
     private val uiStateMachine: BloodDonationCreateUiStateMachine,

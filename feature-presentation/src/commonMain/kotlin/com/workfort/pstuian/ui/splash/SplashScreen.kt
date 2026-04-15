@@ -19,7 +19,7 @@ import pstuian.feature_presentation.generated.resources.title_force_refresh_dial
 import pstuian.feature_presentation.generated.resources.title_force_update_dialog
 
 @Composable
-internal fun SplashScreen(viewModel: SplashViewModel) {
+fun SplashScreen(viewModel: SplashViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

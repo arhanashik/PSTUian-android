@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-internal class CheckInListViewModel(
+class CheckInListViewModel(
     private val checkInRepo: CheckInRepository,
     private val checkInLocationRepo: CheckInLocationRepository,
     private val uiStateMachine: CheckInListUiStateMachine,

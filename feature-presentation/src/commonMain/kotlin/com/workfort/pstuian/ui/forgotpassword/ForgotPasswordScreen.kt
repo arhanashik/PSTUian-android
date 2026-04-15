@@ -27,7 +27,7 @@ import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_forgot_password_screen
 
 @Composable
-internal fun ForgotPasswordScreen(viewModel: ForgotPasswordViewModel) {
+fun ForgotPasswordScreen(viewModel: ForgotPasswordViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

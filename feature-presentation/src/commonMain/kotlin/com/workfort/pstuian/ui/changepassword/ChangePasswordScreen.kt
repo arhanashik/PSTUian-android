@@ -28,7 +28,7 @@ import pstuian.feature_presentation.generated.resources.txt_change_password
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ChangePasswordScreen(viewModel: ChangePasswordViewModel) {
+fun ChangePasswordScreen(viewModel: ChangePasswordViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

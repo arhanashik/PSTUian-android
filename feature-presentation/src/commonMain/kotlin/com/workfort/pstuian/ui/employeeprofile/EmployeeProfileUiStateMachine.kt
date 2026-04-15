@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class EmployeeProfileUiStateMachine : UiStateMachine<EmployeeProfileUiState> {
+class EmployeeProfileUiStateMachine : UiStateMachine<EmployeeProfileUiState> {
 
     private val _uiState = MutableStateFlow(EmployeeProfileUiState())
     override val uiState: StateFlow<EmployeeProfileUiState> = _uiState.asStateFlow()

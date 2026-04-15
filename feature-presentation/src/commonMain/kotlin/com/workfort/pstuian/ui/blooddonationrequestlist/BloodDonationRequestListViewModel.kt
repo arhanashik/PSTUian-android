@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-internal class BloodDonationRequestListViewModel(
+class BloodDonationRequestListViewModel(
     private val donationRequestRepo: BloodDonationRequestRepository,
     private val uiStateMachine: BloodDonationRequestListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,

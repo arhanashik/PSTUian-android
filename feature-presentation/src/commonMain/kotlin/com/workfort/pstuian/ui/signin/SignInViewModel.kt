@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class SignInViewModel(
+class SignInViewModel(
     private val authRepo: AuthRepository,
     private val stateMachine: SignInUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,

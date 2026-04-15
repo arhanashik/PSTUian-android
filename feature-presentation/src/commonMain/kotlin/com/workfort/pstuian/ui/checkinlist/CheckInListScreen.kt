@@ -37,7 +37,7 @@ import pstuian.feature_presentation.generated.resources.txt_title_call
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CheckInListScreen(viewModel: CheckInListViewModel) {
+fun CheckInListScreen(viewModel: CheckInListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

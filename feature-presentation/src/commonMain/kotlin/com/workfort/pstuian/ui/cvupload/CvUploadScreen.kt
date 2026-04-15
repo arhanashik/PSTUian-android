@@ -28,7 +28,7 @@ import pstuian.feature_presentation.generated.resources.txt_dismiss
 import pstuian.feature_presentation.generated.resources.txt_upload
 
 @Composable
-internal fun CvUploadScreen(viewModel: CvUploadViewModel) {
+fun CvUploadScreen(viewModel: CvUploadViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

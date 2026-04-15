@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class HomeViewModel(
+class HomeViewModel(
     private val authRepo: AuthRepository,
     private val sliderRepo: SliderRepository,
     private val facultyRepo: FacultyRepository,

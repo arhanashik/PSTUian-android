@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class ForgotPasswordViewModel (
+class ForgotPasswordViewModel (
     private val authRepo: AuthRepository,
     private val stateMachine: ForgotPasswordUiStateMachine,
 ) : UiStateMachineViewModel<ForgotPasswordUiState>(stateMachine) {

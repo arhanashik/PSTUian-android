@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-internal class ContactUsViewModel(
+class ContactUsViewModel(
     private val repo: SupportRepository,
     private val uiStateMachine: ContactUsUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,

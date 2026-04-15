@@ -25,7 +25,7 @@ import com.workfort.pstuian.ui.blooddonationcreate.state.BloodDonationCreateUiSt
 import org.koin.compose.koinInject
 
 @Composable
-internal fun BloodDonationCreateScreen(viewModel: BloodDonationCreateViewModel) {
+fun BloodDonationCreateScreen(viewModel: BloodDonationCreateViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

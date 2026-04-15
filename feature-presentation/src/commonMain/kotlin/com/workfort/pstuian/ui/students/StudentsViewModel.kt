@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class StudentsViewModel(
+class StudentsViewModel(
     private val batchId: Int,
     private val facultyRepo: FacultyRepository,
     private val uiStateMachine: StudentsUiStateMachine,

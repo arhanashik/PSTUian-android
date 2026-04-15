@@ -44,7 +44,7 @@ import pstuian.feature_presentation.generated.resources.txt_sign_in
 import pstuian.feature_presentation.generated.resources.txt_sign_in_required
 
 @Composable
-internal fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

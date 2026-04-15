@@ -30,7 +30,7 @@ import pstuian.feature_presentation.generated.resources.txt_msg_call
 import pstuian.feature_presentation.generated.resources.txt_title_call
 
 @Composable
-internal fun StudentsScreen(viewModel: StudentsViewModel) {
+fun StudentsScreen(viewModel: StudentsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

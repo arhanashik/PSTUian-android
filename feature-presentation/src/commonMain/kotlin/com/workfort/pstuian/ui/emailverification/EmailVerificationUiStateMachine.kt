@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class EmailVerificationUiStateMachine : UiStateMachine<EmailVerificationUiState> {
+class EmailVerificationUiStateMachine : UiStateMachine<EmailVerificationUiState> {
     private val _uiState = MutableStateFlow(EmailVerificationUiState())
     override val uiState: StateFlow<EmailVerificationUiState> = _uiState.asStateFlow()
 

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class DonateUiStateMachine : UiStateMachine<DonateUiState> {
+class DonateUiStateMachine : UiStateMachine<DonateUiState> {
 
     private val _uiState = MutableStateFlow(DonateUiState())
     override val uiState: StateFlow<DonateUiState> = _uiState.asStateFlow()

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 compose.resources {
@@ -37,6 +38,7 @@ kotlin {
                 api(project(":feature-domain"))
                 implementation(project(":util"))
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.compose.ui)
                 implementation(libs.compose.foundation)

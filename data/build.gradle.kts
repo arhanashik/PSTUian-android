@@ -1,35 +1,21 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
-    alias(libs.plugins.android.lint)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
-    androidLibrary {
-        namespace = "com.workfort.pstuian.data"
-        compileSdk = 36
-        minSdk = 24
-
-        withHostTestBuilder {
-        }
-
-        withDeviceTestBuilder {
-            sourceSetTreeName = "test"
-        }.configure {
-            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
 
-    // For iOS targets, this is also where you should
-    // configure native binary output. For more information, see:
-    // https://kotlinlang.org/docs/multiplatform-build-native-binaries.html#build-xcframeworks
-
-    // A step-by-step guide on how to include this library in an XCode
-    // project can be found here:
-    // https://developer.android.com/kotlin/multiplatform/migrate
     val xcfName = "dataKit"
 
     iosX64 {
@@ -50,11 +36,6 @@ kotlin {
         }
     }
 
-    // Source set declarations.
-    // Declaring a target automatically creates a source set with the same name. By default, the
-    // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
-    // common to share sources between related targets.
-    // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
     sourceSets {
         commonMain {
             dependencies {
@@ -63,6 +44,7 @@ kotlin {
                 implementation(project(":util"))
                 implementation(libs.jetbrains.kotlin.stdlib)
                 implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.sqlite.bundled)
                 implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.ktor.client.core)
@@ -74,9 +56,6 @@ kotlin {
 
                 implementation(libs.multiplatform.settings)
                 implementation(libs.multiplatform.settings.no.arg)
-
-                implementation(libs.androidx.room.runtime)
-                implementation(libs.androidx.sqlite.bundled)
             }
         }
 
@@ -86,7 +65,7 @@ kotlin {
             }
         }
 
-        androidMain {
+        val androidMain by getting {
             dependencies {
                 implementation(libs.androidx.room.runtime)
                 implementation(libs.ktor.client.okhttp)
@@ -94,24 +73,43 @@ kotlin {
             }
         }
 
-        getByName("androidDeviceTest") {
-            dependencies {
-                implementation(libs.androidx.test.runner)
-                implementation(libs.androidx.core)
-                implementation(libs.androidx.test.ext.junit)
-            }
-        }
-
-        iosMain {
+        val iosMain by creating {
+            dependsOn(commonMain.get())
             dependencies {
                 implementation(libs.ktor.client.darwin)
             }
         }
+
+        val iosX64Main by getting {
+            dependsOn(iosMain)
+        }
+        val iosArm64Main by getting {
+            dependsOn(iosMain)
+        }
+        val iosSimulatorArm64Main by getting {
+            dependsOn(iosMain)
+        }
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "17"
+android {
+    namespace = "com.workfort.pstuian.data"
+    compileSdk = 36
+    defaultConfig {
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    add("kspCommonMainMetadata", libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }

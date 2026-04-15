@@ -26,7 +26,7 @@ import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_sign_in
 
 @Composable
-internal fun SignInScreen(viewModel: SignInViewModel) {
+fun SignInScreen(viewModel: SignInViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

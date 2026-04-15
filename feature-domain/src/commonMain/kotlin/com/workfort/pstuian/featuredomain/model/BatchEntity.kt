@@ -3,9 +3,11 @@ package com.workfort.pstuian.featuredomain.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 import com.workfort.pstuian.appconstant.ColumnNames
 import com.workfort.pstuian.appconstant.TableNames
 
+@Serializable
 @Entity(tableName = TableNames.BATCH)
 data class BatchEntity (
     @PrimaryKey val id: Int,

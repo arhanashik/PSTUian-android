@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class DonorsViewModel(
+class DonorsViewModel(
     private val donationRepo: DonationRepository,
     private val uiStateMachine: DonorsUiStateMachine,
 ) : UiStateMachineViewModel<DonorsUiState>(uiStateMachine) {

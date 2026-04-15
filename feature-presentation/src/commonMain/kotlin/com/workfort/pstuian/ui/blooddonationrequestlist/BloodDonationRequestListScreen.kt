@@ -46,7 +46,7 @@ import pstuian.feature_presentation.generated.resources.txt_request_donation
 import pstuian.feature_presentation.generated.resources.txt_title_call
 
 @Composable
-internal fun BloodDonationRequestListScreen(viewModel: BloodDonationRequestListViewModel) {
+fun BloodDonationRequestListScreen(viewModel: BloodDonationRequestListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

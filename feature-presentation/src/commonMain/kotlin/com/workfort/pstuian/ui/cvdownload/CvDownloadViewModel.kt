@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-internal class CvDownloadViewModel(
+class CvDownloadViewModel(
     private val userId: Int,
     private val userType: UserType,
     private val urlToDownload: String,

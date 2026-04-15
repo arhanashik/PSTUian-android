@@ -27,7 +27,7 @@ import pstuian.feature_presentation.generated.resources.label_email_verification
 import pstuian.feature_presentation.generated.resources.txt_sign_in
 
 @Composable
-internal fun EmailVerificationScreen(viewModel: EmailVerificationViewModel) {
+fun EmailVerificationScreen(viewModel: EmailVerificationViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

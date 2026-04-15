@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class MyCheckInListViewModel(
+class MyCheckInListViewModel(
     private val userId: Int,
     private val userType: UserType,
     private val checkInRepo: CheckInRepository,

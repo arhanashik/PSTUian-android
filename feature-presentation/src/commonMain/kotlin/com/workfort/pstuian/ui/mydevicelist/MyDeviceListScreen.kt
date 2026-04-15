@@ -41,7 +41,7 @@ import pstuian.feature_presentation.generated.resources.txt_retry
 import pstuian.feature_presentation.generated.resources.txt_sign_out_from_all
 
 @Composable
-internal fun MyDeviceListScreen(viewModel: MyDeviceListViewModel) {
+fun MyDeviceListScreen(viewModel: MyDeviceListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class ChangePasswordUiStateMachine : UiStateMachine<ChangePasswordUiState> {
+class ChangePasswordUiStateMachine : UiStateMachine<ChangePasswordUiState> {
 
     private val _state = MutableStateFlow<ChangePasswordUiState>(ChangePasswordUiState.None)
     override val uiState: StateFlow<ChangePasswordUiState> = _state.asStateFlow()

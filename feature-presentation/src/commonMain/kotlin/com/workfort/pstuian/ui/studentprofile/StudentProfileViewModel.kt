@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class StudentProfileViewModel(
+class StudentProfileViewModel(
     private val userId: Int,
     private val studentRepo: StudentRepositoryImpl,
     private val authRepo: AuthRepository,

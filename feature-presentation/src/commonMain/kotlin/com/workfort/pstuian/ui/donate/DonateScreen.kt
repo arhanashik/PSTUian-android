@@ -32,7 +32,7 @@ import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_donate_screen
 
 @Composable
-internal fun DonateScreen(viewModel: DonateViewModel) {
+fun DonateScreen(viewModel: DonateViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

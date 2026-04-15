@@ -18,17 +18,16 @@ import com.workfort.pstuian.ui.cvdownload.state.CvDownloadNavigationState
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiEvent
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiState
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_download_cv_screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CvDownloadScreen(
-    viewModel: CvDownloadViewModel,
-    navigator: AppNavigator,
-) {
+fun CvDownloadScreen(viewModel: CvDownloadViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
+    val navigator = koinInject<AppNavigator?>()
 
     LaunchedEffect(Unit) {
         viewModel.onUiReady()
@@ -37,7 +36,7 @@ internal fun CvDownloadScreen(
     LaunchedEffect(navigation) {
         when (navigation) {
             is CvDownloadNavigationState.GoBack -> {
-                navigator.goBack()
+                navigator?.goBack()
                 viewModel.onNavigationHandled()
             }
             null -> Unit

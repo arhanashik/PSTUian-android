@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-internal class ChangePasswordViewModel(
+class ChangePasswordViewModel(
     private val authRepo: AuthRepository,
     private val uiStateMachine: ChangePasswordUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,

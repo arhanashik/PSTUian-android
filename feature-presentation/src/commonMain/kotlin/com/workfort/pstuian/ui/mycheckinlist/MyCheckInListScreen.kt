@@ -34,7 +34,7 @@ import pstuian.feature_presentation.generated.resources.txt_retry
 import pstuian.feature_presentation.generated.resources.txt_update
 
 @Composable
-internal fun MyCheckInListScreen(
+fun MyCheckInListScreen(
     viewModel: MyCheckInListViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()

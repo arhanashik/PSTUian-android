@@ -28,7 +28,7 @@ import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_create_blood_donation_request_screen
 
 @Composable
-internal fun BloodDonationRequestCreateScreen(viewModel: BloodDonationRequestCreateViewModel) {
+fun BloodDonationRequestCreateScreen(viewModel: BloodDonationRequestCreateViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

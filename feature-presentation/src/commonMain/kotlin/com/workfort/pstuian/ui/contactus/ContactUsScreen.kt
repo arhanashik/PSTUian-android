@@ -29,7 +29,7 @@ import pstuian.feature_presentation.generated.resources.txt_home
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ContactUsScreen(viewModel: ContactUsViewModel) {
+fun ContactUsScreen(viewModel: ContactUsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

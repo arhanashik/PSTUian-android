@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
+class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
 
     private val _state = MutableStateFlow<CheckInListUiState>(CheckInListUiState.None)
     override val uiState: StateFlow<CheckInListUiState> = _state.asStateFlow()

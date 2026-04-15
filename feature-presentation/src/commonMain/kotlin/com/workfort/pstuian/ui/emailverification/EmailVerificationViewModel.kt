@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class EmailVerificationViewModel(
+class EmailVerificationViewModel(
     private val authRepo: AuthRepository,
     private val stateMachine: EmailVerificationUiStateMachine,
 ) : UiStateMachineViewModel<EmailVerificationUiState>(stateMachine) {

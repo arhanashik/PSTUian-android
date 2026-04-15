@@ -16,7 +16,7 @@ plugins {
 
 buildscript {
     dependencies {
-        classpath("androidx.room:room-gradle-plugin:2.7.0-alpha01")
+        classpath("androidx.room:room-gradle-plugin:2.7.0-alpha07")
     }
 }
 

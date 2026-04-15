@@ -41,7 +41,7 @@ import pstuian.feature_presentation.generated.resources.txt_donate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun DonorsScreen(viewModel: DonorsViewModel) {
+fun DonorsScreen(viewModel: DonorsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

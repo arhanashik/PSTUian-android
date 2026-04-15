@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class BloodDonationRequestListUiStateMachine : UiStateMachine<BloodDonationRequestListUiState> {
+class BloodDonationRequestListUiStateMachine : UiStateMachine<BloodDonationRequestListUiState> {
 
     private val _state = MutableStateFlow<BloodDonationRequestListUiState>(BloodDonationRequestListUiState.None)
     override val uiState: StateFlow<BloodDonationRequestListUiState> = _state.asStateFlow()

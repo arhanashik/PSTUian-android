@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-internal class SplashViewModel(
+class SplashViewModel(
     private val authRepo: AuthRepository,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val registerDeviceUseCase: RegisterDeviceUseCase,

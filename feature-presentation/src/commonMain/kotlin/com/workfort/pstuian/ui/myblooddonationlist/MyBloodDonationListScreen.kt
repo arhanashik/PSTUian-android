@@ -41,7 +41,7 @@ import pstuian.feature_presentation.generated.resources.txt_my_donation_list
 import pstuian.feature_presentation.generated.resources.txt_retry
 
 @Composable
-internal fun MyBloodDonationListScreen(viewModel: MyBloodDonationListViewModel) {
+fun MyBloodDonationListScreen(viewModel: MyBloodDonationListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

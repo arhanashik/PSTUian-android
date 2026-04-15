@@ -54,7 +54,7 @@ import pstuian.feature_presentation.generated.resources.txt_title_email
 import pstuian.feature_presentation.generated.resources.txt_update
 
 @Composable
-internal fun EmployeeProfileScreen(viewModel: EmployeeProfileViewModel) {
+fun EmployeeProfileScreen(viewModel: EmployeeProfileViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()

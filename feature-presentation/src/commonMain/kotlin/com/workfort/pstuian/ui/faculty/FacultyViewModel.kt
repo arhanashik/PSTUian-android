@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class FacultyViewModel(
+class FacultyViewModel(
     private val currentFacultyId: Int,
     private val facultyRepo: FacultyRepositoryImpl,
     private val uiStateMachine: FacultyUiStateMachine,

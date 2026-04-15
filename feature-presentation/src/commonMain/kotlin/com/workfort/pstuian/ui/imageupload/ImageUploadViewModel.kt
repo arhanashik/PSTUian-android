@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-internal class ImageUploadViewModel(
+class ImageUploadViewModel(
     val userId: Int,
     val userType: UserType,
     private val authRepository: AuthRepository,
