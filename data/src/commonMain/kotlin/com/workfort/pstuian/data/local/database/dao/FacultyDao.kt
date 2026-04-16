@@ -6,32 +6,28 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
-import com.workfort.pstuian.featuredomain.appconstant.TableNames
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.data.local.database.entity.FacultyDbEntity
 
 @Dao
 interface FacultyDao {
-    @Query("SELECT * FROM " + TableNames.FACULTY
-            + " ORDER BY " + ColumnNames.Faculty.TITLE + " ASC")
-    suspend fun getAll(): List<FacultyEntity>
+    @Query("SELECT * FROM faculty ORDER BY title ASC")
+    suspend fun getAll(): List<FacultyDbEntity>
 
-    @Query("SELECT * FROM " + TableNames.FACULTY
-            + " WHERE " + ColumnNames.Faculty.ID + " = :id")
-    suspend fun get(id: Int): FacultyEntity?
+    @Query("SELECT * FROM faculty WHERE id = :id")
+    suspend fun get(id: Int): FacultyDbEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(facultyEntity: FacultyEntity)
+    suspend fun insert(facultyEntity: FacultyDbEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(facultyEntities: List<FacultyEntity>)
+    suspend fun insertAll(facultyEntities: List<FacultyDbEntity>)
 
     @Update
-    suspend fun update(facultyEntity: FacultyEntity)
+    suspend fun update(facultyEntity: FacultyDbEntity)
 
     @Delete
-    suspend fun delete(facultyEntity: FacultyEntity)
+    suspend fun delete(facultyEntity: FacultyDbEntity)
 
-    @Query("DELETE FROM " + TableNames.FACULTY)
+    @Query("DELETE FROM faculty")
     suspend fun deleteAll()
 }

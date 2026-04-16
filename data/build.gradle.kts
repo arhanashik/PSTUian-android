@@ -39,7 +39,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":feature-domain"))
+                api(project(":feature-domain"))
                 implementation(project(":util"))
                 implementation(libs.jetbrains.kotlin.stdlib)
                 implementation(libs.androidx.room.runtime)

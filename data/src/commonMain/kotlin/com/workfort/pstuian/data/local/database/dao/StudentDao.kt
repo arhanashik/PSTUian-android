@@ -6,47 +6,37 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
-import com.workfort.pstuian.featuredomain.appconstant.TableNames
-import com.workfort.pstuian.featuredomain.model.StudentEntity
+import com.workfort.pstuian.data.local.database.entity.StudentDbEntity
 
 @Dao
 interface StudentDao {
-    @Query("SELECT * FROM " + TableNames.STUDENT
-            + " ORDER BY " + ColumnNames.Student.ID + " ASC")
-    suspend fun getAll(): List<StudentEntity>
+    @Query("SELECT * FROM student ORDER BY id ASC")
+    suspend fun getAll(): List<StudentDbEntity>
 
-    @Query("SELECT * FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.FACULTY_ID + "=:facultyId"
-            + " AND " + ColumnNames.Student.BATCH_ID + "=:batchId"
-            + " ORDER BY " + ColumnNames.Student.ID + " ASC")
-    suspend fun getAll(facultyId: Int, batchId: Int): List<StudentEntity>
+    @Query("SELECT * FROM student WHERE faculty_id=:facultyId AND batch_id=:batchId ORDER BY id ASC")
+    suspend fun getAll(facultyId: Int, batchId: Int): List<StudentDbEntity>
 
-    @Query("SELECT * FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.ID + " = :id")
-    suspend fun get(id: Int): StudentEntity?
+    @Query("SELECT * FROM student WHERE id = :id")
+    suspend fun get(id: Int): StudentDbEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(studentEntity: StudentEntity)
+    suspend fun insert(studentEntity: StudentDbEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<StudentEntity>)
+    suspend fun insertAll(entities: List<StudentDbEntity>)
 
     @Update
-    suspend fun update(studentEntity: StudentEntity)
+    suspend fun update(studentEntity: StudentDbEntity)
 
     @Delete
-    suspend fun delete(studentEntity: StudentEntity)
+    suspend fun delete(studentEntity: StudentDbEntity)
 
-    @Query("DELETE FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.FACULTY_ID + "=:faculty")
+    @Query("DELETE FROM student WHERE faculty_id=:faculty")
     suspend fun deleteAll(faculty: Int)
 
-    @Query("DELETE FROM " + TableNames.STUDENT
-            + " WHERE " + ColumnNames.Student.FACULTY_ID + "=:faculty"
-            + " AND " + ColumnNames.Student.BATCH_ID + "=:batch")
+    @Query("DELETE FROM student WHERE faculty_id=:faculty AND batch_id=:batch")
     suspend fun deleteAll(faculty: Int, batch: Int)
 
-    @Query("DELETE FROM " + TableNames.STUDENT)
+    @Query("DELETE FROM student")
     suspend fun deleteAll()
 }

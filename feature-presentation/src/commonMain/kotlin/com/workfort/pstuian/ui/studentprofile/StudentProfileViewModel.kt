@@ -256,7 +256,7 @@ class StudentProfileViewModel(
             _message.update { StudentProfileMessageState.Loading(cancelable = false) }
             viewModelScope.launch {
                 runCatching {
-                    studentRepo.changeProfileImage(cache.student.toEntity(), imageUrl)
+                    studentRepo.changeProfileImage(cache.student, imageUrl)
                 }.onSuccess {
                     isChangingPhoto = false
                     _message.update {
@@ -277,7 +277,7 @@ class StudentProfileViewModel(
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                studentRepo.changeBio(student.toEntity(), newBio)
+                studentRepo.changeBio(student, newBio)
             }.onSuccess {
                 val message = "Bio updated successfully"
                 _message.update { StudentProfileMessageState.Success(message) }

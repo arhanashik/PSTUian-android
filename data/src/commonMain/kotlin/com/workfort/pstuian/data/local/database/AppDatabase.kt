@@ -12,25 +12,25 @@ import com.workfort.pstuian.data.local.database.dao.FacultyDao
 import com.workfort.pstuian.data.local.database.dao.SliderDao
 import com.workfort.pstuian.data.local.database.dao.StudentDao
 import com.workfort.pstuian.data.local.database.dao.TeacherDao
-import com.workfort.pstuian.featuredomain.model.BatchEntity
-import com.workfort.pstuian.featuredomain.model.ConfigEntity
-import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
-import com.workfort.pstuian.featuredomain.model.SliderEntity
-import com.workfort.pstuian.featuredomain.model.StudentEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.data.local.database.entity.BatchDbEntity
+import com.workfort.pstuian.data.local.database.entity.ConfigDbEntity
+import com.workfort.pstuian.data.local.database.entity.CourseDbEntity
+import com.workfort.pstuian.data.local.database.entity.EmployeeDbEntity
+import com.workfort.pstuian.data.local.database.entity.FacultyDbEntity
+import com.workfort.pstuian.data.local.database.entity.SliderDbEntity
+import com.workfort.pstuian.data.local.database.entity.StudentDbEntity
+import com.workfort.pstuian.data.local.database.entity.TeacherDbEntity
 
 @Database(
     entities = [
-        ConfigEntity::class,
-        FacultyEntity::class,
-        BatchEntity::class,
-        TeacherEntity::class,
-        CourseEntity::class,
-        EmployeeEntity::class,
-        StudentEntity::class,
-        SliderEntity::class,
+        ConfigDbEntity::class,
+        FacultyDbEntity::class,
+        BatchDbEntity::class,
+        TeacherDbEntity::class,
+        CourseDbEntity::class,
+        EmployeeDbEntity::class,
+        StudentDbEntity::class,
+        SliderDbEntity::class,
     ],
     version = 2,
     exportSchema = false,

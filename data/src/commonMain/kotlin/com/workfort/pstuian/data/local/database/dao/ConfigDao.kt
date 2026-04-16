@@ -8,27 +8,26 @@ import androidx.room.Query
 import androidx.room.Update
 import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
 import com.workfort.pstuian.featuredomain.appconstant.TableNames
+import com.workfort.pstuian.data.local.database.entity.ConfigDbEntity
 import com.workfort.pstuian.featuredomain.model.ConfigEntity
 
 @Dao
 interface ConfigDao {
-    @Query("SELECT * FROM " + TableNames.CONFIG
-            + " ORDER BY " + ColumnNames.Config.ID + " DESC LIMIT 1")
-    suspend fun getLatest(): ConfigEntity?
+    @Query("SELECT * FROM config ORDER BY id DESC LIMIT 1")
+    suspend fun getLatest(): ConfigDbEntity?
 
-    @Query("SELECT * FROM " + TableNames.CONFIG
-            + " WHERE " + ColumnNames.Config.ID + "=:id")
-    suspend fun get(id: Int): ConfigEntity
+    @Query("SELECT * FROM config WHERE id=:id")
+    suspend fun get(id: Int): ConfigDbEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: ConfigEntity)
+    suspend fun insert(entity: ConfigDbEntity)
 
     @Update
-    suspend fun update(entity: ConfigEntity)
+    suspend fun update(entity: ConfigDbEntity)
 
     @Delete
-    suspend fun delete(entity: ConfigEntity)
+    suspend fun delete(entity: ConfigDbEntity)
 
-    @Query("DELETE FROM " + TableNames.CONFIG)
+    @Query("DELETE FROM config")
     suspend fun deleteAll()
 }

@@ -6,41 +6,34 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
-import com.workfort.pstuian.featuredomain.appconstant.TableNames
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.data.local.database.entity.TeacherDbEntity
 
 @Dao
 interface TeacherDao {
-    @Query("SELECT * FROM " + TableNames.TEACHER
-            + " ORDER BY " + ColumnNames.Teacher.NAME + " ASC")
-    suspend fun getAll(): List<TeacherEntity>
+    @Query("SELECT * FROM teacher ORDER BY name ASC")
+    suspend fun getAll(): List<TeacherDbEntity>
 
-    @Query("SELECT * FROM " + TableNames.TEACHER
-            + " WHERE " + ColumnNames.Teacher.FACULTY_ID + "=:facultyId"
-            + " ORDER BY " + ColumnNames.Teacher.NAME + " ASC")
-    suspend fun getAll(facultyId: Int): List<TeacherEntity>
+    @Query("SELECT * FROM teacher WHERE faculty_id=:facultyId ORDER BY name ASC")
+    suspend fun getAll(facultyId: Int): List<TeacherDbEntity>
 
-    @Query("SELECT * FROM " + TableNames.TEACHER
-            + " WHERE " + ColumnNames.Teacher.ID + "=:id")
-    suspend fun get(id: Int): TeacherEntity?
+    @Query("SELECT * FROM teacher WHERE id=:id")
+    suspend fun get(id: Int): TeacherDbEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(teacherEntity: TeacherEntity)
+    suspend fun insert(teacherEntity: TeacherDbEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<TeacherEntity>)
+    suspend fun insertAll(entities: List<TeacherDbEntity>)
 
     @Update
-    suspend fun update(teacherEntity: TeacherEntity)
+    suspend fun update(teacherEntity: TeacherDbEntity)
 
     @Delete
-    suspend fun delete(teacherEntity: TeacherEntity)
+    suspend fun delete(teacherEntity: TeacherDbEntity)
 
-    @Query("DELETE FROM " + TableNames.TEACHER
-            + " WHERE " + ColumnNames.Teacher.FACULTY_ID + "=:faculty")
+    @Query("DELETE FROM teacher WHERE faculty_id=:faculty")
     suspend fun deleteAll(faculty: Int)
 
-    @Query("DELETE FROM " + TableNames.TEACHER)
+    @Query("DELETE FROM teacher")
     suspend fun deleteAll()
 }

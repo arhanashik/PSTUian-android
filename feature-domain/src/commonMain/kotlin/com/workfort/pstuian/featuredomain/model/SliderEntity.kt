@@ -1,15 +1,7 @@
 package com.workfort.pstuian.featuredomain.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
-import com.workfort.pstuian.featuredomain.appconstant.TableNames
-
-@Entity(tableName = TableNames.SLIDER)
 data class SliderEntity (
-    @PrimaryKey val id: Int,
-    @ColumnInfo(name = ColumnNames.Slider.TITLE) val title: String?,
-    @ColumnInfo(name = ColumnNames.Slider.IMAGE_URL)
-    val imageUrl: String?,
+    var id: Int,
+    var title: String?,
+    var imageUrl: String?,
 )

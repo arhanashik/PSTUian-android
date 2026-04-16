@@ -153,7 +153,7 @@ class TeacherProfileEditViewModel(
                 when (mode) {
                     ProfileEditMode.ACADEMIC -> {
                         teacherRepo.changeAcademicInfo(
-                            teacher = oldProfile.teacher.toEntity(),
+                            teacher = oldProfile.teacher,
                             name = newProfile.teacher.name,
                             designation = newProfile.teacher.designation,
                             department = newProfile.teacher.department,
@@ -163,7 +163,7 @@ class TeacherProfileEditViewModel(
                     }
                     ProfileEditMode.CONNECT -> {
                         teacherRepo.changeConnectInfo(
-                            teacher = oldProfile.teacher.toEntity(),
+                            teacher = oldProfile.teacher,
                             address = newProfile.teacher.address.orEmpty(),
                             phone = newProfile.teacher.phone.orEmpty(),
                             email = newProfile.teacher.email.orEmpty(),

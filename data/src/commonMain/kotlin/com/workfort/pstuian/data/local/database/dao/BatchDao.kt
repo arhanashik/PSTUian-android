@@ -6,41 +6,34 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
-import com.workfort.pstuian.featuredomain.appconstant.TableNames
-import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.data.local.database.entity.BatchDbEntity
 
 @Dao
 interface BatchDao {
-    @Query("SELECT * FROM " + TableNames.BATCH
-            + " ORDER BY " + ColumnNames.Batch.SESSION + " ASC")
-    suspend fun getAll(): List<BatchEntity>
+    @Query("SELECT * FROM batch ORDER BY session ASC")
+    suspend fun getAll(): List<BatchDbEntity>
 
-    @Query("SELECT * FROM " + TableNames.BATCH
-            + " WHERE " + ColumnNames.Batch.FACULTY_ID + "=:facultyId"
-            + " ORDER BY " + ColumnNames.Batch.SESSION + " ASC")
-    suspend fun getAll(facultyId: Int): List<BatchEntity>
+    @Query("SELECT * FROM batch WHERE faculty_id=:facultyId ORDER BY session ASC")
+    suspend fun getAll(facultyId: Int): List<BatchDbEntity>
 
-    @Query("SELECT * FROM " + TableNames.BATCH
-            + " WHERE " + ColumnNames.Batch.ID + "=:id")
-    suspend fun get(id: Int): BatchEntity?
+    @Query("SELECT * FROM batch WHERE id=:id")
+    suspend fun get(id: Int): BatchDbEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(batchEntity: BatchEntity)
+    suspend fun insert(batchEntity: BatchDbEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<BatchEntity>)
+    suspend fun insertAll(entities: List<BatchDbEntity>)
 
     @Update
-    suspend fun update(batchEntity: BatchEntity)
+    suspend fun update(batchEntity: BatchDbEntity)
 
     @Delete
-    suspend fun delete(batchEntity: BatchEntity)
+    suspend fun delete(batchEntity: BatchDbEntity)
 
-    @Query("DELETE FROM " + TableNames.BATCH
-            + " WHERE " + ColumnNames.Batch.FACULTY_ID + "=:faculty")
+    @Query("DELETE FROM batch WHERE faculty_id=:faculty")
     suspend fun deleteAll(faculty: Int)
 
-    @Query("DELETE FROM " + TableNames.BATCH)
+    @Query("DELETE FROM batch")
     suspend fun deleteAll()
 }

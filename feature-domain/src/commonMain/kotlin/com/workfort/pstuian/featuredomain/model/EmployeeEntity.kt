@@ -1,32 +1,17 @@
 package com.workfort.pstuian.featuredomain.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
-import com.workfort.pstuian.featuredomain.appconstant.ColumnNames
-import com.workfort.pstuian.featuredomain.appconstant.TableNames
 
 @Serializable
-@Entity(tableName = TableNames.EMPLOYEE)
 data class EmployeeEntity(
-    @PrimaryKey val id: Int,
-    @ColumnInfo(name = ColumnNames.Employee.NAME)
-    val name: String,
-    @ColumnInfo(name = ColumnNames.Employee.DESIGNATION)
-    val designation: String,
-    @ColumnInfo(name = ColumnNames.Employee.DEPARTMENT)
-    val department: String?,
-    @ColumnInfo(name = ColumnNames.Employee.PHONE)
-    val phone: String?,
-    @ColumnInfo(name = ColumnNames.Employee.ADDRESS)
-    val address: String?,
-    @ColumnInfo(name = ColumnNames.Employee.FACULTY_ID)
-    val facultyId: Int,
-    @ColumnInfo(name = ColumnNames.Employee.IMAGE_URL)
-    val imageUrl: String?,
-    @ColumnInfo(name = "bio")
-    val bio: String? = null,
-    @ColumnInfo(name = "blood")
-    val blood: String? = null,
+    var id: Int,
+    var name: String,
+    var designation: String,
+    var department: String?,
+    var phone: String?,
+    var address: String?,
+    var facultyId: Int,
+    var imageUrl: String?,
+    var bio: String? = null,
+    var blood: String? = null,
 )
