@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.blooddonationrequestlist
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
 import com.workfort.pstuian.ui.blooddonationrequestlist.state.BloodDonationRequestListUiState
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

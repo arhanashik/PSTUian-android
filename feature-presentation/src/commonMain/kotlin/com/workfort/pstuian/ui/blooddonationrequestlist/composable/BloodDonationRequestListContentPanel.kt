@@ -35,14 +35,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.common.composable.AnimatedErrorView
-import com.workfort.pstuian.common.composable.LoadAsyncUserImage
-import com.workfort.pstuian.common.composable.TitleTextSmall
-import com.workfort.pstuian.common.composable.isLastItemVisible
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
 import com.workfort.pstuian.ui.blooddonationrequestlist.state.BloodDonationRequestListUiEvent
 import com.workfort.pstuian.ui.blooddonationrequestlist.state.BloodDonationRequestListUiState
+import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
+import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.isLastItemVisible
 
 @Composable
 internal fun BloodDonationRequestListContentPanel(

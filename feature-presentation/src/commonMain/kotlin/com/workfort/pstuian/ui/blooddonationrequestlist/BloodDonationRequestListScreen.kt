@@ -21,20 +21,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.workfort.pstuian.common.composable.AppBar
-import com.workfort.pstuian.common.composable.AppBarIconButton
-import com.workfort.pstuian.common.composable.AppScaffold
-import com.workfort.pstuian.common.composable.AppSnackbarHost
-import com.workfort.pstuian.common.composable.NavigationButton
-import com.workfort.pstuian.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.common.composable.ShowInfoDialog
-import com.workfort.pstuian.common.navigation.AppNavigator
-import com.workfort.pstuian.common.navigation.AppScreen
 import com.workfort.pstuian.ui.blooddonationrequestlist.composable.BloodDonationRequestListContentPanel
 import com.workfort.pstuian.ui.blooddonationrequestlist.state.BloodDonationRequestListMessageState
 import com.workfort.pstuian.ui.blooddonationrequestlist.state.BloodDonationRequestListNavigationState
 import com.workfort.pstuian.ui.blooddonationrequestlist.state.BloodDonationRequestListUiEvent
 import com.workfort.pstuian.ui.blooddonationrequestlist.state.BloodDonationRequestListUiState
+import com.workfort.pstuian.ui.common.composable.AppBar
+import com.workfort.pstuian.ui.common.composable.AppBarIconButton
+import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
+import com.workfort.pstuian.ui.common.composable.NavigationButton
+import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
+import com.workfort.pstuian.ui.common.navigation.AppNavigator
+import com.workfort.pstuian.ui.common.navigation.AppScreen
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -110,7 +110,7 @@ private fun ScreenContent(
                 )
             }
         },
-        snackbarHost = { AppSnackbarHost(snackbarHostState) }
+        snackbarHost = { AppSnackbarHost(snackbarHostState) },
     ) {
         when (uiState) {
             is BloodDonationRequestListUiState.None -> Unit

@@ -1,9 +1,9 @@
 package com.workfort.pstuian.ui.locationpicker
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.data.infrastructure.repository.CheckInLocationRepositoryImpl
 import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerNavigationState
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerUiState
 import kotlinx.coroutines.launch

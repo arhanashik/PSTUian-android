@@ -21,9 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.TitleTextSmall
-import com.workfort.pstuian.common.composable.dashedBorder
-import com.workfort.pstuian.common.composable.rememberPdfPickerLauncher
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.dashedBorder
+import com.workfort.pstuian.ui.common.composable.rememberPdfPickerLauncher
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiEvent
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiState
 import org.jetbrains.compose.resources.stringResource

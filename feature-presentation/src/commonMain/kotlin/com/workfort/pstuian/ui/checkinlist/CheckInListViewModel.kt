@@ -2,7 +2,6 @@ package com.workfort.pstuian.ui.checkinlist
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.NetworkConst
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.data.local.keyvaluestorage.Prefs
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
@@ -15,6 +14,7 @@ import com.workfort.pstuian.ui.checkinlist.state.CheckInListMessageState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListNavigationState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

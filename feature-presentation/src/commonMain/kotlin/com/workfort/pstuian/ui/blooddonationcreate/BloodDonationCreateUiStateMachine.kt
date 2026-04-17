@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.blooddonationcreate
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.blooddonationcreate.state.BloodDonationCreateUiState
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

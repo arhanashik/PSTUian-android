@@ -1,13 +1,13 @@
 package com.workfort.pstuian.ui.studentprofile
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.InitializationMode
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.ui.common.uistate.InitializationMode
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.studentprofile.state.ProfileState
 import com.workfort.pstuian.ui.studentprofile.state.StudentProfileMessageState
 import com.workfort.pstuian.ui.studentprofile.state.StudentProfileNavigationState

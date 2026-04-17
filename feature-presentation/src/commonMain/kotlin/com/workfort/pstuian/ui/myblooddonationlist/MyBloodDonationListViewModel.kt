@@ -1,12 +1,12 @@
 package com.workfort.pstuian.ui.myblooddonationlist
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListMessageState
 import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListNavigationState
 import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiEvent

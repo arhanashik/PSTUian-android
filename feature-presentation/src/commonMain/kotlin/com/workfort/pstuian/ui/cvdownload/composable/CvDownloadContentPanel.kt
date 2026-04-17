@@ -19,10 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.common.composable.ErrorText
-import com.workfort.pstuian.common.composable.TitleTextSmall
-import com.workfort.pstuian.common.composable.dashedBorder
-import com.workfort.pstuian.common.composable.rememberPdfSaverLauncher
+import com.workfort.pstuian.ui.common.composable.ErrorText
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.dashedBorder
+import com.workfort.pstuian.ui.common.composable.rememberPdfSaverLauncher
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiEvent
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiState
 import org.jetbrains.compose.resources.stringResource

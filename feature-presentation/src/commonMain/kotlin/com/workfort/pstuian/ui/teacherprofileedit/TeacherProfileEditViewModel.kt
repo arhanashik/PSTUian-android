@@ -1,7 +1,6 @@
 package com.workfort.pstuian.ui.teacherprofileedit
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
@@ -10,6 +9,7 @@ import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.teacherprofileedit.state.TeacherProfileEditMessageState
 import com.workfort.pstuian.ui.teacherprofileedit.state.TeacherProfileEditNavigationState
 import com.workfort.pstuian.ui.teacherprofileedit.state.TeacherProfileEditUiEvent

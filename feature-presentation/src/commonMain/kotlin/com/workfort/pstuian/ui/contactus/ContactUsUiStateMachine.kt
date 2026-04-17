@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.contactus
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.ContactUsInput
 import com.workfort.pstuian.featuredomain.model.ContactUsInputValidationError
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.contactus.state.ContactUsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

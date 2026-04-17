@@ -23,13 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.AnimatedErrorView
-import com.workfort.pstuian.common.composable.AnimatedListLoaderView
-import com.workfort.pstuian.common.composable.DropDownMenuBox
-import com.workfort.pstuian.common.composable.OutlinedTextInput
 import com.workfort.pstuian.featuredomain.model.StudentAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.StudentConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.StudentProfile
+import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
+import com.workfort.pstuian.ui.common.composable.AnimatedListLoaderView
+import com.workfort.pstuian.ui.common.composable.DropDownMenuBox
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
 import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditUiEvent
 import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditUiState
 import org.jetbrains.compose.resources.stringArrayResource

@@ -1,9 +1,9 @@
 package com.workfort.pstuian.ui.notification
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.model.NotificationEntity
 import com.workfort.pstuian.featuredomain.repository.NotificationRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.notification.state.NotificationMessageState
 import com.workfort.pstuian.ui.notification.state.NotificationNavigationState
 import com.workfort.pstuian.ui.notification.state.NotificationUiEvent

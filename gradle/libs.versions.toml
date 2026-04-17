@@ -49,6 +49,7 @@ kotlin = "2.1.10"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
 napier = "2.7.1"
+compottie = "2.0.0-rc04"
 
 # Test
 junit = "4.12"
@@ -162,6 +163,8 @@ jakewharton-timber = { group = "com.jakewharton.timber", name = "timber", versio
 
 # Animation
 airbnb-android-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
+compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
+compottie-resources = { module = "io.github.alexzhirkevich:compottie-resources", version.ref = "compottie" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }

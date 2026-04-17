@@ -15,16 +15,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.AppBar
-import com.workfort.pstuian.common.composable.AppBarIconButton
-import com.workfort.pstuian.common.composable.AppScaffold
-import com.workfort.pstuian.common.composable.LoadAsyncUserImage
-import com.workfort.pstuian.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.common.composable.ShowErrorDialog
-import com.workfort.pstuian.common.navigation.AppNavigator
-import com.workfort.pstuian.common.navigation.AppScreen
 import com.workfort.pstuian.featuredomain.model.StudentEntity
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.ui.common.composable.AppBar
+import com.workfort.pstuian.ui.common.composable.AppBarIconButton
+import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
+import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
+import com.workfort.pstuian.ui.common.navigation.AppNavigator
+import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.home.composable.HomeContentPanel
 import com.workfort.pstuian.ui.home.state.HomeMessageState
 import com.workfort.pstuian.ui.home.state.HomeNavigationState
@@ -195,7 +195,7 @@ private fun HandleNavigationState(
                     // TODO navigate to notification
                 }
                 is HomeNavigationState.FacultyScreen -> {
-                    // navigator?.navigateTo(AppScreen.Faculty(it.faculty.id))
+                     navigator?.navigateTo(AppScreen.Faculty(it.faculty.id))
                 }
                 is HomeNavigationState.ImagePreviewScreen -> {
                     // TODO navigate to image preview

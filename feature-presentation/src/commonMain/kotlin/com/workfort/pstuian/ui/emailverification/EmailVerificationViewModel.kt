@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.emailverification
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.emailverification.state.EmailVerificationMessageState
 import com.workfort.pstuian.ui.emailverification.state.EmailVerificationNavigationState
 import com.workfort.pstuian.ui.emailverification.state.EmailVerificationUiEvent

@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.notification
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.NotificationEntity
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.notification.state.NotificationMessageState
 import com.workfort.pstuian.ui.notification.state.NotificationNavigationState
 import com.workfort.pstuian.ui.notification.state.NotificationUiState

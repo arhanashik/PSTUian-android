@@ -16,13 +16,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.common.composable.AnimatedErrorView
-import com.workfort.pstuian.common.composable.ScrollableTabView
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
 import com.workfort.pstuian.featuredomain.model.EmployeeEntity
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
+import com.workfort.pstuian.ui.common.composable.ScrollableTabView
 import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
 import com.workfort.pstuian.ui.faculty.state.FacultyUiState
 import kotlinx.coroutines.launch

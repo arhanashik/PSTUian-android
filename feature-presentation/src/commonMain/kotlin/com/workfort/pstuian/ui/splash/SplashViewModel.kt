@@ -1,12 +1,12 @@
 package com.workfort.pstuian.ui.splash
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
 import com.workfort.pstuian.featuredomain.usecase.RegisterDeviceUseCase
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.splash.state.SplashMessageState
 import com.workfort.pstuian.ui.splash.state.SplashNavigationState
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent

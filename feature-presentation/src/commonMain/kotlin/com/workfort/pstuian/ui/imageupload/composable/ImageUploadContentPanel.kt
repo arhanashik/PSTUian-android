@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.workfort.pstuian.common.composable.dashedBorder
-import com.workfort.pstuian.common.composable.rememberImagePickerLauncher
+import com.workfort.pstuian.ui.common.composable.dashedBorder
+import com.workfort.pstuian.ui.common.composable.rememberImagePickerLauncher
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadUiEvent
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadUiState
 import org.jetbrains.compose.resources.painterResource

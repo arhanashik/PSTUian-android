@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.splash
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.splash.state.SplashUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

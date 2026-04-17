@@ -30,11 +30,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.HorizontalDividerWithLabel
-import com.workfort.pstuian.common.composable.MaterialButtonToggleGroup
-import com.workfort.pstuian.common.composable.OutlinedTextInput
-import com.workfort.pstuian.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.common.composable.HorizontalDividerWithLabel
+import com.workfort.pstuian.ui.common.composable.MaterialButtonToggleGroup
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
+import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 import com.workfort.pstuian.util.isValidEmail

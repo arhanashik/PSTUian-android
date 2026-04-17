@@ -54,6 +54,9 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
+
+                implementation(libs.compottie)
+                implementation(libs.compottie.resources)
             }
         }
         commonMain.resources.srcDirs("src/commonMain/composeResources")

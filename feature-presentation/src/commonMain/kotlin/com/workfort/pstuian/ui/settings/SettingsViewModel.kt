@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.settings
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.settings.state.SettingsMessageState
 import com.workfort.pstuian.ui.settings.state.SettingsNavigationState
 import com.workfort.pstuian.ui.settings.state.SettingsUiEvent

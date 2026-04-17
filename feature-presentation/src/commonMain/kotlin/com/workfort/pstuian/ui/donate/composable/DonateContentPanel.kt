@@ -18,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.OutlinedTextInput
-import com.workfort.pstuian.common.theme.TextStyle
-import com.workfort.pstuian.common.theme.btnBgDefault
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
+import com.workfort.pstuian.ui.common.theme.TextStyle
+import com.workfort.pstuian.ui.common.theme.btnBgDefault
 import com.workfort.pstuian.ui.donate.state.DonateUiEvent
 import com.workfort.pstuian.ui.donate.state.DonateUiState
 import org.jetbrains.compose.resources.stringResource

@@ -17,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.OutlinedTextInput
 import com.workfort.pstuian.featuredomain.model.ContactUsInput
 import com.workfort.pstuian.featuredomain.model.ContactUsInputValidationError
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
 import com.workfort.pstuian.ui.contactus.state.ContactUsUiEvent
 import com.workfort.pstuian.ui.contactus.state.ContactUsUiState
 import org.jetbrains.compose.resources.stringResource

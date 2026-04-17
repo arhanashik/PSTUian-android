@@ -1,10 +1,10 @@
 package com.workfort.pstuian.ui.signup
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
 import com.workfort.pstuian.featuredomain.model.StudentSignUpInput
 import com.workfort.pstuian.featuredomain.model.TeacherSignUpInput
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.signup.state.SignUpUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

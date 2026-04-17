@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.cvdownload
 
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadNavigationState
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiEvent
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiState

@@ -25,8 +25,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.OutlinedTextInput
-import com.workfort.pstuian.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountUiEvent
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountUiState
 import org.jetbrains.compose.resources.stringResource

@@ -24,12 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.DropDownMenuBox
-import com.workfort.pstuian.common.composable.OutlinedTextInput
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestInput
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestInputError
 import com.workfort.pstuian.ui.blooddonationrequestcreate.state.BloodDonationRequestCreateUiEvent
 import com.workfort.pstuian.ui.blooddonationrequestcreate.state.BloodDonationRequestCreateUiState
+import com.workfort.pstuian.ui.common.composable.DropDownMenuBox
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res

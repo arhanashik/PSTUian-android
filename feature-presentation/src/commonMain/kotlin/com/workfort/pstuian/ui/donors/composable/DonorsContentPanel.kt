@@ -25,11 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.common.composable.TitleTextSmall
-import com.workfort.pstuian.common.theme.bgCircle
 import com.workfort.pstuian.featuredomain.model.DonorEntity
-import com.workfort.pstuian.ui.donors.DonorsUiEvent
+import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.theme.bgCircle
+import com.workfort.pstuian.ui.donors.state.DonorsUiEvent
 import com.workfort.pstuian.ui.donors.state.DonorsUiState
 
 @Composable

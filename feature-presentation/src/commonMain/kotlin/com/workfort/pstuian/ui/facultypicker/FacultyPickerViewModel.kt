@@ -1,11 +1,11 @@
 package com.workfort.pstuian.ui.facultypicker
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.facultypicker.state.FacultyPickerNavigationState
 import com.workfort.pstuian.ui.facultypicker.state.FacultyPickerUiState
 import kotlinx.coroutines.launch

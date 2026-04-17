@@ -1,11 +1,11 @@
 package com.workfort.pstuian.ui.students
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.StudentEntity
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.students.state.StudentsMessageState
 import com.workfort.pstuian.ui.students.state.StudentsNavigationState
 import com.workfort.pstuian.ui.students.state.StudentsUiEvent

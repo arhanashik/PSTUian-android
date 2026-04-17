@@ -27,11 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.common.composable.AnimatedErrorView
-import com.workfort.pstuian.common.composable.TitleTextSmall
-import com.workfort.pstuian.common.composable.isLastItemVisible
 import com.workfort.pstuian.featuredomain.model.DeviceEntity
+import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.isLastItemVisible
 import com.workfort.pstuian.ui.mydevicelist.state.MyDeviceListUiEvent
 import com.workfort.pstuian.ui.mydevicelist.state.MyDeviceListUiState
 

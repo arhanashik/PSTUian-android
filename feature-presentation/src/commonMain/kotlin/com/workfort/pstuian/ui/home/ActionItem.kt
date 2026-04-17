@@ -2,30 +2,26 @@ package com.workfort.pstuian.ui.home
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.ui.graphics.vector.ImageVector
-import com.workfort.pstuian.common.icons.AppIcons
-import org.jetbrains.compose.resources.DrawableResource
+import com.workfort.pstuian.ui.common.icons.AppIcons
+import org.jetbrains.compose.resources.StringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.img_admission_support
 import pstuian.feature_presentation.generated.resources.img_donors
-import pstuian.feature_presentation.generated.resources.img_pstu_website
 import pstuian.feature_presentation.generated.resources.img_help
+import pstuian.feature_presentation.generated.resources.img_pstu_website
 import pstuian.feature_presentation.generated.resources.label_admission_support
+import pstuian.feature_presentation.generated.resources.label_clear_data
 import pstuian.feature_presentation.generated.resources.label_donation_list
 import pstuian.feature_presentation.generated.resources.label_university_website
-import pstuian.feature_presentation.generated.resources.txt_need_help
-import pstuian.feature_presentation.generated.resources.txt_need_blood
 import pstuian.feature_presentation.generated.resources.txt_check_in
-import pstuian.feature_presentation.generated.resources.txt_rate_app
-import pstuian.feature_presentation.generated.resources.label_clear_data
-import pstuian.feature_presentation.generated.resources.txt_settings
 import pstuian.feature_presentation.generated.resources.txt_donate
-import org.jetbrains.compose.resources.StringResource
-
+import pstuian.feature_presentation.generated.resources.txt_need_blood
+import pstuian.feature_presentation.generated.resources.txt_need_help
+import pstuian.feature_presentation.generated.resources.txt_rate_app
+import pstuian.feature_presentation.generated.resources.txt_settings
 
 sealed interface Action {
     data object AdmissionSupport: Action

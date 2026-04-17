@@ -24,11 +24,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.OutlinedTextInput
 import com.workfort.pstuian.featuredomain.model.ChangePasswordInput
 import com.workfort.pstuian.featuredomain.model.ChangePasswordInputError
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiState
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.hint_confirm_password

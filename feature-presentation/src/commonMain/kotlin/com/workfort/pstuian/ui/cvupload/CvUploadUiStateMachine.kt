@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.cvupload
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

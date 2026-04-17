@@ -11,11 +11,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.workfort.pstuian.common.composable.AppBar
-import com.workfort.pstuian.common.composable.ShowErrorDialog
-import com.workfort.pstuian.common.composable.ShowLoaderDialog
-import com.workfort.pstuian.common.composable.ShowSuccessDialog
-import com.workfort.pstuian.common.navigation.AppNavigator
+import com.workfort.pstuian.ui.common.composable.AppBar
+import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.contactus.composable.ContactUsContentPanel
 import com.workfort.pstuian.ui.contactus.state.ContactUsMessageState
 import com.workfort.pstuian.ui.contactus.state.ContactUsNavigationState

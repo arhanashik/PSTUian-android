@@ -36,12 +36,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.common.composable.AnimatedErrorView
-import com.workfort.pstuian.common.composable.LabelText
-import com.workfort.pstuian.common.composable.TitleTextSmall
-import com.workfort.pstuian.common.composable.isLastItemVisible
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
+import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
+import com.workfort.pstuian.ui.common.composable.LabelText
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.isLastItemVisible
 import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiEvent
 import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiState
 import org.jetbrains.compose.resources.stringResource

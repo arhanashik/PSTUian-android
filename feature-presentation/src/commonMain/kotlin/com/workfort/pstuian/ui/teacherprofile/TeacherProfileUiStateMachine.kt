@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.teacherprofile
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.teacherprofile.state.ProfileState
 import com.workfort.pstuian.ui.teacherprofile.state.TeacherProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow

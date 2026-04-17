@@ -1,10 +1,10 @@
 package com.workfort.pstuian.ui.teacherprofileedit
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.teacherprofileedit.state.TeacherProfileEditUiState
 import com.workfort.pstuian.util.isValidEmail
 import kotlinx.coroutines.flow.MutableStateFlow

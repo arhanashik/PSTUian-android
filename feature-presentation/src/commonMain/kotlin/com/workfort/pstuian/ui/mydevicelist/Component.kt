@@ -16,9 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.TitleTextSmall
 import com.workfort.pstuian.featuredomain.model.DeviceEntity
-import com.workfort.pstuian.util.DateTimeUtil
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res

@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.employeeprofile
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileUiState
 import com.workfort.pstuian.ui.employeeprofile.state.ProfileState
 import kotlinx.coroutines.flow.MutableStateFlow

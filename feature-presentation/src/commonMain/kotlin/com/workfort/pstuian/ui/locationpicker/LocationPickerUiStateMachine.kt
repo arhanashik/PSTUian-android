@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.locationpicker
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerNavigationState
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerUiState
 import kotlinx.coroutines.flow.MutableStateFlow

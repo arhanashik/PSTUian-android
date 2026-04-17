@@ -1,9 +1,9 @@
 package com.workfort.pstuian.ui.forgotpassword
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.forgotpassword.state.ForgotPasswordMessageState
 import com.workfort.pstuian.ui.forgotpassword.state.ForgotPasswordNavigationState
 import com.workfort.pstuian.ui.forgotpassword.state.ForgotPasswordUiEvent

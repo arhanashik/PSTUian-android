@@ -1,11 +1,11 @@
 package com.workfort.pstuian.ui.imageupload
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadMessageState
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadNavigationState
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadUiEvent

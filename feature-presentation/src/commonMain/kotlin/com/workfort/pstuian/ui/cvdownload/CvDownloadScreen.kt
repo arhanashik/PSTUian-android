@@ -10,9 +10,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.workfort.pstuian.common.composable.AppBar
-import com.workfort.pstuian.common.composable.AppScaffold
-import com.workfort.pstuian.common.navigation.AppNavigator
+import com.workfort.pstuian.ui.common.composable.AppBar
+import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.cvdownload.composable.CvDownloadContentPanel
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadNavigationState
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiEvent

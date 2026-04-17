@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.CardWithAnimatedBorder
-import com.workfort.pstuian.common.composable.TitleTextMedium
+import com.workfort.pstuian.ui.common.composable.CardWithAnimatedBorder
+import com.workfort.pstuian.ui.common.composable.TitleTextMedium
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
 import org.jetbrains.compose.resources.stringResource

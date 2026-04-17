@@ -1,7 +1,6 @@
 package com.workfort.pstuian.ui.donate
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.DonationInput
@@ -9,6 +8,7 @@ import com.workfort.pstuian.featuredomain.model.DonationInputValidationError
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
+import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.donate.state.DonateMessageState
 import com.workfort.pstuian.ui.donate.state.DonateNavigationState
 import com.workfort.pstuian.ui.donate.state.DonateUiEvent

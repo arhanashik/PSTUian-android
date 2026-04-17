@@ -32,11 +32,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.featuredomain.appconstant.Const
-import com.workfort.pstuian.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.common.composable.AnimatedErrorView
-import com.workfort.pstuian.common.composable.AppBar
-import com.workfort.pstuian.common.composable.AppBarIconButton
-import com.workfort.pstuian.common.composable.FacultyView
+import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
+import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
+import com.workfort.pstuian.ui.common.composable.AppBar
+import com.workfort.pstuian.ui.common.composable.AppBarIconButton
+import com.workfort.pstuian.ui.common.composable.FacultyView
 import com.workfort.pstuian.ui.faculty.composable.BatchListItemSimpleView
 import com.workfort.pstuian.ui.facultypicker.state.FacultyPickerNavigationState
 import com.workfort.pstuian.ui.facultypicker.state.FacultyPickerUiEvent

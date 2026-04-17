@@ -1,4 +1,4 @@
-package com.workfort.pstuian.common.composable
+package com.workfort.pstuian.ui.common.composable
 
 import androidx.compose.runtime.Composable
 

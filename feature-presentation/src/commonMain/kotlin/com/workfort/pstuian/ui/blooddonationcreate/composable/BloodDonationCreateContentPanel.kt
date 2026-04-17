@@ -16,9 +16,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.common.composable.OutlinedTextInput
 import com.workfort.pstuian.ui.blooddonationcreate.state.BloodDonationCreateUiEvent
 import com.workfort.pstuian.ui.blooddonationcreate.state.BloodDonationCreateUiState
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.helper_text_blood_donation_request_id

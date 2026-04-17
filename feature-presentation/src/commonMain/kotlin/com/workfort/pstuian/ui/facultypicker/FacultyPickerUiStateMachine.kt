@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.facultypicker
 
-import com.workfort.pstuian.common.uistate.UiStateMachine
+import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.facultypicker.state.FacultyPickerNavigationState
 import com.workfort.pstuian.ui.facultypicker.state.FacultyPickerUiState
 import kotlinx.coroutines.flow.MutableStateFlow
