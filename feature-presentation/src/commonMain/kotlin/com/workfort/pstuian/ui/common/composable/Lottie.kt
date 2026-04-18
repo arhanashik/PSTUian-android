@@ -1,13 +1,13 @@
 package com.workfort.pstuian.ui.common.composable
 
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import io.github.alexzhirkevich.compottie.LottieAnimation
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
-import io.github.alexzhirkevich.compottie.LottieConstants
 import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
+import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import pstuian.feature_presentation.generated.resources.Res
 
@@ -48,6 +48,7 @@ fun AnimatedErrorView(modifier: Modifier = Modifier) {
 fun LottieAnimationView(
     modifier: Modifier = Modifier,
     resourcePath: String,
+    contentDescription: String = "Lottie animation",
 ) {
     val composition by rememberLottieComposition {
         LottieCompositionSpec.JsonString(
@@ -55,14 +56,14 @@ fun LottieAnimationView(
         )
     }
 
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever,
-    )
+    val progress by animateLottieCompositionAsState(composition)
 
-    LottieAnimation(
-        composition = composition,
-        progress = { progress },
+    Image(
         modifier = modifier,
+        painter = rememberLottiePainter(
+            composition = composition,
+            progress = { progress },
+        ),
+        contentDescription = contentDescription,
     )
 }

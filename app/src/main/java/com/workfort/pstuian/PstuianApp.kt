@@ -1,8 +1,7 @@
 package com.workfort.pstuian
 
+import android.app.Application
 import android.content.Context
-import androidx.multidex.MultiDex
-import androidx.multidex.MultiDexApplication
 import com.workfort.pstuian.app.di.appModule
 import com.workfort.pstuian.data.di.dataModule
 import com.workfort.pstuian.di.featurePresentationModule
@@ -12,7 +11,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
-import timber.log.Timber
 
 /**
  *  ****************************************************************************
@@ -21,7 +19,8 @@ import timber.log.Timber
  *  ****************************************************************************
  */
 
-class PstuianApp  : MultiDexApplication() {
+class PstuianApp  : Application() {
+
     init {
         sInstance = this
     }
@@ -38,9 +37,6 @@ class PstuianApp  : MultiDexApplication() {
         super.onCreate()
 
         if (applicationContext != null) {
-            if (BuildConfig.DEBUG) {
-                plantTimber()
-            }
             initDb(applicationContext)
         }
         triggerKoin()
@@ -55,22 +51,12 @@ class PstuianApp  : MultiDexApplication() {
         }
     }
 
-    private fun plantTimber() {
-        Timber.plant(object : Timber.DebugTree() {
-            override fun createStackElementTag(element: StackTraceElement): String {
-                return super.createStackElementTag(element) +
-                        " - Method:${element.methodName} - Line:${element.lineNumber}"
-            }
-        })
-    }
-
     private fun initDb(context: Context) {
         // initialize database
     }
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        MultiDex.install(this)
     }
 
     private val koinModules = appModule +

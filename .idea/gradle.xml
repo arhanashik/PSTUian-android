@@ -15,7 +15,6 @@
             <option value="$PROJECT_DIR$/feature-domain" />
             <option value="$PROJECT_DIR$/feature-presentation" />
             <option value="$PROJECT_DIR$/util" />
-            <option value="$PROJECT_DIR$/workmanager" />
           </set>
         </option>
       </GradleProjectSettings>

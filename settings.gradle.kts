@@ -10,7 +10,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
     }
 }
 include(
@@ -19,6 +18,5 @@ include(
     ":feature-domain",
     ":feature-presentation",
     ":util",
-    ":workmanager",
 )
 rootProject.name = "PSTUian"

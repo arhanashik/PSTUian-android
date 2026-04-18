@@ -2,14 +2,15 @@ package com.workfort.pstuian.ui.checkinlist
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.NetworkConst
-import com.workfort.pstuian.data.local.keyvaluestorage.Prefs
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.CheckInEntity
 import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 import com.workfort.pstuian.featuredomain.repository.CheckInRepository
+import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListMessageState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListNavigationState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
@@ -22,9 +23,9 @@ import kotlinx.coroutines.flow.update
 class CheckInListViewModel(
     private val checkInRepo: CheckInRepository,
     private val checkInLocationRepo: CheckInLocationRepository,
+    private val sharedPrefRepository: SharedPrefRepository,
     private val uiStateMachine: CheckInListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-    private val prefs: Prefs,
 ) : UiStateMachineViewModel<CheckInListUiState>(uiStateMachine) {
 
     private val _message = MutableStateFlow<CheckInListMessageState?>(null)
@@ -33,9 +34,11 @@ class CheckInListViewModel(
     private val _navigation = MutableStateFlow<CheckInListNavigationState?>(null)
     val navigation: StateFlow<CheckInListNavigationState?> = _navigation
 
-    private fun getLastCheckInLocationId(): Int = prefs.lastShownCheckInLocationId.let { locationId ->
-        if (locationId == -1) NetworkConst.Params.CheckInLocation.MAIN_CAMPUS
-        else locationId
+    private fun getLastCheckInLocationId(): Int {
+        return sharedPrefRepository.getInt(SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID).let { locationId ->
+            if (locationId == -1) NetworkConst.Params.CheckInLocation.MAIN_CAMPUS
+            else locationId
+        }
     }
 
     override fun onUiReady() {
@@ -94,7 +97,7 @@ class CheckInListViewModel(
             return
         }
         checkInLocationCache = null
-        prefs.lastShownCheckInLocationId = locationId
+        sharedPrefRepository.putInt(SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID, locationId)
         loadCheckInList(refresh = true)
     }
 
@@ -191,7 +194,7 @@ class CheckInListViewModel(
                     CheckInListMessageState.Success("Checked in successfully!")
                 }
                 checkInLocationCache = null
-                prefs.lastShownCheckInLocationId = locationId
+                sharedPrefRepository.putInt(SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID, locationId)
                 loadCheckInList(refresh = true)
             }.onFailure {
                 uiStateMachine.showOperationLoading(false)

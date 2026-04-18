@@ -1,46 +1,74 @@
 package com.workfort.pstuian.ui.common.navigation
 
 import androidx.navigation.NavType
+import androidx.savedstate.SavedState
+import androidx.savedstate.read
+import androidx.savedstate.write
 import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
-import androidx.core.bundle.Bundle
 
 val UserTypeNavType = object : NavType<UserType>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): UserType? {
-        return bundle.getString(key)?.let { Json.decodeFromString(it) }
+    override fun put(
+        bundle: SavedState,
+        key: String,
+        value: UserType,
+    ) {
+        bundle.write { putString(key, Json.encodeToString(value)) }
     }
-    override fun put(bundle: Bundle, key: String, value: UserType) {
-        bundle.putString(key, Json.encodeToString(value))
+
+    override fun get(
+        bundle: SavedState,
+        key: String,
+    ): UserType? {
+        return bundle.read { Json.decodeFromString<UserType?>(getString(key)) }
     }
+
     override fun parseValue(value: String): UserType = Json.decodeFromString(value)
     override fun serializeAsValue(value: UserType): String = Json.encodeToString(value)
     override val name: String = "UserType"
 }
 
 val ProfileEditModeNavType = object : NavType<ProfileEditMode>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): ProfileEditMode? {
-        return bundle.getString(key)?.let { Json.decodeFromString(it) }
+    override fun put(
+        bundle: SavedState,
+        key: String,
+        value: ProfileEditMode,
+    ) {
+        bundle.write { putString(key, Json.encodeToString(value)) }
     }
-    override fun put(bundle: Bundle, key: String, value: ProfileEditMode) {
-        bundle.putString(key, Json.encodeToString(value))
+
+    override fun get(
+        bundle: SavedState,
+        key: String,
+    ): ProfileEditMode? {
+        return bundle.read { Json.decodeFromString<ProfileEditMode?>(getString(key)) }
     }
+
     override fun parseValue(value: String): ProfileEditMode = Json.decodeFromString(value)
     override fun serializeAsValue(value: ProfileEditMode): String = Json.encodeToString(value)
     override val name: String = "ProfileEditMode"
 }
 
 val FacultySelectionModeNavType = object : NavType<FacultySelectionMode>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): FacultySelectionMode? {
-        return bundle.getString(key)?.let { Json.decodeFromString(it) }
+    override fun put(
+        bundle: SavedState,
+        key: String,
+        value: FacultySelectionMode,
+    ) {
+        bundle.write { putString(key, Json.encodeToString(value)) }
     }
-    override fun put(bundle: Bundle, key: String, value: FacultySelectionMode) {
-        bundle.putString(key, Json.encodeToString(value))
+
+    override fun get(
+        bundle: SavedState,
+        key: String,
+    ): FacultySelectionMode? {
+        return bundle.read { Json.decodeFromString<FacultySelectionMode?>(getString(key)) }
     }
+
     override fun parseValue(value: String): FacultySelectionMode = Json.decodeFromString(value)
     override fun serializeAsValue(value: FacultySelectionMode): String = Json.encodeToString(value)
     override val name: String = "FacultySelectionMode"

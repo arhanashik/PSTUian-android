@@ -1,14 +1,14 @@
 package com.workfort.pstuian.util
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.ceil
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 interface DateTimeUtil {
     fun getTimeInMillisNow(): Long
@@ -67,13 +67,13 @@ class DateTimeUtilImpl : DateTimeUtil {
 
     override fun getTimeInMillsAtMidnight(): Long {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val midnight = LocalDateTime(now.year, now.month, now.dayOfMonth, 0, 0, 0)
+        val midnight = LocalDateTime(now.year, now.month, now.day, 0, 0, 0)
         return midnight.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
 
     override fun getTimeInMillsUntilMidnight(): Long {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val midnight = LocalDateTime(now.year, now.month, now.dayOfMonth, 23, 59, 59)
+        val midnight = LocalDateTime(now.year, now.month, now.day, 23, 59, 59)
         return midnight.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
 
@@ -91,7 +91,7 @@ class DateTimeUtilImpl : DateTimeUtil {
                 duration.inWholeDays < 7 -> "${duration.inWholeDays} days ago"
                 else -> {
                     val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-                    "${dateTime.dayOfMonth} ${dateTime.month.name} ${dateTime.year}"
+                    "${dateTime.day} ${dateTime.month.name} ${dateTime.year}"
                 }
             }
         } catch (_: Exception) {
@@ -140,7 +140,7 @@ class DateTimeUtilImpl : DateTimeUtil {
             .replaceFirstChar { it.uppercase() }
         val hour = dateTime.hour.toString().padStart(2, '0')
         val minute = dateTime.minute.toString().padStart(2, '0')
-        return "${dateTime.dayOfMonth} $monthStr ${dateTime.year}, $hour:$minute"
+        return "${dateTime.day} $monthStr ${dateTime.year}, $hour:$minute"
     }
 
     override fun formatDateDDMMMYYYY(timestamp: Long): String {
@@ -148,7 +148,7 @@ class DateTimeUtilImpl : DateTimeUtil {
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         val monthStr = dateTime.month.name.take(3).lowercase()
             .replaceFirstChar { it.uppercase() }
-        return "${dateTime.dayOfMonth} $monthStr ${dateTime.year}"
+        return "${dateTime.day} $monthStr ${dateTime.year}"
     }
 
     override fun formatDateYYYYMMDD(timestamp: Long): String {
@@ -156,7 +156,7 @@ class DateTimeUtilImpl : DateTimeUtil {
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         val year = dateTime.year
         val month = dateTime.month.number.toString().padStart(2, '0')
-        val day = dateTime.dayOfMonth.toString().padStart(2, '0')
+        val day = dateTime.day.toString().padStart(2, '0')
         return "$year-$month-$day"
     }
 

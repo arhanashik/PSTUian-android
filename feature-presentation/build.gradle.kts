@@ -55,6 +55,7 @@ kotlin {
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
 
+                // Animation
                 implementation(libs.compottie)
                 implementation(libs.compottie.resources)
             }
@@ -63,7 +64,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api(libs.koin.android)
-                implementation(libs.airbnb.android.lottie.compose)
             }
         }
         val iosX64Main by getting

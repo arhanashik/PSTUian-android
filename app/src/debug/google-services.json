@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:968641147735:android:f98df9f444d78a0bf4c412",
         "android_client_info": {
-          "package_name": "com.workfort.pstuian.staging"
+          "package_name": "com.workfort.pstuian.debug"
         }
       },
       "oauth_client": [

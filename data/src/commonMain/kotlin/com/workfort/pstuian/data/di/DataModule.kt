@@ -1,5 +1,6 @@
 package com.workfort.pstuian.data.di
 
+import com.workfort.pstuian.data.infrastructure.repository.AuthRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.BloodDonationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.BloodDonationRequestRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.CheckInLocationRepositoryImpl
@@ -7,7 +8,6 @@ import com.workfort.pstuian.data.infrastructure.repository.CheckInRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.DonationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.NotificationRepositoryImpl
-import com.workfort.pstuian.data.infrastructure.repository.SettingsRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SharedPrefRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SliderRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
@@ -23,7 +23,6 @@ import com.workfort.pstuian.data.local.database.service.FacultyDbService
 import com.workfort.pstuian.data.local.database.service.SliderDbService
 import com.workfort.pstuian.data.local.database.service.StudentDbService
 import com.workfort.pstuian.data.local.database.service.TeacherDbService
-import com.workfort.pstuian.data.local.keyvaluestorage.Prefs
 import com.workfort.pstuian.data.remote.KtorClientFactory
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.domain.BloodDonationApiHelper
@@ -70,13 +69,11 @@ import com.workfort.pstuian.featuredomain.repository.CheckInRepository
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.NotificationRepository
-import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
 import com.workfort.pstuian.featuredomain.repository.SupportRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
-import com.workfort.pstuian.data.infrastructure.repository.AuthRepositoryImpl
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -120,10 +117,6 @@ private val networkModule = module {
     single { BloodDonationRequestApiService(get()) }
     single { CheckInApiService(get()) }
     single { CheckInLocationApiService(get()) }
-}
-
-private val sharedPrefModule = module {
-    single { Prefs(get()) }
 }
 
 val repositoryModule = module {
@@ -175,9 +168,6 @@ val repositoryModule = module {
     factoryOf(::CheckInLocationApiHelperImpl) bind CheckInLocationApiHelper::class
     factoryOf(::CheckInLocationRepositoryImpl) bind CheckInLocationRepository::class
 
-    // settings repository
-    factoryOf(::SettingsRepositoryImpl) bind SettingsRepository::class
-
     factoryOf(::SharedPrefRepositoryImpl) bind SharedPrefRepository::class
 }
 
@@ -185,6 +175,5 @@ val dataModule = listOf(
     platformDataModule,
     databaseModule,
     networkModule,
-    sharedPrefModule,
     repositoryModule,
 )

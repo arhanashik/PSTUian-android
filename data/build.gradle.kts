@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
 }
 
@@ -52,9 +51,6 @@ kotlin {
                 implementation(libs.ktor.client.logging)
 
                 implementation(libs.koin.core)
-
-                implementation(libs.multiplatform.settings)
-                implementation(libs.multiplatform.settings.no.arg)
             }
         }
 
@@ -103,12 +99,4 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-}
-
-dependencies {
-    add("kspCommonMainMetadata", libs.androidx.room.compiler)
-    add("kspAndroid", libs.androidx.room.compiler)
-    add("kspIosX64", libs.androidx.room.compiler)
-    add("kspIosArm64", libs.androidx.room.compiler)
-    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }

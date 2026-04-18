@@ -10,8 +10,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.R
-import com.workfort.pstuian.data.infrastructure.repository.SettingsRepositoryImpl
 import com.workfort.pstuian.featuredomain.model.NotificationType
+import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.util.PlatformInfo
@@ -20,7 +20,6 @@ import kotlin.random.Random
 
 class FcmCallbackImpl(
     private val authRepo: AuthRepository,
-    private val settingsRepo: SettingsRepositoryImpl,
     private val sharedPrefRepository: SharedPrefRepository,
     private val platformInfo: PlatformInfo,
 ) : FcmCallback {
@@ -47,12 +46,13 @@ class FcmCallbackImpl(
      * Show notification when app is open
      * */
     private fun handleNotification(data: FcmMessageData) {
-        val context = PstuianApp.Companion.getBaseApplicationContext()
+        val context = PstuianApp.getBaseApplicationContext()
+        val showNotification = sharedPrefRepository.getBoolean(SharedPrefKey.SHOW_NOTIFICATION, true)
         if (
             ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED || settingsRepo.shouldShowNotification().not()
+            ) != PackageManager.PERMISSION_GRANTED || showNotification
         ) {
             return
         }

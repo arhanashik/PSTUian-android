@@ -23,6 +23,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+//                implementation(libs.kotlin.stdlib)
+                implementation(kotlin("stdlib"))
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.koin.core)
