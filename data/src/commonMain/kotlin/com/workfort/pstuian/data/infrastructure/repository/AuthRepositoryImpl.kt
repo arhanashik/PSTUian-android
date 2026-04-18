@@ -2,7 +2,6 @@ package com.workfort.pstuian.data.infrastructure.repository
 
 import com.workfort.pstuian.data.NetworkConst
 import com.workfort.pstuian.data.dto.toDto
-import com.workfort.pstuian.data.local.database.service.ConfigDbService
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.featuredomain.model.ConfigEntity
 import com.workfort.pstuian.featuredomain.model.DeviceEntity
@@ -15,24 +14,26 @@ import com.workfort.pstuian.util.PlatformInfo
 import com.workfort.pstuian.util.helper.JsonParser
 
 class AuthRepositoryImpl(
-    private val dbService: ConfigDbService,
     private val helper: AuthApiHelper,
     private val sharedPrefRepository: SharedPrefRepository,
     private val jsonParser: JsonParser,
     private val platformInfo: PlatformInfo,
 ) : AuthRepository {
+    private var config: ConfigEntity? = null
 
     override suspend fun getConfig(): ConfigEntity {
-        val oldConfig = dbService.getLatest()
         var newConfig = helper.getConfig().toEntity()
-        if(oldConfig == null || oldConfig != newConfig) {
-            dbService.insert(newConfig)
+        if (config == null || config != newConfig) {
+            config = newConfig
         } else {
             // pass local states(forceRefreshDone and forceUpdateDone) into the new state
-            if(oldConfig == newConfig) newConfig = oldConfig
+            val oldConfig = config!!
+            newConfig.forceRefreshDone = oldConfig.forceRefreshDone
+            newConfig.forceUpdateDone = oldConfig.forceUpdateDone
+            config = newConfig
         }
 
-        return newConfig
+        return config!!
     }
 
     override suspend fun getAllDevices(page: Int): List<DeviceEntity> {
@@ -257,10 +258,8 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun updateDataRefreshState() {
-        val config = dbService.getLatest()
         config?.let {
             it.forceRefreshDone = true
-            dbService.update(it)
         }
     }
 

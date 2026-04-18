@@ -1,24 +1,25 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.local.database.service.TeacherDbService
 import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
 
 class TeacherRepositoryImpl(
     private val authRepo: AuthRepository,
-    private val facultyRepo: FacultyRepositoryImpl,
-    private val teacherDbService: TeacherDbService,
+    private val facultyRepo: FacultyRepository,
     private val helper: TeacherApiHelper,
 ) : TeacherRepository {
+    private val teachers = mutableMapOf<Int, TeacherEntity>()
+
     override suspend fun getProfile(teacherId: Int): TeacherProfile {
         // get teacher
-        var teacher = teacherDbService.get(teacherId)
+        var teacher = teachers[teacherId]
         if (teacher == null) {
             teacher = helper.get(teacherId).toEntity()
-            teacherDbService.insert(teacher)
+            teachers[teacherId] = teacher
         }
         // get faculty
         val faculty = facultyRepo.getFaculty(teacher.facultyId)
@@ -38,7 +39,7 @@ class TeacherRepositoryImpl(
         if (isChanged) {
             teacher.imageUrl = imageUrl
             authRepo.storeSignInTeacher(teacher)
-            teacherDbService.update(teacher)
+            teachers[teacher.id] = teacher
         }
         return isChanged
     }
@@ -48,7 +49,7 @@ class TeacherRepositoryImpl(
         if (isChanged) {
             teacher.name = name
             authRepo.storeSignInTeacher(teacher)
-            teacherDbService.update(teacher)
+            teachers[teacher.id] = teacher
         }
         return isChanged
     }
@@ -58,7 +59,7 @@ class TeacherRepositoryImpl(
         if (isChanged) {
             teacher.bio = bio
             authRepo.storeSignInTeacher(teacher)
-            teacherDbService.update(teacher)
+            teachers[teacher.id] = teacher
         }
         return isChanged
     }
@@ -75,7 +76,7 @@ class TeacherRepositoryImpl(
             teacher.id, name, designation, department, blood, facultyId
         ).toEntity().let { updatedTeacher ->
             authRepo.storeSignInTeacher(updatedTeacher)
-            teacherDbService.update(updatedTeacher)
+            teachers[updatedTeacher.id] = updatedTeacher
             return updatedTeacher
         }
     }
@@ -93,7 +94,7 @@ class TeacherRepositoryImpl(
             teacher.id, address, phone, email, oldEmail, linkedIn, fbLink
         ).toEntity().let { updatedTeacher ->
             authRepo.storeSignInTeacher(updatedTeacher)
-            teacherDbService.update(updatedTeacher)
+            teachers[updatedTeacher.id] = updatedTeacher
             return updatedTeacher
         }
     }

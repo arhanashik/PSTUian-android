@@ -13,16 +13,6 @@ import com.workfort.pstuian.data.infrastructure.repository.SliderRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SupportRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
-import com.workfort.pstuian.data.local.database.AppDatabase
-import com.workfort.pstuian.data.local.database.getRoomDatabase
-import com.workfort.pstuian.data.local.database.service.BatchDbService
-import com.workfort.pstuian.data.local.database.service.ConfigDbService
-import com.workfort.pstuian.data.local.database.service.CourseDbService
-import com.workfort.pstuian.data.local.database.service.EmployeeDbService
-import com.workfort.pstuian.data.local.database.service.FacultyDbService
-import com.workfort.pstuian.data.local.database.service.SliderDbService
-import com.workfort.pstuian.data.local.database.service.StudentDbService
-import com.workfort.pstuian.data.local.database.service.TeacherDbService
 import com.workfort.pstuian.data.remote.KtorClientFactory
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.domain.BloodDonationApiHelper
@@ -81,20 +71,6 @@ import org.koin.dsl.module
 
 expect val platformDataModule: Module
 
-private val databaseModule = module {
-    single<AppDatabase> { getRoomDatabase(get()) }
-
-    // db services injection
-    single { ConfigDbService(get<AppDatabase>().configDao()) }
-    single { SliderDbService(get<AppDatabase>().sliderDao()) }
-    single { FacultyDbService(get<AppDatabase>().facultyDao()) }
-    single { BatchDbService(get<AppDatabase>().batchDao()) }
-    single { StudentDbService(get<AppDatabase>().studentDao()) }
-    single { TeacherDbService(get<AppDatabase>().teacherDao()) }
-    single { CourseDbService(get<AppDatabase>().courseDao()) }
-    single { EmployeeDbService(get<AppDatabase>().employeeDao()) }
-}
-
 private val networkModule = module {
     single {
         KtorClientFactory.create(
@@ -126,15 +102,15 @@ val repositoryModule = module {
 
     // slider repository injections
     factoryOf(::SliderApiHelper)
-    factoryOf(::SliderRepositoryImpl) bind SliderRepository::class
+    single<SliderRepository> { SliderRepositoryImpl(get()) }
 
     // faculty repository injections
     factoryOf(::FacultyApiHelperImpl) bind FacultyApiHelper::class
-    factoryOf(::FacultyRepositoryImpl) bind FacultyRepository::class
+    single<FacultyRepository> { FacultyRepositoryImpl(get()) }
 
     // student repository injections
     factoryOf(::StudentApiHelperImpl) bind StudentApiHelper::class
-    factoryOf(::StudentRepositoryImpl) bind StudentRepository::class
+    single<StudentRepository> { StudentRepositoryImpl(get(), get(), get()) }
 
     // teacher repository injections
     factoryOf(::TeacherApiHelperImpl) bind TeacherApiHelper::class
@@ -173,7 +149,6 @@ val repositoryModule = module {
 
 val dataModule = listOf(
     platformDataModule,
-    databaseModule,
     networkModule,
     repositoryModule,
 )

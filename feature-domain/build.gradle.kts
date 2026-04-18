@@ -2,11 +2,6 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.androidx.room)
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
@@ -40,8 +35,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":util"))
-                implementation(libs.jetbrains.kotlin.stdlib)
-                implementation(libs.androidx.room.runtime)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.koin.core)
