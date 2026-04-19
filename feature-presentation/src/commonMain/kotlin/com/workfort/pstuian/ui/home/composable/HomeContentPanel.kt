@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -25,11 +26,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ErrorText
+import com.workfort.pstuian.ui.common.composable.FacultyShimmer
 import com.workfort.pstuian.ui.common.composable.FacultyView
 import com.workfort.pstuian.ui.common.composable.SliderShimmer
 import com.workfort.pstuian.ui.common.composable.SliderView
@@ -47,6 +51,7 @@ import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_faculties
 import pstuian.feature_presentation.generated.resources.label_information_corner
 import pstuian.feature_presentation.generated.resources.label_options
+import androidx.compose.foundation.layout.size
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -80,19 +85,13 @@ fun HomeContentPanel(
             style = TextStyle.title3.copy(color = AppColors.textPrimary),
         )
 
-        FlowRow(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            maxItemsInEachRow = 3,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            FacultyViewWrapper(
-                modifier = Modifier
-                    .fillMaxWidth(0.3f)
-                    .padding(vertical = 8.dp),
-                state = uiState.facultyState,
-                onUiEvent = onUiEvent,
-            )
-        }
+        FacultyViewWrapper(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            state = uiState.facultyState,
+            onUiEvent = onUiEvent,
+        )
 
         Spacer(Modifier.height(16.dp))
 
@@ -194,6 +193,7 @@ private fun SliderViewWrapper(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FacultyViewWrapper(
     modifier: Modifier,
@@ -203,23 +203,31 @@ private fun FacultyViewWrapper(
     when (state) {
         is HomeUiState.FacultyState.None -> Unit
         is HomeUiState.FacultyState.Loading -> {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Loading, please wait...")
+            Box(modifier = modifier.padding(top = 8.dp)) {
+                FacultyShimmer()
             }
         }
         is HomeUiState.FacultyState.Available -> {
-            state.faculties.forEach { item ->
-                FacultyView(
-                    modifier = modifier
-                        .clickable {
-                            onUiEvent(HomeUiEvent.FacultyClicked(item))
-                        },
-                    faculty = item,
-                )
+            FlowRow(
+                modifier = modifier,
+                maxItemsInEachRow = 3,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                state.faculties.forEach { item ->
+                    FacultyView(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 8.dp)
+                            .clickable {
+                                onUiEvent(HomeUiEvent.FacultyClicked(item))
+                            },
+                        faculty = item,
+                    )
+                }
             }
         }
         is HomeUiState.FacultyState.Error -> {
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = modifier.padding(top = 8.dp)) {
                 ErrorText(text = state.message)
             }
         }
@@ -229,11 +237,12 @@ private fun FacultyViewWrapper(
 @Composable
 private fun InformationCornerView(item: ActionItem, modifier: Modifier) {
     ElevatedCard(
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(24.dp)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(24.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -243,8 +252,11 @@ private fun InformationCornerView(item: ActionItem, modifier: Modifier) {
                 text = stringResource(item.title),
                 modifier = Modifier
                     .weight(0.6f)
-                    .padding(start = 8.dp),
-                style = TextStyle.body2.copy(color = AppColors.textSecondary),
+                    .padding(start = 12.dp),
+                style = TextStyle.body2.copy(
+                    color = AppColors.textPrimary,
+                    fontWeight = FontWeight.SemiBold
+                ),
             )
             val icon = item.icon
             if (icon is DrawableResource) {
@@ -254,7 +266,8 @@ private fun InformationCornerView(item: ActionItem, modifier: Modifier) {
                     contentScale = ContentScale.Inside,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .weight(0.4f),
+                        .weight(0.4f)
+                        .padding(8.dp),
                 )
             } else if (icon is ImageVector) {
                 Icon(
@@ -263,7 +276,7 @@ private fun InformationCornerView(item: ActionItem, modifier: Modifier) {
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(0.4f)
-                        .padding(8.dp),
+                        .padding(12.dp),
                 )
             }
         }
@@ -273,21 +286,26 @@ private fun InformationCornerView(item: ActionItem, modifier: Modifier) {
 @Composable
 private fun OptionView(item: ActionItem, modifier: Modifier) {
     ElevatedCard(
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(24.dp)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(24.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 modifier = Modifier.weight(0.7f),
                 text = stringResource(item.title),
-                style = TextStyle.body2.copy(color = AppColors.textSecondary),
+                style = TextStyle.label1.copy(
+                    color = AppColors.textPrimary,
+                    fontWeight = FontWeight.Medium
+                ),
             )
             val icon = item.icon
             if (icon is DrawableResource) {
@@ -296,14 +314,16 @@ private fun OptionView(item: ActionItem, modifier: Modifier) {
                     contentDescription = "",
                     contentScale = ContentScale.Inside,
                     modifier = Modifier
-                        .weight(0.3f),
+                        .weight(0.3f)
+                        .size(24.dp),
                 )
             } else if (icon is ImageVector) {
                 Icon(
                     imageVector = icon,
                     contentDescription = "",
                     modifier = Modifier
-                        .weight(0.3f),
+                        .weight(0.3f)
+                        .size(24.dp),
                 )
             }
         }
