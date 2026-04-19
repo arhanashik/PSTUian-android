@@ -61,6 +61,9 @@ kotlin {
                 // Animation
                 implementation(libs.compottie)
                 implementation(libs.compottie.resources)
+
+                // Logging
+                implementation(libs.napier)
             }
         }
         commonMain.resources.srcDirs("src/commonMain/composeResources")

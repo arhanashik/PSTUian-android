@@ -19,11 +19,13 @@ object KtorClientFactory {
         val isDebug = platformInfo.isDebug
         return HttpClient {
             install(ContentNegotiation) {
-                json(Json {
+                val json = Json {
                     ignoreUnknownKeys = true
                     prettyPrint = true
                     isLenient = true
-                })
+                }
+                json(json)
+                json(json, ContentType.Text.Html)
             }
             
             install(Logging) {

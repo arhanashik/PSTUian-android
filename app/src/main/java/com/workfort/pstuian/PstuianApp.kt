@@ -7,17 +7,12 @@ import com.workfort.pstuian.data.di.dataModule
 import com.workfort.pstuian.di.featurePresentationModule
 import com.workfort.pstuian.featuredomain.di.featureDomainModule
 import com.workfort.pstuian.util.di.utilModule
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
-
-/**
- *  ****************************************************************************
- *  * Created by : Arhan Ashik on 12/11/2018 at 4:18 PM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  ****************************************************************************
- */
 
 class PstuianApp  : Application() {
 
@@ -36,9 +31,10 @@ class PstuianApp  : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        if (applicationContext != null) {
-            initDb(applicationContext)
+        if (BuildConfig.DEBUG) {
+            Napier.base(DebugAntilog())
         }
+
         triggerKoin()
     }
 
@@ -49,10 +45,6 @@ class PstuianApp  : Application() {
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
             modules(koinModules)
         }
-    }
-
-    private fun initDb(context: Context) {
-        // initialize database
     }
 
     override fun attachBaseContext(base: Context?) {

@@ -1,7 +1,6 @@
 [versions]
 # App Config
 gradle = "8.9.1"
-appId = "com.workfort.pstuian"
 compileSdk = "36"
 minSdk = "24"
 targetSdk = "34"
@@ -130,6 +129,9 @@ coil3-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref
 # Animation
 compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
 compottie-resources = { module = "io.github.alexzhirkevich:compottie-resources", version.ref = "compottie" }
+
+# Logging
+napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }

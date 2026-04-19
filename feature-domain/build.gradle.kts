@@ -39,6 +39,9 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.koin.core)
+
+                // Logging
+                implementation(libs.napier)
             }
         }
 

@@ -28,6 +28,9 @@ kotlin {
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.koin.core)
+
+                // Logging
+                implementation(libs.napier)
             }
         }
         val commonTest by getting {

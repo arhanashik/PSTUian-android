@@ -10,11 +10,11 @@ plugins {
 }
 
 android {
-    namespace = libs.versions.appId.get()
+    namespace = "com.workfort.pstuian"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = libs.versions.appId.get()
+        applicationId = "com.workfort.pstuian"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
@@ -79,5 +79,8 @@ dependencies {
     // Koin for DI
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+
+    // Logging
+    implementation(libs.napier)
 }
 
