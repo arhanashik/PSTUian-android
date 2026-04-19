@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +37,8 @@ import com.workfort.pstuian.ui.common.composable.FacultyView
 import com.workfort.pstuian.ui.common.composable.ShimmerBox
 import com.workfort.pstuian.ui.common.composable.SliderView
 import com.workfort.pstuian.ui.common.composable.TitleTextMedium
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.home.ActionItem
 import com.workfort.pstuian.ui.home.informationItems
 import com.workfort.pstuian.ui.home.optionsItems
@@ -83,19 +86,20 @@ fun HomeContentPanel(
         ) {
             SliderViewWrapper(uiState.sliderState, onUiEvent)
         }
+
+        Spacer(Modifier.height(16.dp))
+
         // faculties
-        Row(
+        Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
-        ) {
-            TitleTextMedium(
-                text = stringResource(Res.string.label_faculties),
-                color = Color.Black,
-            )
-        }
+                .padding(horizontal = 16.dp),
+            text = stringResource(Res.string.label_faculties),
+            style = TextStyle.title3.copy(color = AppColors.textPrimary),
+        )
+
         FlowRow(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             maxItemsInEachRow = 3,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -107,17 +111,22 @@ fun HomeContentPanel(
                 onUiEvent = onUiEvent,
             )
         }
+
+        Spacer(Modifier.height(16.dp))
+
         // information corner
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)) {
-            TitleTextMedium(
-                text = stringResource(Res.string.label_information_corner),
-                color = Color.Black,
-            )
-        }
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            text = stringResource(Res.string.label_information_corner),
+            style = TextStyle.title3.copy(color = AppColors.textPrimary),
+        )
+
         FlowRow(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             maxItemsInEachRow = 2,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -134,17 +143,22 @@ fun HomeContentPanel(
                 )
             }
         }
+
+        Spacer(Modifier.height(16.dp))
+
         // options
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)) {
-            TitleTextMedium(
-                text = stringResource(Res.string.label_options),
-                color = Color.Black,
-            )
-        }
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            text = stringResource(Res.string.label_options),
+            style = TextStyle.title3.copy(color = AppColors.textPrimary),
+        )
+
         FlowRow(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             maxItemsInEachRow = 3,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -242,6 +256,7 @@ private fun InformationCornerView(item: ActionItem, modifier: Modifier) {
                 modifier = Modifier
                     .weight(0.6f)
                     .padding(start = 8.dp),
+                style = TextStyle.body2.copy(color = AppColors.textSecondary),
             )
             val icon = item.icon
             if (icon is DrawableResource) {
@@ -284,6 +299,7 @@ private fun OptionView(item: ActionItem, modifier: Modifier) {
             Text(
                 modifier = Modifier.weight(0.7f),
                 text = stringResource(item.title),
+                style = TextStyle.body2.copy(color = AppColors.textSecondary),
             )
             val icon = item.icon
             if (icon is DrawableResource) {

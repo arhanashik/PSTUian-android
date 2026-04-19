@@ -6,14 +6,11 @@ import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppBarIconButton
@@ -59,10 +56,7 @@ private fun HomeScreenContent(
     uiState: HomeUiState,
     onUiEvent: (HomeUiEvent) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
     AppScaffold (
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
                 title = stringResource(Res.string.app_name),
@@ -77,15 +71,12 @@ private fun HomeScreenContent(
                         onClick = { onUiEvent(HomeUiEvent.NotificationClicked) },
                     )
                 },
-                scrollBehavior = scrollBehavior,
             )
         }
     ) {
         when (uiState) {
             is HomeUiState.None -> Unit
-            is HomeUiState.Content -> {
-                HomeContentPanel(uiState, onUiEvent)
-            }
+            is HomeUiState.Content -> HomeContentPanel(uiState, onUiEvent)
         }
     }
 }

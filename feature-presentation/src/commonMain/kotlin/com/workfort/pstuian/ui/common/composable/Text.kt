@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.workfort.pstuian.ui.common.theme.AppColors
 
 @Composable
 fun TitleText(
@@ -30,7 +31,7 @@ fun TitleTextMedium(
     text: String,
     fontSize: TextUnit = 24.sp,
     fontWeight: FontWeight = FontWeight.Medium,
-    color: Color = Color.Black,
+    color: Color = AppColors.textPrimary,
 ) = Text(
     modifier = modifier,
     text = text,
@@ -45,7 +46,7 @@ fun TitleTextSmall(
     text: String,
     fontSize: TextUnit = 18.sp,
     fontWeight: FontWeight = FontWeight.Medium,
-    color: Color = Color.Black,
+    color: Color = AppColors.textSecondary,
 ) = Text(
     modifier = modifier,
     text = text,
