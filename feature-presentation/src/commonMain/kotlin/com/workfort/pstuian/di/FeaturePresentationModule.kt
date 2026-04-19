@@ -188,7 +188,6 @@ private val splashModule = module {
     factory {
         SplashViewModel(
             appConfigRepository = get(),
-            clearAllDataUseCase = get(),
             registerDeviceUseCase = get(),
             getInitialScreenUseCase = get(),
             stateMachine = get(),
