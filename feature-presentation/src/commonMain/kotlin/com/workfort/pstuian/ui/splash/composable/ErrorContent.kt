@@ -32,12 +32,12 @@ internal fun ErrorContent(
     AnimatedVisibility(
         visible = true,
         enter = fadeIn() + scaleIn(),
-        exit = fadeOut()
+        exit = fadeOut(),
     ) {
         Column(
             modifier = Modifier.padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = statusText,
