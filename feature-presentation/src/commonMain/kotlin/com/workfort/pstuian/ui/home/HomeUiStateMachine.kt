@@ -2,6 +2,7 @@ package com.workfort.pstuian.ui.home
 
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.SliderEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.home.state.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +37,7 @@ class HomeUiStateMachine : UiStateMachine<HomeUiState> {
         copy(profileState = HomeUiState.ProfileState.Loading)
     }
 
-    fun showProfile(user: Any) = updateContent {
+    fun showProfile(user: User) = updateContent {
         copy(profileState = HomeUiState.ProfileState.Available(user))
     }
 

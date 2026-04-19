@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.blooddonationcreate.state.BloodDonationCreateMessageState
 import com.workfort.pstuian.ui.blooddonationcreate.state.BloodDonationCreateNavigationState
 import com.workfort.pstuian.ui.blooddonationcreate.state.BloodDonationCreateUiEvent
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.update
 
 class BloodDonationCreateViewModel(
     private val repo: BloodDonationRepository,
+    private val sharedScreenData: SharedScreenData,
     private val dateTimeUtil: DateTimeUtil,
     private val uiStateMachine: BloodDonationCreateUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -70,13 +72,15 @@ class BloodDonationCreateViewModel(
     private fun onSendClicked() {
         val input = uiState.value as? BloodDonationCreateUiState.Content ?: return
         val requestId = input.requestId
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
         val date = input.date ?: return
         val info = input.info
 
         uiStateMachine.showLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
-                repo.insert(requestId, date, info)
+                repo.insert(requestId, userId, userType, date, info)
                 uiStateMachine.showLoading(false)
                 _message.update {
                     BloodDonationCreateMessageState.Snackbar("Donation created successfully!")

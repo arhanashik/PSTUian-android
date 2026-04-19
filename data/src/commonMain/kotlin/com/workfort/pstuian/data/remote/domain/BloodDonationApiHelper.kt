@@ -1,30 +1,19 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.NetworkConst
-import com.workfort.pstuian.data.dto.BloodDonationDto
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 02 Oct, 2021 at 5:10 AM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
+import com.workfort.pstuian.data.model.BloodDonationDto
+import com.workfort.pstuian.data.remote.NetworkConst
 
 abstract class BloodDonationApiHelper : ApiHelper<BloodDonationDto>()  {
+
     open suspend fun getAll(
-        userId: Int,
+        userId: String,
         userType: String,
         page: Int,
         limit: Int = NetworkConst.Params.Default.PAGE_SIZE
     ): List<BloodDonationDto> = emptyList()
 
     open suspend fun insert(
-        userId: Int,
+        userId: String,
         userType: String,
         requestId: Int?,
         date: Long,

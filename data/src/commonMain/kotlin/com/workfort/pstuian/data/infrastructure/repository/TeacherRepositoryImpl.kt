@@ -24,12 +24,7 @@ class TeacherRepositoryImpl(
         // get faculty
         val faculty = facultyRepo.getFaculty(teacher.facultyId)
         // get sign in state
-        val isSignedIn = try {
-            val user = authRepo.getSignInUser()
-            user is TeacherEntity && user.id == teacherId
-        } catch (_: Exception) {
-            false
-        }
+        val isSignedIn = authRepo.getAuthUser()?.userId == teacherId.toString()
 
         return TeacherProfile(teacher, faculty, isSignedIn)
     }

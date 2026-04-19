@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.dto.TeacherDto
+import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
 import com.workfort.pstuian.data.remote.service.TeacherApiService
 

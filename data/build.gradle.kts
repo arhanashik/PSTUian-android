@@ -44,6 +44,11 @@ kotlin {
                 implementation(libs.ktor.client.logging)
 
                 implementation(libs.koin.core)
+
+                // GitLive Firebase (KMM wrapper)
+                implementation(libs.firebase.kmm.auth)
+                implementation(libs.firebase.kmm.firestore)
+                implementation(libs.firebase.kmm.database)
             }
         }
 

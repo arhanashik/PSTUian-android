@@ -1,8 +1,9 @@
 package com.workfort.pstuian.ui.locationpicker
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.data.infrastructure.repository.CheckInLocationRepositoryImpl
 import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerNavigationState
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerUiState
@@ -10,7 +11,8 @@ import kotlinx.coroutines.launch
 
 class LocationPickerViewModel(
     private val isCheckInMode: Boolean,
-    private val checkInLocationRepo: CheckInLocationRepositoryImpl,
+    private val checkInLocationRepo: CheckInLocationRepository,
+    private val sharedScreenData: SharedScreenData,
     private val stateMachine: LocationPickerUiStateMachine,
 ) : UiStateMachineViewModel<LocationPickerUiState>(stateMachine) {
 
@@ -101,9 +103,12 @@ class LocationPickerViewModel(
     }
 
     fun createNewLocation(name: String) {
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
+
         viewModelScope.launch {
             runCatching {
-                checkInLocationRepo.insert(name)
+                checkInLocationRepo.insert(userId, userType, name)
                 val message = "Location create request is successful. Please wait for an admin to approve it!"
                 search(query = "", refresh = true)
                 stateMachine.updateMessageState(

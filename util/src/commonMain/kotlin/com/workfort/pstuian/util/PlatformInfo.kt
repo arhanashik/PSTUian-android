@@ -1,15 +1,14 @@
 package com.workfort.pstuian.util
 
 interface PlatformInfo {
-    val appVersion: String
+    val appVersionCode: Int
+    val appVersionName: String
     val isDebug: Boolean
     val storeUrl: String
     val deviceId: String
     val model: String
-    val platformName: String
+    val platform: String
     val locale: String
-    fun getLocalIpAddress(): String
-//    fun vibrate()
 }
 
 fun isVersionLower(current: String, required: String): Boolean {

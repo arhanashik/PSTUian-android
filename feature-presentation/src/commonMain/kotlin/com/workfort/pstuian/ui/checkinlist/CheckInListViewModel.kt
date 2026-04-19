@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.checkinlist
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.data.NetworkConst
+import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.CheckInEntity
@@ -11,6 +11,7 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 import com.workfort.pstuian.featuredomain.repository.CheckInRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListMessageState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListNavigationState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
@@ -24,6 +25,7 @@ class CheckInListViewModel(
     private val checkInRepo: CheckInRepository,
     private val checkInLocationRepo: CheckInLocationRepository,
     private val sharedPrefRepository: SharedPrefRepository,
+    private val sharedScreenData: SharedScreenData,
     private val uiStateMachine: CheckInListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<CheckInListUiState>(uiStateMachine) {
@@ -184,10 +186,13 @@ class CheckInListViewModel(
     }
 
     fun checkIn(locationId: Int) {
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
+
         uiStateMachine.showOperationLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
-                checkInRepo.checkIn(locationId)
+                checkInRepo.checkIn(userId, userType, locationId)
             }.onSuccess {
                 uiStateMachine.showOperationLoading(false)
                 _message.update {

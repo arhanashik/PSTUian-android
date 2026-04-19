@@ -106,7 +106,7 @@ class EmployeeProfileViewModel(
         profileCache()?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.ImageUploadScreen(
-                    userId = employee.id,
+                    userId = employee.id.toString(),
                     userType = UserType.EMPLOYEE,
                 )
             }
@@ -132,7 +132,7 @@ class EmployeeProfileViewModel(
             }?.let { mode ->
                 _navigation.update {
                     EmployeeProfileNavigationState.EmployeeProfileEditScreen(
-                        userId = employee.id,
+                        userId = employee.id.toString(),
                         action = mode,
                     )
                 }
@@ -150,7 +150,7 @@ class EmployeeProfileViewModel(
         profileCache()?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.MyDeviceListScreen(
-                    userId = employee.id,
+                    userId = employee.id.toString(),
                     userType = UserType.EMPLOYEE,
                 )
             }
@@ -162,7 +162,7 @@ class EmployeeProfileViewModel(
         profileCache()?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.DeleteAccountScreen(
-                    userId = employee.id,
+                    userId = employee.id.toString(),
                     userType = UserType.EMPLOYEE,
                 )
             }

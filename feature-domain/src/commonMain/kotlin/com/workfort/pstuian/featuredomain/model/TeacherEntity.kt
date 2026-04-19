@@ -12,7 +12,7 @@ data class TeacherEntity(
     var linkedIn: String?,
     var fbLink: String?,
     var address: String?,
-    var email: String?,
+    var email: String,
     var department: String,
     var blood: String?,
     var facultyId: Int,

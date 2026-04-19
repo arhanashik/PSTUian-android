@@ -1,29 +1,17 @@
 package com.workfort.pstuian.featuredomain.repository
 
-import com.workfort.pstuian.featuredomain.model.ConfigEntity
-import com.workfort.pstuian.featuredomain.model.DeviceEntity
-import com.workfort.pstuian.featuredomain.model.StudentEntity
+import com.workfort.pstuian.featuredomain.model.AuthUser
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.UserType
 
 interface AuthRepository {
-    suspend fun getConfig(): ConfigEntity
-    suspend fun getAllDevices(page: Int): List<DeviceEntity>
-    suspend fun registerDevice(
-        fcmToken: String,
-        lat: String = "0.0",
-        lng: String = "0.0",
-    ): DeviceEntity
-
-    suspend fun updateFcmToken(
-        fcmToken: String
-    ): DeviceEntity
-
-    fun getSignInUserType(): String
-    fun getSignInUser(): Any
-    fun getUserIdAndType(): Pair<Int, String>
-    suspend fun storeSignInStudent(student: StudentEntity)
+    fun getAuthUser(): AuthUser?
+    fun isUserSignedIn(): Boolean
+    fun isUserEmailVerified(): Boolean
+    fun getSignInUserType(): UserType?
     suspend fun storeSignInTeacher(teacher: TeacherEntity)
-    suspend fun signIn(email: String, password: String, userType: String): Any
+    suspend fun signIn(email: String, password: String, userType: UserType): User
     suspend fun signUpStudent(
         name: String,
         id: String,
@@ -33,7 +21,7 @@ interface AuthRepository {
         session: String,
         email: String,
         password: String,
-    ): StudentEntity
+    ): User.Student
 
     suspend fun signUpTeacher(
         name: String,
@@ -49,6 +37,5 @@ interface AuthRepository {
     suspend fun forgotPassword(userType: String, email: String): String
     suspend fun emailVerification(userType: String, email: String): String
     suspend fun deleteAll()
-    suspend fun updateDataRefreshState()
     suspend fun deleteAccount(password: String): String
 }

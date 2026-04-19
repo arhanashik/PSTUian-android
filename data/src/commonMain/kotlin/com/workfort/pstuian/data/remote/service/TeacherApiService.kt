@@ -1,8 +1,8 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.data.NetworkConst
-import com.workfort.pstuian.data.dto.TeacherDto
-import com.workfort.pstuian.featuredomain.model.Response
+import com.workfort.pstuian.data.remote.NetworkConst
+import com.workfort.pstuian.data.model.TeacherDto
+import com.workfort.pstuian.data.model.ApiResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
@@ -11,7 +11,7 @@ import io.ktor.client.request.parameter
 import io.ktor.http.parameters
 
 class TeacherApiService(private val client: HttpClient) {
-    suspend fun get(id: Int): Response<TeacherDto> {
+    suspend fun get(id: Int): ApiResponse<TeacherDto> {
         return client.get(NetworkConst.Remote.Api.Teacher.GET) {
             parameter(NetworkConst.Params.ID, id)
         }.body()
@@ -20,7 +20,7 @@ class TeacherApiService(private val client: HttpClient) {
     suspend fun changeProfileImage(
         id: Int,
         imageUrl: String,
-    ): Response<String> {
+    ): ApiResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.CHANGE_PROFILE_IMAGE,
             formParameters = parameters {
@@ -33,7 +33,7 @@ class TeacherApiService(private val client: HttpClient) {
     suspend fun changeName(
         id: Int,
         name: String
-    ): Response<String> {
+    ): ApiResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_NAME,
             formParameters = parameters {
@@ -46,7 +46,7 @@ class TeacherApiService(private val client: HttpClient) {
     suspend fun changeBio(
         id: Int,
         bio: String
-    ): Response<String> {
+    ): ApiResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_BIO,
             formParameters = parameters {
@@ -63,7 +63,7 @@ class TeacherApiService(private val client: HttpClient) {
         reg: String,
         blood: String,
         facultyId: Int,
-    ): Response<TeacherDto> {
+    ): ApiResponse<TeacherDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_ACADEMIC_INFO,
             formParameters = parameters {
@@ -85,7 +85,7 @@ class TeacherApiService(private val client: HttpClient) {
         oldEmail: String,
         linkedIn: String,
         fbLink: String,
-    ): Response<TeacherDto> {
+    ): ApiResponse<TeacherDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_CONNECT_INFO,
             formParameters = parameters {

@@ -1,10 +1,12 @@
 package com.workfort.pstuian.featuredomain.repository
 
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
+import com.workfort.pstuian.featuredomain.model.UserType
 
 interface BloodDonationRepository {
+
     suspend fun getAll(
-        userId: Int,
+        userId: String,
         userType: String,
         page: Int,
     ): List<BloodDonationEntity>
@@ -13,6 +15,8 @@ interface BloodDonationRepository {
 
     suspend fun insert(
         requestId: Int?,
+        userId: String,
+        userType: UserType,
         date: Long,
         info: String?,
     ) : BloodDonationEntity

@@ -39,6 +39,7 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.serialization.json)
 
+                // Compose
                 implementation(libs.compose.ui)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
@@ -46,8 +47,10 @@ kotlin {
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.animation)
                 implementation(libs.compose.components.resources)
+                implementation(libs.compose.ui.tooling.preview)
                 implementation(libs.compose.viewmodel)
                 implementation(libs.compose.navigation)
+
                 implementation(libs.coil3.compose)
 
                 // Koin
@@ -89,4 +92,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+}
+
+dependencies {
+    debugImplementation(libs.compose.ui.tooling)
 }

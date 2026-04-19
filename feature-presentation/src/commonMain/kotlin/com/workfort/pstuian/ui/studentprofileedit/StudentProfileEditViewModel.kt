@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class StudentProfileEditViewModel(
-    private val userId: Int,
+    private val userId: String,
     private val mode: ProfileEditMode,
     private val studentRepo: StudentRepository,
     private val facultyRepo: FacultyRepository,
@@ -187,9 +187,9 @@ class StudentProfileEditViewModel(
                 when (mode) {
                     ProfileEditMode.ACADEMIC -> {
                         studentRepo.changeAcademicInfo(
-                            student = oldProfile.student,
+                            userId = oldProfile.student.userId,
                             name = newProfile.student.name,
-                            id = newProfile.student.id,
+                            studentId = newProfile.student.studentId,
                             reg = newProfile.student.reg,
                             blood = newProfile.student.blood.orEmpty(),
                             facultyId = newProfile.student.facultyId,
@@ -199,10 +199,11 @@ class StudentProfileEditViewModel(
                     }
                     ProfileEditMode.CONNECT -> {
                         studentRepo.changeConnectInfo(
-                            student = oldProfile.student,
+                            userId = oldProfile.student.userId,
                             address = newProfile.student.address.orEmpty(),
                             phone = newProfile.student.phone.orEmpty(),
-                            email = newProfile.student.email.orEmpty(),
+                            oldEmail = oldProfile.student.email,
+                            newEmail = newProfile.student.email,
                             cvLink = newProfile.student.cvLink.orEmpty(),
                             linkedIn = newProfile.student.linkedIn.orEmpty(),
                             facebook = newProfile.student.fbLink.orEmpty(),

@@ -15,8 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.StudentEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppBarIconButton
 import com.workfort.pstuian.ui.common.composable.AppScaffold
@@ -98,16 +96,11 @@ private fun ProfileView(state: HomeUiState.ProfileState, onUiEvent: (HomeUiEvent
         is HomeUiState.ProfileState.None -> Unit
         is HomeUiState.ProfileState.Loading -> Unit
         is HomeUiState.ProfileState.Available -> {
-            val imageUrl = when(val u = state.user) {
-                is StudentEntity -> u.imageUrl
-                is TeacherEntity -> u.imageUrl
-                else -> null
-            }
             LoadAsyncUserImage(
                 modifier = Modifier.clickable {
                     onUiEvent(HomeUiEvent.UserProfileClicked)
                 },
-                url = imageUrl,
+                url = state.user.imageUrl,
                 size = 24.dp,
             )
         }

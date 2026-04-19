@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.dto.DonorDto
+import com.workfort.pstuian.data.model.DonorDto
 import com.workfort.pstuian.data.remote.domain.DonationApiHelper
 import com.workfort.pstuian.data.remote.service.DonationApiService
 

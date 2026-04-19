@@ -1,8 +1,11 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
+import com.workfort.pstuian.data.mapper.DomainErrorMapper
+import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.StudentApiHelper
-import com.workfort.pstuian.featuredomain.model.StudentEntity
+import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.StudentProfile
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
@@ -11,99 +14,92 @@ class StudentRepositoryImpl(
     private val authRepo: AuthRepository,
     private val facultyRepo: FacultyRepository,
     private val helper: StudentApiHelper,
+    private val domainErrorMapper: DomainErrorMapper,
 ) : StudentRepository {
-    private val students = mutableMapOf<Int, StudentEntity>()
+    private val students = mutableMapOf<String, User.Student>()
 
-    override suspend fun getProfile(studentId: Int): StudentProfile {
+    override suspend fun getUser(userId: String): User.Student? {
+        return helper.get(userId)?.toModel()
+    }
+
+    override suspend fun getProfile(studentId: String): StudentProfile? {
         // get student
-        var student = students[studentId]
+        val student = students[studentId] ?: helper.get(studentId)?.toModel()
         if (student == null) {
-            student = helper.get(studentId).toEntity()
-            students[studentId] = student
+            return null
         }
         // get faculty
         val faculty = facultyRepo.getFaculty(student.facultyId)
         // get batch
         val batch = facultyRepo.getBatch(student.batchId)
         // get sign in state
-        val isSignedIn = try {
-            val user = authRepo.getSignInUser()
-            user is StudentEntity && user.id == studentId
-        } catch (_: Exception) {
-            false
-        }
+        val isSignedIn = authRepo.getAuthUser()?.userId == studentId
 
         return StudentProfile(student, faculty, batch, isSignedIn)
     }
 
-    override suspend fun changeProfileImage(student: StudentEntity, imageUrl: String): Boolean {
-        val isChanged = helper.changeProfileImage(student.id, imageUrl)
-        if (isChanged) {
-            student.imageUrl = imageUrl
-            authRepo.storeSignInStudent(student)
-            students[student.id] = student
-        }
-        return isChanged
+    override suspend fun changeProfileImage(
+        userId: String,
+        imageUrl: String
+    ): DomainResult<Unit> {
+        return helper.changeProfileImage(userId, imageUrl).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun changeName(student: StudentEntity, name: String): Boolean {
-        val isChanged = helper.changeName(student.id, name)
-        if (isChanged) {
-            student.name = name
-            authRepo.storeSignInStudent(student)
-            students[student.id] = student
-        }
-        return isChanged
+    override suspend fun changeName(
+        userId: String,
+        name: String
+    ): DomainResult<Unit> {
+        return helper.changeName(userId, name).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun changeBio(student: StudentEntity, bio: String): Boolean {
-        val isChanged = helper.changeBio(student.id, bio)
-        if (isChanged) {
-            student.bio = bio
-            authRepo.storeSignInStudent(student)
-            students[student.id] = student
-        }
-        return isChanged
+    override suspend fun changeBio(
+        userId: String,
+        bio: String
+    ): DomainResult<Unit> {
+        return helper.changeBio(userId, bio).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun changeAcademicInfo(
-        student: StudentEntity,
+        userId: String,
         name: String,
-        id: Int,
+        studentId: String,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int
-    ): StudentEntity {
-        helper.changeAcademicInfo(
-            name, student.id, id, reg, blood, facultyId, session, batchId
-        ).toEntity().let { updatedStudent ->
-            authRepo.storeSignInStudent(updatedStudent)
-            if (student.id != id) {
-                students.remove(student.id)
-            }
-            students[updatedStudent.id] = updatedStudent
-            return updatedStudent
-        }
+    ): DomainResult<Unit> {
+        return helper.changeAcademicInfo(
+            userId = userId,
+            name = name,
+            studentId = studentId,
+            reg = reg,
+            blood = blood,
+            facultyId = facultyId,
+            session = session,
+            batchId = batchId,
+        ).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun changeConnectInfo(
-        student: StudentEntity,
+        userId: String,
         address: String,
         phone: String,
-        email: String,
+        oldEmail: String,
+        newEmail: String,
         cvLink: String,
         linkedIn: String,
         facebook: String
-    ): StudentEntity {
-        val oldEmail = student.email ?: ""
-        helper.changeConnectInfo(
-            student.id, address, phone, email, oldEmail, cvLink, linkedIn, facebook
-        ).toEntity().let { updatedStudent ->
-            authRepo.storeSignInStudent(updatedStudent)
-            students[updatedStudent.id] = updatedStudent
-            return updatedStudent
-        }
+    ): DomainResult<Unit> {
+        return helper.changeConnectInfo(
+            userId = userId,
+            address = address,
+            phone = phone,
+            oldEmail = oldEmail,
+            newEmail = newEmail,
+            cvLink = cvLink,
+            linkedIn = linkedIn,
+            fbLink = facebook,
+        ).toDomainResult(domainErrorMapper)
     }
 }

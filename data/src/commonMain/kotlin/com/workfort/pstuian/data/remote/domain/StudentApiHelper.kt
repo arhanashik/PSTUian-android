@@ -1,50 +1,37 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.dto.StudentDto
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 02 Oct, 2021 at 5:10 AM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
+import com.workfort.pstuian.data.model.NetworkResult
+import com.workfort.pstuian.data.model.StudentDto
 
 interface StudentApiHelper {
-    suspend fun get(id: Int): StudentDto
 
-    suspend fun changeProfileImage(
-        id: Int,
-        imageUrl: String,
-    ): Boolean
+    suspend fun get(userId: String): StudentDto?
 
-    suspend fun changeName(id: Int, name: String): Boolean
+    suspend fun changeProfileImage(userId: String, imageUrl: String): NetworkResult<Unit>
 
-    suspend fun changeBio(id: Int, bio: String): Boolean
+    suspend fun changeName(userId: String, name: String): NetworkResult<Unit>
+
+    suspend fun changeBio(userId: String, bio: String): NetworkResult<Unit>
 
     suspend fun changeAcademicInfo(
+        userId: String,
         name: String,
-        oldId: Int,
-        id: Int,
+        studentId: String,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int
-    ): StudentDto
+    ): NetworkResult<Unit>
 
     suspend fun changeConnectInfo(
-        id: Int,
+        userId: String,
         address: String,
         phone: String,
-        email: String,
         oldEmail: String,
+        newEmail: String,
         cvLink: String,
         linkedIn: String,
         fbLink: String
-    ): StudentDto
+    ): NetworkResult<Unit>
 }

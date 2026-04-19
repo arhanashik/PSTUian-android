@@ -66,7 +66,7 @@ class SignInViewModel(
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
             runCatching {
-                authRepo.signIn(email, password, userType.type)
+                authRepo.signIn(email, password, userType)
             }.onSuccess {
                 stateMachine.showLoading(false)
                 _message.update {

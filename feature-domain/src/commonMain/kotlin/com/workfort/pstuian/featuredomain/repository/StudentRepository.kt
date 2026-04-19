@@ -1,35 +1,40 @@
 package com.workfort.pstuian.featuredomain.repository
 
-import com.workfort.pstuian.featuredomain.model.StudentEntity
+import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.StudentProfile
+import com.workfort.pstuian.featuredomain.model.User
 
 interface StudentRepository {
-    suspend fun getProfile(studentId: Int): StudentProfile
 
-    suspend fun changeProfileImage(student: StudentEntity, imageUrl: String): Boolean
+    suspend fun getUser(userId: String): User.Student?
 
-    suspend fun changeName(student: StudentEntity, name: String): Boolean
+    suspend fun getProfile(studentId: String): StudentProfile?
 
-    suspend fun changeBio(student: StudentEntity, bio: String): Boolean
+    suspend fun changeProfileImage(userId: String, imageUrl: String): DomainResult<Unit>
+
+    suspend fun changeName(userId: String, name: String): DomainResult<Unit>
+
+    suspend fun changeBio(userId: String, bio: String): DomainResult<Unit>
 
     suspend fun changeAcademicInfo(
-        student: StudentEntity,
+        userId: String,
         name: String,
-        id: Int,
+        studentId: String,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int,
-    ): StudentEntity
+    ): DomainResult<Unit>
 
     suspend fun changeConnectInfo(
-        student: StudentEntity,
+        userId: String,
         address: String,
         phone: String,
-        email: String,
+        oldEmail: String,
+        newEmail: String,
         cvLink: String,
         linkedIn: String,
         facebook: String,
-    ): StudentEntity
+    ): DomainResult<Unit>
 }

@@ -108,7 +108,7 @@ class TeacherProfileViewModel(
         profileCache()?.teacher?.let { teacher ->
             _navigation.update {
                 TeacherProfileNavigationState.ImageUploadScreen(
-                    userId = teacher.id,
+                    userId = teacher.id.toString(),
                     userType = UserType.TEACHER,
                 )
             }
@@ -134,7 +134,7 @@ class TeacherProfileViewModel(
             }?.let { action ->
                 _navigation.update {
                     TeacherProfileNavigationState.TeacherProfileEditScreen(
-                        userId = teacher.id,
+                        userId = teacher.id.toString(),
                         action = action,
                     )
                 }
@@ -152,7 +152,7 @@ class TeacherProfileViewModel(
         profileCache()?.teacher?.let { teacher ->
             _navigation.update {
                 TeacherProfileNavigationState.MyDeviceListScreen(
-                    userId = teacher.id,
+                    userId = teacher.id.toString(),
                     userType = UserType.TEACHER,
                 )
             }
@@ -164,7 +164,7 @@ class TeacherProfileViewModel(
         profileCache()?.teacher?.let { teacher ->
             _navigation.update {
                 TeacherProfileNavigationState.DeleteAccountScreen(
-                    userId = teacher.id,
+                    userId = teacher.id.toString(),
                     userType = UserType.TEACHER,
                 )
             }

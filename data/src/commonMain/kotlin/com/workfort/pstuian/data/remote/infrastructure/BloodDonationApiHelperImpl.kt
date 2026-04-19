@@ -1,26 +1,15 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.dto.BloodDonationDto
+import com.workfort.pstuian.data.model.BloodDonationDto
 import com.workfort.pstuian.data.remote.domain.BloodDonationApiHelper
 import com.workfort.pstuian.data.remote.service.BloodDonationApiService
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 01 Oct, 2021 at 1:47 AM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
-
 class BloodDonationApiHelperImpl(
-    private val service: BloodDonationApiService
+    private val service: BloodDonationApiService,
 ) : BloodDonationApiHelper() {
+
     override suspend fun getAll(
-        userId: Int,
+        userId: String,
         userType: String,
         page: Int,
         limit: Int
@@ -39,7 +28,7 @@ class BloodDonationApiHelperImpl(
     }
 
     override suspend fun insert(
-        userId: Int,
+        userId: String,
         userType: String,
         requestId: Int?,
         date: Long,

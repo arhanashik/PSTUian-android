@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.students
 
-import com.workfort.pstuian.featuredomain.model.StudentEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.students.state.StudentsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ class StudentsUiStateMachine : UiStateMachine<StudentsUiState> {
         _uiState.update { it.copy(title = title) }
     }
 
-    fun showContent(items: List<StudentEntity>) {
+    fun showContent(items: List<User.Student>) {
         _uiState.update { it.copy(items = items, isLoading = false, error = null) }
     }
 

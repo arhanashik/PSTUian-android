@@ -52,15 +52,15 @@ class StudentProfileEditUiStateMachine : UiStateMachine<StudentProfileEditUiStat
 
     fun validateAcademic(profile: StudentProfile) = StudentAcademicInfoInputError.INITIAL.copy(
         name = if (profile.student.name.isEmpty()) "*Required" else "",
-        id = if (profile.student.id == 0) "*Required" else "",
+        id = if (profile.student.studentId.isEmpty()) "*Required" else "",
         reg = if (profile.student.reg.isEmpty()) "*Required" else "",
         session = if (profile.student.session.isEmpty()) "*Required" else "",
     )
 
     fun validateConnect(profile: StudentProfile) = StudentConnectInfoInputError.INITIAL.copy(
-        email = if (profile.student.email.isNullOrEmpty()) {
+        email = if (profile.student.email.isEmpty()) {
             "*Required"
-        } else if (profile.student.email?.isValidEmail() == false) {
+        } else if (!profile.student.email.isValidEmail()) {
             "*Invalid email"
         } else {
             ""

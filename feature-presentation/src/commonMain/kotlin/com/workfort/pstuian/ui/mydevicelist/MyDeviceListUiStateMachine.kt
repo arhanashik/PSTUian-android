@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.mydevicelist
 
-import com.workfort.pstuian.featuredomain.model.DeviceEntity
+import com.workfort.pstuian.featuredomain.model.Device
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.mydevicelist.state.MyDeviceListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,22 +12,20 @@ class MyDeviceListUiStateMachine : UiStateMachine<MyDeviceListUiState> {
     private val _uiState = MutableStateFlow(MyDeviceListUiState())
     override val uiState: StateFlow<MyDeviceListUiState> = _uiState.asStateFlow()
 
-    fun updateLoading(isLoading: Boolean, isRefresh: Boolean) {
-        _uiState.update {
-            it.copy(
-                devices = if (isRefresh) emptyList() else it.devices,
-                isLoading = isLoading,
-                error = if (isLoading && isRefresh) null else it.error
-            )
-        }
+    fun showLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
     }
 
-    fun updateData(devices: List<DeviceEntity>, isEndOfData: Boolean) {
+    fun updateDevices(
+        devices: List<Device>,
+        isRefresh: Boolean,
+    ) {
+        val newDevices = if (isRefresh) devices else _uiState.value.devices + devices
         _uiState.update {
             it.copy(
-                devices = devices,
+                devices = newDevices,
                 isLoading = false,
-                isEndOfData = isEndOfData,
+                isEndOfData = devices.isEmpty(),
             )
         }
     }
@@ -37,7 +35,7 @@ class MyDeviceListUiStateMachine : UiStateMachine<MyDeviceListUiState> {
             it.copy(
                 isLoading = false,
                 isEndOfData = true,
-                error = if (isFirstPage) message else null
+                error = if (isFirstPage) message else null,
             )
         }
     }

@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.featuredomain.model.Response
+import com.workfort.pstuian.data.model.ApiResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -15,7 +15,7 @@ class FileHandlerApiService(private val client: HttpClient) {
         userType: String,
         filename: String,
         fileBytes: ByteArray,
-    ): Response<String> {
+    ): ApiResponse<String> {
         return client.post("file_handler.php?call=uploadImage") {
             setBody(MultiPartFormDataContent(
                 formData {
@@ -33,7 +33,7 @@ class FileHandlerApiService(private val client: HttpClient) {
     suspend fun uploadPdf(
         filename: String,
         fileBytes: ByteArray,
-    ): Response<String> {
+    ): ApiResponse<String> {
         return client.post("file_handler.php?call=uploadPdf") {
             setBody(MultiPartFormDataContent(
                 formData {

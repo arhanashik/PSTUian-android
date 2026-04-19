@@ -3,8 +3,12 @@ package com.workfort.pstuian.ui.mydevicelist
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.DeviceEntity
+import com.workfort.pstuian.featuredomain.model.Device
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.DeviceRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.mydevicelist.state.MyDeviceListMessageState
 import com.workfort.pstuian.ui.mydevicelist.state.MyDeviceListNavigationState
@@ -17,7 +21,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MyDeviceListViewModel(
-    private val authRepo: AuthRepository,
+    private val screenData: SharedScreenData,
+    private val authRepository: AuthRepository,
+    private val deviceRepository: DeviceRepository,
     private val stateMachine: MyDeviceListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<MyDeviceListUiState>(stateMachine) {
@@ -31,14 +37,14 @@ class MyDeviceListViewModel(
     private var page = 0
 
     override fun onUiReady() {
-        loadDeviceList(refresh = true)
+        loadDeviceList(isRefresh = true)
     }
 
     fun onUiEvent(event: MyDeviceListUiEvent) {
         viewModelScope.launch {
             when (event) {
-                is MyDeviceListUiEvent.RefreshClicked -> loadDeviceList(refresh = true)
-                is MyDeviceListUiEvent.LoadMore -> loadDeviceList(refresh = false)
+                is MyDeviceListUiEvent.RefreshClicked -> loadDeviceList(isRefresh = true)
+                is MyDeviceListUiEvent.LoadMore -> loadDeviceList(isRefresh = false)
                 is MyDeviceListUiEvent.BackClicked -> onClickBack()
                 is MyDeviceListUiEvent.ItemClicked -> onClickItem(event.item)
                 is MyDeviceListUiEvent.SignOutFromAllDeviceClicked -> onClickSignOutFromAllDevice()
@@ -52,7 +58,7 @@ class MyDeviceListViewModel(
 
     private fun onClickBack() = _navigation.update { MyDeviceListNavigationState.GoBack }
 
-    private fun onClickItem(item: DeviceEntity) {
+    private fun onClickItem(item: Device) {
         _message.update { MyDeviceListMessageState.ShowDetails(item) }
     }
 
@@ -68,32 +74,33 @@ class MyDeviceListViewModel(
         }
     }
 
-    private fun loadDeviceList(refresh: Boolean) {
+    private fun loadDeviceList(isRefresh: Boolean) {
+        val userId = screenData.getCurrentUser()?.userId ?: return
+        val userType = screenData.getCurrentUserType() ?: return
+
         val currentState = stateMachine.uiState.value
-        if (currentState.isLoading || (refresh.not() && currentState.isEndOfData)) {
+        if (currentState.isLoading || (isRefresh.not() && currentState.isEndOfData)) {
             return
         }
 
-        if (refresh) {
+        if (isRefresh) {
             page = 0
+            deviceRepository.clearCache()
         }
-
         page += 1
 
-        val currentItems = if (refresh) emptyList() else currentState.devices
-        stateMachine.updateLoading(isLoading = true, isRefresh = refresh)
+        val currentItems = if (isRefresh) emptyList() else currentState.devices
+        stateMachine.showLoading(isLoading = true)
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                authRepo.getAllDevices(page)
-            }.onSuccess { newList ->
-                val allItems = currentItems + newList
-                stateMachine.updateData(devices = allItems, isEndOfData = newList.isEmpty())
-            }.onFailure {
-                stateMachine.updateLoading(isLoading = false, isRefresh = refresh)
-                val message = it.message ?: "Failed to load data"
-                stateMachine.updateError(message = message, isFirstPage = currentItems.isEmpty())
-            }
+            deviceRepository.getAllDevices(userId, userType, page)
+                .onSuccess {
+                    stateMachine.updateDevices(devices = it, isRefresh = isRefresh)
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load data"
+                    stateMachine.updateError(message = message, isFirstPage = currentItems.isEmpty())
+                }
         }
     }
 
@@ -102,7 +109,7 @@ class MyDeviceListViewModel(
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
-                authRepo.signOut(fromAllDevice = true)
+                authRepository.signOut(fromAllDevice = true)
             }.onSuccess {
                 _message.update { null }
                 _navigation.update { MyDeviceListNavigationState.GoBack }

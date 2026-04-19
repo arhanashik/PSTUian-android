@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.dto.CheckInDto
+import com.workfort.pstuian.data.model.CheckInDto
 import com.workfort.pstuian.data.remote.domain.CheckInApiHelper
 import com.workfort.pstuian.data.remote.service.CheckInApiService
 
@@ -35,7 +35,7 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
      * Get all check in by user
      * */
     override suspend fun getAll(
-        userId: Int,
+        userId: String,
         userType: String,
         page: Int,
         limit: Int
@@ -46,7 +46,7 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         }
     }
 
-    override suspend fun getMyCheckIn(userId: Int, userType: String): CheckInDto {
+    override suspend fun getMyCheckIn(userId: String, userType: String): CheckInDto {
         service.get(userId, userType).also {
             if(!it.success) throw Exception(it.message)
             return it.data ?: throw Exception("No data")
@@ -55,7 +55,7 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
 
     override suspend fun checkIn(
         locationId: Int,
-        userId: Int,
+        userId: String,
         userType: String
     ): CheckInDto {
         service.checkIn(locationId, userId, userType).also {

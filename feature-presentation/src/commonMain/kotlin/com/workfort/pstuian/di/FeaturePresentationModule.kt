@@ -2,6 +2,7 @@ package com.workfort.pstuian.di
 
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.blooddonationcreate.BloodDonationCreateUiStateMachine
 import com.workfort.pstuian.ui.blooddonationcreate.BloodDonationCreateViewModel
 import com.workfort.pstuian.ui.blooddonationrequestcreate.BloodDonationRequestCreateUiStateMachine
@@ -62,6 +63,10 @@ import com.workfort.pstuian.ui.teacherprofileedit.TeacherProfileEditViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+
+private val screenDataModule = module {
+    singleOf(::SharedScreenData)
+}
 
 private val navigationModule = module {
     singleOf(::AppNavigator)
@@ -182,9 +187,10 @@ private val splashModule = module {
     factoryOf(::SplashUiStateMachine)
     factory {
         SplashViewModel(
-            authRepo = get(),
+            appConfigRepository = get(),
             clearAllDataUseCase = get(),
             registerDeviceUseCase = get(),
+            getInitialScreenUseCase = get(),
             stateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
@@ -205,8 +211,14 @@ private val studentsModule = module {
 
 private val studentProfileModule = module {
     factoryOf(::StudentProfileUiStateMachine)
-    factory { (userId: Int) ->
-        StudentProfileViewModel(userId, get(), get(), get())
+    factory { (userId: String) ->
+        StudentProfileViewModel(
+            userId = userId,
+            studentRepo = get(),
+            authRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
     }
 }
 
@@ -245,7 +257,7 @@ private val emailVerificationModule = module {
 
 private val myBloodDonationListModule = module {
     factoryOf(::MyBloodDonationListUiStateMachine)
-    factory { (userId: Int, userType: UserType) ->
+    factory { (userId: String, userType: UserType) ->
         MyBloodDonationListViewModel(
             userId = userId,
             userType = userType,
@@ -258,7 +270,7 @@ private val myBloodDonationListModule = module {
 
 private val myCheckInListModule = module {
     factoryOf(::MyCheckInListUiStateMachine)
-    factory { (userId: Int, userType: UserType) ->
+    factory { (userId: String, userType: UserType) ->
         MyCheckInListViewModel(
             userId = userId,
             userType = userType,
@@ -281,7 +293,7 @@ private val settingsModule = module {
 
 private val studentProfileEditModule = module {
     factoryOf(::StudentProfileEditUiStateMachine)
-    factory { (userId: Int, mode: ProfileEditMode) ->
+    factory { (userId: String, mode: ProfileEditMode) ->
         StudentProfileEditViewModel(
             userId = userId,
             mode = mode,
@@ -308,6 +320,7 @@ private val teacherProfileEditModule = module {
 }
 
 val featurePresentationModule = listOf(
+    screenDataModule,
     navigationModule,
     bloodDonationCreateModule,
     bloodDonationRequestCreateModule,

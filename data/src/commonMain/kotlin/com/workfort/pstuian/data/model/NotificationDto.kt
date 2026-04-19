@@ -1,4 +1,4 @@
-package com.workfort.pstuian.data.dto
+package com.workfort.pstuian.data.model
 
 import com.workfort.pstuian.featuredomain.model.NotificationEntity
 import kotlinx.serialization.Serializable

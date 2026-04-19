@@ -3,6 +3,7 @@ package com.workfort.pstuian.ui.notification
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.model.NotificationEntity
 import com.workfort.pstuian.featuredomain.repository.NotificationRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.notification.state.NotificationMessageState
 import com.workfort.pstuian.ui.notification.state.NotificationNavigationState
@@ -12,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class NotificationViewModel(
     private val repo: NotificationRepository,
+    private val sharedScreenData: SharedScreenData,
     private val stateMachine: NotificationUiStateMachine,
 ) : UiStateMachineViewModel<NotificationUiState>(stateMachine) {
 
@@ -43,6 +45,9 @@ class NotificationViewModel(
     private val notificationsCache = ArrayList<NotificationEntity>()
 
     private fun getAll(isRefresh: Boolean = true) {
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
+
         if (isRefresh) {
             currentDataPage = 0
             notificationsCache.clear()
@@ -57,7 +62,7 @@ class NotificationViewModel(
             )
             runCatching {
                 currentDataPage += 1
-                val notifications = repo.getAll(currentDataPage)
+                val notifications = repo.getAll(userId, userType, currentDataPage)
                 if (notifications.isEmpty()) {
                     hasMoreData = false
                 } else {

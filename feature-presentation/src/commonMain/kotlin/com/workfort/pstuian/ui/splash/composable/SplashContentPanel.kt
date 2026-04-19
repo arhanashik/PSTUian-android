@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.CardWithAnimatedBorder
 import com.workfort.pstuian.ui.common.composable.TitleTextMedium
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
@@ -31,23 +33,35 @@ fun SplashContentPanel(
         MaterialTheme.colorScheme.secondary,
         MaterialTheme.colorScheme.primary,
     )
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row {
-            CardWithAnimatedBorder(
-                borderColors = borderColors,
-                borderSize = 2.dp,
-            ) {
-                TitleTextMedium(
-                    text = stringResource(Res.string.app_name),
-                    modifier = Modifier.padding(16.dp),
-                )
+
+    AppScaffold {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row {
+                CardWithAnimatedBorder(
+                    borderColors = borderColors,
+                    borderSize = 2.dp,
+                ) {
+                    TitleTextMedium(
+                        text = stringResource(Res.string.app_name),
+                        modifier = Modifier.padding(16.dp),
+                    )
+                }
             }
+            Spacer(modifier = Modifier.padding(top = 16.dp))
+            Text(text = state.loadingText)
         }
-        Spacer(modifier = Modifier.padding(top = 16.dp))
-        Text(text = state.loadingText)
     }
+}
+
+@Preview
+@Composable
+private fun ScreenContentView() {
+    SplashContentPanel(
+        state = SplashUiState(loadingText = "Loading..."),
+        onEvent = {},
+    )
 }

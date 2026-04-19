@@ -3,7 +3,7 @@ package com.workfort.pstuian.ui.students
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.StudentEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.students.state.StudentsMessageState
@@ -49,8 +49,8 @@ class StudentsViewModel(
         _navigation.update { StudentsNavigationState.GoBack }
     }
 
-    private fun onClickStudent(student: StudentEntity) {
-        _navigation.update { StudentsNavigationState.GoToStudentProfile(student.id) }
+    private fun onClickStudent(student: User.Student) {
+        _navigation.update { StudentsNavigationState.GoToStudentProfile(student.userId) }
     }
 
     private fun onClickCall(phoneNumber: String) {
@@ -73,7 +73,7 @@ class StudentsViewModel(
         }
     }
 
-    private val studentListCache = arrayListOf<StudentEntity>()
+    private val studentListCache = arrayListOf<User.Student>()
     private var hasMoreData = true
     private fun getStudents(facultyId: Int, batchId: Int) {
         if (hasMoreData.not()) return

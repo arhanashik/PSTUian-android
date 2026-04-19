@@ -1,61 +1,61 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.data.NetworkConst
-import com.workfort.pstuian.data.dto.BatchDto
-import com.workfort.pstuian.data.dto.CourseDto
-import com.workfort.pstuian.data.dto.EmployeeDto
-import com.workfort.pstuian.data.dto.FacultyDto
-import com.workfort.pstuian.data.dto.StudentDto
-import com.workfort.pstuian.data.dto.TeacherDto
-import com.workfort.pstuian.featuredomain.model.Response
+import com.workfort.pstuian.data.remote.NetworkConst
+import com.workfort.pstuian.data.model.BatchDto
+import com.workfort.pstuian.data.model.CourseDto
+import com.workfort.pstuian.data.model.EmployeeDto
+import com.workfort.pstuian.data.model.FacultyDto
+import com.workfort.pstuian.data.model.StudentDto
+import com.workfort.pstuian.data.model.TeacherDto
+import com.workfort.pstuian.data.model.ApiResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
 class FacultyApiService(private val client: HttpClient) {
-    suspend fun getFaculties(): Response<List<FacultyDto>> {
+    suspend fun getFaculties(): ApiResponse<List<FacultyDto>> {
         return client.get(NetworkConst.Remote.Api.Faculty.GET_ALL).body()
     }
 
-    suspend fun getFaculty(id: Int): Response<FacultyDto> {
+    suspend fun getFaculty(id: Int): ApiResponse<FacultyDto> {
         return client.get(NetworkConst.Remote.Api.Faculty.GET) {
             parameter(NetworkConst.Params.ID, id)
         }.body()
     }
 
-    suspend fun getBatches(facultyId: Int): Response<List<BatchDto>> {
+    suspend fun getBatches(facultyId: Int): ApiResponse<List<BatchDto>> {
         return client.get(NetworkConst.Remote.Api.BATCH.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
         }.body()
     }
 
-    suspend fun getBatch(id: Int): Response<BatchDto> {
+    suspend fun getBatch(id: Int): ApiResponse<BatchDto> {
         return client.get(NetworkConst.Remote.Api.BATCH.GET) {
             parameter(NetworkConst.Params.ID, id)
         }.body()
     }
 
-    suspend fun getStudents(facultyId: Int, batchId: Int): Response<List<StudentDto>> {
+    suspend fun getStudents(facultyId: Int, batchId: Int): ApiResponse<List<StudentDto>> {
         return client.get(NetworkConst.Remote.Api.Student.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
             parameter(NetworkConst.Params.BATCH_ID, batchId)
         }.body()
     }
 
-    suspend fun getTeachers(facultyId: Int): Response<List<TeacherDto>> {
+    suspend fun getTeachers(facultyId: Int): ApiResponse<List<TeacherDto>> {
         return client.get(NetworkConst.Remote.Api.Teacher.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
         }.body()
     }
 
-    suspend fun getCourseSchedules(facultyId: Int): Response<List<CourseDto>> {
+    suspend fun getCourseSchedules(facultyId: Int): ApiResponse<List<CourseDto>> {
         return client.get(NetworkConst.Remote.Api.Course.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
         }.body()
     }
 
-    suspend fun getEmployees(facultyId: Int): Response<List<EmployeeDto>> {
+    suspend fun getEmployees(facultyId: Int): ApiResponse<List<EmployeeDto>> {
         return client.get(NetworkConst.Remote.Api.Employee.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
         }.body()

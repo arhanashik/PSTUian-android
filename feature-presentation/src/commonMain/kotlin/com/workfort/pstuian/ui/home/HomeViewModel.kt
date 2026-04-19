@@ -1,18 +1,18 @@
 package com.workfort.pstuian.ui.home
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.data.NetworkConst
+import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.SliderEntity
-import com.workfort.pstuian.featuredomain.model.StudentEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.home.state.HomeMessageState
 import com.workfort.pstuian.ui.home.state.HomeNavigationState
@@ -27,6 +27,7 @@ class HomeViewModel(
     private val authRepo: AuthRepository,
     private val sliderRepo: SliderRepository,
     private val facultyRepo: FacultyRepository,
+    private val sharedScreenData: SharedScreenData,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val uiStateMachine: HomeUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -111,18 +112,12 @@ class HomeViewModel(
         if (state is HomeUiState.Content && state.profileState is HomeUiState.ProfileState.Available) {
             val user = state.profileState.user
             val userType = when (user) {
-                is StudentEntity -> UserType.STUDENT
-                is TeacherEntity -> UserType.TEACHER
-                else -> null
+                is User.Student -> UserType.STUDENT
+                is User.Teacher -> UserType.TEACHER
+                is User.Employee -> UserType.EMPLOYEE
             }
-            val userId = when (user) {
-                is StudentEntity -> user.id
-                is TeacherEntity -> user.id
-                else -> null
-            }
-            if (userType != null && userId != null) {
-                _navigation.update { HomeNavigationState.GoToProfileScreen(userType, userId) }
-            }
+
+            _navigation.update { HomeNavigationState.GoToProfileScreen(user.userId, userType) }
         }
     }
 
@@ -219,17 +214,8 @@ class HomeViewModel(
     }
 
     fun getUserProfile() {
-        uiStateMachine.showProfileLoading()
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                authRepo.getSignInUser()
-            }.onSuccess {
-                uiStateMachine.showProfile(it)
-            }.onFailure {
-                val message = it.message ?: "Failed to load profile"
-                uiStateMachine.showProfileError(message)
-            }
-        }
+        val user = sharedScreenData.getCurrentUser() ?: return
+        uiStateMachine.showProfile(user)
     }
 
     fun clearAllData() {

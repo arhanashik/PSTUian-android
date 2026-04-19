@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MyCheckInListViewModel(
-    private val userId: Int,
+    private val userId: String,
     private val userType: UserType,
     private val checkInRepo: CheckInRepository,
     private val uiStateMachine: MyCheckInListUiStateMachine,
@@ -80,7 +80,7 @@ class MyCheckInListViewModel(
         runCatching {
             checkInRepo.getAll(
                 userId = userId,
-                userType = userType.type,
+                userType = userType,
                 page = page,
             )
         }.onSuccess { list ->

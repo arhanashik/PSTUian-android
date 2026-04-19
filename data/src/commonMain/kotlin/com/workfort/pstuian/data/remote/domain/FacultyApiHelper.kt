@@ -1,11 +1,11 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.dto.BatchDto
-import com.workfort.pstuian.data.dto.CourseDto
-import com.workfort.pstuian.data.dto.EmployeeDto
-import com.workfort.pstuian.data.dto.FacultyDto
-import com.workfort.pstuian.data.dto.StudentDto
-import com.workfort.pstuian.data.dto.TeacherDto
+import com.workfort.pstuian.data.model.BatchDto
+import com.workfort.pstuian.data.model.CourseDto
+import com.workfort.pstuian.data.model.EmployeeDto
+import com.workfort.pstuian.data.model.FacultyDto
+import com.workfort.pstuian.data.model.StudentDto
+import com.workfort.pstuian.data.model.TeacherDto
 
 
 interface FacultyApiHelper {

@@ -27,9 +27,9 @@ sealed interface AppScreen {
     @Serializable
     data class Students(val batchId: Int) : AppScreen
     @Serializable
-    data class Teachers(val userId: Int) : AppScreen
+    data class Teachers(val userId: String) : AppScreen
     @Serializable
-    data class Employees(val userId: Int) : AppScreen
+    data class Employees(val userId: String) : AppScreen
     @Serializable
     object BloodDonationRequestList : AppScreen
     @Serializable
@@ -37,30 +37,30 @@ sealed interface AppScreen {
     @Serializable
     data class BloodDonationRequestEdit(val donationId: Int) : AppScreen
     @Serializable
-    data class Profile(val userId: Int, val userType: UserType) : AppScreen
+    data class Profile(val userId: String, val userType: UserType) : AppScreen
     @Serializable
-    data class MyBloodDonationList(val userId: Int, val userType: UserType) : AppScreen
+    data class MyBloodDonationList(val userId: String, val userType: UserType) : AppScreen
     @Serializable
-    data class MyCheckInList(val userId: Int, val userType: UserType) : AppScreen
+    data class MyCheckInList(val userId: String, val userType: UserType) : AppScreen
     @Serializable
-    data class MyDeviceList(val userId: Int, val userType: UserType) : AppScreen
+    data class MyDeviceList(val userId: String, val userType: UserType) : AppScreen
     @Serializable
     data class StudentProfileEdit(
-        val userId: Int,
+        val userId: String,
         val action: ProfileEditMode,
     ) : AppScreen
     @Serializable
     data class TeacherProfileEdit(
-        val userId: Int,
+        val userId: String,
         val action: ProfileEditMode,
     ) : AppScreen
     @Serializable
     data class EmployeeProfileEdit(
-        val userId: Int,
+        val userId: String,
         val action: ProfileEditMode,
     ) : AppScreen
     @Serializable
-    data class DeleteAccount(val userId: Int, val userType: UserType) : AppScreen
+    data class DeleteAccount(val userId: String, val userType: UserType) : AppScreen
     @Serializable
     object LocationPicker : AppScreen
     @Serializable
@@ -72,17 +72,17 @@ sealed interface AppScreen {
         val batchId: Int?,
     ) : AppScreen
     @Serializable
-    data class ImageUpload(val userId: Int, val userType: UserType) : AppScreen
+    data class ImageUpload(val userId: String, val userType: UserType) : AppScreen
     @Serializable
     data class ImagePreview(val encodedImageUrl: String) : AppScreen
     @Serializable
     data class DownloadCv(
-        val userId: Int,
+        val userId: String,
         val userType: UserType,
         val url: String,
     ) : AppScreen
     @Serializable
-    data class UploadCv(val userId: Int, val userType: UserType) : AppScreen
+    data class UploadCv(val userId: String, val userType: UserType) : AppScreen
     @Serializable
     object Settings : AppScreen
     @Serializable

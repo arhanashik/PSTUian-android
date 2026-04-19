@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.NetworkConst
+import com.workfort.pstuian.data.remote.NetworkConst
 
 /**
  *  ****************************************************************************

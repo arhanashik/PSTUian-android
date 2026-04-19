@@ -2,6 +2,8 @@ package com.workfort.pstuian.ui.studentprofile
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -20,10 +22,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class StudentProfileViewModel(
-    private val userId: Int,
+    private val userId: String,
     private val studentRepo: StudentRepositoryImpl,
     private val authRepo: AuthRepository,
     private val uiStateMachine: StudentProfileUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<StudentProfileUiState>(
     uiStateMachine,
     initializationMode = InitializationMode.JustOnce,
@@ -109,7 +112,7 @@ class StudentProfileViewModel(
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.ImageUploadScreen(
-                    userId = student.id,
+                    userId = student.userId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -136,7 +139,7 @@ class StudentProfileViewModel(
             }?.let { action ->
                 _navigation.update {
                     StudentProfileNavigationState.StudentProfileEditScreen(
-                        userId = student.id,
+                        userId = student.userId,
                         action = action,
                     )
                 }
@@ -149,7 +152,7 @@ class StudentProfileViewModel(
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyBloodDonationListScreen(
-                    userId = student.id,
+                    userId = student.userId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -165,7 +168,7 @@ class StudentProfileViewModel(
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.DownloadCvScreen(
-                    userId = student.id,
+                    userId = student.userId,
                     userType = UserType.STUDENT,
                     url = url,
                 )
@@ -178,7 +181,7 @@ class StudentProfileViewModel(
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.UploadCvScreen(
-                    userId = student.id,
+                    userId = student.userId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -190,7 +193,7 @@ class StudentProfileViewModel(
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyCheckInListScreen(
-                    userId = student.id,
+                    userId = student.userId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -202,7 +205,7 @@ class StudentProfileViewModel(
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyDeviceListScreen(
-                    userId = student.id,
+                    userId = student.userId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -214,7 +217,7 @@ class StudentProfileViewModel(
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.DeleteAccountScreen(
-                    userId = student.id,
+                    userId = student.userId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -232,17 +235,16 @@ class StudentProfileViewModel(
         getProfile(userId)
     }
 
-    private fun getProfile(studentId: Int) {
+    private fun getProfile(studentId: String) {
         uiStateMachine.showProfileLoading()
-        viewModelScope.launch {
-            runCatching {
-                studentRepo.getProfile(studentId)
-            }.onSuccess {
-                uiStateMachine.showProfile(it)
-            }.onFailure {
-                val message = it.message ?: "Failed to load student profile"
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            val profile = studentRepo.getProfile(studentId)
+            if (profile == null) {
+                val message = "Failed to load student profile"
                 uiStateMachine.showProfileError(message)
+                return@launchOnMain
             }
+            uiStateMachine.showProfile(profile)
         }
     }
 
@@ -256,7 +258,7 @@ class StudentProfileViewModel(
             _message.update { StudentProfileMessageState.Loading(cancelable = false) }
             viewModelScope.launch {
                 runCatching {
-                    studentRepo.changeProfileImage(cache.student, imageUrl)
+                    studentRepo.changeProfileImage(cache.student.userId, imageUrl)
                 }.onSuccess {
                     isChangingPhoto = false
                     _message.update {
@@ -277,7 +279,7 @@ class StudentProfileViewModel(
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                studentRepo.changeBio(student, newBio)
+                studentRepo.changeBio(student.userId, newBio)
             }.onSuccess {
                 val message = "Bio updated successfully"
                 _message.update { StudentProfileMessageState.Success(message) }

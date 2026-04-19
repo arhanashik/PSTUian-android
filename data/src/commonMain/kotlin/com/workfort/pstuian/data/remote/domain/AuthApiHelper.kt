@@ -1,28 +1,11 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.NetworkConst
-import com.workfort.pstuian.data.dto.ConfigDto
-import com.workfort.pstuian.data.dto.DeviceDto
-import com.workfort.pstuian.data.dto.StudentDto
-import com.workfort.pstuian.data.dto.TeacherDto
+import com.workfort.pstuian.data.model.ConfigDto
+import com.workfort.pstuian.data.model.StudentDto
+import com.workfort.pstuian.data.model.TeacherDto
 
 interface AuthApiHelper {
     suspend fun getConfig(): ConfigDto
-
-    suspend fun getAllDevices(
-        userId: Int,
-        userType: String,
-        deviceId: String,
-        page: Int,
-        limit: Int = NetworkConst.Params.Default.PAGE_SIZE
-    ): List<DeviceDto>
-
-    suspend fun registerDevice(device: DeviceDto): DeviceDto
-
-    suspend fun updateFcmToken(
-        deviceId: String,
-        fcmToken: String
-    ): DeviceDto
 
     suspend fun signInStudent(
         email: String,
@@ -59,7 +42,7 @@ interface AuthApiHelper {
     ): Pair<TeacherDto, String>
 
     suspend fun signOut(
-        id: Int,
+        userId: String,
         userType: String,
         deviceId: String,
         fromAllDevice: Boolean = false,
@@ -71,7 +54,7 @@ interface AuthApiHelper {
      * 2nd one should be auth token
      * */
     suspend fun changePassword(
-        userId: Int,
+        userId: String,
         userType: String,
         oldPassword: String,
         newPassword: String,
@@ -83,7 +66,7 @@ interface AuthApiHelper {
     suspend fun emailVerification(userType: String, email: String, deviceId: String): String
 
     suspend fun deleteAccount(
-        userId: Int,
+        userId: String,
         userType: String,
         email: String,
         password: String

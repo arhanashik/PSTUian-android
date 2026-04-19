@@ -3,8 +3,10 @@ package com.workfort.pstuian.ui.splash
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
+import com.workfort.pstuian.featuredomain.usecase.GetInitialScreenUseCase
+import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.featuredomain.usecase.RegisterDeviceUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.splash.state.SplashMessageState
@@ -17,9 +19,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class SplashViewModel(
-    private val authRepo: AuthRepository,
+    private val appConfigRepository: AppConfigRepository,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
+    private val getInitialScreenUseCase: GetInitialScreenUseCase,
     private val stateMachine: SplashUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SplashUiState>(stateMachine) {
@@ -31,7 +34,7 @@ class SplashViewModel(
     val navigation: StateFlow<SplashNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {
-        checkAuth()
+        refreshConfig()
     }
 
     fun onUiEvent(event: SplashUiEvent) {
@@ -42,56 +45,29 @@ class SplashViewModel(
 
     fun onNavigationHandled() = _navigation.update { null }
 
-    private fun checkAuth() {
-        registerDevice()
-    }
-
-    private fun registerDevice() {
-        stateMachine.updateLoadingText("Checking device")
+    private fun refreshConfig() {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                registerDeviceUseCase()
-            }.onSuccess {
-                getConfig()
-            }.onFailure {
-                _message.update {
-                    SplashMessageState.DeviceRegFailed {
-                        registerDevice()
-                    }
-                }
-            }
-        }
-    }
+            stateMachine.updateLoadingText("Checking config...")
 
-    private fun getConfig() {
-        stateMachine.updateLoadingText("Loading Configuration")
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                authRepo.getConfig()
-            }.onSuccess {
-                if(it.forceUpdate != 0 && it.forceUpdateDone.not()) {
-                    _message.update {
-                        SplashMessageState.ForceUpdate {
-                            // go to app/play store
-                        }
-                    }
-                    return@onSuccess
+            val initialScreen = getInitialScreenUseCase(
+                device = registerDeviceUseCase().getOrNull(),
+                appConfig = appConfigRepository.getAppConfig(),
+            )
+            stateMachine.updateLoadingText(initialScreen.name)
+            when (initialScreen) {
+                InitialScreenState.MISSING_CONFIG -> {
+                    _message.update { SplashMessageState.GetConfigFailed(::refreshConfig) }
                 }
-                if(it.forceRefresh != 0 && it.forceRefreshDone.not()) {
-                    _message.update {
-                        SplashMessageState.ForceRefresh {
-                            clearAllData()
-                        }
-                    }
-                    return@onSuccess
+                InitialScreenState.BLOCKLISTED -> {
+                    _message.update { SplashMessageState.DeviceRegFailed(::refreshConfig) }
                 }
-                _navigation.update { SplashNavigationState.HomeScreen }
-            }.onFailure {
-                _message.update {
-                    SplashMessageState.GetConfigFailed {
-                        getConfig()
-                    }
+                InitialScreenState.FORCE_UPDATE -> {
+                    _message.update { SplashMessageState.ForceUpdate(::refreshConfig) }
                 }
+                InitialScreenState.MAINTENANCE -> {
+                    _message.update { SplashMessageState.ForceRefresh(::refreshConfig) }
+                }
+                InitialScreenState.HOME -> _navigation.update { SplashNavigationState.HomeScreen }
             }
         }
     }

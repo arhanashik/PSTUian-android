@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.dto.TeacherDto
+import com.workfort.pstuian.data.model.TeacherDto
 
 /**
  *  ****************************************************************************

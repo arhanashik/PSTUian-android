@@ -13,6 +13,5 @@ class ClearAllDataUseCase(
         authRepository.deleteAll()
         sliderRepo.deleteAll()
         facultyRepo.deleteAll()
-        authRepository.updateDataRefreshState()
     }
 }

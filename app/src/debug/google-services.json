@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "968641147735",
-    "project_id": "pstuian",
-    "storage_bucket": "pstuian.appspot.com"
+    "project_number": "876793003153",
+    "project_id": "pstuian-debug",
+    "storage_bucket": "pstuian-debug.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:968641147735:android:f98df9f444d78a0bf4c412",
+        "mobilesdk_app_id": "1:876793003153:android:b2f400f18926ea62c41330",
         "android_client_info": {
           "package_name": "com.workfort.pstuian.debug"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "968641147735-h5c1fsctkpu0g0bgn2s95qamimu7h0p2.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCWDMxY4fqfXlc6wSAdDMPOD9qljFCvw78"
+          "current_key": "AIzaSyARYqVLNMCI7Irm6NPzqmzQezWNwDC4zJ4"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "968641147735-h5c1fsctkpu0g0bgn2s95qamimu7h0p2.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

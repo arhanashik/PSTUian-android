@@ -1,8 +1,8 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.data.NetworkConst
-import com.workfort.pstuian.data.dto.BloodDonationRequestDto
-import com.workfort.pstuian.featuredomain.model.Response
+import com.workfort.pstuian.data.model.ApiResponse
+import com.workfort.pstuian.data.model.BloodDonationRequestDto
+import com.workfort.pstuian.data.remote.NetworkConst
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
@@ -14,31 +14,31 @@ class BloodDonationRequestApiService(private val client: HttpClient) {
     suspend fun getAll(
         page: Int = 1,
         limit: Int = 20,
-    ): Response<List<BloodDonationRequestDto>> {
+    ): ApiResponse<List<BloodDonationRequestDto>> {
         return client.get(NetworkConst.Remote.Api.BloodDonationRequest.GET_ALL) {
             parameter(NetworkConst.Params.PAGE, page)
             parameter(NetworkConst.Params.LIMIT, limit)
         }.body()
     }
 
-    suspend fun get(id: Int): Response<BloodDonationRequestDto> {
+    suspend fun get(id: Int): ApiResponse<BloodDonationRequestDto> {
         return client.get(NetworkConst.Remote.Api.BloodDonationRequest.GET) {
             parameter(NetworkConst.Params.ID, id)
         }.body()
     }
 
     suspend fun insert(
-        userId: Int,
+        userId: String,
         userType: String,
         bloodGroup: String,
         beforeDate: String,
         contact: String,
         info: String?,
-    ): Response<BloodDonationRequestDto> {
+    ): ApiResponse<BloodDonationRequestDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonationRequest.INSERT,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId.toString())
+                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.BLOOD_GROUP, bloodGroup)
                 append(NetworkConst.Params.BEFORE_DATE, beforeDate)
@@ -54,7 +54,7 @@ class BloodDonationRequestApiService(private val client: HttpClient) {
         beforeDate: String,
         contact: String,
         info: String,
-    ): Response<BloodDonationRequestDto> {
+    ): ApiResponse<BloodDonationRequestDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonationRequest.UPDATE,
             formParameters = parameters {
@@ -67,7 +67,7 @@ class BloodDonationRequestApiService(private val client: HttpClient) {
         ).body()
     }
 
-    suspend fun delete(id: Int): Response<String> {
+    suspend fun delete(id: Int): ApiResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonationRequest.DELETE,
             formParameters = parameters {

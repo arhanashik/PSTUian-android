@@ -6,8 +6,8 @@ import com.workfort.pstuian.featuredomain.model.CourseEntity
 import com.workfort.pstuian.featuredomain.model.EmployeeEntity
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
-import com.workfort.pstuian.featuredomain.model.StudentEntity
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 
 class FacultyRepositoryImpl(
@@ -15,7 +15,7 @@ class FacultyRepositoryImpl(
 ) : FacultyRepository {
     private val faculties = mutableListOf<FacultyEntity>()
     private val batches = mutableMapOf<Int, List<BatchEntity>>()
-    private val students = mutableMapOf<String, List<StudentEntity>>()
+    private val students = mutableMapOf<String, List<User.Student>>()
     private val teachers = mutableMapOf<Int, List<TeacherEntity>>()
     private val courses = mutableMapOf<Int, List<CourseEntity>>()
     private val employees = mutableMapOf<Int, List<EmployeeEntity>>()
@@ -50,10 +50,10 @@ class FacultyRepositoryImpl(
         facultyId: Int,
         batchId: Int,
         forceRefresh: Boolean,
-    ): List<StudentEntity> {
+    ): List<User.Student> {
         val key = "${facultyId}_${batchId}"
         if (forceRefresh || !students.containsKey(key)) {
-            val newData = helper.getStudents(facultyId, batchId).map { it.toEntity() }
+            val newData = helper.getStudents(facultyId, batchId).map { it.toModel() }
             students[key] = newData
         }
         return students[key] ?: emptyList()

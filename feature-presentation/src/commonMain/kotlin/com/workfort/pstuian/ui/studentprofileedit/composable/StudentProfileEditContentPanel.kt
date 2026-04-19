@@ -129,18 +129,14 @@ private fun AcademicInfoEditPanelView(
         }
         OutlinedTextInput(
             label = stringResource(Res.string.hint_id),
-            value = if (newProfile.student.id == 0) {
-                ""
-            } else {
-                newProfile.student.id.toString()
-            },
+            value = newProfile.student.studentId,
             inputType = KeyboardType.Number,
             isError = validationError.id.isNotEmpty(),
             supportingText = validationError.id,
         ) {
             it.ifEmpty { "0" }.toIntOrNull()?.let { newId ->
                 newProfile = newProfile.copy(
-                    student = newProfile.student.copy(id = newId),
+                    student = newProfile.student.copy(studentId = newId.toString()),
                 )
             }
         }

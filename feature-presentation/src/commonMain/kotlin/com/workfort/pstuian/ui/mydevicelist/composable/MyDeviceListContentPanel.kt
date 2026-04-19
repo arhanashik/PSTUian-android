@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.DeviceEntity
+import com.workfort.pstuian.featuredomain.model.Device
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
@@ -63,7 +63,7 @@ internal fun MyDeviceListContentPanel(
 
 @Composable
 private fun DeviceListView(
-    devices: List<DeviceEntity>,
+    devices: List<Device>,
     isLoading: Boolean,
     onUiEvent: (MyDeviceListUiEvent) -> Unit,
 ) {
@@ -106,7 +106,7 @@ private fun DeviceListView(
 
 @Composable
 private fun DeviceItemView(
-    item: DeviceEntity,
+    item: Device,
     onClick: () -> Unit,
 ) {
     Row(
@@ -122,8 +122,7 @@ private fun DeviceItemView(
             tint = Color.Gray,
         )
         Column(modifier = Modifier.padding(start = 8.dp)) {
-            TitleTextSmall(text = item.model ?: "Unknown")
-            Text(text = "IP Address: ${item.ipAddress}")
+            TitleTextSmall(text = item.model)
             Text(text = "Last Activity: ${item.updatedAt}")
         }
     }

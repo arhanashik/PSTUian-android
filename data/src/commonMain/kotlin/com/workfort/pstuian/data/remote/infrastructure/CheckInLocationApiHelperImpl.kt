@@ -1,23 +1,13 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.dto.CheckInLocationDto
+import com.workfort.pstuian.data.model.CheckInLocationDto
 import com.workfort.pstuian.data.remote.domain.CheckInLocationApiHelper
 import com.workfort.pstuian.data.remote.service.CheckInLocationApiService
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Dec, 2021 at 21:31.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
 class CheckInLocationApiHelperImpl(
     private val service: CheckInLocationApiService
 ) : CheckInLocationApiHelper() {
+
     override suspend fun getAll(page: Int, limit: Int): List<CheckInLocationDto> {
         service.getAll(page, limit).also {
             if(!it.success) throw Exception(it.message)
@@ -44,7 +34,7 @@ class CheckInLocationApiHelperImpl(
     }
 
     override suspend fun insert(
-        userId: Int,
+        userId: String,
         userType: String,
         name: String,
         details: String?,

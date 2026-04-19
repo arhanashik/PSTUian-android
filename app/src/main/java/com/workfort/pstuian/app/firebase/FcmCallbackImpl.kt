@@ -12,34 +12,21 @@ import com.workfort.pstuian.PstuianApp
 import com.workfort.pstuian.R
 import com.workfort.pstuian.featuredomain.model.NotificationType
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
-import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
-import com.workfort.pstuian.util.PlatformInfo
-import kotlinx.coroutines.runBlocking
 import kotlin.random.Random
 
 class FcmCallbackImpl(
-    private val authRepo: AuthRepository,
     private val sharedPrefRepository: SharedPrefRepository,
-    private val platformInfo: PlatformInfo,
 ) : FcmCallback {
 
     override fun onMessageReceived(data: FcmMessageData) {
         // TODO: update prefs to add new notification state
 //        prefs.hasNewNotification = true
-
-//        platformInfo.vibrate()
         handleNotification(data)
     }
 
     override fun onNewToken(token: String) {
-        runBlocking {
-            try {
-                authRepo.updateFcmToken(token)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
+        sharedPrefRepository.putString(SharedPrefKey.FCM_TOKEN, token)
     }
 
     /**
@@ -60,7 +47,7 @@ class FcmCallbackImpl(
         val channelId = context.getString(R.string.default_notification_channel_id)
         val channelName = context.getString(R.string.default_notification_channel_name)
 
-        val type = data.type?.let { NotificationType.Companion.create(it) } ?: NotificationType.DEFAULT
+        val type = data.type?.let { NotificationType.create(it) } ?: NotificationType.DEFAULT
         val iconRes = when(type) {
             NotificationType.DEFAULT -> R.drawable.ic_bell_filled
             NotificationType.BLOOD_DONATION -> R.drawable.ic_blood_drop
@@ -78,11 +65,14 @@ class FcmCallbackImpl(
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel =
-                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_DEFAULT,
+            )
             manager.createNotificationChannel(channel)
         }
 
-        manager.notify(Random.Default.nextInt(), notification)
+        manager.notify(Random.nextInt(), notification)
     }
 }

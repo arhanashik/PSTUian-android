@@ -6,6 +6,7 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestInput
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestInputError
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.blooddonationrequestcreate.state.BloodDonationRequestCreateMessageState
 import com.workfort.pstuian.ui.blooddonationrequestcreate.state.BloodDonationRequestCreateNavigationState
 import com.workfort.pstuian.ui.blooddonationrequestcreate.state.BloodDonationRequestCreateUiEvent
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.update
 
 class BloodDonationRequestCreateViewModel(
     private val repo: BloodDonationRequestRepository,
+    private val sharedScreenData: SharedScreenData,
     private val dateTimeUtil: DateTimeUtil,
     private val uiStateMachine: BloodDonationRequestCreateUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -70,6 +72,9 @@ class BloodDonationRequestCreateViewModel(
     }
 
     private fun onSendClicked() {
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
+
         val content = uiState.value as? BloodDonationRequestCreateUiState.Content ?: return
         val input = content.input
         val validationError = input.validate()
@@ -82,6 +87,8 @@ class BloodDonationRequestCreateViewModel(
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 repo.insert(
+                    userId = userId,
+                    userType = userType,
                     bloodGroup = input.bloodGroup,
                     beforeDate = input.date,
                     contact = input.contact,

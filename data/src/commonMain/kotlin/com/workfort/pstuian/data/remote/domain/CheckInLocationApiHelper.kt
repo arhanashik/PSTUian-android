@@ -1,20 +1,9 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.dto.CheckInLocationDto
+import com.workfort.pstuian.data.model.CheckInLocationDto
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Dec, 2021 at 21:30 PM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
+abstract class CheckInLocationApiHelper : ApiHelper<CheckInLocationDto>() {
 
-abstract class CheckInLocationApiHelper : ApiHelper<CheckInLocationDto>()  {
     override suspend fun search(
         query: String,
         page: Int,
@@ -22,7 +11,7 @@ abstract class CheckInLocationApiHelper : ApiHelper<CheckInLocationDto>()  {
     ): List<CheckInLocationDto> = emptyList()
 
     open suspend fun insert(
-        userId: Int,
+        userId: String,
         userType: String,
         name: String,
         details: String?,

@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.dto.SliderDto
+import com.workfort.pstuian.data.model.SliderDto
 import com.workfort.pstuian.data.remote.service.SliderApiService
 
 /**

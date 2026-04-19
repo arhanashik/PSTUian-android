@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MyBloodDonationListViewModel(
-    private val userId: Int,
+    private val userId: String,
     private val userType: UserType,
     private val donationRepo: BloodDonationRepository,
     private val uiStateMachine: MyBloodDonationListUiStateMachine,

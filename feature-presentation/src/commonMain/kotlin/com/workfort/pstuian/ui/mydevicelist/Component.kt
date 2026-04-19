@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.DeviceEntity
+import com.workfort.pstuian.featuredomain.model.Device
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -27,7 +27,7 @@ import pstuian.feature_presentation.generated.resources.txt_dismiss
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyDeviceItemBottomSheet(
-    item: DeviceEntity,
+    item: Device,
     onClickDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -44,8 +44,7 @@ fun MyDeviceItemBottomSheet(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            TitleTextSmall(text = item.model ?: "Unknown")
-            Text(text = "IP Address: ${item.ipAddress}")
+            TitleTextSmall(text = item.model)
             Text(text = "Last Activity: $lastActiveAt")
             HorizontalDivider(
                 modifier = Modifier.padding(top = 16.dp),

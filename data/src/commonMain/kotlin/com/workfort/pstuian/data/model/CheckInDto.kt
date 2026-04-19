@@ -1,4 +1,4 @@
-package com.workfort.pstuian.data.dto
+package com.workfort.pstuian.data.model
 
 import com.workfort.pstuian.featuredomain.model.CheckInEntity
 import kotlinx.serialization.SerialName
@@ -16,7 +16,7 @@ data class CheckInDto(
     val count: Int,
     val privacy: String,
     @SerialName("user_id")
-    val userId: Int,
+    val userId: String,
     @SerialName("user_type")
     val userType: String,
     val name: String,

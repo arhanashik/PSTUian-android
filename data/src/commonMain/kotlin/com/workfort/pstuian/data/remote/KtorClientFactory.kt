@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.remote
 
-import com.workfort.pstuian.data.NetworkConst
 import com.workfort.pstuian.util.PlatformInfo
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -15,7 +14,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 object KtorClientFactory {
+
     fun create(platformInfo: PlatformInfo, authTokenProvider: () -> String?): HttpClient {
+        val isDebug = platformInfo.isDebug
         return HttpClient {
             install(ContentNegotiation) {
                 json(Json {
@@ -31,11 +32,11 @@ object KtorClientFactory {
                         println("Ktor: $message")
                     }
                 }
-                level = LogLevel.ALL
+                level = if (isDebug) LogLevel.ALL else LogLevel.NONE
             }
 
             defaultRequest {
-                val baseUrl = if (platformInfo.isDebug) {
+                val baseUrl = if (isDebug) {
                     NetworkConst.Remote.DEV_API_SERVER
                 } else {
                     NetworkConst.Remote.LIVE_API_SERVER

@@ -1,76 +1,70 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.dto.StudentDto
+import com.workfort.pstuian.data.mapper.toNetworkResult
+import com.workfort.pstuian.data.model.NetworkResult
+import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.remote.domain.StudentApiHelper
 import com.workfort.pstuian.data.remote.service.StudentApiService
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Oct, 2021 at 3:52 PM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
+class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiHelper {
 
-class StudentApiHelperImpl(private val service: StudentApiService) :
-    StudentApiHelper {
-    override suspend fun get(id: Int): StudentDto {
-        val response = service.get(id)
-        if(!response.success) throw Exception(response.message)
-        return response.data?: throw Exception("Empty data")
+    override suspend fun get(userId: String): StudentDto? {
+        return service.get(userId).data
     }
 
-    override suspend fun changeProfileImage(id: Int, imageUrl: String): Boolean {
-        val response = service.changeProfileImage(id, imageUrl)
-        if(!response.success) throw Exception(response.message)
-        return response.success
+    override suspend fun changeProfileImage(userId: String, imageUrl: String): NetworkResult<Unit> {
+        return service.changeProfileImage(userId, imageUrl).toNetworkResult()
     }
 
-    override suspend fun changeName(id: Int, name: String): Boolean {
-        val response = service.changeName(id, name)
-        if(!response.success) throw Exception(response.message)
-        return response.success
+    override suspend fun changeName(userId: String, name: String): NetworkResult<Unit> {
+        return service.changeName(userId, name).toNetworkResult()
     }
 
-    override suspend fun changeBio(id: Int, bio: String): Boolean {
-        val response = service.changeBio(id, bio)
-        if(!response.success) throw Exception(response.message)
-        return response.success
+    override suspend fun changeBio(userId: String, bio: String): NetworkResult<Unit> {
+        return service.changeBio(userId, bio).toNetworkResult()
     }
 
     override suspend fun changeAcademicInfo(
+        userId: String,
         name: String,
-        oldId: Int,
-        id: Int,
+        studentId: String,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int
-    ): StudentDto {
-        val response = service.changeAcademicInfo(name, oldId, id, reg, blood,
-            facultyId, session, batchId)
-        if(!response.success) throw Exception(response.message)
-        return response.data?: throw Exception("Empty data")
+    ): NetworkResult<Unit> {
+        return service.changeAcademicInfo(
+            userId = userId,
+            name = name,
+            studentId = studentId,
+            reg = reg,
+            blood = blood,
+            facultyId = facultyId,
+            session = session,
+            batchId = batchId,
+        ).toNetworkResult()
     }
 
     override suspend fun changeConnectInfo(
-        id: Int,
+        userId: String,
         address: String,
         phone: String,
-        email: String,
         oldEmail: String,
+        newEmail: String,
         cvLink: String,
         linkedIn: String,
         fbLink: String
-    ): StudentDto {
-        val response = service.changeConnectInfo(id, address, phone,
-            email, oldEmail, cvLink, linkedIn, fbLink)
-        if(!response.success) throw Exception(response.message)
-        return response.data?: throw Exception("Empty data")
+    ): NetworkResult<Unit> {
+        return service.changeConnectInfo(
+            userId = userId,
+            address = address,
+            phone = phone,
+            oldEmail = oldEmail,
+            newEmail = newEmail,
+            cvLink = cvLink,
+            linkedIn = linkedIn,
+            fbLink = fbLink,
+        ).toNetworkResult()
     }
 }

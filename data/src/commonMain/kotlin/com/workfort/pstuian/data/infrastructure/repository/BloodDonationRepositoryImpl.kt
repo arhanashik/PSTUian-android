@@ -1,17 +1,17 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.dto.toDto
+import com.workfort.pstuian.data.model.toDto
 import com.workfort.pstuian.data.remote.domain.BloodDonationApiHelper
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
-import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
 
 class BloodDonationRepositoryImpl(
-    private val authRepo: AuthRepository,
     private val helper: BloodDonationApiHelper,
 ) : BloodDonationRepository {
+
     override suspend fun getAll(
-        userId: Int,
+        userId: String,
         userType: String,
         page: Int,
     ): List<BloodDonationEntity> {
@@ -22,12 +22,12 @@ class BloodDonationRepositoryImpl(
 
     override suspend fun insert(
         requestId: Int?,
+        userId: String,
+        userType: UserType,
         date: Long,
         info: String?,
     ) : BloodDonationEntity {
-        val (userId, userType) = authRepo.getUserIdAndType()
-
-        return helper.insert(userId, userType, requestId, date, info)
+        return helper.insert(userId, userType.type, requestId, date, info)
             ?.toEntity() ?: throw Exception("Insert failed")
     }
 

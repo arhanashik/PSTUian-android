@@ -1,23 +1,14 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.dto.NotificationDto
+import com.workfort.pstuian.data.model.NotificationDto
+import com.workfort.pstuian.data.remote.NetworkConst
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 29 Oct, 2021 at 20:55.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
 interface NotificationApiHelper {
+
     suspend fun getAll(
-        userId: Int,
+        userId: String,
         userType: String,
         page: Int,
-        limit: Int
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
     ): List<NotificationDto>
 }

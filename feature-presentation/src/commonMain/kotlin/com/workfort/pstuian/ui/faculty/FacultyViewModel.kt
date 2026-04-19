@@ -68,11 +68,11 @@ class FacultyViewModel(
     }
 
     private fun onClickTeacher(teacher: TeacherEntity) {
-        _navigation.update { FacultyNavigationState.GoToTeacherScreen(teacher.id) }
+        _navigation.update { FacultyNavigationState.GoToTeacherScreen(teacher.id.toString()) }
     }
 
     private fun onClickEmployee(employee: EmployeeEntity) {
-        _navigation.update { FacultyNavigationState.GoToEmployeeScreen(employee.id) }
+        _navigation.update { FacultyNavigationState.GoToEmployeeScreen(employee.id.toString()) }
     }
 
     private fun onClickCall(phoneNumber: String) {

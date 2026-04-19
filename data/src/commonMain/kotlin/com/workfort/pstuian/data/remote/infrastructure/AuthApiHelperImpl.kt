@@ -1,51 +1,16 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.dto.ConfigDto
-import com.workfort.pstuian.data.dto.DeviceDto
-import com.workfort.pstuian.data.dto.StudentDto
-import com.workfort.pstuian.data.dto.TeacherDto
+import com.workfort.pstuian.data.model.ConfigDto
+import com.workfort.pstuian.data.model.StudentDto
+import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.service.AuthApiService
 
 
 class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
+
     override suspend fun getConfig(): ConfigDto {
         val response = service.getConfig()
-        if(!response.success) throw Exception(response.message)
-        return response.data?: throw Exception("No data found")
-    }
-
-    override suspend fun getAllDevices(
-        userId: Int,
-        userType: String,
-        deviceId: String,
-        page: Int,
-        limit: Int
-    ): List<DeviceDto> {
-        val response = service.getAllDevices(userId, userType, deviceId, page, limit)
-        if(!response.success) throw Exception(response.message)
-        return response.data?: throw Exception("No data found")
-    }
-
-    override suspend fun registerDevice(device: DeviceDto): DeviceDto {
-        val response = service.registerDevice(
-            id = device.id,
-            fcmToken = device.fcmToken,
-            model = device.model?: "",
-            androidVersion = device.androidVersion?: "",
-            appVersionCode = device.appVersionCode?: 0,
-            appVersionName = device.appVersionName?: "",
-            ipAddress = device.ipAddress?: "",
-            lat = device.lat?: "0.0",
-            lng = device.lng?: "0.0",
-            locale = device.locale?: ""
-        )
-        if(!response.success) throw Exception(response.message)
-        return response.data?: throw Exception("No data found")
-    }
-
-    override suspend fun updateFcmToken(deviceId: String, fcmToken: String): DeviceDto {
-        val response = service.updateFcmToken(deviceId, fcmToken)
         if(!response.success) throw Exception(response.message)
         return response.data?: throw Exception("No data found")
     }
@@ -112,21 +77,21 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
     }
 
     override suspend fun signOut(
-        id: Int,
+        userId: String,
         userType: String,
         deviceId: String,
         fromAllDevice: Boolean,
     ): String {
         val response = if(fromAllDevice) service.signOutFromAllDevice(
-            id, userType, deviceId
-        ) else service.signOut(id, userType, deviceId)
+            userId, userType, deviceId
+        ) else service.signOut(userId, userType, deviceId)
 
         if(!response.success) throw Exception(response.message)
         return response.message
     }
 
     override suspend fun changePassword(
-        userId: Int,
+        userId: String,
         userType: String,
         oldPassword: String,
         newPassword: String,
@@ -158,7 +123,7 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
     }
 
     override suspend fun deleteAccount(
-        userId: Int,
+        userId: String,
         userType: String,
         email: String,
         password: String

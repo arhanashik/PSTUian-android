@@ -1,19 +1,37 @@
 package com.workfort.pstuian.util
 
+import kotlinx.cinterop.CPointerVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
+import kotlinx.cinterop.refTo
 import kotlinx.cinterop.toKString
+import kotlinx.cinterop.value
 import platform.Foundation.NSBundle
+import platform.Foundation.NSLocale
 import platform.Foundation.NSUUID
+import platform.Foundation.currentLocale
+import platform.Foundation.localeIdentifier
 import platform.UIKit.UIDevice
+import platform.darwin.freeifaddrs
+import platform.darwin.getifaddrs
+import platform.darwin.ifaddrs
+import platform.posix.AF_INET
+import platform.posix.NI_MAXHOST
+import platform.posix.NI_NUMERICHOST
+import platform.posix.getnameinfo
 import platform.posix.uname
 import platform.posix.utsname
 import kotlin.experimental.ExperimentalNativeApi
 
 class IOSPlatformInfo : PlatformInfo {
-    override val appVersion: String
+    override val appVersionCode: Int
+        get() = NSBundle.mainBundle.objectForInfoDictionaryKey("CFBundleVersion") as? Int ?: 0
+
+    override val appVersionName: String
         get() = NSBundle.mainBundle.objectForInfoDictionaryKey("CFBundleShortVersionString") as? String ?: "1.0.0"
 
     @OptIn(ExperimentalNativeApi::class)
@@ -43,20 +61,9 @@ class IOSPlatformInfo : PlatformInfo {
             systemInfo.machine.toKString()
         }
 
-    override val platformName: String
+    override val platform: String
         get() = "${UIDevice.currentDevice.systemName} ${UIDevice.currentDevice.systemVersion}"
 
     override val locale: String
-        get() = "en" // Default to English for now to avoid compilation issues
-
-    override fun getLocalIpAddress(): String {
-        return "127.0.0.1" // Simplified for now
-    }
-
-//    override fun vibrate() {
-//        UIImpactFeedbackGenerator(platform.UIKit.UIImpactFeedbackStyle.UIImpactFeedbackStyleMedium).apply {
-//            prepare()
-//            impactOccurred()
-//        }
-//    }
+        get() = NSLocale.currentLocale.localeIdentifier
 }

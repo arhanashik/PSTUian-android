@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.featuredomain.model.StudentEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.LabelText
@@ -81,7 +81,7 @@ fun StudentsContentPanel(
 
 @Composable
 private fun StudentListView(
-    students: List<StudentEntity>,
+    students: List<User.Student>,
     isLoading: Boolean,
     onUiEvent: (StudentsUiEvent) -> Unit,
 ) {
@@ -116,7 +116,7 @@ private fun StudentListView(
 
 @Composable
 private fun StudentListItemView(
-    student: StudentEntity,
+    student: User.Student,
     onClickStudent: () -> Unit,
     onClickCall: () -> Unit,
 ) {
@@ -151,7 +151,7 @@ private fun StudentListItemView(
                 Row {
                     Column(modifier = Modifier.weight(0.3f)) {
                         LabelText(text = stringResource(Res.string.txt_id))
-                        Text(text = student.id.toString(), fontSize = 14.sp)
+                        Text(text = student.userId.toString(), fontSize = 14.sp)
                     }
                     Column(
                         modifier = Modifier.weight(0.3f),

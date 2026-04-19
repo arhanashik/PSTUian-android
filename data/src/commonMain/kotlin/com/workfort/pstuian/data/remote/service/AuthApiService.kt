@@ -1,80 +1,20 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.data.NetworkConst
-import com.workfort.pstuian.data.dto.ConfigDto
-import com.workfort.pstuian.data.dto.DeviceDto
-import com.workfort.pstuian.data.dto.StudentDto
-import com.workfort.pstuian.data.dto.TeacherDto
+import com.workfort.pstuian.data.model.ApiResponse
+import com.workfort.pstuian.data.model.ConfigDto
+import com.workfort.pstuian.data.model.StudentDto
+import com.workfort.pstuian.data.model.TeacherDto
+import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.featuredomain.model.AuthResponse
-import com.workfort.pstuian.featuredomain.model.Response
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
-import io.ktor.client.request.parameter
 import io.ktor.http.parameters
 
 class AuthApiService(private val client: HttpClient) {
-    suspend fun getConfig(): Response<ConfigDto> {
+    suspend fun getConfig(): ApiResponse<ConfigDto> {
         return client.get(NetworkConst.Remote.Api.GET_CONFIG).body()
-    }
-
-    suspend fun getAllDevices(
-        userId: Int,
-        userType: String,
-        deviceId: String,
-        page: Int,
-        limit: Int,
-    ): Response<List<DeviceDto>> {
-        return client.get(NetworkConst.Remote.Api.Device.GET_ALL) {
-            parameter(NetworkConst.Params.USER_ID, userId)
-            parameter(NetworkConst.Params.USER_TYPE, userType)
-            parameter(NetworkConst.Params.DEVICE_ID, deviceId)
-            parameter(NetworkConst.Params.PAGE, page)
-            parameter(NetworkConst.Params.LIMIT, limit)
-        }.body()
-    }
-
-    suspend fun registerDevice(
-        id: String,
-        fcmToken: String,
-        model: String,
-        androidVersion: String,
-        appVersionCode: Int,
-        appVersionName: String,
-        ipAddress: String,
-        lat: String,
-        lng: String,
-        locale: String
-    ): Response<DeviceDto> {
-        return client.submitForm(
-            url = NetworkConst.Remote.Api.Device.REGISTER,
-            formParameters = parameters {
-                append(NetworkConst.Params.ID, id)
-                append(NetworkConst.Params.FCM_TOKEN, fcmToken)
-                append(NetworkConst.Params.MODEL, model)
-                append(NetworkConst.Params.ANDROID_VERSION, androidVersion)
-                append(NetworkConst.Params.APP_VERSION_CODE, appVersionCode.toString())
-                append(NetworkConst.Params.APP_VERSION_NAME, appVersionName)
-                append(NetworkConst.Params.IP_ADDRESS, ipAddress)
-                append(NetworkConst.Params.LAT, lat)
-                append(NetworkConst.Params.LNG, lng)
-                append(NetworkConst.Params.LOCALE, locale)
-            }
-        ).body()
-    }
-
-    suspend fun updateFcmToken(
-        deviceId: String,
-        fcmToken: String
-    ): Response<DeviceDto> {
-        return client.submitForm(
-            url = NetworkConst.Remote.Api.Device.UPDATE_FCM_TOKEN,
-            formParameters = parameters {
-                append(NetworkConst.Params.DEVICE_ID, deviceId)
-                append(NetworkConst.Params.FCM_TOKEN, fcmToken)
-            }
-        ).body()
     }
 
     suspend fun signInStudent(
@@ -162,14 +102,14 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun signOut(
-        id: Int,
+        userId: String,
         userType: String,
         deviceId: String,
     ): AuthResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_OUT,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, id.toString())
+                append(NetworkConst.Params.ID, userId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
             }
@@ -177,14 +117,14 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun signOutFromAllDevice(
-        id: Int,
+        userId: String,
         userType: String,
         deviceId: String,
     ): AuthResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_OUT_FROM_ALL_DEVICE,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, id.toString())
+                append(NetworkConst.Params.ID, userId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
             }
@@ -192,7 +132,7 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun changePassword(
-        userId: Int,
+        userId: String,
         userType: String,
         oldPassword: String,
         newPassword: String,
@@ -201,7 +141,7 @@ class AuthApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.CHANGE_PASSWORD,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId.toString())
+                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.OLD_PASSWORD, oldPassword)
                 append(NetworkConst.Params.NEW_PASSWORD, newPassword)
@@ -241,7 +181,7 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun deleteAccount(
-        userId: Int,
+        userId: String,
         userType: String,
         email: String,
         password: String,
@@ -249,7 +189,7 @@ class AuthApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.DELETE_ACCOUNT,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId.toString())
+                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.EMAIL, email)
                 append(NetworkConst.Params.PASSWORD, password)
