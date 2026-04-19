@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
@@ -34,9 +33,8 @@ import androidx.compose.ui.unit.offset
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ErrorText
 import com.workfort.pstuian.ui.common.composable.FacultyView
-import com.workfort.pstuian.ui.common.composable.ShimmerBox
+import com.workfort.pstuian.ui.common.composable.SliderShimmer
 import com.workfort.pstuian.ui.common.composable.SliderView
-import com.workfort.pstuian.ui.common.composable.TitleTextMedium
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.home.ActionItem
@@ -186,7 +184,7 @@ private fun SliderViewWrapper(
     when (state) {
         is HomeUiState.SliderState.None -> Unit
         is HomeUiState.SliderState.Loading -> {
-            ShimmerBox()
+            SliderShimmer()
         }
         is HomeUiState.SliderState.Available -> {
             SliderView(
