@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.theme.bgLabelBadge
 
-
 @Composable
 fun HorizontalDividerWithLabel(
     modifier: Modifier = Modifier,
