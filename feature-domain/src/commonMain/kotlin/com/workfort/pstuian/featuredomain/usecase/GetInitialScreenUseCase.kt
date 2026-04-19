@@ -11,27 +11,26 @@ class GetInitialScreenUseCase(private val platformInfo: PlatformInfo) {
         device: Device?,
         appConfig: AppConfig?,
     ): InitialScreenState {
-        if (device == null || appConfig == null) return InitialScreenState.MISSING_CONFIG
-        if (device.blocklisted) return InitialScreenState.BLOCKLISTED
-        if (appConfig.maintenance) return InitialScreenState.MAINTENANCE
+        if (device == null || appConfig == null) return InitialScreenState.MissingConfig
+        if (device.blocklisted) return InitialScreenState.Blocklisted
+        if (appConfig.maintenance) return InitialScreenState.Maintenance(
+            remainingTime = appConfig.remainingMaintenance,
+        )
 
         val needForceUpdate = isVersionLower(
             current = platformInfo.appVersionName,
             required = appConfig.forceUpdateVersion,
         )
-        if (needForceUpdate) return InitialScreenState.FORCE_UPDATE
+        if (needForceUpdate) return InitialScreenState.ForceUpdate
 
-        return InitialScreenState.HOME
+        return InitialScreenState.Home
     }
 }
 
-enum class InitialScreenState {
-    MISSING_CONFIG,
-    BLOCKLISTED,
-    FORCE_UPDATE,
-    MAINTENANCE,
-//    SIGN_IN,
-//    SIGN_IN_AGAIN,
-//    EMAIL_VERIFICATION,
-    HOME,
+sealed interface InitialScreenState {
+    data object MissingConfig : InitialScreenState
+    data object Blocklisted : InitialScreenState
+    data object ForceUpdate : InitialScreenState
+    data class Maintenance(val remainingTime: Double) : InitialScreenState
+    data object Home : InitialScreenState
 }

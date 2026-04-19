@@ -4,12 +4,10 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
-import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
 import com.workfort.pstuian.featuredomain.usecase.GetInitialScreenUseCase
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.featuredomain.usecase.RegisterDeviceUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
-import com.workfort.pstuian.ui.splash.state.SplashMessageState
 import com.workfort.pstuian.ui.splash.state.SplashNavigationState
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
@@ -20,15 +18,11 @@ import kotlinx.coroutines.flow.update
 
 class SplashViewModel(
     private val appConfigRepository: AppConfigRepository,
-    private val clearAllDataUseCase: ClearAllDataUseCase,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val getInitialScreenUseCase: GetInitialScreenUseCase,
     private val stateMachine: SplashUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SplashUiState>(stateMachine) {
-
-    private val _message = MutableStateFlow<SplashMessageState?>(null)
-    val message: StateFlow<SplashMessageState?> = _message.asStateFlow()
 
     private val _navigation = MutableStateFlow<SplashNavigationState?>(null)
     val navigation: StateFlow<SplashNavigationState?> = _navigation.asStateFlow()
@@ -38,53 +32,78 @@ class SplashViewModel(
     }
 
     fun onUiEvent(event: SplashUiEvent) {
-        // Add event handling here
-    }
-
-    fun onMessageHandled() = _message.update { null }
-
-    fun onNavigationHandled() = _navigation.update { null }
-
-    private fun refreshConfig() {
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            stateMachine.updateLoadingText("Checking config...")
-
-            val initialScreen = getInitialScreenUseCase(
-                device = registerDeviceUseCase().getOrNull(),
-                appConfig = appConfigRepository.getAppConfig(),
-            )
-            stateMachine.updateLoadingText(initialScreen.name)
-            when (initialScreen) {
-                InitialScreenState.MISSING_CONFIG -> {
-                    _message.update { SplashMessageState.GetConfigFailed(::refreshConfig) }
+        when (event) {
+            is SplashUiEvent.ActionBtnClicked -> {
+                if (event.isForceUpdateAction) {
+                    // Navigate to app/play store
+                } else {
+                    refreshConfig()
                 }
-                InitialScreenState.BLOCKLISTED -> {
-                    _message.update { SplashMessageState.DeviceRegFailed(::refreshConfig) }
-                }
-                InitialScreenState.FORCE_UPDATE -> {
-                    _message.update { SplashMessageState.ForceUpdate(::refreshConfig) }
-                }
-                InitialScreenState.MAINTENANCE -> {
-                    _message.update { SplashMessageState.ForceRefresh(::refreshConfig) }
-                }
-                InitialScreenState.HOME -> _navigation.update { SplashNavigationState.HomeScreen }
             }
         }
     }
 
-    private fun clearAllData() {
-        stateMachine.updateLoadingText("Clearing data")
+    fun onNavigationHandled() = _navigation.update { null }
+
+    private fun refreshConfig() {
+        stateMachine.updateScreenState(
+            screenState = null,
+            statusText = "Checking config...",
+            descriptionText = null,
+            actionBtnText = null,
+        )
+
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                clearAllDataUseCase()
-            }.onSuccess {
+            val initialScreen = getInitialScreenUseCase(
+                device = registerDeviceUseCase().getOrNull(),
+                appConfig = appConfigRepository.getAppConfig(),
+            )
+            handleInitialScreen(initialScreen)
+        }
+    }
+
+    private fun handleInitialScreen(screenState: InitialScreenState) {
+        when (screenState) {
+            is InitialScreenState.MissingConfig -> {
+                stateMachine.updateScreenState(
+                    screenState,
+                    statusText = "Missing config",
+                    descriptionText = "Client and server out of sync",
+                    actionBtnText = "Refresh",
+                )
+            }
+            is InitialScreenState.Blocklisted -> {
+                stateMachine.updateScreenState(
+                    screenState,
+                    statusText = "Access Denied",
+                    descriptionText = "Please contact support",
+                    actionBtnText = null,
+                )
+            }
+            is InitialScreenState.ForceUpdate -> {
+                stateMachine.updateScreenState(
+                    screenState,
+                    statusText = "Update Required",
+                    descriptionText = "A new version is available to update!",
+                    actionBtnText = "Update",
+                )
+            }
+            is InitialScreenState.Maintenance -> {
+                stateMachine.updateScreenState(
+                    screenState,
+                    statusText = "Under Maintenance",
+                    descriptionText = null,
+                    actionBtnText = "Refresh",
+                )
+            }
+            is InitialScreenState.Home -> {
+                stateMachine.updateScreenState(
+                    screenState,
+                    statusText = "All Done",
+                    descriptionText = null,
+                    actionBtnText = null,
+                )
                 _navigation.update { SplashNavigationState.HomeScreen }
-            }.onFailure {
-                _message.update {
-                    SplashMessageState.ForceRefresh {
-                        clearAllData()
-                    }
-                }
             }
         }
     }
