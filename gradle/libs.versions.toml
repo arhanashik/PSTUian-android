@@ -33,7 +33,7 @@ workManager = "2.11.2"
 ktor = "3.4.2"
 documentFile = "1.0.1"
 
-coil-version = "3.4.0"
+coil-version = "3.0.4"
 firebase-bom = "33.1.1"
 firebase-kmm = "2.4.0"
 google-services-version = "4.4.4"
@@ -123,8 +123,8 @@ koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmo
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
 
 # Image Loader
-# coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
-coil3-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil-version" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil-version" }
+coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil-version" }
 
 # Animation
 compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }

@@ -9,11 +9,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.ui.blooddonationcreate.BloodDonationCreateScreen
 import com.workfort.pstuian.ui.blooddonationrequestcreate.BloodDonationRequestCreateScreen
 import com.workfort.pstuian.ui.blooddonationrequestlist.BloodDonationRequestListScreen
 import com.workfort.pstuian.ui.changepassword.ChangePasswordScreen
-import com.workfort.pstuian.ui.checkinlist.CheckInListScreen
+import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
 import com.workfort.pstuian.ui.contactus.ContactUsScreen
 import com.workfort.pstuian.ui.cvdownload.CvDownloadScreen
 import com.workfort.pstuian.ui.cvupload.CvUploadScreen
@@ -51,6 +50,8 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     navigator: AppNavigator = koinInject(),
 ) {
+    ProvideCoilImageLoader()
+
     LaunchedEffect(Unit) {
         navigator.events.collect { event ->
             when (event) {

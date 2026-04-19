@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImage
@@ -13,6 +14,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import coil3.compose.LocalPlatformContext
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import pstuian.feature_presentation.generated.resources.Res
@@ -71,11 +73,11 @@ fun LoadAsyncImage(
 private fun LoadAsyncImage(
     modifier: Modifier = Modifier,
     url: String?,
-    placeholder: androidx.compose.ui.graphics.painter.Painter,
+    placeholder: Painter,
     contentScale: ContentScale,
 ) {
     AsyncImage(
-        model = ImageRequest.Builder(coil3.compose.LocalPlatformContext.current)
+        model = ImageRequest.Builder(LocalPlatformContext.current)
             .data(url)
             .crossfade(true)
             .build(),
