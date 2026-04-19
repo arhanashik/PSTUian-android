@@ -27,9 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.offset
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ErrorText
 import com.workfort.pstuian.ui.common.composable.FacultyView
@@ -62,28 +60,14 @@ fun HomeContentPanel(
             .verticalScroll(rememberScrollState()),
     ) {
         // slider
-        Box(
+        SliderViewWrapper(
+            state = uiState.sliderState,
+            onUiEvent = onUiEvent,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(220.dp)
-                .layout { measurable, constraints ->
-                    // removing the horizontal padding set by parent
-                    val horizontalPadding = 16.dp.roundToPx()
-                    // measure the composable with the padding*2 (left+right)
-                    val placeable = measurable.measure(
-                        constraints.offset(horizontal = horizontalPadding * 2),
-                    )
-                    // reset the width by removing the padding*2
-                    layout(placeable.width - horizontalPadding * 2, placeable.height) {
-                        // place the composable
-                        placeable.place(-horizontalPadding, 0)
-                    }
-                }
-                .padding(top = 8.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            SliderViewWrapper(uiState.sliderState, onUiEvent)
-        }
+                .padding(top = 16.dp),
+        )
 
         Spacer(Modifier.height(16.dp))
 
@@ -180,26 +164,32 @@ fun HomeContentPanel(
 private fun SliderViewWrapper(
     state: HomeUiState.SliderState,
     onUiEvent: (HomeUiEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    when (state) {
-        is HomeUiState.SliderState.None -> Unit
-        is HomeUiState.SliderState.Loading -> {
-            SliderShimmer()
-        }
-        is HomeUiState.SliderState.Available -> {
-            SliderView(
-                sliders = state.sliders,
-                scrollPosition = state.scrollPosition,
-                onScrollSlider = {
-                    onUiEvent(HomeUiEvent.ScrollSlider(it))
-                },
-                onClickSlider = {
-                    onUiEvent(HomeUiEvent.SliderClicked(it))
-                },
-            )
-        }
-        is HomeUiState.SliderState.Error -> {
-            AnimatedErrorView(modifier = Modifier.width(150.dp))
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        when (state) {
+            is HomeUiState.SliderState.None -> Unit
+            is HomeUiState.SliderState.Loading -> {
+                SliderShimmer()
+            }
+            is HomeUiState.SliderState.Available -> {
+                SliderView(
+                    sliders = state.sliders,
+                    scrollPosition = state.scrollPosition,
+                    onScrollSlider = {
+                        onUiEvent(HomeUiEvent.ScrollSlider(it))
+                    },
+                    onClickSlider = {
+                        onUiEvent(HomeUiEvent.SliderClicked(it))
+                    },
+                )
+            }
+            is HomeUiState.SliderState.Error -> {
+                AnimatedErrorView(modifier = Modifier.width(150.dp))
+            }
         }
     }
 }
