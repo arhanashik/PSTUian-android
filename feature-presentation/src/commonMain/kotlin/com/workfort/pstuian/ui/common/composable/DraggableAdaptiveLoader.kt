@@ -23,8 +23,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
@@ -40,6 +44,7 @@ fun DraggableAdaptiveLoader(
     size: Dp = 40.dp,
     zIndex: Float = 1f,
     showAsOverLay: Boolean = false,
+    showFilledLoader: Boolean = true,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val offset = remember { Animatable(Offset(0f, 0f), Offset.VectorConverter) }
@@ -80,7 +85,11 @@ fun DraggableAdaptiveLoader(
                 },
             contentAlignment = Alignment.Center,
         ) {
-            AdaptiveCircularLoader(modifier = Modifier.size(size))
+            if (showFilledLoader) {
+                AdaptiveCircularLoader(modifier = Modifier.size(size))
+            } else {
+                SpiralCircularLoader(modifier = Modifier.size(size))
+            }
         }
     }
 }
@@ -105,14 +114,78 @@ fun AdaptiveCircularLoader(modifier: Modifier = Modifier) {
         Color(0xFFFF9500), // Orange
         Color(0xFFFFCC00), // Yellow
         Color(0xFF4CD964), // Green
-        Color(0xFF5AC8FA), // Back to Light Blue for seamless transition
+        Color(0xFF5AC8FA), // Back to Light Blue
     )
 
     Canvas(modifier = modifier.graphicsLayer { rotationZ = rotation }) {
-        drawCircle(
-            brush = Brush.sweepGradient(colors),
-            center = center,
-            radius = size.minDimension / 2
+        val layers = 40
+        val maxRadius = size.minDimension / 2
+        // Draw many overlapping circles with progressive rotation to create "bent" colors
+        for (i in 0 until layers) {
+            val progress = i.toFloat() / layers
+            val radius = maxRadius * (1f - progress)
+            // Twist effect: inner layers are rotated more than outer layers
+            val twist = progress * 60f
+            rotate(twist) {
+                drawCircle(
+                    brush = Brush.sweepGradient(colors),
+                    radius = radius,
+                    center = center
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SpiralCircularLoader(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = LinearEasing)
         )
+    )
+
+    val colors = listOf(
+        Color(0xFF5AC8FA), // Light Blue
+        Color(0xFF5856D6), // Blue
+        Color(0xFFAF52DE), // Purple
+        Color(0xFFFF2D55), // Pink
+        Color(0xFFFF3B30), // Red
+        Color(0xFFFF9500), // Orange
+        Color(0xFFFFCC00), // Yellow
+        Color(0xFF4CD964), // Green
+        Color(0xFF5AC8FA), // Back to Light Blue
+    )
+
+    Canvas(modifier = modifier.graphicsLayer { rotationZ = rotation }) {
+        val strokeWidth = size.minDimension * 0.15f
+        val arcSize = size.minDimension - strokeWidth
+        
+        // Create a "bent" spiral effect by drawing multiple layers with progressive rotation
+        val layers = 24
+        for (i in 0 until layers) {
+            val progress = i.toFloat() / layers
+            // Twist effect: inner layers are rotated more than outer layers
+            val twist = progress * 60f 
+            val layerSize = arcSize - (progress * strokeWidth * 0.6f)
+            
+            rotate(twist) {
+                drawArc(
+                    brush = Brush.sweepGradient(colors),
+                    startAngle = 0f,
+                    sweepAngle = 360f,
+                    useCenter = false,
+                    topLeft = Offset(
+                        x = (size.width - layerSize) / 2,
+                        y = (size.height - layerSize) / 2
+                    ),
+                    size = Size(layerSize, layerSize),
+                    style = Stroke(width = strokeWidth / layers * 2.5f, cap = StrokeCap.Round)
+                )
+            }
+        }
     }
 }

@@ -28,7 +28,7 @@ class SplashViewModel(
     val navigation: StateFlow<SplashNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {
-        refreshConfig()
+//        refreshConfig()
     }
 
     fun onUiEvent(event: SplashUiEvent) {
