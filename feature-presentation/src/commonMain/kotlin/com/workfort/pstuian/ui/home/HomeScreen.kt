@@ -1,34 +1,20 @@
 package com.workfort.pstuian.ui.home
 
-import androidx.compose.foundation.clickable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NotificationsActive
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppBarIconButton
-import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
-import com.workfort.pstuian.ui.home.composable.HomeContentPanel
+import com.workfort.pstuian.ui.home.composable.HomeScreenContent
 import com.workfort.pstuian.ui.home.state.HomeMessageState
 import com.workfort.pstuian.ui.home.state.HomeNavigationState
 import com.workfort.pstuian.ui.home.state.HomeUiEvent
-import com.workfort.pstuian.ui.home.state.HomeUiState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.app_name
 import pstuian.feature_presentation.generated.resources.data_clear_message
 import pstuian.feature_presentation.generated.resources.label_are_you_sure
 import pstuian.feature_presentation.generated.resources.msg_request_notification_permission
@@ -48,59 +34,6 @@ fun HomeScreen(viewModel: HomeViewModel) {
 
     HandleMessageState(message, viewModel::onUiEvent, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun HomeScreenContent(
-    uiState: HomeUiState,
-    onUiEvent: (HomeUiEvent) -> Unit,
-) {
-    AppScaffold (
-        topBar = {
-            AppBar(
-                title = stringResource(Res.string.app_name),
-                actions = {
-                    // load signed in user
-                    (uiState as? HomeUiState.Content)?.let {
-                        ProfileView(uiState.profileState, onUiEvent)
-                    }
-
-                    AppBarIconButton(
-                        icon = Icons.Default.NotificationsActive,
-                        onClick = { onUiEvent(HomeUiEvent.NotificationClicked) },
-                    )
-                },
-            )
-        }
-    ) {
-        when (uiState) {
-            is HomeUiState.None -> Unit
-            is HomeUiState.Content -> HomeContentPanel(uiState, onUiEvent)
-        }
-    }
-}
-
-@Composable
-private fun ProfileView(state: HomeUiState.ProfileState, onUiEvent: (HomeUiEvent) -> Unit) {
-    when (state) {
-        is HomeUiState.ProfileState.None -> Unit
-        is HomeUiState.ProfileState.Loading -> Unit
-        is HomeUiState.ProfileState.Available -> {
-            LoadAsyncUserImage(
-                modifier = Modifier.clickable {
-                    onUiEvent(HomeUiEvent.UserProfileClicked)
-                },
-                url = state.user.imageUrl,
-                size = 24.dp,
-            )
-        }
-        is HomeUiState.ProfileState.Error -> {
-            TextButton(onClick = { onUiEvent(HomeUiEvent.SignInClicked) }) {
-                Text(text = stringResource(Res.string.txt_sign_in))
-            }
-        }
-    }
 }
 
 @Composable

@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,8 +38,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,7 +54,8 @@ import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import kotlinx.coroutines.delay
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.img_placeholder_profile
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
 import kotlin.math.absoluteValue
 
 
@@ -119,8 +126,8 @@ fun SliderView(
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
             state = pagerState,
-            contentPadding = PaddingValues(horizontal = 64.dp),
-            pageSpacing = 16.dp,
+            contentPadding = PaddingValues(horizontal = 48.dp),
+            pageSpacing = 24.dp,
         ) { page ->
             val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction)
             val absOffset = pageOffset.absoluteValue
@@ -131,30 +138,36 @@ fun SliderView(
                     .graphicsLayer {
                         // Scale effect for the card
                         val scaleXEffect = lerp(
-                            start = 0.92f,
+                            start = 0.9f,
                             stop = 1f,
                             fraction = 1f - absOffset.coerceIn(0f, 1f)
                         )
                         val scaleYEffect = lerp(
-                            start = 0.85f, // Balanced height for side slides
+                            start = 0.8f, // Slightly less height for side slides
                             stop = 1f,
                             fraction = 1f - absOffset.coerceIn(0f, 1f)
                         )
                         scaleX = scaleXEffect
                         scaleY = scaleYEffect
 
-                        // Alpha effect - side slides are now even more visible
+                        // Alpha effect
                         alpha = lerp(
-                            start = 0.8f,
+                            start = 0.7f,
                             stop = 1f,
                             fraction = 1f - absOffset.coerceIn(0f, 1f)
                         )
 
-                        // Rotation effect for 3D feel - slightly reduced for better visibility
-                        rotationY = pageOffset * -10f
+                        // Rotation effect for "bended" look
+                        // We shift the pivot to the inner edge (closer to center) to bring it "front"
+                        val pivotX = if (pageOffset > 0) 1f else if (pageOffset < 0) 0f else 0.5f
+                        transformOrigin = TransformOrigin(pivotX, 0.5f)
+                        rotationY = pageOffset * -45f
 
-                        // Camera distance for 3D perspective
-                        cameraDistance = 12f * density
+                        // Camera distance for 3D perspective - smaller value makes it more dramatic
+                        cameraDistance = 8f * density
+
+                        // Slightly pull side cards towards the center to emphasize the bend
+                        translationX = pageOffset * 20f
                     }
                     .clickable {
                         onClickSlider(sliders[page])
@@ -169,15 +182,36 @@ fun SliderView(
                         stop = 1.3f,
                         fraction = 1f - absOffset.coerceIn(0f, 1f)
                     )
-                    LoadAsyncImage(
-                        url = sliders[page].imageUrl,
-                        placeholder = Res.drawable.img_placeholder_profile,
+
+                    // Better placeholder: centered icon with gray background
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(Color.LightGray.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Image,
+                            contentDescription = null,
+                            tint = Color.Gray.copy(alpha = 0.3f),
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalPlatformContext.current)
+                            .data(sliders[page].imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .matchParentSize()
                             .graphicsLayer {
                                 scaleX = imageScale
                                 scaleY = imageScale
+                                // Parallax effect
+                                translationX = pageOffset * 40f
                             },
                     )
 
@@ -196,6 +230,9 @@ fun SliderView(
                                     )
                                 )
                             )
+                            .graphicsLayer {
+                                alpha = 1f - absOffset.coerceIn(0f, 1f)
+                            }
                     )
 
                     // Bottom scrim for overall aesthetics
@@ -223,6 +260,11 @@ fun SliderView(
                             modifier = Modifier
                                 .align(Alignment.TopCenter)
                                 .padding(16.dp)
+                                .graphicsLayer {
+                                    // Fade and slide animation for title
+                                    alpha = 1f - (absOffset * 2f).coerceIn(0f, 1f)
+                                    translationY = -absOffset * 40f
+                                }
                         )
                     }
                 }
@@ -237,22 +279,19 @@ fun SliderView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             repeat(pagerState.pageCount) { iteration ->
-                val isSelected = pagerState.currentPage == iteration
-                val width by animateDpAsState(
-                    targetValue = if (isSelected) 16.dp else 6.dp,
-                    label = "width"
-                )
-                val color by animateColorAsState(
-                    targetValue = if (isSelected) AppColors.primary else Color.LightGray.copy(alpha = 0.5f),
-                    label = "color"
-                )
+                val pageOffset = (pagerState.currentPage - iteration) + pagerState.currentPageOffsetFraction
+                val absOffset = pageOffset.absoluteValue
+                val fraction = (1f - absOffset).coerceIn(0f, 1f)
+
+                val dotWidth = androidx.compose.ui.unit.lerp(6.dp, 16.dp, fraction)
+                val dotColor = androidx.compose.ui.graphics.lerp(Color.LightGray.copy(alpha = 0.5f), AppColors.primary, fraction)
 
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 3.dp)
                         .clip(CircleShape)
-                        .background(color)
-                        .size(width = width, height = 6.dp)
+                        .background(dotColor)
+                        .size(width = dotWidth, height = 6.dp)
                 )
             }
         }
