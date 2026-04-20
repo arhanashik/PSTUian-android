@@ -40,7 +40,7 @@ private fun HandleNavigationState(
         navigationState?.let {
             when (it) {
                 is SplashNavigationState.HomeScreen -> {
-                    navigator?.resetTo(AppScreen.Home)
+                    navigator?.resetAll(AppScreen.Home)
                 }
             }
             onNavigationHandled()

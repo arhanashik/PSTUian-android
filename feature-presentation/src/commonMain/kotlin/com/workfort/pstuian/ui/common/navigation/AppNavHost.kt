@@ -63,7 +63,22 @@ fun AppNavHost(
                             navController.navigate(event.screen)
                         }
 
-                        is NavEvent.NavigateAndClearStack -> {
+                        is NavEvent.ResetTo -> {
+                            navController.navigate(event.screen) {
+                                popUpTo(event.screen) { inclusive = false }
+                            }
+                        }
+
+                        is NavEvent.ReplaceWith -> {
+                            val currentDestination = navController.currentDestination
+                            navController.navigate(event.screen) {
+                                if (currentDestination != null) {
+                                    popUpTo(currentDestination.id) { inclusive = true }
+                                }
+                            }
+                        }
+
+                        is NavEvent.ResetAll -> {
                             navController.navigate(event.screen) {
                                 popUpTo(0) { inclusive = true }
                             }
