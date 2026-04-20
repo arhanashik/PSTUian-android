@@ -8,7 +8,6 @@ import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.SliderEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class HomeViewModel(
-    private val authRepo: AuthRepository,
     private val sliderRepo: SliderRepository,
     private val facultyRepo: FacultyRepository,
     private val sharedScreenData: SharedScreenData,
@@ -85,10 +83,7 @@ class HomeViewModel(
         }
     }
 
-    private fun isSignedInUser(): Boolean {
-        val state = uiState.value
-        return state is HomeUiState.Content && state.profileState is HomeUiState.ProfileState.Available
-    }
+    private fun isSignedInUser(): Boolean = sharedScreenData.getCurrentUser() != null
 
     fun onMessageHandled() {
         _message.update { null }
@@ -99,7 +94,6 @@ class HomeViewModel(
     }
 
     private fun onClickSignIn() {
-        onMessageHandled()
         _navigation.update { HomeNavigationState.SignInScreen }
     }
 
@@ -108,9 +102,10 @@ class HomeViewModel(
     }
 
     private fun onClickUserProfile() {
-        val state = uiState.value
-        if (state is HomeUiState.Content && state.profileState is HomeUiState.ProfileState.Available) {
-            val user = state.profileState.user
+        val user = sharedScreenData.getCurrentUser()
+        if (user == null) {
+            _message.update { HomeMessageState.SignInNecessary }
+        } else {
             val userType = when (user) {
                 is User.Student -> UserType.STUDENT
                 is User.Teacher -> UserType.TEACHER
@@ -214,8 +209,7 @@ class HomeViewModel(
     }
 
     fun getUserProfile() {
-        val user = sharedScreenData.getCurrentUser() ?: return
-        uiStateMachine.showProfile(user)
+        uiStateMachine.showProfile(sharedScreenData.getCurrentUser()?.imageUrl)
     }
 
     fun clearAllData() {

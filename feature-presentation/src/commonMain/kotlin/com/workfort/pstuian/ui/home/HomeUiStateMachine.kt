@@ -2,7 +2,6 @@ package com.workfort.pstuian.ui.home
 
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.SliderEntity
-import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.home.state.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +14,7 @@ class HomeUiStateMachine : UiStateMachine<HomeUiState> {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.None)
     override val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private fun updateUiState(
-        updater: HomeUiState.() -> HomeUiState,
-    ) = _uiState.update(updater)
+    private fun updateUiState(updater: HomeUiState.() -> HomeUiState) = _uiState.update(updater)
 
     fun setInitialContent() = updateUiState {
         HomeUiState.Content()
@@ -33,16 +30,8 @@ class HomeUiStateMachine : UiStateMachine<HomeUiState> {
         }
     }
 
-    fun showProfileLoading() = updateContent {
-        copy(profileState = HomeUiState.ProfileState.Loading)
-    }
-
-    fun showProfile(user: User) = updateContent {
-        copy(profileState = HomeUiState.ProfileState.Available(user))
-    }
-
-    fun showProfileError(message: String) = updateContent {
-        copy(profileState = HomeUiState.ProfileState.Error(message))
+    fun showProfile(imageUrl: String?) = updateContent {
+        copy(profileImageUrl = imageUrl)
     }
 
     fun showSliderLoading() = updateContent {

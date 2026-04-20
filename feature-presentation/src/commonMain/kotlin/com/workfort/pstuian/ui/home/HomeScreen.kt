@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.home.composable.HomeScreenContent
 import com.workfort.pstuian.ui.home.state.HomeMessageState
 import com.workfort.pstuian.ui.home.state.HomeNavigationState
@@ -103,16 +102,16 @@ private fun HandleNavigationState(
                     // TODO navigate to splash
                 }
                 is HomeNavigationState.SignInScreen -> {
-                    navigator?.navigateTo(AppScreen.SignIn)
+                    navigator?.navigateToSignIn()
                 }
                 is HomeNavigationState.GoToProfileScreen -> {
-                    navigator?.navigateTo(AppScreen.Profile(it.userId, it.userType))
+                    navigator?.navigateToProfile(it.userId, it.userType)
                 }
                 is HomeNavigationState.NotificationScreen -> {
                     // TODO navigate to notification
                 }
                 is HomeNavigationState.FacultyScreen -> {
-                     navigator?.navigateTo(AppScreen.Faculty(it.faculty.id))
+                     navigator?.navigateToFaculty(it.faculty.id)
                 }
                 is HomeNavigationState.ImagePreviewScreen -> {
                     // TODO navigate to image preview
@@ -121,19 +120,19 @@ private fun HandleNavigationState(
                     // TODO navigate to contact us
                 }
                 is HomeNavigationState.DonorsScreen -> {
-                    navigator?.navigateTo(AppScreen.BloodDonationRequestList)
+                    navigator?.navigateToBloodDonationRequestList()
                 }
                 is HomeNavigationState.BloodDonationRequestScreen -> {
-                    navigator?.navigateTo(AppScreen.BloodDonationRequestCreate)
+                    navigator?.navigateToBloodDonationRequestCreate()
                 }
                 is HomeNavigationState.CheckInScreen -> {
                     // TODO navigate to check in
                 }
                 is HomeNavigationState.DonateScreen -> {
-                    navigator?.navigateTo(AppScreen.Donate)
+                    navigator?.navigateToDonate()
                 }
                 is HomeNavigationState.SettingsScreen -> {
-                    navigator?.navigateTo(AppScreen.Settings)
+                    navigator?.navigateToSettings()
                 }
                 is HomeNavigationState.Browser -> {
                     // TODO open browser

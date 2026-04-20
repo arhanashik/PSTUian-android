@@ -31,13 +31,9 @@ fun SignInScreen(viewModel: SignInViewModel) {
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
 
-    SignInScreenContent(
-        uiState = uiState,
-        onUiEvent = viewModel::onUiEvent,
-    )
+    SignInScreenContent(uiState = uiState, onUiEvent = viewModel::onUiEvent)
 
     HandleMessageState(message, viewModel::onUiEvent)
-
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
