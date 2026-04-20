@@ -19,7 +19,6 @@
 		2F3A2090FBCF81687B1D3196 /* Pods-pstuian.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pstuian.release.xcconfig"; path = "Target Support Files/Pods-pstuian/Pods-pstuian.release.xcconfig"; sourceTree = "<group>"; };
 		4170870D13257C7497CC905B /* Pods-pstuian.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pstuian.debug.xcconfig"; path = "Target Support Files/Pods-pstuian/Pods-pstuian.debug.xcconfig"; sourceTree = "<group>"; };
 		D4F743088AEC4F254FEE554A /* Pods_pstuian.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_pstuian.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE5958A22F9645C800C8060E /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Pods.xcodeproj; sourceTree = "<group>"; };
 		EE7F4E9A2F90329B00C35115 /* pstuian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pstuian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEC8D9C02F96487E00956350 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EEC8D9C12F96487E00956350 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -60,13 +59,6 @@
 				D4F743088AEC4F254FEE554A /* Pods_pstuian.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		EE5958B02F9645C800C8060E /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		EE7F4E912F90329B00C35115 = {
@@ -147,10 +139,6 @@
 			productRefGroup = EE7F4E9B2F90329B00C35115 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
-				{
-					ProductGroup = EE5958B02F9645C800C8060E /* Products */;
-					ProjectRef = EE5958A22F9645C800C8060E /* Pods.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -377,8 +365,12 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8WJFWCZXP2;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
