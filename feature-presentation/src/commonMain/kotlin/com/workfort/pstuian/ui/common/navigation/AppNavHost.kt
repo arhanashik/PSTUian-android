@@ -63,6 +63,12 @@ fun AppNavHost(
                             navController.navigate(event.screen)
                         }
 
+                        is NavEvent.NavigateAndClearStack -> {
+                            navController.navigate(event.screen) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+
                         is NavEvent.Back -> {
                             navController.popBackStack()
                         }
