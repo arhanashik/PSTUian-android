@@ -17,11 +17,13 @@ import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.DraggableAdaptiveLoader
+import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.app_name
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SplashContentPanel(
@@ -59,7 +61,7 @@ private fun DefaultSplashContent(loadingText: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 48.dp)
+                .padding(bottom = 48.dp),
         ) {
             Text(
                 text = stringResource(Res.string.app_name),
@@ -76,5 +78,50 @@ private fun DefaultSplashContent(loadingText: String) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun SplashContentPanelLoadingPreview() {
+    AppTheme {
+        SplashContentPanel(
+            state = SplashUiState(
+                statusText = "Checking for updates..."
+            ),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SplashContentPanelErrorPreview() {
+    AppTheme {
+        SplashContentPanel(
+            state = SplashUiState(
+                screenState = InitialScreenState.MissingConfig,
+                statusText = "Error",
+                descriptionText = "Something went wrong. Please try again later.",
+                actionBtnText = "Retry"
+            ),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SplashContentPanelMaintenancePreview() {
+    AppTheme {
+        SplashContentPanel(
+            state = SplashUiState(
+                screenState = InitialScreenState.Maintenance(600000.0),
+                statusText = "Maintenance Mode",
+                descriptionText = "The server is currently under maintenance. Please check back later.",
+                actionBtnText = "OK"
+            ),
+            onEvent = {}
+        )
     }
 }
