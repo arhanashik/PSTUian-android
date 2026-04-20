@@ -173,7 +173,9 @@ fun SliderView(
                         onClickSlider(sliders[page])
                     },
                 shape = RoundedCornerShape(24.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = androidx.compose.ui.unit.lerp(2.dp, 10.dp, 1f - absOffset.coerceIn(0f, 1f))
+                ),
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // Zoom effect for the image inside the frame
