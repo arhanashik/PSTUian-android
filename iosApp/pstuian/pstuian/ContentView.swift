@@ -1,5 +1,5 @@
 import SwiftUI
-import shared
+import feature_presentation
 
 struct ContentView: View {
     var body: some View {
@@ -10,7 +10,7 @@ struct ContentView: View {
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController()
+        IOSBridge().mainViewController()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

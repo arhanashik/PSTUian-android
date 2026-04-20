@@ -31,27 +31,6 @@
             android:usesCleartextTraffic="true"
             tools:ignore="DiscouragedApi,GoogleAppIndexingWarning,UnusedAttribute">
 
-        <!--    Firebase service    -->
-        <service
-                android:name=".app.firebase.FcmMessagingService"
-                android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <!-- Set custom default icon. -->
-<!--        <meta-data-->
-<!--                android:name="com.google.firebase.messaging.default_notification_icon"-->
-<!--                android:resource="@drawable/ic_bell_filled" />-->
-        <!-- Set color used with incoming notification messages. -->
-        <meta-data
-                android:name="com.google.firebase.messaging.default_notification_color"
-                android:resource="@color/colorAccent" />
-        <!--    Default notification channel    -->
-        <meta-data
-                android:name="com.google.firebase.messaging.default_notification_channel_id"
-                android:value="@string/default_notification_channel_id" />
-
         <activity
                 android:name=".app.ui.MainActivity"
                 android:exported="true">

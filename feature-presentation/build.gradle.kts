@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    id("org.jetbrains.kotlin.native.cocoapods")
 }
 
 compose.resources {
@@ -17,17 +18,24 @@ kotlin {
         }
     }
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "shared"
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+    cocoapods {
+        version = "1.0.0"
+        summary = "Shared module for PSTUian"
+        homepage = "https://github.com/workfort/PSTUian-android"
+        ios.deploymentTarget = "16.0"
+        framework {
+            baseName = "feature_presentation"
             isStatic = true
-            // Export modules to make them visible in Swift
-            export(project(":feature-domain"))
         }
+        pod("FirebaseCore")
+        pod("FirebaseAuth")
+        pod("FirebaseFirestore")
+        pod("FirebaseDatabase")
+        pod("FirebaseMessaging")
     }
 
     sourceSets {
@@ -65,6 +73,10 @@ kotlin {
 
                 // Logging
                 implementation(libs.napier)
+
+                // ✅ GitLive Firebase (KMM wrapper)
+                implementation(libs.firebase.kmm.auth)
+                implementation(libs.firebase.kmm.firestore)
             }
         }
         commonMain.resources.srcDirs("src/commonMain/composeResources")

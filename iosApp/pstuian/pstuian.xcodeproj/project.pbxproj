@@ -8,9 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		EE7F4EAA2F903AB900C35115 /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EE7F4EA92F903AB900C35115 /* Shared.xcconfig */; };
+		F00F71CDCD1EDB1D342E6B67 /* Pods_pstuian.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F743088AEC4F254FEE554A /* Pods_pstuian.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F3A2090FBCF81687B1D3196 /* Pods-pstuian.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pstuian.release.xcconfig"; path = "Target Support Files/Pods-pstuian/Pods-pstuian.release.xcconfig"; sourceTree = "<group>"; };
+		4170870D13257C7497CC905B /* Pods-pstuian.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pstuian.debug.xcconfig"; path = "Target Support Files/Pods-pstuian/Pods-pstuian.debug.xcconfig"; sourceTree = "<group>"; };
+		D4F743088AEC4F254FEE554A /* Pods_pstuian.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_pstuian.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7F4E9A2F90329B00C35115 /* pstuian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pstuian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7F4EA92F903AB900C35115 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -18,6 +22,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		EE7F4E9C2F90329B00C35115 /* pstuian */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = pstuian;
 			sourceTree = "<group>";
 		};
@@ -28,18 +34,38 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F00F71CDCD1EDB1D342E6B67 /* Pods_pstuian.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		165CBFC6F47434A4FFD2CFD6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4170870D13257C7497CC905B /* Pods-pstuian.debug.xcconfig */,
+				2F3A2090FBCF81687B1D3196 /* Pods-pstuian.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		734F11F34EA0E6F2019DA562 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D4F743088AEC4F254FEE554A /* Pods_pstuian.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		EE7F4E912F90329B00C35115 = {
 			isa = PBXGroup;
 			children = (
 				EE7F4E9C2F90329B00C35115 /* pstuian */,
 				EE7F4E9B2F90329B00C35115 /* Products */,
 				EE7F4EA92F903AB900C35115 /* Shared.xcconfig */,
+				165CBFC6F47434A4FFD2CFD6 /* Pods */,
+				734F11F34EA0E6F2019DA562 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,10 +84,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EE7F4EA52F90329D00C35115 /* Build configuration list for PBXNativeTarget "pstuian" */;
 			buildPhases = (
-				EE7F4EA82F9038EA00C35115 /* Connect KMM Framework */,
+				504D2E1BE04BC2E1358A5E6A /* [CP] Check Pods Manifest.lock */,
 				EE7F4E962F90329B00C35115 /* Sources */,
 				EE7F4E972F90329B00C35115 /* Frameworks */,
 				EE7F4E982F90329B00C35115 /* Resources */,
+				7DEA867B953407F791305C9E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -71,8 +98,6 @@
 				EE7F4E9C2F90329B00C35115 /* pstuian */,
 			);
 			name = pstuian;
-			packageProductDependencies = (
-			);
 			productName = pstuian;
 			productReference = EE7F4E9A2F90329B00C35115 /* pstuian.app */;
 			productType = "com.apple.product-type.application";
@@ -123,7 +148,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		EE7F4EA82F9038EA00C35115 /* Connect KMM Framework */ = {
+		504D2E1BE04BC2E1358A5E6A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -131,15 +156,36 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
-			name = "Connect KMM Framework";
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-pstuian-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "    cd \"$SRCROOT/../..\"\n    ./gradlew :feature-presentation:embedAndSignAppleFrameworkForXcode\n    \n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7DEA867B953407F791305C9E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-pstuian/Pods-pstuian-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-pstuian/Pods-pstuian-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-pstuian/Pods-pstuian-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -277,7 +323,7 @@
 		};
 		EE7F4EA62F90329D00C35115 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EE7F4EA92F903AB900C35115 /* Shared.xcconfig */;
+			baseConfigurationReference = 4170870D13257C7497CC905B /* Pods-pstuian.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -313,7 +359,7 @@
 		};
 		EE7F4EA72F90329D00C35115 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EE7F4EA92F903AB900C35115 /* Shared.xcconfig */;
+			baseConfigurationReference = 2F3A2090FBCF81687B1D3196 /* Pods-pstuian.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
