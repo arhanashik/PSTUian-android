@@ -24,7 +24,9 @@ object KtorClientFactory {
                     prettyPrint = true
                     isLenient = true
                 }
-                json(json)
+                json(json, contentType = ContentType.Application.Json)
+                json(json, contentType = ContentType.Text.Html)
+                json(json, contentType = ContentType.parse("text/html; charset=UTF-8"))
             }
             
             install(Logging) {
