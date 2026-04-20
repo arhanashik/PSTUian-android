@@ -54,18 +54,21 @@ import pstuian.feature_presentation.generated.resources.txt_verify_now
 
 @Composable
 fun SignInContentPanel(
-    modifier: Modifier = Modifier,
     uiState: SignInUiState,
     onUiEvent: (SignInUiEvent) -> Unit,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxSize(),
-    ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            SignInFormContent(Modifier, uiState.userType, onUiEvent)
-            SignInFooterContent(Modifier, onUiEvent)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            SignInFormContent(uiState.userType, onUiEvent)
+            SignInFooterContent(onUiEvent)
         }
+
         if (uiState.isLoading) {
             ShowLoaderDialog()
         }
@@ -74,7 +77,6 @@ fun SignInContentPanel(
 
 @Composable
 private fun SignInFormContent(
-    modifier: Modifier = Modifier,
     userType: UserType?,
     onUiEvent: (SignInUiEvent) -> Unit,
 ) {
@@ -125,8 +127,8 @@ private fun SignInFormContent(
     }
 
     Column(
-        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         MaterialButtonToggleGroup(
             items = userTypes,
@@ -216,14 +218,8 @@ private fun SignInFormContent(
 }
 
 @Composable
-private fun SignInFooterContent(
-    modifier: Modifier = Modifier,
-    onUiEvent: (SignInUiEvent) -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+private fun SignInFooterContent(onUiEvent: (SignInUiEvent) -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         HorizontalDividerWithLabel(
             modifier = Modifier.padding(vertical = 16.dp),
             label = stringResource(Res.string.txt_or)

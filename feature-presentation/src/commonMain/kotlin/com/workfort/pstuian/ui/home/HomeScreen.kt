@@ -49,6 +49,7 @@ private fun HandleMessageState(
                     message = stringResource(Res.string.msg_sign_in_required),
                     confirmButtonText = stringResource(Res.string.txt_sign_in),
                     onConfirm = {
+                        onMessageHandled()
                         onUiEvent(HomeUiEvent.SignInClicked)
                     },
                     onDismiss = onMessageHandled,
