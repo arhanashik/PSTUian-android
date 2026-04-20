@@ -3,6 +3,8 @@ package com.workfort.pstuian.ui.common.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.Surface
+import com.workfort.pstuian.ui.common.theme.AppTheme
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,209 +54,217 @@ fun AppNavHost(
 ) {
     ProvideCoilImageLoader()
 
-    LaunchedEffect(Unit) {
-        navigator.events.collect { event ->
-            when (event) {
-                is NavEvent.Navigate -> {
-                    navController.navigate(event.screen)
-                }
-                is NavEvent.Back -> {
-                    navController.popBackStack()
-                }
-                is NavEvent.PopToRoot -> {
-                    navController.popBackStack<AppScreen.Splash>(inclusive = false)
-                }
-            }
-        }
-    }
+    AppTheme {
+        Surface {
+            LaunchedEffect(Unit) {
+                navigator.events.collect { event ->
+                    when (event) {
+                        is NavEvent.Navigate -> {
+                            navController.navigate(event.screen)
+                        }
 
-    NavHost(
-        navController = navController,
-        startDestination = AppScreen.Splash,
-        modifier = modifier,
-        typeMap = navTypeMap,
-    ) {
-        composable<AppScreen.Splash> {
-            SplashScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.SignIn> {
-            SignInScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.SignUp> {
-            SignUpScreen(
-                viewModel = koinViewModel(),
-                facultyId = null,
-                batchId = null,
-            )
-        }
-        composable<AppScreen.ChangePassword> {
-            ChangePasswordScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.ForgotPassword> {
-            ForgotPasswordScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.EmailVerification> {
-            EmailVerificationScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.ContactUs> {
-            ContactUsScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.Home> {
-            HomeScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.Students> { backStackEntry ->
-            val screen: AppScreen.Students = backStackEntry.toRoute()
-            StudentsScreen(viewModel = koinViewModel { parametersOf(screen.batchId) })
-        }
-        composable<AppScreen.Teachers> { backStackEntry ->
-            val screen: AppScreen.Teachers = backStackEntry.toRoute()
-            TeacherProfileScreen(viewModel = koinViewModel { parametersOf(screen.userId) })
-        }
-        composable<AppScreen.Employees> { backStackEntry ->
-            val screen: AppScreen.Employees = backStackEntry.toRoute()
-            EmployeeProfileScreen(viewModel = koinViewModel { parametersOf(screen.userId) })
-        }
-        composable<AppScreen.BloodDonationRequestList> {
-            BloodDonationRequestListScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.BloodDonationRequestCreate> {
-            BloodDonationRequestCreateScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.BloodDonationRequestEdit> {
-             // TODO: Need Screen for BloodDonationRequestEdit
-        }
-        composable<AppScreen.Profile>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.Profile = backStackEntry.toRoute()
-            when (screen.userType) {
-                UserType.STUDENT -> StudentProfileScreen(
-                    viewModel = koinViewModel { parametersOf(screen.userId) }
-                )
-                UserType.TEACHER -> TeacherProfileScreen(
-                    viewModel = koinViewModel { parametersOf(screen.userId) }
-                )
-                UserType.EMPLOYEE -> EmployeeProfileScreen(
-                    viewModel = koinViewModel { parametersOf(screen.userId) }
-                )
-            }
-        }
-        composable<AppScreen.MyBloodDonationList>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.MyBloodDonationList = backStackEntry.toRoute()
-            MyBloodDonationListScreen(
-                viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
-            )
-        }
-        composable<AppScreen.MyCheckInList>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.MyCheckInList = backStackEntry.toRoute()
-            MyCheckInListScreen(
-                viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
-            )
-        }
-        composable<AppScreen.MyDeviceList>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.MyDeviceList = backStackEntry.toRoute()
-            MyDeviceListScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.StudentProfileEdit>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.StudentProfileEdit = backStackEntry.toRoute()
-            StudentProfileEditScreen(
-                viewModel = koinViewModel { parametersOf(screen.userId, screen.action) }
-            )
-        }
-        composable<AppScreen.TeacherProfileEdit>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.TeacherProfileEdit = backStackEntry.toRoute()
-            TeacherProfileEditScreen(
-                viewModel = koinViewModel { parametersOf(screen.userId, screen.action) }
-            )
-        }
-        composable<AppScreen.EmployeeProfileEdit>(
-            typeMap = navTypeMap
-        ) {
-            // TODO: Need Screen for EmployeeProfileEdit
-        }
-        composable<AppScreen.DeleteAccount>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.DeleteAccount = backStackEntry.toRoute()
-            DeleteAccountScreen(
-                viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
-            )
-        }
-        composable<AppScreen.LocationPicker> {
-             LocationPickerScreen(
-                 viewModel = koinViewModel(),
-                 navController = navController,
-             )
-        }
-        composable<AppScreen.Donate> {
-            DonateScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.FacultyPicker>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.FacultyPicker = backStackEntry.toRoute()
-            FacultyPickerScreen(
-                viewModel = koinViewModel {
-                    parametersOf(screen.mode, screen.facultyId ?: -1, screen.batchId ?: -1)
-                },
-                navController = navController,
-            )
-        }
-        composable<AppScreen.ImageUpload>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.ImageUpload = backStackEntry.toRoute()
-            ImageUploadScreen(
-                viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
-            )
-        }
-        composable<AppScreen.ImagePreview> { backStackEntry ->
-            val screen: AppScreen.ImagePreview = backStackEntry.toRoute()
-            ImagePreviewScreen(
-                imageUrl = screen.encodedImageUrl,
-                onBack = { navController.popBackStack() }
-            )
-        }
-        composable<AppScreen.DownloadCv>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.DownloadCv = backStackEntry.toRoute()
-            CvDownloadScreen(
-                viewModel = koinViewModel {
-                    parametersOf(screen.userId, screen.userType, screen.url)
+                        is NavEvent.Back -> {
+                            navController.popBackStack()
+                        }
+
+                        is NavEvent.PopToRoot -> {
+                            navController.popBackStack<AppScreen.Splash>(inclusive = false)
+                        }
+                    }
                 }
-            )
-        }
-        composable<AppScreen.UploadCv>(
-            typeMap = navTypeMap
-        ) { backStackEntry ->
-            val screen: AppScreen.UploadCv = backStackEntry.toRoute()
-            CvUploadScreen(
-                viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
-            )
-        }
-        composable<AppScreen.Settings> {
-            SettingsScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.Faculty> { backStackEntry ->
-            val screen: AppScreen.Faculty = backStackEntry.toRoute()
-            FacultyScreen(viewModel = koinViewModel { parametersOf(screen.facultyId) })
-        }
-        composable<AppScreen.Donors> {
-            DonorsScreen(viewModel = koinViewModel())
-        }
-        composable<AppScreen.Notification> {
-            // TODO: Need Screen for Notification
+            }
+
+            NavHost(
+                navController = navController,
+                startDestination = AppScreen.Splash,
+                modifier = modifier,
+                typeMap = navTypeMap,
+            ) {
+                composable<AppScreen.Splash> {
+                    SplashScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.SignIn> {
+                    SignInScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.SignUp> {
+                    SignUpScreen(
+                        viewModel = koinViewModel(),
+                        facultyId = null,
+                        batchId = null,
+                    )
+                }
+                composable<AppScreen.ChangePassword> {
+                    ChangePasswordScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.ForgotPassword> {
+                    ForgotPasswordScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.EmailVerification> {
+                    EmailVerificationScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.ContactUs> {
+                    ContactUsScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.Home> {
+                    HomeScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.Students> { backStackEntry ->
+                    val screen: AppScreen.Students = backStackEntry.toRoute()
+                    StudentsScreen(viewModel = koinViewModel { parametersOf(screen.batchId) })
+                }
+                composable<AppScreen.Teachers> { backStackEntry ->
+                    val screen: AppScreen.Teachers = backStackEntry.toRoute()
+                    TeacherProfileScreen(viewModel = koinViewModel { parametersOf(screen.userId) })
+                }
+                composable<AppScreen.Employees> { backStackEntry ->
+                    val screen: AppScreen.Employees = backStackEntry.toRoute()
+                    EmployeeProfileScreen(viewModel = koinViewModel { parametersOf(screen.userId) })
+                }
+                composable<AppScreen.BloodDonationRequestList> {
+                    BloodDonationRequestListScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.BloodDonationRequestCreate> {
+                    BloodDonationRequestCreateScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.BloodDonationRequestEdit> {
+                    // TODO: Need Screen for BloodDonationRequestEdit
+                }
+                composable<AppScreen.Profile>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.Profile = backStackEntry.toRoute()
+                    when (screen.userType) {
+                        UserType.STUDENT -> StudentProfileScreen(
+                            viewModel = koinViewModel { parametersOf(screen.userId) }
+                        )
+
+                        UserType.TEACHER -> TeacherProfileScreen(
+                            viewModel = koinViewModel { parametersOf(screen.userId) }
+                        )
+
+                        UserType.EMPLOYEE -> EmployeeProfileScreen(
+                            viewModel = koinViewModel { parametersOf(screen.userId) }
+                        )
+                    }
+                }
+                composable<AppScreen.MyBloodDonationList>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.MyBloodDonationList = backStackEntry.toRoute()
+                    MyBloodDonationListScreen(
+                        viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
+                    )
+                }
+                composable<AppScreen.MyCheckInList>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.MyCheckInList = backStackEntry.toRoute()
+                    MyCheckInListScreen(
+                        viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
+                    )
+                }
+                composable<AppScreen.MyDeviceList>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.MyDeviceList = backStackEntry.toRoute()
+                    MyDeviceListScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.StudentProfileEdit>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.StudentProfileEdit = backStackEntry.toRoute()
+                    StudentProfileEditScreen(
+                        viewModel = koinViewModel { parametersOf(screen.userId, screen.action) }
+                    )
+                }
+                composable<AppScreen.TeacherProfileEdit>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.TeacherProfileEdit = backStackEntry.toRoute()
+                    TeacherProfileEditScreen(
+                        viewModel = koinViewModel { parametersOf(screen.userId, screen.action) }
+                    )
+                }
+                composable<AppScreen.EmployeeProfileEdit>(
+                    typeMap = navTypeMap
+                ) {
+                    // TODO: Need Screen for EmployeeProfileEdit
+                }
+                composable<AppScreen.DeleteAccount>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.DeleteAccount = backStackEntry.toRoute()
+                    DeleteAccountScreen(
+                        viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
+                    )
+                }
+                composable<AppScreen.LocationPicker> {
+                    LocationPickerScreen(
+                        viewModel = koinViewModel(),
+                        navController = navController,
+                    )
+                }
+                composable<AppScreen.Donate> {
+                    DonateScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.FacultyPicker>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.FacultyPicker = backStackEntry.toRoute()
+                    FacultyPickerScreen(
+                        viewModel = koinViewModel {
+                            parametersOf(screen.mode, screen.facultyId ?: -1, screen.batchId ?: -1)
+                        },
+                        navController = navController,
+                    )
+                }
+                composable<AppScreen.ImageUpload>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.ImageUpload = backStackEntry.toRoute()
+                    ImageUploadScreen(
+                        viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
+                    )
+                }
+                composable<AppScreen.ImagePreview> { backStackEntry ->
+                    val screen: AppScreen.ImagePreview = backStackEntry.toRoute()
+                    ImagePreviewScreen(
+                        imageUrl = screen.encodedImageUrl,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable<AppScreen.DownloadCv>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.DownloadCv = backStackEntry.toRoute()
+                    CvDownloadScreen(
+                        viewModel = koinViewModel {
+                            parametersOf(screen.userId, screen.userType, screen.url)
+                        }
+                    )
+                }
+                composable<AppScreen.UploadCv>(
+                    typeMap = navTypeMap
+                ) { backStackEntry ->
+                    val screen: AppScreen.UploadCv = backStackEntry.toRoute()
+                    CvUploadScreen(
+                        viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
+                    )
+                }
+                composable<AppScreen.Settings> {
+                    SettingsScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.Faculty> { backStackEntry ->
+                    val screen: AppScreen.Faculty = backStackEntry.toRoute()
+                    FacultyScreen(viewModel = koinViewModel { parametersOf(screen.facultyId) })
+                }
+                composable<AppScreen.Donors> {
+                    DonorsScreen(viewModel = koinViewModel())
+                }
+                composable<AppScreen.Notification> {
+                    // TODO: Need Screen for Notification
+                }
+            }
         }
     }
 }

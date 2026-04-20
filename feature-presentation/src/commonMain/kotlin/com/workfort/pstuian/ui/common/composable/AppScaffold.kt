@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.workfort.pstuian.ui.common.theme.AppColors
 
 @Composable
 fun AppScaffold(
@@ -25,15 +26,20 @@ fun AppScaffold(
         bottomBar = bottomBar,
         snackbarHost = snackbarHost,
         floatingActionButton = floatingActionButton,
-        containerColor = AppColors.background,
+        containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
-        Box(
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .imePadding(),
+            color = MaterialTheme.colorScheme.background
         ) {
-            content(paddingValues)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                content(paddingValues)
+            }
         }
     }
 }
