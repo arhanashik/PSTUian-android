@@ -10,6 +10,7 @@ import com.workfort.pstuian.data.infrastructure.repository.DeviceRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.DonationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.NotificationRepositoryImpl
+import com.workfort.pstuian.data.infrastructure.repository.SettingsRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SharedPrefRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SliderRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
@@ -70,6 +71,7 @@ import com.workfort.pstuian.featuredomain.repository.DeviceRepository
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.NotificationRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
@@ -180,6 +182,8 @@ val repositoryModule = module {
 
     // notification repository injections
     factoryOf(::NotificationRepositoryImpl) bind NotificationRepository::class
+
+    singleOf(::SettingsRepositoryImpl) bind SettingsRepository::class
 
     // blood donation repository injections
     factoryOf(::BloodDonationRepositoryImpl) bind BloodDonationRepository::class

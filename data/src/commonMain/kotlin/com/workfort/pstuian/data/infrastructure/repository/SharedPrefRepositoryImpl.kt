@@ -19,6 +19,14 @@ class SharedPrefRepositoryImpl(private val storage: KeyValueStorage) : SharedPre
 
     override fun putString(key: SharedPrefKey, value: String?) {
         storage.putString(key.name, value)
+        preferenceFlow.tryEmit(key to value)
+    }
+
+    override fun observeString(key: SharedPrefKey, defaultValue: String?): Flow<String?> {
+        return preferenceFlow
+            .onStart { emit(key to getString(key, defaultValue)) }
+            .filter { it.first == key }
+            .map { it.second as String? }
     }
 
     override fun getInt(key: SharedPrefKey, defaultValue: Int): Int {

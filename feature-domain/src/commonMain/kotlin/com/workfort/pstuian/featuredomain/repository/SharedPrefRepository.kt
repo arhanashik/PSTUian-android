@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SharedPrefRepository {
     fun getString(key: SharedPrefKey, defaultValue: String? = null): String?
+    fun observeString(key: SharedPrefKey, defaultValue: String? = null): Flow<String?>
     fun putString(key: SharedPrefKey, value: String?)
     fun getInt(key: SharedPrefKey, defaultValue: Int = 0): Int
     fun putInt(key: SharedPrefKey, value: Int)

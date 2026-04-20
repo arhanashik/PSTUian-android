@@ -32,7 +32,7 @@
             tools:ignore="DiscouragedApi,GoogleAppIndexingWarning,UnusedAttribute">
 
         <activity
-                android:name=".app.ui.MainActivity"
+                android:name=".app.MainActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

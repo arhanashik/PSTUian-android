@@ -13,38 +13,34 @@ import pstuian.feature_presentation.generated.resources.poppins_italic
 import pstuian.feature_presentation.generated.resources.poppins_regular
 import pstuian.feature_presentation.generated.resources.poppins_semi_bold
 
-object AppFont {
-    @Composable
-    fun Poppins() = FontFamily(
+@Composable
+fun getTypography(): Typography {
+    val fontFamily = FontFamily(
         Font(Res.font.poppins_regular),
         Font(Res.font.poppins_italic, style = FontStyle.Italic),
         Font(Res.font.poppins_semi_bold, FontWeight.SemiBold),
         Font(Res.font.poppins_bold, FontWeight.Bold),
     )
-}
 
-@Composable
-fun getTypography(): Typography {
-    val poppins = AppFont.Poppins()
     return Typography(
-        displayLarge = MaterialTheme.typography.displayLarge.copy(fontFamily = poppins),
-        displayMedium = MaterialTheme.typography.displayMedium.copy(fontFamily = poppins),
-        displaySmall = MaterialTheme.typography.displaySmall.copy(fontFamily = poppins),
+        displayLarge = MaterialTheme.typography.displayLarge.copy(fontFamily = fontFamily),
+        displayMedium = MaterialTheme.typography.displayMedium.copy(fontFamily = fontFamily),
+        displaySmall = MaterialTheme.typography.displaySmall.copy(fontFamily = fontFamily),
 
-        headlineLarge = MaterialTheme.typography.headlineLarge.copy(fontFamily = poppins),
-        headlineMedium = MaterialTheme.typography.headlineMedium.copy(fontFamily = poppins),
-        headlineSmall = MaterialTheme.typography.headlineSmall.copy(fontFamily = poppins),
+        headlineLarge = MaterialTheme.typography.headlineLarge.copy(fontFamily = fontFamily),
+        headlineMedium = MaterialTheme.typography.headlineMedium.copy(fontFamily = fontFamily),
+        headlineSmall = MaterialTheme.typography.headlineSmall.copy(fontFamily = fontFamily),
 
-        titleLarge = MaterialTheme.typography.titleLarge.copy(fontFamily = poppins),
-        titleMedium = MaterialTheme.typography.titleMedium.copy(fontFamily = poppins),
-        titleSmall = MaterialTheme.typography.titleSmall.copy(fontFamily = poppins),
+        titleLarge = MaterialTheme.typography.titleLarge.copy(fontFamily = fontFamily),
+        titleMedium = MaterialTheme.typography.titleMedium.copy(fontFamily = fontFamily),
+        titleSmall = MaterialTheme.typography.titleSmall.copy(fontFamily = fontFamily),
 
-        bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontFamily = poppins),
-        bodyMedium = MaterialTheme.typography.bodyMedium.copy(fontFamily = poppins),
-        bodySmall = MaterialTheme.typography.bodySmall.copy(fontFamily = poppins),
+        bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontFamily = fontFamily),
+        bodyMedium = MaterialTheme.typography.bodyMedium.copy(fontFamily = fontFamily),
+        bodySmall = MaterialTheme.typography.bodySmall.copy(fontFamily = fontFamily),
 
-        labelLarge = MaterialTheme.typography.labelLarge.copy(fontFamily = poppins),
-        labelMedium = MaterialTheme.typography.labelMedium.copy(fontFamily = poppins),
-        labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = poppins)
+        labelLarge = MaterialTheme.typography.labelLarge.copy(fontFamily = fontFamily),
+        labelMedium = MaterialTheme.typography.labelMedium.copy(fontFamily = fontFamily),
+        labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = fontFamily),
     )
 }

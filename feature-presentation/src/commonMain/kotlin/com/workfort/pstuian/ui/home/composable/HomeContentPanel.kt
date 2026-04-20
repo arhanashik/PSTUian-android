@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ErrorText
@@ -48,10 +50,10 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.about_it
 import pstuian.feature_presentation.generated.resources.label_faculties
 import pstuian.feature_presentation.generated.resources.label_information_corner
 import pstuian.feature_presentation.generated.resources.label_options
-import androidx.compose.foundation.layout.size
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -156,6 +158,34 @@ fun HomeContentPanel(
                 )
             }
         }
+
+        Spacer(Modifier.height(16.dp))
+
+        AboutCard()
+
+        Spacer(Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun AboutCard() {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+    ) {
+        Text(
+            text = stringResource(Res.string.about_it),
+            style = TextStyle.body1,
+            color = AppColors.textPrimary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+        )
     }
 }
 

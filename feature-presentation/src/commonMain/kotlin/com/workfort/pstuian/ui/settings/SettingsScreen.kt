@@ -1,27 +1,19 @@
 package com.workfort.pstuian.ui.settings
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.settings.composable.SettingsContentPanel
+import com.workfort.pstuian.ui.common.navigation.AppScreen
+import com.workfort.pstuian.ui.settings.composable.SettingsScreenContent
 import com.workfort.pstuian.ui.settings.state.SettingsMessageState
 import com.workfort.pstuian.ui.settings.state.SettingsNavigationState
-import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
-import com.workfort.pstuian.ui.settings.state.SettingsUiState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.label_settings_screen
 import pstuian.feature_presentation.generated.resources.txt_retry
 
 @Composable
@@ -36,28 +28,6 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SettingsScreenContent(
-    uiState: SettingsUiState,
-    onUiEvent: (SettingsUiEvent) -> Unit,
-) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    AppScaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppBar(
-                title = stringResource(Res.string.label_settings_screen),
-                navigation = { onUiEvent(SettingsUiEvent.OnClickBack) },
-                scrollBehavior = scrollBehavior,
-            )
-        },
-    ) {
-        SettingsContentPanel(uiState, onUiEvent)
-    }
-}
-
 @Composable
 private fun HandleMessageState(
     message: SettingsMessageState?,
@@ -70,6 +40,14 @@ private fun HandleMessageState(
                     message = it.message,
                     dismissButtonText = stringResource(Res.string.txt_retry),
                     onDismiss = { onMessageHandled() }
+                )
+            }
+            is SettingsMessageState.ConfirmClearPrefs -> {
+                ShowConfirmationDialog(
+                    title = it.title,
+                    message = it.message,
+                    onConfirm = it.onConfirm,
+                    onDismiss = onMessageHandled,
                 )
             }
         }
@@ -87,6 +65,7 @@ private fun HandleNavigationState(
         navigation?.let {
             when (it) {
                 is SettingsNavigationState.GoBack -> navigator?.goBack()
+                is SettingsNavigationState.GoToContactUs -> navigator?.navigateTo(AppScreen.ContactUs)
             }
             onNavigationHandled()
         }

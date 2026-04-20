@@ -1,20 +1,25 @@
 package com.workfort.pstuian.ui.common.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.material3.Surface
-import com.workfort.pstuian.ui.common.theme.AppTheme
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.blooddonationrequestcreate.BloodDonationRequestCreateScreen
 import com.workfort.pstuian.ui.blooddonationrequestlist.BloodDonationRequestListScreen
 import com.workfort.pstuian.ui.changepassword.ChangePasswordScreen
 import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
+import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.contactus.ContactUsScreen
 import com.workfort.pstuian.ui.cvdownload.CvDownloadScreen
 import com.workfort.pstuian.ui.cvupload.CvUploadScreen
@@ -49,12 +54,13 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
+    theme: ThemeMode = ThemeMode.System,
     navController: NavHostController = rememberNavController(),
     navigator: AppNavigator = koinInject(),
 ) {
     ProvideCoilImageLoader()
 
-    AppTheme {
+    AppTheme(theme = theme) {
         Surface {
             LaunchedEffect(Unit) {
                 navigator.events.collect { event ->
@@ -100,6 +106,30 @@ fun AppNavHost(
                 startDestination = AppScreen.Splash,
                 modifier = modifier,
                 typeMap = navTypeMap,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                        animationSpec = tween(300)
+                    ) + fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                        animationSpec = tween(300)
+                    ) + fadeOut(animationSpec = tween(300))
+                },
+                popEnterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.End,
+                        animationSpec = tween(300)
+                    ) + fadeIn(animationSpec = tween(300))
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.End,
+                        animationSpec = tween(300)
+                    ) + fadeOut(animationSpec = tween(300))
+                }
             ) {
                 composable<AppScreen.Splash> {
                     SplashScreen(viewModel = koinViewModel())

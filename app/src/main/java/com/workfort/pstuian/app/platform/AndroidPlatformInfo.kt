@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import com.workfort.pstuian.BuildConfig
 import com.workfort.pstuian.util.PlatformInfo
+import kotlinx.coroutines.tasks.await
 import java.util.Locale
 import java.util.UUID
 

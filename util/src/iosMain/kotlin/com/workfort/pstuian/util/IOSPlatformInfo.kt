@@ -55,4 +55,9 @@ class IOSPlatformInfo : PlatformInfo {
 
     override val locale: String
         get() = NSLocale.currentLocale.localeIdentifier
+
+    override suspend fun getFcmToken(): String? {
+        // Implement FCM token retrieval for iOS if needed, or return null for now
+        return null
+    }
 }

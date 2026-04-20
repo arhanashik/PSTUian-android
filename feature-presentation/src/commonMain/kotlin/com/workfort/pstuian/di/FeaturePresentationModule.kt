@@ -3,6 +3,7 @@ package com.workfort.pstuian.di
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.model.SharedScreenData
+import com.workfort.pstuian.ui.AppViewModel
 import com.workfort.pstuian.ui.blooddonationcreate.BloodDonationCreateUiStateMachine
 import com.workfort.pstuian.ui.blooddonationcreate.BloodDonationCreateViewModel
 import com.workfort.pstuian.ui.blooddonationrequestcreate.BloodDonationRequestCreateUiStateMachine
@@ -64,11 +65,9 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-private val screenDataModule = module {
+private val appCommonModule = module {
+    singleOf(::AppViewModel)
     singleOf(::SharedScreenData)
-}
-
-private val navigationModule = module {
     singleOf(::AppNavigator)
 }
 
@@ -319,8 +318,7 @@ private val teacherProfileEditModule = module {
 }
 
 val featurePresentationModule = listOf(
-    screenDataModule,
-    navigationModule,
+    appCommonModule,
     bloodDonationCreateModule,
     bloodDonationRequestCreateModule,
     bloodDonationRequestListModule,

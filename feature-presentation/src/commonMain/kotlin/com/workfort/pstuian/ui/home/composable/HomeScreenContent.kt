@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.SliderEntity
+import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppBarIconButton
@@ -36,7 +37,7 @@ fun HomeScreenContent(
             AppBar(
                 title = stringResource(Res.string.app_name),
                 actions = {
-                    // load signed in user
+                    // load signed-in user
                     (uiState as? HomeUiState.Content)?.let {
                         ProfileView(uiState.profileState, onUiEvent)
                     }
@@ -84,7 +85,7 @@ fun HomeScreenContentPreview() {
     AppTheme {
         HomeScreenContent(
             uiState = mockUiState(),
-            onUiEvent = {}
+            onUiEvent = {},
         )
     }
 }
@@ -92,10 +93,10 @@ fun HomeScreenContentPreview() {
 @Preview
 @Composable
 fun HomeScreenContentDarkPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme(theme = ThemeMode.Dark) {
         HomeScreenContent(
             uiState = mockUiState(),
-            onUiEvent = {}
+            onUiEvent = {},
         )
     }
 }
