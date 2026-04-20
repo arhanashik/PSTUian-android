@@ -31,11 +31,6 @@ kotlin {
             baseName = "feature_presentation"
             isStatic = true
         }
-        pod("FirebaseCore")
-        pod("FirebaseAuth")
-        pod("FirebaseFirestore")
-        pod("FirebaseDatabase")
-        pod("FirebaseMessaging")
     }
 
     sourceSets {

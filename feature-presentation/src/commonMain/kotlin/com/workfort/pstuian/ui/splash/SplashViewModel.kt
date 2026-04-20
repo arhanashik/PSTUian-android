@@ -54,9 +54,12 @@ class SplashViewModel(
         )
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            val deviceResult = registerDeviceUseCase()
+            val appConfig = appConfigRepository.getAppConfig()
+
             val initialScreen = getInitialScreenUseCase(
-                device = registerDeviceUseCase().getOrNull(),
-                appConfig = appConfigRepository.getAppConfig(),
+                device = deviceResult.getOrNull(),
+                appConfig = appConfig,
             )
             handleInitialScreen(initialScreen)
         }
@@ -64,20 +67,28 @@ class SplashViewModel(
 
     private fun handleInitialScreen(screenState: InitialScreenState) {
         when (screenState) {
+            is InitialScreenState.MissingDeviceInfo -> {
+                stateMachine.updateScreenState(
+                    screenState,
+                    statusText = "Device Not Recognized",
+                    descriptionText = "Device is not recognized by server",
+                    actionBtnText = "Retry",
+                )
+            }
+            is InitialScreenState.DeviceBlocklisted -> {
+                stateMachine.updateScreenState(
+                    screenState,
+                    statusText = "Access Denied",
+                    descriptionText = "Please contact support",
+                    actionBtnText = null,
+                )
+            }
             is InitialScreenState.MissingConfig -> {
                 stateMachine.updateScreenState(
                     screenState,
                     statusText = "Missing config",
                     descriptionText = "Client and server out of sync",
                     actionBtnText = "Refresh",
-                )
-            }
-            is InitialScreenState.Blocklisted -> {
-                stateMachine.updateScreenState(
-                    screenState,
-                    statusText = "Access Denied",
-                    descriptionText = "Please contact support",
-                    actionBtnText = null,
                 )
             }
             is InitialScreenState.ForceUpdate -> {

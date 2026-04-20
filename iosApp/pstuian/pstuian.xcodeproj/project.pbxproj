@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EE7F4EAA2F903AB900C35115 /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EE7F4EA92F903AB900C35115 /* Shared.xcconfig */; };
+		EEC8DC842F96487F00956350 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEC8D9C02F96487E00956350 /* Assets.xcassets */; };
+		EEC8DC852F96487F00956350 /* GoogleService-Info-Debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = EEC8D9C22F96487E00956350 /* GoogleService-Info-Debug.plist */; };
+		EEC8DC862F96487F00956350 /* GoogleService-Info-Release.plist in Resources */ = {isa = PBXBuildFile; fileRef = EEC8D9C32F96487E00956350 /* GoogleService-Info-Release.plist */; };
+		EEC8E5922F96487F00956350 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC8D9C12F96487E00956350 /* ContentView.swift */; };
+		EEC8E5932F96487F00956350 /* pstuianApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC8D9CA2F96487E00956350 /* pstuianApp.swift */; };
 		F00F71CDCD1EDB1D342E6B67 /* Pods_pstuian.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F743088AEC4F254FEE554A /* Pods_pstuian.framework */; };
 /* End PBXBuildFile section */
 
@@ -15,19 +19,19 @@
 		2F3A2090FBCF81687B1D3196 /* Pods-pstuian.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pstuian.release.xcconfig"; path = "Target Support Files/Pods-pstuian/Pods-pstuian.release.xcconfig"; sourceTree = "<group>"; };
 		4170870D13257C7497CC905B /* Pods-pstuian.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pstuian.debug.xcconfig"; path = "Target Support Files/Pods-pstuian/Pods-pstuian.debug.xcconfig"; sourceTree = "<group>"; };
 		D4F743088AEC4F254FEE554A /* Pods_pstuian.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_pstuian.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE5958A22F9645C800C8060E /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Pods.xcodeproj; sourceTree = "<group>"; };
 		EE7F4E9A2F90329B00C35115 /* pstuian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pstuian.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE7F4EA92F903AB900C35115 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		EEC8D9C02F96487E00956350 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EEC8D9C12F96487E00956350 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		EEC8D9C22F96487E00956350 /* GoogleService-Info-Debug.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Debug.plist"; sourceTree = "<group>"; };
+		EEC8D9C32F96487E00956350 /* GoogleService-Info-Release.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Release.plist"; sourceTree = "<group>"; };
+		EEC8D9C42F96487E00956350 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EEC8D9C52F96487E00956350 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		EEC8D9C62F96487E00956350 /* Podfile.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile.lock; sourceTree = "<group>"; };
+		EEC8D9C72F96487E00956350 /* pstuian.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = pstuian.entitlements; sourceTree = "<group>"; };
+		EEC8D9CA2F96487E00956350 /* pstuianApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pstuianApp.swift; sourceTree = "<group>"; };
+		EEC8D9CB2F96487E00956350 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		EE7F4E9C2F90329B00C35115 /* pstuian */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = pstuian;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		EE7F4E972F90329B00C35115 /* Frameworks */ = {
@@ -58,14 +62,29 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		EE5958B02F9645C800C8060E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		EE7F4E912F90329B00C35115 = {
 			isa = PBXGroup;
 			children = (
-				EE7F4E9C2F90329B00C35115 /* pstuian */,
 				EE7F4E9B2F90329B00C35115 /* Products */,
-				EE7F4EA92F903AB900C35115 /* Shared.xcconfig */,
 				165CBFC6F47434A4FFD2CFD6 /* Pods */,
 				734F11F34EA0E6F2019DA562 /* Frameworks */,
+				EEC8D9C02F96487E00956350 /* Assets.xcassets */,
+				EEC8D9C12F96487E00956350 /* ContentView.swift */,
+				EEC8D9C22F96487E00956350 /* GoogleService-Info-Debug.plist */,
+				EEC8D9C32F96487E00956350 /* GoogleService-Info-Release.plist */,
+				EEC8D9C42F96487E00956350 /* Info.plist */,
+				EEC8D9C52F96487E00956350 /* Podfile */,
+				EEC8D9C62F96487E00956350 /* Podfile.lock */,
+				EEC8D9C72F96487E00956350 /* pstuian.entitlements */,
+				EEC8D9CA2F96487E00956350 /* pstuianApp.swift */,
+				EEC8D9CB2F96487E00956350 /* Shared.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -89,13 +108,11 @@
 				EE7F4E972F90329B00C35115 /* Frameworks */,
 				EE7F4E982F90329B00C35115 /* Resources */,
 				7DEA867B953407F791305C9E /* [CP] Embed Pods Frameworks */,
+				60F5CCF921C17799D3725732 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				EE7F4E9C2F90329B00C35115 /* pstuian */,
 			);
 			name = pstuian;
 			productName = pstuian;
@@ -129,6 +146,12 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EE7F4E9B2F90329B00C35115 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = EE5958B02F9645C800C8060E /* Products */;
+					ProjectRef = EE5958A22F9645C800C8060E /* Pods.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				EE7F4E992F90329B00C35115 /* pstuian */,
@@ -141,7 +164,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE7F4EAA2F903AB900C35115 /* Shared.xcconfig in Resources */,
+				EEC8DC842F96487F00956350 /* Assets.xcassets in Resources */,
+				EEC8DC852F96487F00956350 /* GoogleService-Info-Debug.plist in Resources */,
+				EEC8DC862F96487F00956350 /* GoogleService-Info-Release.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +195,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		60F5CCF921C17799D3725732 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-pstuian/Pods-pstuian-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-pstuian/Pods-pstuian-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-pstuian/Pods-pstuian-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		7DEA867B953407F791305C9E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -194,6 +236,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEC8E5922F96487F00956350 /* ContentView.swift in Sources */,
+				EEC8E5932F96487F00956350 /* pstuianApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,11 +371,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = pstuian.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8WJFWCZXP2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -343,9 +389,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 3.0.0;
 				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.workfort.pstuian;
+				PRODUCT_BUNDLE_IDENTIFIER = com.workfort.pstuian.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -363,11 +409,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = pstuian.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8WJFWCZXP2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -379,9 +427,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 3.0.0;
 				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.workfort.pstuian;
+				PRODUCT_BUNDLE_IDENTIFIER = com.workfort.pstuian.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

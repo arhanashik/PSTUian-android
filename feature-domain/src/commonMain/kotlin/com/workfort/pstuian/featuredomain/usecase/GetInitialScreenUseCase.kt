@@ -11,8 +11,10 @@ class GetInitialScreenUseCase(private val platformInfo: PlatformInfo) {
         device: Device?,
         appConfig: AppConfig?,
     ): InitialScreenState {
-        if (device == null || appConfig == null) return InitialScreenState.MissingConfig
-        if (device.blocklisted) return InitialScreenState.Blocklisted
+        if (device == null) return InitialScreenState.MissingDeviceInfo
+        if (device.blocklisted) return InitialScreenState.DeviceBlocklisted
+
+        if (appConfig == null) return InitialScreenState.MissingConfig
         if (appConfig.maintenance) return InitialScreenState.Maintenance(
             remainingTime = appConfig.remainingMaintenance,
         )
@@ -28,8 +30,9 @@ class GetInitialScreenUseCase(private val platformInfo: PlatformInfo) {
 }
 
 sealed interface InitialScreenState {
+    data object MissingDeviceInfo : InitialScreenState
+    data object DeviceBlocklisted : InitialScreenState
     data object MissingConfig : InitialScreenState
-    data object Blocklisted : InitialScreenState
     data object ForceUpdate : InitialScreenState
     data class Maintenance(val remainingTime: Double) : InitialScreenState
     data object Home : InitialScreenState

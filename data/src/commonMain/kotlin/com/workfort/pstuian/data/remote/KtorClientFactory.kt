@@ -25,7 +25,6 @@ object KtorClientFactory {
                     isLenient = true
                 }
                 json(json)
-                json(json, ContentType.Text.Html)
             }
             
             install(Logging) {
@@ -45,6 +44,10 @@ object KtorClientFactory {
                 }
                 url(baseUrl)
                 contentType(ContentType.Application.Json)
+                
+                // Unify User-Agent format across platforms
+                header("User-Agent", "PSTUian/${platformInfo.appVersionName} (${platformInfo.platform}; ${platformInfo.model})")
+
                 authTokenProvider()?.let { token ->
                     header("x-auth-token", token)
                 }

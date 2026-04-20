@@ -4,7 +4,7 @@ import feature_presentation
 import SwiftUI
 import UserNotifications
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     let iosBridge = IOSBridge()
     
