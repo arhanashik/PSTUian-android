@@ -14,7 +14,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EE7F4E992F90329B00C35115"
-               BuildableName = "pstuian.app"
+               BuildableName = "PSTUian.app"
                BlueprintName = "pstuian"
                ReferencedContainer = "container:pstuian.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EE7F4E992F90329B00C35115"
-            BuildableName = "pstuian.app"
+            BuildableName = "PSTUian.app"
             BlueprintName = "pstuian"
             ReferencedContainer = "container:pstuian.xcodeproj">
          </BuildableReference>

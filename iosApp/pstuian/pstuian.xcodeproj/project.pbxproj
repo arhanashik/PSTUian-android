@@ -369,6 +369,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4170870D13257C7497CC905B /* Pods-pstuian.debug.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "PSTUian Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = pstuian.entitlements;
@@ -376,23 +377,16 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8WJFWCZXP2;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.0;
-				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.workfort.pstuian.debug;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PSTUian;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -407,6 +401,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2F3A2090FBCF81687B1D3196 /* Pods-pstuian.release.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = PSTUian;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = pstuian.entitlements;
@@ -416,21 +411,18 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.0;
-				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.workfort.pstuian.debug;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.workfort.pstuian;
+				PRODUCT_NAME = PSTUian;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -456,6 +448,7 @@
 		EE7F4EA52F90329D00C35115 /* Build configuration list for PBXNativeTarget "pstuian" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
+				EE7F4EA62F90329D00C35115 /* Debug */,
 				EE7F4EA62F90329D00C35115 /* Debug */,
 				EE7F4EA72F90329D00C35115 /* Release */,
 			);

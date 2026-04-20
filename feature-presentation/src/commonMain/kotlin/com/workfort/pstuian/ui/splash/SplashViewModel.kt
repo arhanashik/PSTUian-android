@@ -61,17 +61,17 @@ class SplashViewModel(
                 device = deviceResult.getOrNull(),
                 appConfig = appConfig,
             )
-            handleInitialScreen(initialScreen)
+            handleInitialScreen(initialScreen, deviceResult.exceptionOrNull()?.message)
         }
     }
 
-    private fun handleInitialScreen(screenState: InitialScreenState) {
+    private fun handleInitialScreen(screenState: InitialScreenState, errorMessage: String? = null) {
         when (screenState) {
             is InitialScreenState.MissingDeviceInfo -> {
                 stateMachine.updateScreenState(
                     screenState,
                     statusText = "Device Not Recognized",
-                    descriptionText = "Device is not recognized by server",
+                    descriptionText = errorMessage ?: "Device is not recognized by server",
                     actionBtnText = "Retry",
                 )
             }
