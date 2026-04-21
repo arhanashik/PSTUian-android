@@ -22,6 +22,9 @@ fun SignInContentPanel(
             onForgotPassword = { email ->
                 onUiEvent(SignInUiEvent.ForgotPasswordSubmitted(email))
             },
+            onEmailVerification = { email ->
+                onUiEvent(SignInUiEvent.EmailVerificationSubmitted(email))
+            },
             onSignUp = { data ->
                 onUiEvent(SignInUiEvent.SignUpSubmitted(data))
             },

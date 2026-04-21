@@ -1,0 +1,11 @@
+---
+description: Do not run lint or diagnostics unless the user asks
+alwaysApply: true
+---
+
+# Lint and diagnostics
+
+- Do **not** run `read_lints`, IDE lint tasks, or similar lint/diagnostic checks on your own after edits or as part of routine work.
+- Only run lint or surface diagnostics when the user **explicitly** asks to check lint, fix lints, or verify diagnostics in that conversation.
+
+This applies in every chat and context window unless the user overrides it in their message.

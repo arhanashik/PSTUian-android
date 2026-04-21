@@ -61,3 +61,67 @@ private fun SignInScreenContentDarkPreview() {
         )
     }
 }
+
+@Preview
+@Composable
+private fun SignInScreenUiPreview() {
+    AppTheme {
+        SignInScreenUi()
+    }
+}
+
+@Preview
+@Composable
+private fun SignInScreenUiDarkPreview() {
+    AppTheme(theme = ThemeMode.Dark) {
+        SignInScreenUi()
+    }
+}
+
+@Preview
+@Composable
+private fun SignUpPanelPreview() {
+    AppTheme {
+        SignInScreenUi(initialPanel = AuthPanel.SignUp)
+    }
+}
+
+@Preview
+@Composable
+private fun SignUpPanelDarkPreview() {
+    AppTheme(theme = ThemeMode.Dark) {
+        SignInScreenUi(initialPanel = AuthPanel.SignUp)
+    }
+}
+
+@Preview
+@Composable
+private fun ForgotPasswordPanelPreview() {
+    AppTheme {
+        SignInScreenUi(initialPanel = AuthPanel.ForgotPassword)
+    }
+}
+
+@Preview
+@Composable
+private fun ForgotPasswordPanelDarkPreview() {
+    AppTheme(theme = ThemeMode.Dark) {
+        SignInScreenUi(initialPanel = AuthPanel.ForgotPassword)
+    }
+}
+
+@Preview
+@Composable
+private fun EmailVerificationPanelPreview() {
+    AppTheme {
+        SignInScreenUi(initialPanel = AuthPanel.EmailVerification)
+    }
+}
+
+@Preview
+@Composable
+private fun EmailVerificationPanelDarkPreview() {
+    AppTheme(theme = ThemeMode.Dark) {
+        SignInScreenUi(initialPanel = AuthPanel.EmailVerification)
+    }
+}

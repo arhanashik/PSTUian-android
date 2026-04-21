@@ -48,8 +48,8 @@ class SignInViewModel(
             is SignInUiEvent.ForgotPasswordSubmitted -> {
                 sendPasswordResetLink(event.email)
             }
-            is SignInUiEvent.EmailVerificationClicked -> {
-                _navigation.update { SignInNavigationState.GoToEmailVerificationScreen }
+            is SignInUiEvent.EmailVerificationSubmitted -> {
+                sendVerificationEmail(event.email)
             }
             is SignInUiEvent.MessageConsumed -> onMessageHandled()
             is SignInUiEvent.NavigationConsumed -> onNavigationHandled()
@@ -72,6 +72,16 @@ class SignInViewModel(
         _message.update {
             SignInMessageState.Success(
                 message = "Password reset link request stubbed (for: $email)",
+                showToast = true,
+            )
+        }
+    }
+
+    private fun sendVerificationEmail(email: String) {
+        // TODO: wire to AuthRepository / Firebase sendEmailVerification once available.
+        _message.update {
+            SignInMessageState.Success(
+                message = "Verification email request stubbed (for: $email)",
                 showToast = true,
             )
         }
