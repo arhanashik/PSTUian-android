@@ -227,25 +227,6 @@ internal fun AuthFormContent(
                         onRememberMeToggle = onRememberMeToggle,
                         onForgotPassword = onForgotPasswordTap,
                     )
-                    Spacer(modifier = Modifier.height(14.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "Need to verify your email? ",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 13.sp,
-                        )
-                        Text(
-                            text = "Verify",
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.clickable(onClick = onEmailVerificationTap),
-                        )
-                    }
                 }
             }
 
@@ -294,33 +275,58 @@ internal fun AuthFormContent(
                 animationSpec = tween(250),
                 label = "bottomLink",
             ) { currentPanel ->
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
-                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    when (currentPanel) {
-                        AuthPanel.SignIn -> AuthBottomLink(
-                            prefix = "Don't have an account? ",
-                            action = "SIGN UP",
-                            onAction = onSwitchToSignUp,
-                        )
-                        AuthPanel.SignUp -> AuthBottomLink(
-                            prefix = "Already have an account? ",
-                            action = "LOG IN",
-                            onAction = onSwitchToSignIn,
-                        )
-                        AuthPanel.ForgotPassword -> AuthBottomLink(
-                            prefix = "Remember your password? ",
-                            action = "LOG IN",
-                            onAction = onSwitchToSignIn,
-                        )
-                        AuthPanel.EmailVerification -> AuthBottomLink(
-                            prefix = "Already verified? ",
-                            action = "LOG IN",
-                            onAction = onSwitchToSignIn,
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        when (currentPanel) {
+                            AuthPanel.SignIn -> AuthBottomLink(
+                                prefix = "Don't have an account? ",
+                                action = "SIGN UP",
+                                onAction = onSwitchToSignUp,
+                            )
+                            AuthPanel.SignUp -> AuthBottomLink(
+                                prefix = "Already have an account? ",
+                                action = "LOG IN",
+                                onAction = onSwitchToSignIn,
+                            )
+                            AuthPanel.ForgotPassword -> AuthBottomLink(
+                                prefix = "Remember your password? ",
+                                action = "LOG IN",
+                                onAction = onSwitchToSignIn,
+                            )
+                            AuthPanel.EmailVerification -> AuthBottomLink(
+                                prefix = "Already verified? ",
+                                action = "LOG IN",
+                                onAction = onSwitchToSignIn,
+                            )
+                        }
+                    }
+                    if (currentPanel == AuthPanel.SignIn) {
+                        Spacer(modifier = Modifier.height(14.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "Need to verify your email? ",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 13.sp,
+                            )
+                            Text(
+                                text = "Verify",
+                                color = MaterialTheme.colorScheme.tertiary,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.clickable(onClick = onEmailVerificationTap),
+                            )
+                        }
                     }
                 }
             }
