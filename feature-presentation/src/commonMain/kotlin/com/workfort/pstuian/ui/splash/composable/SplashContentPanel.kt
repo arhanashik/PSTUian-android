@@ -35,17 +35,22 @@ fun SplashContentPanel(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            if (state.screenState == null) {
-                DefaultSplashContent(state.statusText)
-            } else {
-                ErrorContent(
-                    state.screenState,
-                    state.statusText,
-                    state.descriptionText,
-                    state.actionBtnText,
-                ) {
-                    val isForceUpdateAction = state.screenState is InitialScreenState.ForceUpdate
-                    onEvent(SplashUiEvent.ActionBtnClicked(isForceUpdateAction))
+            when {
+                state.screenState == null ||
+                    (state.showAppUsageRolePicker && state.screenState is InitialScreenState.Home) -> {
+                    DefaultSplashContent(state.statusText)
+                }
+                else -> {
+                    val screenState = state.screenState as InitialScreenState
+                    ErrorContent(
+                        screenState,
+                        state.statusText,
+                        state.descriptionText,
+                        state.actionBtnText,
+                    ) {
+                        val isForceUpdateAction = screenState is InitialScreenState.ForceUpdate
+                        onEvent(SplashUiEvent.ActionBtnClicked(isForceUpdateAction))
+                    }
                 }
             }
         }

@@ -150,6 +150,7 @@ class AuthRepositoryImpl(
         sharedPrefRepository.remove(SharedPrefKey.AUTH_TOKEN)
         sharedPrefRepository.remove(SharedPrefKey.USER)
         sharedPrefRepository.remove(SharedPrefKey.USER_TYPE)
+        sharedPrefRepository.remove(SharedPrefKey.APP_USAGE_ROLE)
     }
 
     override suspend fun deleteAccount(password: String): String {

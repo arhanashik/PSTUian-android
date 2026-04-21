@@ -1,8 +1,10 @@
 package com.workfort.pstuian.ui.signin.state
 
-/**
- * Values submitted from the sign-up panel of the unified auth screen.
- */
+data class SignInFormData(
+    val email: String,
+    val password: String,
+)
+
 data class SignUpFormData(
     val name: String,
     val email: String,

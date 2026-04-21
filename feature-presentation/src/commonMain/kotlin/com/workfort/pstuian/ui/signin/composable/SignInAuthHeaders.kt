@@ -82,7 +82,7 @@ internal fun CompactAuthHeader(title: String, onBack: () -> Unit) {
                 modifier = Modifier.size(20.dp),
             )
         }
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(24.dp))
         Text(
             text = title,
             color = MaterialTheme.colorScheme.onPrimary,

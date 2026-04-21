@@ -22,6 +22,7 @@ data class SharedPrefKey(
         val USER_TYPE = create("user_type", true)
         val USER = create("user", true)
         val LAST_SHOWN_CHECK_IN_LOCATION_ID = create("last_shown_check_in_location_id", true)
+        val APP_USAGE_ROLE = create("app_usage_role", true)
 
         fun create(name: String, clearOnSignOut: Boolean): SharedPrefKey {
             return SharedPrefKey(name, clearOnSignOut).also { allKeys.add(it) }

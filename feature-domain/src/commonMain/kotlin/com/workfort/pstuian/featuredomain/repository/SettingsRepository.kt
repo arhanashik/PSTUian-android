@@ -1,5 +1,6 @@
 package com.workfort.pstuian.featuredomain.repository
 
+import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
 
@@ -12,4 +13,6 @@ interface SettingsRepository {
     fun getFcmToken(): String?
     fun setFcmToken(fcmToken: String)
     fun clearSharedPrefs()
+    fun getAppUsageRole(): AppUsageRole?
+    fun setAppUsageRole(role: AppUsageRole)
 }

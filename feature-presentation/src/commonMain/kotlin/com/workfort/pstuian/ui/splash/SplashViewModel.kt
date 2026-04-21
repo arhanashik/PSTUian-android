@@ -3,7 +3,9 @@ package com.workfort.pstuian.ui.splash
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
+import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetInitialScreenUseCase
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.featuredomain.usecase.RegisterDeviceUseCase
@@ -20,6 +22,7 @@ class SplashViewModel(
     private val appConfigRepository: AppConfigRepository,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val getInitialScreenUseCase: GetInitialScreenUseCase,
+    private val settingsRepository: SettingsRepository,
     private val stateMachine: SplashUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SplashUiState>(stateMachine) {
@@ -40,7 +43,16 @@ class SplashViewModel(
                     refreshConfig()
                 }
             }
+            is SplashUiEvent.SelectAppUsageRole -> stateMachine.setSelectedAppUsageRole(event.role)
+            SplashUiEvent.SaveAppUsageRoleAndContinue -> onSaveAppUsageRoleAndContinue()
         }
+    }
+
+    private fun onSaveAppUsageRoleAndContinue() {
+        val selected = stateMachine.uiState.value.selectedAppUsageRole ?: return
+        settingsRepository.setAppUsageRole(selected)
+        stateMachine.setShowAppUsageRolePicker(false)
+        _navigation.update { SplashNavigationState.HomeScreen }
     }
 
     fun onNavigationHandled() = _navigation.update { null }
@@ -114,7 +126,13 @@ class SplashViewModel(
                     descriptionText = null,
                     actionBtnText = null,
                 )
-                _navigation.update { SplashNavigationState.HomeScreen }
+                val stored = settingsRepository.getAppUsageRole()
+                if (stored == null || stored == AppUsageRole.VISITOR) {
+                    val initialSelection = stored?.takeIf { it == AppUsageRole.VISITOR }
+                    stateMachine.setShowAppUsageRolePicker(show = true, initialSelection = initialSelection)
+                } else {
+                    _navigation.update { SplashNavigationState.HomeScreen }
+                }
             }
         }
     }

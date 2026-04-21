@@ -9,4 +9,5 @@ sealed interface SettingsUiEvent {
     data class OnChangeTheme(val theme: ThemeMode) : SettingsUiEvent
     data object OnRefreshFcmToken : SettingsUiEvent
     data object OnClearSharedPrefs : SettingsUiEvent
+    data object OnClickEditAppUsageRole : SettingsUiEvent
 }

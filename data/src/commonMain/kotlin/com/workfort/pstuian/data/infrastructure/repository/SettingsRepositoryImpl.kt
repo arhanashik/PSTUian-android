@@ -1,5 +1,6 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
+import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
@@ -46,5 +47,14 @@ class SettingsRepositoryImpl(
 
     override fun clearSharedPrefs() {
         sharedPrefRepository.clear()
+    }
+
+    override fun getAppUsageRole(): AppUsageRole? {
+        val raw = sharedPrefRepository.getString(SharedPrefKey.APP_USAGE_ROLE, null)
+        return AppUsageRole.fromStorage(raw)
+    }
+
+    override fun setAppUsageRole(role: AppUsageRole) {
+        sharedPrefRepository.putString(SharedPrefKey.APP_USAGE_ROLE, role.storageValue)
     }
 }

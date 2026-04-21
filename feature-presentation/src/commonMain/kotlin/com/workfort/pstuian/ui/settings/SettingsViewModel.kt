@@ -3,6 +3,7 @@ package com.workfort.pstuian.ui.settings
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
+import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
@@ -38,6 +39,10 @@ class SettingsViewModel(
             theme = settingsRepository.getTheme(),
             isDebug = platformInfo.isDebug,
             fcmToken = settingsRepository.getFcmToken() ?: "N/A",
+            appUsageRole = settingsRepository.getAppUsageRole(),
+            appVersionName = platformInfo.appVersionName,
+            appVersionCode = platformInfo.appVersionCode,
+            deviceId = platformInfo.deviceId,
         )
     }
 
@@ -50,8 +55,36 @@ class SettingsViewModel(
                 is SettingsUiEvent.OnChangeTheme -> onChangeTheme(event.theme)
                 is SettingsUiEvent.OnRefreshFcmToken -> onRefreshFcmToken()
                 is SettingsUiEvent.OnClearSharedPrefs -> onClearSharedPrefs()
+                SettingsUiEvent.OnClickEditAppUsageRole -> openAppUsageRoleSelectionMessage()
             }
         }
+    }
+
+    private fun openAppUsageRoleSelectionMessage() {
+        _message.update {
+            SettingsMessageState.AppUsageRoleSelection(
+                selectedRole = settingsRepository.getAppUsageRole(),
+                onSelectRole = { role -> onAppUsageRoleSheetSelect(role) },
+                onSaveAndContinue = { onAppUsageRoleSheetSave() },
+            )
+        }
+    }
+
+    private fun onAppUsageRoleSheetSelect(role: AppUsageRole) {
+        _message.update { prev ->
+            when (prev) {
+                is SettingsMessageState.AppUsageRoleSelection -> prev.copy(selectedRole = role)
+                else -> prev
+            }
+        }
+    }
+
+    private fun onAppUsageRoleSheetSave() {
+        val sheet = _message.value as? SettingsMessageState.AppUsageRoleSelection ?: return
+        val role = sheet.selectedRole ?: return
+        settingsRepository.setAppUsageRole(role)
+        stateMachine.setAppUsageRole(role)
+        onMessageHandled()
     }
 
     fun onMessageHandled() = _message.update { null }

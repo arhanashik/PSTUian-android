@@ -3,6 +3,7 @@ package com.workfort.pstuian.ui.settings.composable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
@@ -60,5 +61,9 @@ private val mockUiSate = SettingsUiState.Content(
     showNotification = true,
     theme = ThemeMode.System,
     isDebug = true,
-    fcmToken = "mock_fcm_token"
+    fcmToken = "mock_fcm_token",
+    appUsageRole = AppUsageRole.TEACHER,
+    appVersionName = "3.0.0",
+    appVersionCode = 7,
+    deviceId = "mock-device-id",
 )

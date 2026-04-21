@@ -1,5 +1,6 @@
 package com.workfort.pstuian.ui.settings
 
+import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.settings.state.SettingsUiState
@@ -29,12 +30,20 @@ class SettingsUiStateMachine : UiStateMachine<SettingsUiState> {
         theme: ThemeMode,
         isDebug: Boolean,
         fcmToken: String,
+        appUsageRole: AppUsageRole?,
+        appVersionName: String,
+        appVersionCode: Int,
+        deviceId: String,
     ) = updateUiState {
         SettingsUiState.Content(
             showNotification = showNotification,
             theme = theme,
             isDebug = isDebug,
             fcmToken = fcmToken,
+            appUsageRole = appUsageRole,
+            appVersionName = appVersionName,
+            appVersionCode = appVersionCode,
+            deviceId = deviceId,
         )
     }
 
@@ -48,5 +57,9 @@ class SettingsUiStateMachine : UiStateMachine<SettingsUiState> {
 
     fun setShowNotification(show: Boolean) = updateContent {
         copy(showNotification = show)
+    }
+
+    fun setAppUsageRole(role: AppUsageRole?) = updateContent {
+        copy(appUsageRole = role)
     }
 }
