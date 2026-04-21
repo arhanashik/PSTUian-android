@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -28,10 +29,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -68,11 +72,25 @@ internal fun AuthFormContent(
     modifier: Modifier = Modifier,
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val nameFocus = remember { FocusRequester() }
+    val emailFocus = remember { FocusRequester() }
+    val studentIdFocus = remember { FocusRequester() }
+    val registrationFocus = remember { FocusRequester() }
+    val facultyFocus = remember { FocusRequester() }
+    val batchFocus = remember { FocusRequester() }
+    val passwordFocus = remember { FocusRequester() }
     val isSignIn = panel == AuthPanel.SignIn
     val isSignUp = panel == AuthPanel.SignUp
     val isForgotPassword = panel == AuthPanel.ForgotPassword
     val isEmailVerification = panel == AuthPanel.EmailVerification
     val isCompactEmailPanel = isForgotPassword || isEmailVerification
+    val emailImeAction = if (isCompactEmailPanel) ImeAction.Done else ImeAction.Next
+    val emailKeyboardActions = when {
+        isCompactEmailPanel -> KeyboardActions(onDone = { focusManager.clearFocus() })
+        isSignUp -> KeyboardActions(onNext = { studentIdFocus.requestFocus() })
+        else -> KeyboardActions(onNext = { passwordFocus.requestFocus() })
+    }
     val fieldSpacing = 18.dp
 
     Column(
@@ -90,7 +108,12 @@ internal fun AuthFormContent(
                         label = "Name",
                         value = name,
                         onValueChange = onNameChange,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        focusRequester = nameFocus,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next,
+                        ),
+                        keyboardActions = KeyboardActions(onNext = { emailFocus.requestFocus() }),
                     )
                     Spacer(modifier = Modifier.height(fieldSpacing))
                 }
@@ -100,7 +123,12 @@ internal fun AuthFormContent(
                 label = "Email Address",
                 value = email,
                 onValueChange = onEmailChange,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                focusRequester = emailFocus,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = emailImeAction,
+                ),
+                keyboardActions = emailKeyboardActions,
             )
 
             AnimatedVisibility(visible = isSignUp) {
@@ -110,14 +138,24 @@ internal fun AuthFormContent(
                         label = "Student Id",
                         value = studentId,
                         onValueChange = onStudentIdChange,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        focusRequester = studentIdFocus,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next,
+                        ),
+                        keyboardActions = KeyboardActions(onNext = { registrationFocus.requestFocus() }),
                     )
                     Spacer(modifier = Modifier.height(fieldSpacing))
                     AuthUnderlinedField(
                         label = "Registration Number",
                         value = registrationNumber,
                         onValueChange = onRegistrationNumberChange,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        focusRequester = registrationFocus,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next,
+                        ),
+                        keyboardActions = KeyboardActions(onNext = { facultyFocus.requestFocus() }),
                     )
                     Spacer(modifier = Modifier.height(fieldSpacing))
                     Row(
@@ -129,7 +167,12 @@ internal fun AuthFormContent(
                             value = faculty,
                             onValueChange = onFacultyChange,
                             modifier = Modifier.weight(1f),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                            focusRequester = facultyFocus,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next,
+                            ),
+                            keyboardActions = KeyboardActions(onNext = { batchFocus.requestFocus() }),
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         AuthUnderlinedField(
@@ -137,7 +180,12 @@ internal fun AuthFormContent(
                             value = batch,
                             onValueChange = onBatchChange,
                             modifier = Modifier.weight(1f),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                            focusRequester = batchFocus,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next,
+                            ),
+                            keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
                         )
                     }
                 }
@@ -150,7 +198,12 @@ internal fun AuthFormContent(
                         label = "Password",
                         value = password,
                         onValueChange = onPasswordChange,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        focusRequester = passwordFocus,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingContent = {
                             Icon(

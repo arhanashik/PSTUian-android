@@ -1,0 +1,11 @@
+---
+description: Do not run Gradle unless the user explicitly asks
+alwaysApply: true
+---
+
+# Gradle commands
+
+- Do **not** run `./gradlew`, `gradlew`, `gradle`, or any Gradle wrapper / Gradle CLI command on your own to verify builds, compile, test, or as part of routine work.
+- Only run Gradle when the user **explicitly** asks in that conversation (for example: run the build, compile, execute tests, or “run gradle …”).
+
+This applies in every chat and context window unless the user overrides it in their message.
