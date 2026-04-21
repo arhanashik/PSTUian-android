@@ -12,15 +12,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -34,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -69,7 +65,6 @@ internal fun AuthFormContent(
     onSignUp: () -> Unit,
     onSwitchToSignIn: () -> Unit,
     onSwitchToSignUp: () -> Unit,
-    onContentMeasured: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
@@ -80,18 +75,12 @@ internal fun AuthFormContent(
     val isCompactEmailPanel = isForgotPassword || isEmailVerification
     val fieldSpacing = 18.dp
 
-    // Outer container scrolls when content is taller than the white section; the inner Column
-    // wraps its own content so `onSizeChanged` reports the actual form height, which the parent
-    // uses to size the green header against the available screen space.
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .onSizeChanged { size -> onContentMeasured(size.height) }
                 .padding(horizontal = 28.dp)
                 .padding(top = 32.dp, bottom = 24.dp),
         ) {

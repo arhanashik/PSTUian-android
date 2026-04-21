@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,14 +13,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import com.workfort.pstuian.ui.signin.state.SignUpFormData
 
 /**
  * Unified auth screen that hosts sign-in, sign-up, forgot-password, and email-verification panels.
- * Switching between panels animates the green header between the tall hero section and a compact
- * app bar, while the email field stays in place and the remaining fields animate in or out per
- * panel.
+ * Green header height follows panel state (hero vs compact app bar on Sign Up). The whole screen
+ * scrolls so tall content and the software keyboard can move everything upward together.
  */
 @Composable
 fun SignInScreenUi(
@@ -43,27 +40,16 @@ fun SignInScreenUi(
     var batch by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
 
-    val density = LocalDensity.current
-
-    // On iOS the screen is drawn edge-to-edge (see [SignInScreenContent]) so the green and white
-    // sections can color the status bar and home indicator areas respectively. These insets let us
-    // size each section to include its safe area while still keeping the inner interactive content
-    // padded out of the system bars.
+    // Green header height includes the status-bar safe area on edge-to-edge layouts.
     val statusBarInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val navigationBarInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val totalHeight = maxHeight
-        var formContentHeight by remember(totalHeight) {
-            mutableStateOf(totalHeight * 0.42f)
-        }
-
-        val preferredWhite = formContentHeight + WhiteSectionVerticalBuffer + navigationBarInset
         val compactGreenHeight = CompactHeaderHeight + statusBarInset
-        val targetGreenHeight = if (preferredWhite > totalHeight * MAX_WHITE_FRACTION) {
-            compactGreenHeight
-        } else {
-            totalHeight - preferredWhite
+        val targetGreenHeight = when (panel) {
+            AuthPanel.SignUp -> compactGreenHeight
+            AuthPanel.SignIn -> totalHeight * SignInGreenHeightFraction
+            else -> totalHeight * ExpandedGreenHeightFraction
         }
 
         val greenHeight by animateDpAsState(
@@ -74,8 +60,6 @@ fun SignInScreenUi(
             ),
             label = "greenSectionHeight",
         )
-
-        SignInAuthBackdrop(greenHeight = greenHeight)
 
         SignInAuthForeground(
             greenHeight = greenHeight,
@@ -121,9 +105,6 @@ fun SignInScreenUi(
                 },
                 onSwitchToSignIn = { panel = AuthPanel.SignIn },
                 onSwitchToSignUp = { panel = AuthPanel.SignUp },
-                onContentMeasured = { heightPx ->
-                    formContentHeight = with(density) { heightPx.toDp() }
-                },
             )
         }
     }

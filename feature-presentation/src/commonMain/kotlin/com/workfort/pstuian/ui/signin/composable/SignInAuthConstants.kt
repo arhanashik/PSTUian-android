@@ -6,12 +6,11 @@ import androidx.compose.ui.unit.dp
 internal val SectionCornerRadius = 56.dp
 internal val CompactHeaderHeight = 88.dp
 
-// White section height is driven by the form's measured content. If the form needs more than
-// MAX_WHITE_FRACTION of the screen, the green header collapses to an app bar (CompactHeaderHeight)
-// and the form takes the remainder; otherwise the green section fills whatever the form doesn't
-// need so its size tracks the content.
-internal const val MAX_WHITE_FRACTION = 0.75f
-internal val WhiteSectionVerticalBuffer = 24.dp
+// When not on Sign Up, the green hero header uses a fraction of screen height; Sign Up uses
+// [CompactHeaderHeight] only (plus status bar inset where applied). Sign In uses a smaller green
+// band so the form has more vertical space.
+internal const val SignInGreenHeightFraction = 0.50f
+internal const val ExpandedGreenHeightFraction = 0.58f
 
 // Ease-out: responds quickly at the start then settles gently. Avoids the slight ease-in at the
 // beginning of FastOutSlowIn, which can read as a bounce—especially when [totalHeight] jumps with
