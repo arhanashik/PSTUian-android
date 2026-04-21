@@ -17,15 +17,22 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -67,6 +74,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.common.theme.AppTheme
+import com.workfort.pstuian.ui.signin.state.SignUpFormData
 import org.jetbrains.compose.resources.painterResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.ic_logo
@@ -82,16 +90,6 @@ private const val MAX_WHITE_FRACTION = 0.75f
 private val WhiteSectionVerticalBuffer = 24.dp
 
 enum class AuthPanel { SignIn, SignUp, ForgotPassword }
-
-data class SignUpFormData(
-    val name: String,
-    val email: String,
-    val studentId: String,
-    val registrationNumber: String,
-    val faculty: String,
-    val batch: String,
-    val password: String,
-)
 
 /**
  * Unified auth screen that hosts the sign-in, sign-up and forgot-password panels. Switching
@@ -119,6 +117,13 @@ fun SignInScreenUi(
 
     val density = LocalDensity.current
 
+    // On iOS the screen is drawn edge-to-edge (see [SignInScreenContent]) so the green and white
+    // sections can color the status bar and home indicator areas respectively. These insets let us
+    // size each section to include its safe area while still keeping the inner interactive content
+    // padded out of the system bars.
+    val statusBarInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val navigationBarInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val totalHeight = maxHeight
         // Seed with a sensible fraction of the screen so the first paint looks balanced; the real
@@ -127,9 +132,10 @@ fun SignInScreenUi(
             mutableStateOf(totalHeight * 0.42f)
         }
 
-        val preferredWhite = formContentHeight + WhiteSectionVerticalBuffer
+        val preferredWhite = formContentHeight + WhiteSectionVerticalBuffer + navigationBarInset
+        val compactGreenHeight = CompactHeaderHeight + statusBarInset
         val targetGreenHeight = if (preferredWhite > totalHeight * MAX_WHITE_FRACTION) {
-            CompactHeaderHeight
+            compactGreenHeight
         } else {
             totalHeight - preferredWhite
         }
@@ -163,21 +169,37 @@ fun SignInScreenUi(
                     .clip(RoundedCornerShape(bottomEnd = SectionCornerRadius))
                     .background(MaterialTheme.colorScheme.primary),
             ) {
-                Crossfade(
-                    targetState = panel,
-                    animationSpec = tween(durationMillis = 300),
-                    modifier = Modifier.fillMaxSize(),
-                    label = "headerContent",
-                ) { currentPanel ->
-                    when (currentPanel) {
-                        AuthPanel.SignIn -> SignInHeaderContent(onSkip = onSkip)
-                        AuthPanel.SignUp -> SignUpHeaderContent(
-                            onBack = { panel = AuthPanel.SignIn },
-                        )
-                        AuthPanel.ForgotPassword -> ForgotPasswordHeaderContent(
-                            onBack = { panel = AuthPanel.SignIn },
-                        )
+                // The green background itself extends into the status bar area, but the
+                // interactive content (top bar + hero) is padded below the status bar.
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding(),
+                ) {
+                    // Top bar (Skip / Back + title) crossfades between panels. The hero logo
+                    // rendered below lives outside this Crossfade so it can have its own,
+                    // section-aware reveal animation.
+                    Crossfade(
+                        targetState = panel,
+                        animationSpec = tween(durationMillis = 300),
+                        modifier = Modifier.fillMaxSize(),
+                        label = "headerContent",
+                    ) { currentPanel ->
+                        when (currentPanel) {
+                            AuthPanel.SignIn -> SignInHeaderContent(onSkip = onSkip)
+                            AuthPanel.SignUp -> SignUpHeaderContent(
+                                onBack = { panel = AuthPanel.SignIn },
+                            )
+                            AuthPanel.ForgotPassword -> ForgotPasswordHeaderContent(
+                                onBack = { panel = AuthPanel.SignIn },
+                            )
+                        }
                     }
+
+                    // Reveal the hero only after the green section has finished expanding and
+                    // dismiss it as soon as the collapse begins. This makes the white section
+                    // feel like it's sliding over a static hero rather than dragging it along.
+                    SignInHeroReveal(visible = panel == AuthPanel.SignIn)
                 }
             }
 
@@ -188,46 +210,50 @@ fun SignInScreenUi(
                     .clip(RoundedCornerShape(topStart = SectionCornerRadius))
                     .background(MaterialTheme.colorScheme.surface),
             ) {
-                AuthFormContent(
-                    panel = panel,
-                    email = email,
-                    password = password,
-                    name = name,
-                    studentId = studentId,
-                    registrationNumber = registrationNumber,
-                    faculty = faculty,
-                    batch = batch,
-                    rememberMe = rememberMe,
-                    onEmailChange = { email = it },
-                    onPasswordChange = { password = it },
-                    onNameChange = { name = it },
-                    onStudentIdChange = { studentId = it },
-                    onRegistrationNumberChange = { registrationNumber = it },
-                    onFacultyChange = { faculty = it },
-                    onBatchChange = { batch = it },
-                    onRememberMeToggle = { rememberMe = !rememberMe },
-                    onLogin = { onLogin(email, password) },
-                    onForgotPasswordTap = { panel = AuthPanel.ForgotPassword },
-                    onResetPasswordSubmit = { onForgotPassword(email) },
-                    onSignUp = {
-                        onSignUp(
-                            SignUpFormData(
-                                name = name,
-                                email = email,
-                                studentId = studentId,
-                                registrationNumber = registrationNumber,
-                                faculty = faculty,
-                                batch = batch,
-                                password = password,
-                            ),
-                        )
-                    },
-                    onSwitchToSignIn = { panel = AuthPanel.SignIn },
-                    onSwitchToSignUp = { panel = AuthPanel.SignUp },
-                    onContentMeasured = { heightPx ->
-                        formContentHeight = with(density) { heightPx.toDp() }
-                    },
-                )
+                // As with the green section, the white background extends behind the home
+                // indicator while the form content stays padded above it.
+                Box(modifier = Modifier.navigationBarsPadding()) {
+                    AuthFormContent(
+                        panel = panel,
+                        email = email,
+                        password = password,
+                        name = name,
+                        studentId = studentId,
+                        registrationNumber = registrationNumber,
+                        faculty = faculty,
+                        batch = batch,
+                        rememberMe = rememberMe,
+                        onEmailChange = { email = it },
+                        onPasswordChange = { password = it },
+                        onNameChange = { name = it },
+                        onStudentIdChange = { studentId = it },
+                        onRegistrationNumberChange = { registrationNumber = it },
+                        onFacultyChange = { faculty = it },
+                        onBatchChange = { batch = it },
+                        onRememberMeToggle = { rememberMe = !rememberMe },
+                        onLogin = { onLogin(email, password) },
+                        onForgotPasswordTap = { panel = AuthPanel.ForgotPassword },
+                        onResetPasswordSubmit = { onForgotPassword(email) },
+                        onSignUp = {
+                            onSignUp(
+                                SignUpFormData(
+                                    name = name,
+                                    email = email,
+                                    studentId = studentId,
+                                    registrationNumber = registrationNumber,
+                                    faculty = faculty,
+                                    batch = batch,
+                                    password = password,
+                                ),
+                            )
+                        },
+                        onSwitchToSignIn = { panel = AuthPanel.SignIn },
+                        onSwitchToSignUp = { panel = AuthPanel.SignUp },
+                        onContentMeasured = { heightPx ->
+                            formContentHeight = with(density) { heightPx.toDp() }
+                        },
+                    )
+                }
             }
         }
     }
@@ -246,39 +272,74 @@ private fun SignInHeaderContent(onSkip: () -> Unit) {
                 .padding(16.dp)
                 .clickable(onClick = onSkip),
         )
+    }
+}
 
-        Column(
+/**
+ * Extracted so that only [BoxScope] is in scope at the call site. When this was inlined inside the
+ * green `Box { ... }` (which itself lives inside a `Column { ... }`), Kotlin resolved the call to
+ * [ColumnScope.AnimatedVisibility] because the outer column scope was still visible, and then
+ * failed to supply its implicit receiver.
+ */
+@Composable
+private fun BoxScope.SignInHeroReveal(visible: Boolean) {
+    AnimatedVisibility(
+        visible = visible,
+        // Wait for the green section to finish growing, then slowly reveal the hero.
+        enter = fadeIn(
+            animationSpec = tween(
+                durationMillis = 220,
+                delayMillis = 450,
+                easing = FastOutSlowInEasing,
+            ),
+        ),
+        // Mirror of the reveal: fade out at the same pace as the reveal runs in, so the hero
+        // gently dissolves at the start of the white section's expand rather than snapping away.
+        exit = fadeOut(
+            animationSpec = tween(
+                durationMillis = 220,
+                easing = FastOutSlowInEasing,
+            ),
+        ),
+        modifier = Modifier.align(Alignment.BottomCenter),
+        label = "signInHeroReveal",
+    ) {
+        SignInHero()
+    }
+}
+
+@Composable
+private fun SignInHero() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 28.dp)
+            .padding(bottom = 72.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(horizontal = 28.dp)
-                .padding(bottom = 72.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .size(96.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
+            Image(
+                painter = painterResource(Res.drawable.ic_logo),
+                contentDescription = null,
                 modifier = Modifier
-                    .size(96.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center,
-            ) {
-                Image(
-                    painter = painterResource(Res.drawable.ic_logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape),
-                )
-            }
-            Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                text = "Welcome Back!",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
+                    .size(64.dp)
+                    .clip(CircleShape),
             )
         }
+        Spacer(modifier = Modifier.height(14.dp))
+        Text(
+            text = "Welcome Back!",
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

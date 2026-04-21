@@ -64,12 +64,6 @@ private fun HandleNavigationState(
         navigation?.let {
             when (it) {
                 is SignInNavigationState.GoBack -> navigator?.goBack()
-                is SignInNavigationState.GoToForgotPasswordScreen -> {
-                    navigator?.navigateTo(AppScreen.ForgotPassword)
-                }
-                is SignInNavigationState.GoToSignUpScreen -> {
-                    navigator?.navigateTo(AppScreen.SignUp)
-                }
                 is SignInNavigationState.GoToEmailVerificationScreen -> {
                     navigator?.navigateTo(AppScreen.EmailVerification)
                 }

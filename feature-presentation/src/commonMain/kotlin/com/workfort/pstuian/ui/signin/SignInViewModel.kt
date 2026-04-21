@@ -9,6 +9,7 @@ import com.workfort.pstuian.ui.signin.state.SignInMessageState
 import com.workfort.pstuian.ui.signin.state.SignInNavigationState
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
+import com.workfort.pstuian.ui.signin.state.SignUpFormData
 import com.workfort.pstuian.util.isValidEmail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,17 +42,38 @@ class SignInViewModel(
             is SignInUiEvent.SignInClicked -> {
                 signIn(event.email, event.password)
             }
-            is SignInUiEvent.ForgotPasswordClicked -> {
-                _navigation.update { SignInNavigationState.GoToForgotPasswordScreen }
+            is SignInUiEvent.SignUpSubmitted -> {
+                signUp(event.data)
             }
-            is SignInUiEvent.SignUpClicked -> {
-                _navigation.update { SignInNavigationState.GoToSignUpScreen }
+            is SignInUiEvent.ForgotPasswordSubmitted -> {
+                sendPasswordResetLink(event.email)
             }
             is SignInUiEvent.EmailVerificationClicked -> {
                 _navigation.update { SignInNavigationState.GoToEmailVerificationScreen }
             }
             is SignInUiEvent.MessageConsumed -> onMessageHandled()
             is SignInUiEvent.NavigationConsumed -> onNavigationHandled()
+        }
+    }
+
+    private fun signUp(data: SignUpFormData) {
+        // TODO: wire to repository once the sign-up endpoint is ready. For now we just surface a
+        // placeholder message so the UI flow can be exercised end-to-end.
+        _message.update {
+            SignInMessageState.Success(
+                message = "Sign up not implemented yet (received: ${data.email})",
+                showToast = true,
+            )
+        }
+    }
+
+    private fun sendPasswordResetLink(email: String) {
+        // TODO: wire to AuthRepository.sendPasswordResetLink once available.
+        _message.update {
+            SignInMessageState.Success(
+                message = "Password reset link request stubbed (for: $email)",
+                showToast = true,
+            )
         }
     }
 
