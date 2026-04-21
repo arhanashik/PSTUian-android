@@ -17,4 +17,4 @@ internal val WhiteSectionVerticalBuffer = 24.dp
 // beginning of FastOutSlowIn, which can read as a bounce—especially when [totalHeight] jumps with
 // the keyboard and the target green height is recomputed.
 internal val SectionResizeEasing = LinearOutSlowInEasing
-internal const val SectionResizeDurationMillis = 520
+internal const val SectionResizeDurationMillis = 300
