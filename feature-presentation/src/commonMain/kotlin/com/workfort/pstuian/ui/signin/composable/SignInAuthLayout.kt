@@ -6,10 +6,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -36,7 +39,11 @@ internal fun SignInAuthForeground(
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val scrollState = rememberScrollState()
-        val minWhiteHeight = (maxHeight - greenHeight).coerceAtLeast(0.dp)
+        // Because the scroll container applies `navigationBarsPadding()`, we must account for that
+        // inset when sizing the white section. Otherwise the content becomes slightly taller than
+        // the viewport even when nothing overflows, causing a small "phantom" scroll.
+        val navigationBarInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        val minWhiteHeight = (maxHeight - greenHeight - navigationBarInset).coerceAtLeast(0.dp)
         // Primary behind the scroll column so the white card’s rounded top-start wedge shows green.
         // The green header stacks surface (white) under primary: the bottom-end radius cuts through
         // primary so that corner reads as white — the form/surface color — not more green.
