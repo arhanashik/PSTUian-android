@@ -9,24 +9,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 
 object AppColors {
-    // Colors from original Theme.kt
-    val ColorPrimary = Color(0xFF008577)
-    val ColorPrimaryDark = Color(0xFF00574B)
-    val ColorAccent = Color(0xFFD81B60)
+    // Brand palette — shared across the app
+    val BrandGreen = Color(0xFF0B3D2E)           // dark forest green, primary brand color
+    val BrandGreenContainer = Color(0xFF1A5A43)  // lighter forest green, used for chips / circular backdrops
+    val BrandGreenSoft = Color(0xFF7DB8A1)       // light sage, readable on dark surfaces
+    val BrandYellow = Color(0xFFFFC107)          // accent yellow
 
-    private val Purple80 = Color(0xFF667EEA)
-    private val PurpleGrey80 = Color(0xFF764BA2)
-    private val Pink80 = Color(0xFFEFB8C8)
+    // Neutrals
+    private val NeutralWhite = Color.White
+    private val BodyDark = Color(0xFF1A1A1A)
+    private val LabelDark = Color(0xFF3D3D3D)
+    private val LineLight = Color(0xFFD9D9D9)
 
-    private val Purple40 = Color(0xFF667EEA)
-    private val PurpleGrey40 = Color(0xFF625b71)
-    private val Pink40 = Color(0xFF7D5260)
+    // Dark-mode neutrals (tinted slightly toward brand green)
+    private val SurfaceDark = Color(0xFF14211C)        // the "white section" in dark mode
+    private val SurfaceDarkVariant = Color(0xFF1E2D27)
+    private val BackgroundDark = Color(0xFF0B1613)
+    private val OnSurfaceDark = Color(0xFFE6E6E6)
+    private val OnSurfaceVariantDark = Color(0xFFB8BFBB)
+    private val OutlineDark = Color(0xFF4A5550)
+    private val OutlineVariantDark = Color(0xFF2F3A35)
+
+    // Legacy aliases kept for backward compatibility with older call sites
+    val ColorPrimary = BrandGreen
+    val ColorPrimaryDark = Color(0xFF05251C)
+    val ColorAccent = BrandYellow
 
     // Status colors
     val crimson = Color(0xFFDC143C)
     val blue = Color(0xFF2196F3)
     val green = Color(0xFF4CAF50)
-    val yellow = Color(0xFFFFC107)
+    val yellow = BrandYellow
     val gray = Color(0xFFA9A9A9)
 
     // Themed colors using MaterialTheme.colorScheme
@@ -91,35 +104,45 @@ object AppColors {
         }
 
     val LightColorScheme = lightColorScheme(
-        primary = Purple40,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
+        primary = BrandGreen,
+        onPrimary = NeutralWhite,
+        primaryContainer = BrandGreenContainer,
+        onPrimaryContainer = NeutralWhite,
+        secondary = BrandYellow,
+        onSecondary = BrandGreen,
+        secondaryContainer = BrandYellow,
+        onSecondaryContainer = BrandGreen,
+        tertiary = BrandGreenContainer,
+        onTertiary = NeutralWhite,
         background = Color(0xFFF5F7FA),
-        surface = Color.White,
-        onPrimary = Color.White,
-        onSecondary = Color.White,
-        onTertiary = Color.White,
-        onBackground = Color(0xFF1C1B1F),
-        onSurface = Color(0xFF1C1B1F),
-        onSurfaceVariant = Color(0xFF4A5568),
-        outline = Color(0xFF718096),
-        outlineVariant = Color(0xFFCBD5E0)
+        onBackground = BodyDark,
+        surface = NeutralWhite,
+        onSurface = BodyDark,
+        surfaceVariant = Color(0xFFEEF1EE),
+        onSurfaceVariant = LabelDark,
+        outline = Color(0xFF718983),
+        outlineVariant = LineLight,
     )
 
     val DarkColorScheme = darkColorScheme(
-        primary = Purple80,
-        secondary = PurpleGrey80,
-        tertiary = Pink80,
-        background = Color(0xFF1C1B1F),
-        surface = Color(0xFF2D3748),
-        onPrimary = Color.White,
-        onSecondary = Color.White,
-        onTertiary = Color.White,
-        onBackground = Color(0xFFE6E1E5),
-        onSurface = Color(0xFFE6E1E5),
-        onSurfaceVariant = Color(0xFFCBD5E0),
-        outline = Color(0xFFA0AEC0),
-        outlineVariant = Color(0xFF4A5568)
+        primary = BrandGreen,
+        onPrimary = NeutralWhite,
+        primaryContainer = BrandGreenContainer,
+        onPrimaryContainer = NeutralWhite,
+        secondary = BrandYellow,
+        onSecondary = BrandGreen,
+        secondaryContainer = BrandYellow,
+        onSecondaryContainer = BrandGreen,
+        tertiary = BrandGreenSoft,
+        onTertiary = BrandGreen,
+        background = BackgroundDark,
+        onBackground = OnSurfaceDark,
+        surface = SurfaceDark,
+        onSurface = OnSurfaceDark,
+        surfaceVariant = SurfaceDarkVariant,
+        onSurfaceVariant = OnSurfaceVariantDark,
+        outline = OutlineDark,
+        outlineVariant = OutlineVariantDark,
     )
 }
 

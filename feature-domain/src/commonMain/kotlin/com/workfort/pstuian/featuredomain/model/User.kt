@@ -26,9 +26,9 @@ sealed interface User {
         override val imageUrl: String?,
         val studentId: String,
         val reg: String,
+        val batchId: Int,
         val linkedIn: String?,
         val fbLink: String?,
-        val batchId: Int,
         val session: String,
         val cvLink: String?,
     ): User
