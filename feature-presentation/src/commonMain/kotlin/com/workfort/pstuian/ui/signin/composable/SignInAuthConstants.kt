@@ -17,3 +17,4 @@ internal const val ExpandedGreenHeightFraction = 0.58f
 // the keyboard and the target green height is recomputed.
 internal val SectionResizeEasing = LinearOutSlowInEasing
 internal const val SectionResizeDurationMillis = 300
+internal const val SignUpToggleResizeDurationMillis = 180

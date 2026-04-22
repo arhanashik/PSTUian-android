@@ -9,10 +9,15 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
+import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 
@@ -24,9 +29,17 @@ fun SignInContentPanel(
     Box(modifier = Modifier.fillMaxSize()) {
         val panel = when (uiState) {
             is SignInUiState.None, is SignInUiState.SignInPanel -> AuthPanel.SignIn
-            is SignInUiState.SignUpPanel -> AuthPanel.StudentSignUp
+            is SignInUiState.SignUpPanel -> when (uiState.formData) {
+                is SignUpFormData.StudentSignUpFormData -> AuthPanel.StudentSignUp
+                is SignUpFormData.TeacherSignUpFormData -> AuthPanel.TeacherSignUp
+            }
             is SignInUiState.ForgotPasswordPanel -> AuthPanel.ForgotPassword
             is SignInUiState.EmailVerificationPanel -> AuthPanel.EmailVerification
+        }
+        var previousPanel by remember { mutableStateOf(panel) }
+        val isSignUpTypeToggle = previousPanel.isSignUpPanel() && panel.isSignUpPanel()
+        LaunchedEffect(panel) {
+            previousPanel = panel
         }
 
         // Green header height includes the status-bar safe area on edge-to-edge layouts.
@@ -36,7 +49,7 @@ fun SignInContentPanel(
             val totalHeight = maxHeight
             val compactGreenHeight = CompactHeaderHeight + statusBarInset
             val targetGreenHeight = when (panel) {
-                AuthPanel.StudentSignUp -> compactGreenHeight
+                AuthPanel.StudentSignUp, AuthPanel.TeacherSignUp -> compactGreenHeight
                 AuthPanel.SignIn -> totalHeight * SignInGreenHeightFraction
                 else -> totalHeight * ExpandedGreenHeightFraction
             }
@@ -44,7 +57,11 @@ fun SignInContentPanel(
             val greenHeight by animateDpAsState(
                 targetValue = targetGreenHeight,
                 animationSpec = tween(
-                    durationMillis = SectionResizeDurationMillis,
+                    durationMillis = if (isSignUpTypeToggle) {
+                        SignUpToggleResizeDurationMillis
+                    } else {
+                        SectionResizeDurationMillis
+                    },
                     easing = SectionResizeEasing,
                 ),
                 label = "greenSectionHeight",
@@ -64,4 +81,8 @@ fun SignInContentPanel(
             ShowLoaderDialog()
         }
     }
+}
+
+private fun AuthPanel.isSignUpPanel(): Boolean {
+    return this == AuthPanel.StudentSignUp || this == AuthPanel.TeacherSignUp
 }

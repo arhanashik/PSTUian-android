@@ -37,6 +37,22 @@ sealed interface SignUpFormData {
                 batch.isEmpty() ||
                 password.isEmpty() ||
                 password.length < 6
+
+        fun toTeacherSignUpFormData() = TeacherSignUpFormData(
+            name = name,
+            faculty = faculty,
+            email = email,
+            password = password,
+            department = "",
+            designation = "",
+        )
+
+        fun copyFromCommonFields(teacherFormData: TeacherSignUpFormData) = copy(
+            name = teacherFormData.name,
+            faculty = teacherFormData.faculty,
+            email = teacherFormData.email,
+            password = teacherFormData.password,
+        )
     }
 
     data class TeacherSignUpFormData(
@@ -56,5 +72,22 @@ sealed interface SignUpFormData {
                 designation.isEmpty() ||
                 password.isEmpty() ||
                 password.length < 6
+
+        fun toStudentSignUpFormData() = StudentSignUpFormData(
+            name = name,
+            faculty = faculty,
+            email = email,
+            password = password,
+            studentId = "",
+            regNumber = "",
+            batch = "",
+        )
+
+        fun copyFromCommonFields(studentFormData: StudentSignUpFormData) = copy(
+            name = studentFormData.name,
+            faculty = studentFormData.faculty,
+            email = studentFormData.email,
+            password = studentFormData.password,
+        )
     }
 }
