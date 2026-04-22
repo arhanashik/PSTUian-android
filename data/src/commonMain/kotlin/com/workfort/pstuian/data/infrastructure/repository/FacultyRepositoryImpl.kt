@@ -1,5 +1,7 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
+import com.workfort.pstuian.data.mapper.DomainErrorMapper
+import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.FacultyApiHelper
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
@@ -8,10 +10,12 @@ import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 
 class FacultyRepositoryImpl(
     private val helper: FacultyApiHelper,
+    private val domainErrorMapper: DomainErrorMapper,
 ) : FacultyRepository {
     private val faculties = mutableListOf<FacultyEntity>()
     private val batches = mutableMapOf<Int, List<BatchEntity>>()
@@ -22,9 +26,11 @@ class FacultyRepositoryImpl(
 
     override suspend fun getFaculties(forceRefresh: Boolean): List<FacultyEntity> {
         if (forceRefresh || faculties.isEmpty()) {
-            val newData = helper.getFaculties().map { it.toEntity() }
-            faculties.clear()
-            faculties.addAll(newData)
+            helper.getFaculties().toDomainResult(domainErrorMapper).map { dtos ->
+                val newData = dtos.map { it.toEntity() }
+                faculties.clear()
+                faculties.addAll(newData)
+            }
         }
         return faculties
     }

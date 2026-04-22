@@ -4,12 +4,13 @@ import com.workfort.pstuian.data.model.BatchDto
 import com.workfort.pstuian.data.model.CourseDto
 import com.workfort.pstuian.data.model.EmployeeDto
 import com.workfort.pstuian.data.model.FacultyDto
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.model.TeacherDto
 
 
 interface FacultyApiHelper {
-    suspend fun getFaculties(): List<FacultyDto>
+    suspend fun getFaculties(): NetworkResult<List<FacultyDto>>
     suspend fun getFaculty(id: Int): FacultyDto
     suspend fun getBatches(facultyId: Int): List<BatchDto>
     suspend fun getBatch(id: Int): BatchDto

@@ -112,7 +112,7 @@ object NetworkConst {
             }
 
             object Slider {
-                const val GET_ALL = "${DEVICE_API_PATH}getAll"
+                const val GET_ALL = "${SLIDER_API_PATH}getAll"
             }
 
             object Auth {

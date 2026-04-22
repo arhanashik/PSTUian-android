@@ -1,20 +1,20 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
+import com.workfort.pstuian.data.mapper.toNetworkResult
 import com.workfort.pstuian.data.model.BatchDto
 import com.workfort.pstuian.data.model.CourseDto
 import com.workfort.pstuian.data.model.EmployeeDto
 import com.workfort.pstuian.data.model.FacultyDto
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.FacultyApiHelper
 import com.workfort.pstuian.data.remote.service.FacultyApiService
 
 class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiHelper {
-    override suspend fun getFaculties(): List<FacultyDto> {
-        val response = service.getFaculties()
-        if(!response.success) throw Exception(response.message)
 
-        return response.data?: emptyList()
+    override suspend fun getFaculties(): NetworkResult<List<FacultyDto>> {
+        return service.getFaculties().toNetworkResult()
     }
 
     override suspend fun getFaculty(id: Int): FacultyDto {

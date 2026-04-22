@@ -14,6 +14,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
 class FacultyApiService(private val client: HttpClient) {
+
     suspend fun getFaculties(): ApiResponse<List<FacultyDto>> {
         return client.get(NetworkConst.Remote.Api.Faculty.GET_ALL).body()
     }

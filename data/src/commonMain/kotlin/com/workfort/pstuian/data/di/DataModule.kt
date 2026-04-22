@@ -166,7 +166,7 @@ val repositoryModule = module {
     singleOf(::SliderRepositoryImpl) bind SliderRepository::class
 
     // faculty repository injections
-    single<FacultyRepository> { FacultyRepositoryImpl(get()) }
+    singleOf(::FacultyRepositoryImpl) bind FacultyRepository::class
 
     // student repository injections
     singleOf(::StudentRepositoryImpl) bind StudentRepository::class
