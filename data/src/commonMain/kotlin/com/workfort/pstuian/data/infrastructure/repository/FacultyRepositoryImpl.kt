@@ -40,9 +40,11 @@ class FacultyRepositoryImpl(
     }
 
     override suspend fun getBatches(facultyId: Int, forceRefresh: Boolean): List<BatchEntity> {
-        if (forceRefresh || !batches.containsKey(facultyId)) {
-            val newData = helper.getBatches(facultyId).map { it.toEntity() }
-            batches[facultyId] = newData
+        if (forceRefresh || batches[facultyId].isNullOrEmpty()) {
+            helper.getBatches(facultyId).toDomainResult(domainErrorMapper).map { dtos ->
+                val newData = dtos.map { it.toEntity() }
+                batches[facultyId] = newData
+            }
         }
         return batches[facultyId] ?: emptyList()
     }

@@ -24,11 +24,8 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         return response.data?: throw Exception("No DATA")
     }
 
-    override suspend fun getBatches(facultyId: Int): List<BatchDto> {
-        val response = service.getBatches(facultyId)
-        if(!response.success) throw Exception(response.message)
-
-        return response.data?: emptyList()
+    override suspend fun getBatches(facultyId: Int): NetworkResult<List<BatchDto>> {
+        return service.getBatches(facultyId).toNetworkResult()
     }
 
     override suspend fun getBatch(id: Int): BatchDto {

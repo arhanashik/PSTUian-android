@@ -12,7 +12,7 @@ import com.workfort.pstuian.data.model.TeacherDto
 interface FacultyApiHelper {
     suspend fun getFaculties(): NetworkResult<List<FacultyDto>>
     suspend fun getFaculty(id: Int): FacultyDto
-    suspend fun getBatches(facultyId: Int): List<BatchDto>
+    suspend fun getBatches(facultyId: Int): NetworkResult<List<BatchDto>>
     suspend fun getBatch(id: Int): BatchDto
     suspend fun getStudents(facultyId: Int, batchId: Int): List<StudentDto>
     suspend fun getTeachers(facultyId: Int): List<TeacherDto>
