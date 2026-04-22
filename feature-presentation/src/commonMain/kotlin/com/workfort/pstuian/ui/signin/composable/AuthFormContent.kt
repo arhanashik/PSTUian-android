@@ -1,5 +1,12 @@
 package com.workfort.pstuian.ui.signin.composable
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,17 +23,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.ActionButton
+import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
-import com.workfort.pstuian.ui.signin.screendata.StudentSignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 
@@ -40,7 +50,7 @@ internal fun AuthFormForSignInUiState(
     when (uiState) {
         is SignInUiState.None -> Unit
         is SignInUiState.SignInPanel -> SignInAuthForm(uiState.formData, uiState.rememberMe, onUiEvent)
-        is SignInUiState.StudentSignUpPanel -> SignUpAuthForm(uiState.formData, onUiEvent)
+        is SignInUiState.SignUpPanel -> SignUpAuthFormContent(uiState.formData, onUiEvent)
         is SignInUiState.ForgotPasswordPanel -> {
             ForgotPasswordAuthForm(
                 email = uiState.email,
@@ -112,15 +122,109 @@ internal fun SignInAuthForm(
             AuthBottomLink(
                 prefix = "Don't have an account?",
                 action = "SIGN UP",
-                onAction = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignUp)) },
+                onAction = { onUiEvent(SignInUiEvent.SignUpFromSignInClicked) },
             )
         }
     }
 }
 
 @Composable
-internal fun SignUpAuthForm(
-    formData: StudentSignUpFormData,
+private fun SignUpAuthFormContent(
+    formData: SignUpFormData,
+    onUiEvent: (SignInUiEvent) -> Unit,
+) {
+    val selectedIndex = when (formData) {
+        is SignUpFormData.StudentSignUpFormData -> 0
+        is SignUpFormData.TeacherSignUpFormData -> 1
+    }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        AuthFormPanelLayout {
+            ToggleSwitch(
+                listOf("Student", "Teacher"),
+                selectedIndex = selectedIndex,
+                onSelectedIndexChange = { index ->
+                    val userType = if (index == 0) UserType.STUDENT else UserType.TEACHER
+                    onUiEvent(SignInUiEvent.SignUpUserTypeToggled(userType))
+                },
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            AnimatedContent(
+                targetState = selectedIndex,
+                transitionSpec = {
+                    if (selectedIndex == 1) {
+                        (slideIntoContainer(
+                            towards = SlideDirection.Left,
+                            animationSpec = tween(durationMillis = 320, easing = FastOutSlowInEasing),
+                        ) + fadeIn(
+                            animationSpec = tween(durationMillis = 190, delayMillis = 90, easing = FastOutSlowInEasing),
+                        ))
+                            .togetherWith(
+                                slideOutOfContainer(
+                                    towards = SlideDirection.Left,
+                                    animationSpec = tween(durationMillis = 260, easing = FastOutSlowInEasing),
+                                ) + fadeOut(
+                                    animationSpec = tween(durationMillis = 160, easing = FastOutSlowInEasing),
+                                )
+                            )
+                    } else {
+                        (slideIntoContainer(
+                            towards = SlideDirection.Right,
+                            animationSpec = tween(durationMillis = 320, easing = FastOutSlowInEasing),
+                        ) + fadeIn(
+                            animationSpec = tween(durationMillis = 190, delayMillis = 90, easing = FastOutSlowInEasing),
+                        ))
+                            .togetherWith(
+                                slideOutOfContainer(
+                                    towards = SlideDirection.Right,
+                                    animationSpec = tween(durationMillis = 260, easing = FastOutSlowInEasing),
+                                ) + fadeOut(
+                                    animationSpec = tween(durationMillis = 160, easing = FastOutSlowInEasing),
+                                )
+                            )
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clipToBounds(),
+                contentAlignment = Alignment.TopStart,
+                label = "signUpInputFieldsSwitcher",
+            ) {
+                when (formData) {
+                    is SignUpFormData.StudentSignUpFormData -> StudentSignUpInputFields(
+                        formData = formData,
+                        onUiEvent = onUiEvent,
+                    )
+                    is SignUpFormData.TeacherSignUpFormData -> TeacherSignUpInputFields(
+                        formData = formData,
+                        onUiEvent = onUiEvent,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            AuthPrivacyPolicyAndTermsLink(
+                onTermsAndConditionsClick = { onUiEvent(SignInUiEvent.TermsAndConditionsClicked) },
+                onPrivacyPolicyClick = { onUiEvent(SignInUiEvent.PrivacyPolicyClicked) },
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            ActionButton("SIGN UP", Icons.AutoMirrored.Filled.ArrowForward) {
+                when (formData) {
+                    is SignUpFormData.StudentSignUpFormData -> onUiEvent(SignInUiEvent.StudentSignUpClicked(formData))
+                    is SignUpFormData.TeacherSignUpFormData -> onUiEvent(SignInUiEvent.TeacherSignUpClicked(formData))
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            AuthBottomLink(
+                prefix = "Already have an account?",
+                action = "LOG IN",
+                onAction = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun StudentSignUpInputFields(
+    formData: SignUpFormData.StudentSignUpFormData,
     onUiEvent: (SignInUiEvent) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
@@ -133,91 +237,143 @@ internal fun SignUpAuthForm(
     val passwordFocus = remember { FocusRequester() }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        AuthFormPanelLayout {
+        AuthUnderlinedField(
+            label = "Name",
+            value = formData.name,
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(name = it))) },
+            focusRequester = nameFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { emailFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = "Email Address",
+            value = formData.email,
+            onValueChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
+            focusRequester = emailFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { studentIdFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = "Student Id",
+            value = formData.studentId,
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(studentId = it))) },
+            focusRequester = studentIdFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { registrationFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = "Registration Number",
+            value = formData.regNumber,
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(regNumber = it))) },
+            focusRequester = registrationFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { facultyFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+        ) {
             AuthUnderlinedField(
-                label = "Name",
-                value = formData.name,
-                onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(name = it))) },
-                focusRequester = nameFocus,
+                label = "Faculty",
+                value = formData.faculty,
+                onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(faculty = it))) },
+                modifier = Modifier.weight(1f),
+                focusRequester = facultyFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { emailFocus.requestFocus() }),
+                keyboardActions = KeyboardActions(onNext = { batchFocus.requestFocus() }),
             )
-            Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+            Spacer(modifier = Modifier.width(16.dp))
             AuthUnderlinedField(
-                label = "Email Address",
-                value = formData.email,
-                onValueChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
-                focusRequester = emailFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { studentIdFocus.requestFocus() }),
-            )
-            Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
-            AuthUnderlinedField(
-                label = "Student Id",
-                value = formData.studentId,
-                onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(studentId = it))) },
-                focusRequester = studentIdFocus,
+                label = "Batch",
+                value = formData.batch,
+                onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(batch = it))) },
+                modifier = Modifier.weight(1f),
+                focusRequester = batchFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { registrationFocus.requestFocus() }),
-            )
-            Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
-            AuthUnderlinedField(
-                label = "Registration Number",
-                value = formData.regNumber,
-                onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(regNumber = it))) },
-                focusRequester = registrationFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { facultyFocus.requestFocus() }),
-            )
-            Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top,
-            ) {
-                AuthUnderlinedField(
-                    label = "Faculty",
-                    value = formData.faculty,
-                    onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(faculty = it))) },
-                    modifier = Modifier.weight(1f),
-                    focusRequester = facultyFocus,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = { batchFocus.requestFocus() }),
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                AuthUnderlinedField(
-                    label = "Batch",
-                    value = formData.batch,
-                    onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(batch = it))) },
-                    modifier = Modifier.weight(1f),
-                    focusRequester = batchFocus,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
-                )
-            }
-            Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
-            AuthPasswordField(
-                password = formData.password,
-                onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
-                focusRequester = passwordFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            AuthPrivacyPolicyAndTermsLink(
-                onTermsAndConditionsClick = { onUiEvent(SignInUiEvent.TermsAndConditionsClicked) },
-                onPrivacyPolicyClick = { onUiEvent(SignInUiEvent.PrivacyPolicyClicked) },
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            ActionButton("SIGN UP", Icons.AutoMirrored.Filled.ArrowForward) {
-                onUiEvent(SignInUiEvent.SignUpClicked(formData))
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-            AuthBottomLink(
-                prefix = "Already have an account?",
-                action = "LOG IN",
-                onAction = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
+                keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
             )
         }
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthPasswordField(
+            password = formData.password,
+            onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
+            focusRequester = passwordFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+        )
+    }
+}
+
+@Composable
+private fun TeacherSignUpInputFields(
+    formData: SignUpFormData.TeacherSignUpFormData,
+    onUiEvent: (SignInUiEvent) -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    val nameFocus = remember { FocusRequester() }
+    val emailFocus = remember { FocusRequester() }
+    val facultyFocus = remember { FocusRequester() }
+    val departmentFocus = remember { FocusRequester() }
+    val designationFocus = remember { FocusRequester() }
+    val passwordFocus = remember { FocusRequester() }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        AuthUnderlinedField(
+            label = "Name",
+            value = formData.name,
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(name = it))) },
+            focusRequester = nameFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { emailFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = "Email Address",
+            value = formData.email,
+            onValueChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
+            focusRequester = emailFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { facultyFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = "Faculty",
+            value = formData.faculty,
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(faculty = it))) },
+            focusRequester = facultyFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { departmentFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = "Department",
+            value = formData.department,
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(department = it))) },
+            focusRequester = departmentFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { designationFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = "Designation",
+            value = formData.designation,
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(designation = it))) },
+            focusRequester = designationFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
+        )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthPasswordField(
+            password = formData.password,
+            onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
+            focusRequester = passwordFocus,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+        )
     }
 }
 

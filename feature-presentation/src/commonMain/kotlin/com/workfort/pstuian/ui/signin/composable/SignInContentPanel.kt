@@ -24,7 +24,7 @@ fun SignInContentPanel(
     Box(modifier = Modifier.fillMaxSize()) {
         val panel = when (uiState) {
             is SignInUiState.None, is SignInUiState.SignInPanel -> AuthPanel.SignIn
-            is SignInUiState.StudentSignUpPanel -> AuthPanel.SignUp
+            is SignInUiState.SignUpPanel -> AuthPanel.StudentSignUp
             is SignInUiState.ForgotPasswordPanel -> AuthPanel.ForgotPassword
             is SignInUiState.EmailVerificationPanel -> AuthPanel.EmailVerification
         }
@@ -36,7 +36,7 @@ fun SignInContentPanel(
             val totalHeight = maxHeight
             val compactGreenHeight = CompactHeaderHeight + statusBarInset
             val targetGreenHeight = when (panel) {
-                AuthPanel.SignUp -> compactGreenHeight
+                AuthPanel.StudentSignUp -> compactGreenHeight
                 AuthPanel.SignIn -> totalHeight * SignInGreenHeightFraction
                 else -> totalHeight * ExpandedGreenHeightFraction
             }

@@ -12,40 +12,49 @@ data class SignInFormData(
             password.length < 6
 }
 
-data class StudentSignUpFormData(
-    val name: String,
-    val email: String,
-    val studentId: String,
-    val regNumber: String,
-    val faculty: String,
-    val batch: String,
-    val password: String,
-) {
-    fun isInvalid(): Boolean = name.isEmpty() ||
-            email.isEmpty() ||
-            email.isValidEmail().not() ||
-            studentId.isEmpty() ||
-            regNumber.isEmpty() ||
-            faculty.isEmpty() ||
-            batch.isEmpty() ||
-            password.isEmpty() ||
-            password.length < 6
-}
+sealed interface SignUpFormData {
+    val name: String
+    val faculty: String
+    val email: String
+    val password: String
 
-data class TeacherSignUpFormData(
-    val name: String,
-    val email: String,
-    val faculty: String,
-    val department: String,
-    val designation: String,
-    val password: String,
-) {
-    fun isInvalid(): Boolean = name.isEmpty() ||
-            email.isEmpty() ||
-            email.isValidEmail().not() ||
-            faculty.isEmpty() ||
-            department.isEmpty() ||
-            designation.isEmpty() ||
-            password.isEmpty() ||
-            password.length < 6
+    data class StudentSignUpFormData(
+        override val name: String,
+        override val faculty: String,
+        override val email: String,
+        override val password: String,
+        val studentId: String,
+        val regNumber: String,
+        val batch: String,
+    ) : SignUpFormData {
+
+        fun isInvalid(): Boolean = name.isEmpty() ||
+                email.isEmpty() ||
+                email.isValidEmail().not() ||
+                studentId.isEmpty() ||
+                regNumber.isEmpty() ||
+                faculty.isEmpty() ||
+                batch.isEmpty() ||
+                password.isEmpty() ||
+                password.length < 6
+    }
+
+    data class TeacherSignUpFormData(
+        override val name: String,
+        override val faculty: String,
+        override val email: String,
+        override val password: String,
+        val department: String,
+        val designation: String,
+    ) : SignUpFormData {
+
+        fun isInvalid(): Boolean = name.isEmpty() ||
+                email.isEmpty() ||
+                email.isValidEmail().not() ||
+                faculty.isEmpty() ||
+                department.isEmpty() ||
+                designation.isEmpty() ||
+                password.isEmpty() ||
+                password.length < 6
+    }
 }

@@ -11,7 +11,7 @@ import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
-import com.workfort.pstuian.ui.signin.screendata.StudentSignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 
@@ -77,9 +77,9 @@ private fun SignInPanelDarkPreview() {
 private fun SignUpPanelPreviewAuth() {
     AppTheme {
         SignInScreenContent(
-            uiState = SignInUiState.StudentSignUpPanel(
+            uiState = SignInUiState.SignUpPanel(
                 isLoading = false,
-                formData = StudentSignUpFormData("", "", "", "", "", "", ""),
+                formData = SignUpFormData.StudentSignUpFormData("", "", "", "", "", "", ""),
             ),
             onUiEvent = {},
         )
@@ -91,9 +91,37 @@ private fun SignUpPanelPreviewAuth() {
 private fun SignUpPanelDarkPreviewAuth() {
     AppTheme(theme = ThemeMode.Dark) {
         SignInScreenContent(
-            uiState = SignInUiState.StudentSignUpPanel(
+            uiState = SignInUiState.SignUpPanel(
                 isLoading = false,
-                formData = StudentSignUpFormData("", "", "", "", "", "", ""),
+                formData = SignUpFormData.StudentSignUpFormData("", "", "", "", "", "", ""),
+            ),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TeacherSignUpPanelPreviewAuth() {
+    AppTheme {
+        SignInScreenContent(
+            uiState = SignInUiState.SignUpPanel(
+                isLoading = false,
+                formData = SignUpFormData.TeacherSignUpFormData("", "", "", "", "", ""),
+            ),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TeacherSignUpPanelDarkPreviewAuth() {
+    AppTheme(theme = ThemeMode.Dark) {
+        SignInScreenContent(
+            uiState = SignInUiState.SignUpPanel(
+                isLoading = false,
+                formData = SignUpFormData.TeacherSignUpFormData("", "", "", "", "", ""),
             ),
             onUiEvent = {},
         )

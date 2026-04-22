@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 
 /**
@@ -89,7 +88,8 @@ internal fun SignInAuthForeground(
                         ) { currentPanel ->
                             when (currentPanel) {
                                 AuthPanel.SignIn -> SignInHeaderContent(onSkip = onSkip)
-                                AuthPanel.SignUp -> SignUpHeaderContent(onBack = onBackToSignIn)
+                                AuthPanel.StudentSignUp, AuthPanel.TeacherSignUp ->
+                                    SignUpHeaderContent(onBack = onBackToSignIn)
                                 AuthPanel.ForgotPassword -> ForgotPasswordHeaderContent(onBack = onBackToSignIn)
                                 AuthPanel.EmailVerification -> EmailVerificationHeaderContent(onBack = onBackToSignIn)
                             }

@@ -1,8 +1,7 @@
 package com.workfort.pstuian.ui.signin.state
 
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
-import com.workfort.pstuian.ui.signin.screendata.StudentSignUpFormData
-import com.workfort.pstuian.ui.signin.screendata.TeacherSignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 
 sealed interface SignInUiState {
     val isLoading: Boolean
@@ -15,14 +14,9 @@ sealed interface SignInUiState {
         val rememberMe: Boolean,
     ) : SignInUiState
 
-    data class StudentSignUpPanel(
+    data class SignUpPanel(
         override val isLoading: Boolean,
-        val formData: StudentSignUpFormData,
-    ) : SignInUiState
-
-    data class TeacherSignUpPanel(
-        override val isLoading: Boolean,
-        val formData: TeacherSignUpFormData,
+        val formData: SignUpFormData,
     ) : SignInUiState
 
     data class ForgotPasswordPanel(

@@ -3,13 +3,15 @@ package com.workfort.pstuian.ui.signin
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
-import com.workfort.pstuian.ui.signin.screendata.StudentSignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInMessageState
 import com.workfort.pstuian.ui.signin.state.SignInNavigationState
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
@@ -46,9 +48,12 @@ class SignInViewModel(
             is SignInUiEvent.PasswordChanged -> stateMachine.updatePassword(event.password)
             is SignInUiEvent.SignInFormDataChanged -> stateMachine.updateSignInForm(event.formData)
             is SignInUiEvent.SignInRememberMeToggled -> stateMachine.toggleRememberMe(event.rememberMe)
-            is SignInUiEvent.SignUpFormDataChanged -> stateMachine.updateSignUpForm(event.formData)
+            is SignInUiEvent.SignUpFromSignInClicked -> showSignUpPanelByUserType()
+            is SignInUiEvent.SignUpUserTypeToggled -> onSignUpUserTypeToggled(event.userType)
+            is SignInUiEvent.SignUpFormDataChanged -> stateMachine.updateSignUpFormData(event.formData)
             is SignInUiEvent.SignInClicked -> signIn(event.formData)
-            is SignInUiEvent.SignUpClicked -> signUp(event.formData)
+            is SignInUiEvent.StudentSignUpClicked -> studentSignUp(event.formData)
+            is SignInUiEvent.TeacherSignUpClicked -> teacherSignUp(event.formData)
             is SignInUiEvent.ForgotPasswordClicked -> sendPasswordResetLink(event.email)
             is SignInUiEvent.EmailVerificationClicked -> sendVerificationEmail(event.email, event.password)
             is SignInUiEvent.TermsAndConditionsClicked -> {
@@ -57,6 +62,32 @@ class SignInViewModel(
             is SignInUiEvent.PrivacyPolicyClicked -> {
                 // TODO
             }
+        }
+    }
+
+    private fun showSignUpPanelByUserType() {
+        when (settingsRepository.getUserType()) {
+            UserType.STUDENT -> stateMachine.setAuthPanel(AuthPanel.StudentSignUp)
+            UserType.TEACHER -> stateMachine.setAuthPanel(AuthPanel.TeacherSignUp)
+            UserType.EMPLOYEE -> {
+                _message.update {
+                    SignInMessageState.Error("Employee sign up is not available yet. Coming soon.")
+                }
+            }
+            null -> {
+                _message.update {
+                    SignInMessageState.Error("Unable to determine user type. Please try again.")
+                }
+            }
+        }
+    }
+
+    private fun onSignUpUserTypeToggled(userType: UserType) {
+        settingsRepository.setUserType(userType)
+        when (userType) {
+            UserType.STUDENT -> stateMachine.setAuthPanel(AuthPanel.StudentSignUp)
+            UserType.TEACHER -> stateMachine.setAuthPanel(AuthPanel.TeacherSignUp)
+            UserType.EMPLOYEE -> Unit
         }
     }
 
@@ -135,7 +166,7 @@ class SignInViewModel(
         }
     }
 
-    private fun signUp(formData: StudentSignUpFormData) {
+    private fun studentSignUp(formData: SignUpFormData.StudentSignUpFormData) {
         // TODO: wire to repository once the sign-up endpoint is ready. For now we just surface a
         // placeholder message so the UI flow can be exercised end-to-end.
         if (formData.isInvalid()) {
@@ -147,6 +178,21 @@ class SignInViewModel(
         _message.update {
             SignInMessageState.Success(
                 message = "Sign up not implemented yet (received: ${formData.email})",
+            )
+        }
+    }
+
+    private fun teacherSignUp(formData: SignUpFormData.TeacherSignUpFormData) {
+        // TODO: wire teacher sign-up to repository once endpoint is ready.
+        if (formData.isInvalid()) {
+            _message.update {
+                SignInMessageState.Error("Please enter valid credentials and try again")
+            }
+            return
+        }
+        _message.update {
+            SignInMessageState.Success(
+                message = "Teacher sign up not implemented yet (received: ${formData.email})",
             )
         }
     }
