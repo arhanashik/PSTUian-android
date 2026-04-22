@@ -1,13 +1,11 @@
 package com.workfort.pstuian.ui.signin.composable
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -98,49 +95,21 @@ internal fun SignInAuthForm(
                 onForgotPassword = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.ForgotPassword)) },
             )
             Spacer(modifier = Modifier.height(24.dp))
+            AuthBottomLink(
+                prefix = "Need to verify your email?",
+                action = "Verify",
+                onAction = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.EmailVerification)) },
+            )
+            Spacer(modifier = Modifier.height(24.dp))
             ActionButton("LOGIN", Icons.AutoMirrored.Filled.ArrowForward) {
                 onUiEvent(SignInUiEvent.SignInClicked(formData))
             }
-            Spacer(modifier = Modifier.height(28.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    AuthBottomLink(
-                        prefix = "Don't have an account? ",
-                        action = "SIGN UP",
-                        onAction = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignUp)) },
-                    )
-                }
-                Spacer(modifier = Modifier.height(14.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Need to verify your email? ",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 13.sp,
-                    )
-                    Text(
-                        text = "Verify",
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.clickable(
-                            onClick = {
-                                onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.EmailVerification))
-                            },
-                        ),
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(24.dp))
+            AuthBottomLink(
+                prefix = "Don't have an account?",
+                action = "SIGN UP",
+                onAction = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignUp)) },
+            )
         }
     }
 }
@@ -230,22 +199,20 @@ internal fun SignUpAuthForm(
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             )
             Spacer(modifier = Modifier.height(24.dp))
+            AuthPrivacyPolicyAndTermsLink(
+                onTermsAndConditionsClick = { onUiEvent(SignInUiEvent.TermsAndConditionsClicked) },
+                onPrivacyPolicyClick = { onUiEvent(SignInUiEvent.PrivacyPolicyClicked) },
+            )
+            Spacer(modifier = Modifier.height(24.dp))
             ActionButton("SIGN UP", Icons.AutoMirrored.Filled.ArrowForward) {
                 onUiEvent(SignInUiEvent.SignUpClicked(formData))
             }
-            Spacer(modifier = Modifier.height(28.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                AuthBottomLink(
-                    prefix = "Already have an account? ",
-                    action = "LOG IN",
-                    onAction = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
-                )
-            }
+            Spacer(modifier = Modifier.height(24.dp))
+            AuthBottomLink(
+                prefix = "Already have an account?",
+                action = "LOG IN",
+                onAction = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
+            )
         }
     }
 }
@@ -280,9 +247,9 @@ internal fun ForgotPasswordAuthForm(
             ActionButton("RESET PASSWORD", Icons.AutoMirrored.Filled.ArrowForward) {
                 onResetPasswordClicked()
             }
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             AuthBottomLink(
-                prefix = "Remember your password? ",
+                prefix = "Remember your password?",
                 action = "LOG IN",
                 onAction = onSwitchToSignIn,
             )
@@ -320,19 +287,12 @@ internal fun EmailVerificationAuthForm(
             ActionButton("SEND VERIFICATION EMAIL", Icons.AutoMirrored.Filled.ArrowForward) {
                 onSendVerificationClicked()
             }
-            Spacer(modifier = Modifier.height(28.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                AuthBottomLink(
-                    prefix = "Already verified? ",
-                    action = "LOG IN",
-                    onAction = onSwitchToSignIn,
-                )
-            }
+            Spacer(modifier = Modifier.height(24.dp))
+            AuthBottomLink(
+                prefix = "Already verified?",
+                action = "LOG IN",
+                onAction = onSwitchToSignIn,
+            )
         }
     }
 }

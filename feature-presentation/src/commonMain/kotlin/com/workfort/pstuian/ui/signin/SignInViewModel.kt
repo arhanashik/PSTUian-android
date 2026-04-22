@@ -51,6 +51,12 @@ class SignInViewModel(
             is SignInUiEvent.SignUpClicked -> signUp(event.formData)
             is SignInUiEvent.ForgotPasswordClicked -> sendPasswordResetLink(event.email)
             is SignInUiEvent.EmailVerificationClicked -> sendVerificationEmail(event.email)
+            is SignInUiEvent.TermsAndConditionsClicked -> {
+                // TODO
+            }
+            is SignInUiEvent.PrivacyPolicyClicked -> {
+                // TODO
+            }
         }
     }
 

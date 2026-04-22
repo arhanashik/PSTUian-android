@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +40,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -53,16 +53,55 @@ internal fun AuthBottomLink(
     action: String,
     onAction: () -> Unit,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Text(
             text = prefix,
             style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
         )
+        Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = action,
             style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.tertiary),
             modifier = Modifier.clickable(onClick = onAction),
         )
+    }
+}
+
+@Composable
+internal fun AuthPrivacyPolicyAndTermsLink(
+    onTermsAndConditionsClick: () -> Unit,
+    onPrivacyPolicyClick: () -> Unit,
+) {
+    Column (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = "By signing by you'll automatically agree to the",
+            style = TextStyle.label2.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Terms & Conditions",
+                style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.tertiary),
+                modifier = Modifier.clickable(onClick = onTermsAndConditionsClick),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "and",
+                style = TextStyle.label2.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "Privacy Policy",
+                style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.tertiary),
+                modifier = Modifier.clickable(onClick = onPrivacyPolicyClick),
+            )
+        }
     }
 }
 
