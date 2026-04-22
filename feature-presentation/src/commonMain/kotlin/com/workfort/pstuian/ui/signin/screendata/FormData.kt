@@ -12,7 +12,7 @@ data class SignInFormData(
             password.length < 6
 }
 
-data class SignUpFormData(
+data class StudentSignUpFormData(
     val name: String,
     val email: String,
     val studentId: String,
@@ -28,6 +28,24 @@ data class SignUpFormData(
             regNumber.isEmpty() ||
             faculty.isEmpty() ||
             batch.isEmpty() ||
+            password.isEmpty() ||
+            password.length < 6
+}
+
+data class TeacherSignUpFormData(
+    val name: String,
+    val email: String,
+    val faculty: String,
+    val department: String,
+    val designation: String,
+    val password: String,
+) {
+    fun isInvalid(): Boolean = name.isEmpty() ||
+            email.isEmpty() ||
+            email.isValidEmail().not() ||
+            faculty.isEmpty() ||
+            department.isEmpty() ||
+            designation.isEmpty() ||
             password.isEmpty() ||
             password.length < 6
 }

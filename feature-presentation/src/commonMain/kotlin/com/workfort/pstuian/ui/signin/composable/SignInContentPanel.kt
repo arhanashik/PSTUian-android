@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
@@ -27,7 +24,7 @@ fun SignInContentPanel(
     Box(modifier = Modifier.fillMaxSize()) {
         val panel = when (uiState) {
             is SignInUiState.None, is SignInUiState.SignInPanel -> AuthPanel.SignIn
-            is SignInUiState.SignUpPanel -> AuthPanel.SignUp
+            is SignInUiState.StudentSignUpPanel -> AuthPanel.SignUp
             is SignInUiState.ForgotPasswordPanel -> AuthPanel.ForgotPassword
             is SignInUiState.EmailVerificationPanel -> AuthPanel.EmailVerification
         }

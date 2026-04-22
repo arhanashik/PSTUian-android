@@ -9,7 +9,7 @@ import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
-import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.StudentSignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInMessageState
 import com.workfort.pstuian.ui.signin.state.SignInNavigationState
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
@@ -135,7 +135,7 @@ class SignInViewModel(
         }
     }
 
-    private fun signUp(formData: SignUpFormData) {
+    private fun signUp(formData: StudentSignUpFormData) {
         // TODO: wire to repository once the sign-up endpoint is ready. For now we just surface a
         // placeholder message so the UI flow can be exercised end-to-end.
         if (formData.isInvalid()) {

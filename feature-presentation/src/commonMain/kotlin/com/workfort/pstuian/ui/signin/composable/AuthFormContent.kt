@@ -1,6 +1,5 @@
 package com.workfort.pstuian.ui.signin.composable
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,7 +26,7 @@ import com.workfort.pstuian.ui.common.composable.ActionButton
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
-import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.StudentSignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 
@@ -41,7 +40,7 @@ internal fun AuthFormForSignInUiState(
     when (uiState) {
         is SignInUiState.None -> Unit
         is SignInUiState.SignInPanel -> SignInAuthForm(uiState.formData, uiState.rememberMe, onUiEvent)
-        is SignInUiState.SignUpPanel -> SignUpAuthForm(uiState.formData, onUiEvent)
+        is SignInUiState.StudentSignUpPanel -> SignUpAuthForm(uiState.formData, onUiEvent)
         is SignInUiState.ForgotPasswordPanel -> {
             ForgotPasswordAuthForm(
                 email = uiState.email,
@@ -121,7 +120,7 @@ internal fun SignInAuthForm(
 
 @Composable
 internal fun SignUpAuthForm(
-    formData: SignUpFormData,
+    formData: StudentSignUpFormData,
     onUiEvent: (SignInUiEvent) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current

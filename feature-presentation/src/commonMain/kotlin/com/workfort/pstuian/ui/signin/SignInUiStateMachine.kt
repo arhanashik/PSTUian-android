@@ -3,7 +3,7 @@ package com.workfort.pstuian.ui.signin
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
-import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.StudentSignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +16,7 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
     override val uiState: StateFlow<SignInUiState> = _uiState.asStateFlow()
 
     private var cachedSignInFormData: SignInFormData? = null
-    private var cachedSignUpFormData: SignUpFormData? = null
+    private var cachedStudentSignUpFormData: StudentSignUpFormData? = null
 
     fun showInitialState(
         email: String,
@@ -39,7 +39,7 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
             when (current) {
                 is SignInUiState.None -> current
                 is SignInUiState.SignInPanel -> current.copy(isLoading = isLoading)
-                is SignInUiState.SignUpPanel -> current.copy(isLoading = isLoading)
+                is SignInUiState.StudentSignUpPanel -> current.copy(isLoading = isLoading)
                 is SignInUiState.ForgotPasswordPanel -> current.copy(isLoading = isLoading)
                 is SignInUiState.EmailVerificationPanel -> current.copy(isLoading = isLoading)
             }
@@ -55,9 +55,9 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
                     cachedSignInFormData = updatedFormData
                     current.copy(formData = updatedFormData)
                 }
-                is SignInUiState.SignUpPanel -> {
+                is SignInUiState.StudentSignUpPanel -> {
                     val updatedFormData = current.formData.copy(email = email)
-                    cachedSignUpFormData = updatedFormData
+                    cachedStudentSignUpFormData = updatedFormData
                     current.copy(formData = updatedFormData)
                 }
                 is SignInUiState.ForgotPasswordPanel -> current.copy(email = email)
@@ -74,9 +74,9 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
                     cachedSignInFormData = updatedFormData
                     current.copy(formData = updatedFormData)
                 }
-                is SignInUiState.SignUpPanel -> {
+                is SignInUiState.StudentSignUpPanel -> {
                     val updatedFormData = current.formData.copy(password = password)
-                    cachedSignUpFormData = updatedFormData
+                    cachedStudentSignUpFormData = updatedFormData
                     current.copy(formData = updatedFormData)
                 }
                 else -> current
@@ -103,11 +103,11 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
         }
     }
 
-    fun updateSignUpForm(formData: SignUpFormData) {
-        cachedSignUpFormData = formData
+    fun updateSignUpForm(formData: StudentSignUpFormData) {
+        cachedStudentSignUpFormData = formData
         _uiState.update { current ->
             when (current) {
-                is SignInUiState.SignUpPanel -> current.copy(formData = formData)
+                is SignInUiState.StudentSignUpPanel -> current.copy(formData = formData)
                 else -> current
             }
         }
@@ -130,7 +130,7 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
     }
 
     private fun transitionToSignUp(isLoading: Boolean): SignInUiState {
-        val formData = cachedSignUpFormData ?: SignUpFormData(
+        val formData = cachedStudentSignUpFormData ?: StudentSignUpFormData(
             name = "",
             email = "",
             studentId = "",
@@ -139,17 +139,17 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
             batch = "",
             password = "",
         )
-        return SignInUiState.SignUpPanel(isLoading, formData)
+        return SignInUiState.StudentSignUpPanel(isLoading, formData)
     }
 
     private fun transitionToForgotPassword(isLoading: Boolean): SignInUiState {
-        val email = cachedSignInFormData?.email ?: cachedSignUpFormData?.email ?: ""
+        val email = cachedSignInFormData?.email ?: cachedStudentSignUpFormData?.email ?: ""
         return SignInUiState.ForgotPasswordPanel(isLoading, email)
     }
 
     private fun transitionToEmailVerification(isLoading: Boolean): SignInUiState {
-        val email = cachedSignInFormData?.email ?: cachedSignUpFormData?.email ?: ""
-        val password = cachedSignInFormData?.password ?: cachedSignUpFormData?.password ?: ""
+        val email = cachedSignInFormData?.email ?: cachedStudentSignUpFormData?.email ?: ""
+        val password = cachedSignInFormData?.password ?: cachedStudentSignUpFormData?.password ?: ""
         return SignInUiState.EmailVerificationPanel(isLoading, email, password)
     }
 }
