@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
-import com.workfort.pstuian.featuredomain.model.SliderEntity
+import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppBarIconButton
@@ -102,9 +102,9 @@ private fun mockUiState() = HomeUiState.Content(
     profileImageUrl = null,
     sliderState = HomeUiState.SliderState.Available(
         sliders = listOf(
-            SliderEntity(id = 1, title = "Slider 1", imageUrl = ""),
-            SliderEntity(id = 2, title = "Slider 2", imageUrl = ""),
-            SliderEntity(id = 3, title = "Slider 3", imageUrl = ""),
+            Slider(id = 1, title = "Slider 1", imageUrl = ""),
+            Slider(id = 2, title = "Slider 2", imageUrl = ""),
+            Slider(id = 3, title = "Slider 3", imageUrl = ""),
         )
     ),
     facultyState = HomeUiState.FacultyState.Available(

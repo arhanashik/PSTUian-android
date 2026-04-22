@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.model
 
-import com.workfort.pstuian.featuredomain.model.SliderEntity
+import com.workfort.pstuian.featuredomain.model.Slider
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,14 +11,14 @@ data class SliderDto (
     @SerialName("image_url")
     val imageUrl: String?,
 ) {
-    fun toEntity() = SliderEntity(
+    fun toModel() = Slider(
         id = id,
         title = title,
         imageUrl = imageUrl
     )
 }
 
-fun SliderEntity.toDto() = SliderDto(
+fun Slider.toDto() = SliderDto(
     id = id,
     title = title,
     imageUrl = imageUrl

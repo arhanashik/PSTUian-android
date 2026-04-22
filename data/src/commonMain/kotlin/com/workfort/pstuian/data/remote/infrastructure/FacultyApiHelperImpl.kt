@@ -9,19 +9,7 @@ import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.FacultyApiHelper
 import com.workfort.pstuian.data.remote.service.FacultyApiService
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 01 Oct, 2021 at 12:58 AM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
-class FacultyApiHelperImpl(private val service: FacultyApiService) :
-    FacultyApiHelper {
+class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiHelper {
     override suspend fun getFaculties(): List<FacultyDto> {
         val response = service.getFaculties()
         if(!response.success) throw Exception(response.message)

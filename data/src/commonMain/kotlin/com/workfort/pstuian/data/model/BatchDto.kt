@@ -1,6 +1,7 @@
 package com.workfort.pstuian.data.model
 
 import com.workfort.pstuian.featuredomain.model.BatchEntity
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,8 +10,11 @@ data class BatchDto (
     val name: String,
     val title: String?,
     val session: String,
+    @SerialName("faculty_id")
     val facultyId: Int,
+    @SerialName("total_student")
     val totalStudent: Int,
+    @SerialName("registered_student")
     val registeredStudent: Int,
 ) {
     fun toEntity() = BatchEntity(

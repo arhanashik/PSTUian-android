@@ -2,7 +2,10 @@ package com.workfort.pstuian.data.model
 
 enum class ApiResponseCode(val code: String): NetworkErrorCode {
     Success("S00000"),
-    Unknown("S00001"),
+    MissingParam("S00001"),
+    ReadFailed("S00002"),
+    WriteFailed("S00003"),
+    Unknown("S11111"),
 
     // Auth
     InvalidAuthToken("SA0001"),

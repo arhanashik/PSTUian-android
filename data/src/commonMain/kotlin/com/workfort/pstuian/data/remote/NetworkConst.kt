@@ -4,56 +4,56 @@ object NetworkConst {
 
     object Params {
         const val ID = "id"
-        const val STUDENT_ID = "studentId"
-        const val USER_ID = "userId"
-        const val REQUEST_ID = "requestId"
-        const val LOCATION_ID = "locationId"
+        const val STUDENT_ID = "student_id"
+        const val USER_ID = "user_id"
+        const val REQUEST_ID = "request_id"
+        const val LOCATION_ID = "location_id"
 
-        const val DEVICE_ID = "deviceId"
-        const val FCM_TOKEN = "fcmToken"
+        const val DEVICE_ID = "device_id"
+        const val FCM_TOKEN = "fcm_token"
         const val MODEL = "model"
         const val PLATFORM = "platform"
-        const val APP_VERSION_CODE = "appVersionCode"
-        const val APP_VERSION_NAME = "appVersionName"
+        const val APP_VERSION_CODE = "app_version_code"
+        const val APP_VERSION_NAME = "app_version_name"
         const val LAT = "lat"
         const val LNG = "lng"
         const val LOCALE = "locale"
 
-        const val OLD_EMAIL = "oldEmail"
-        const val NEW_EMAIL = "newEmail"
+        const val OLD_EMAIL = "old_email"
+        const val NEW_EMAIL = "new_email"
         const val EMAIL = "email"
         const val PASSWORD = "password"
-        const val OLD_PASSWORD = "oldPassword"
-        const val NEW_PASSWORD = "newPassword"
-        const val USER_TYPE = "userType"
+        const val OLD_PASSWORD = "old_password"
+        const val NEW_PASSWORD = "new_password"
+        const val USER_TYPE = "user_type"
 
         const val NAME = "name"
         const val REG = "reg"
-        const val FACULTY_ID = "facultyId"
-        const val BATCH_ID = "batchId"
+        const val FACULTY_ID = "faculty_id"
+        const val BATCH_ID = "batch_id"
         const val SESSION = "session"
 
         const val DESIGNATION = "designation"
         const val DEPARTMENT = "department"
 
-        const val IMAGE_URL = "imageUrl"
+        const val IMAGE_URL = "image_url"
         const val BIO = "bio"
         const val BLOOD = "blood"
-        const val BLOOD_GROUP = "bloodGroup"
+        const val BLOOD_GROUP = "blood_group"
         const val ADDRESS = "address"
         const val PHONE = "phone"
-        const val CV_LINK = "cvLink"
-        const val LINKED_IN = "linkedIn"
-        const val FB_LINK = "fbLink"
+        const val CV_LINK = "cv_link"
+        const val LINKED_IN = "linked_in"
+        const val FB_LINK = "fb_link"
 
         const val DATE = "date"
-        const val BEFORE_DATE = "beforeDate"
+        const val BEFORE_DATE = "before_date"
         const val CONTACT = "contact"
         const val INFO = "info"
         const val PRIVACY = "privacy"
 
-        const val CREATED_AT = "createdAt"
-        const val UPDATED_AT = "updatedAt"
+        const val CREATED_AT = "created_at"
+        const val UPDATED_AT = "updated_at"
 
         const val PAGE = "page"
         const val LIMIT = "limit"
@@ -88,6 +88,7 @@ object NetworkConst {
 
         private const val CONFIG_API_PATH = "config.php?call="
         private const val DEVICE_API_PATH = "device.php?call="
+        private const val SLIDER_API_PATH = "slider.php?call="
         private const val AUTH_API_PATH = "auth.php?call="
         private const val FACULTY_API_PATH = "faculty.php?call="
         private const val BATCH_API_PATH = "batch.php?call="
@@ -108,6 +109,10 @@ object NetworkConst {
                 const val GET_ALL = "${DEVICE_API_PATH}getAll"
                 const val REGISTER = "${DEVICE_API_PATH}register"
                 const val UPDATE_FCM_TOKEN = "${DEVICE_API_PATH}updateFcmToken"
+            }
+
+            object Slider {
+                const val GET_ALL = "${DEVICE_API_PATH}getAll"
             }
 
             object Auth {

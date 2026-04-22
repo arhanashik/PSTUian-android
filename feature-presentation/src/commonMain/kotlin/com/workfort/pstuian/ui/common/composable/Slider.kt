@@ -1,8 +1,6 @@
 package com.workfort.pstuian.ui.common.composable
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOutQuart
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -49,11 +47,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.workfort.pstuian.featuredomain.model.SliderEntity
+import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import kotlinx.coroutines.delay
-import pstuian.feature_presentation.generated.resources.Res
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import kotlin.math.absoluteValue
@@ -62,11 +59,11 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SliderView(
-    sliders: List<SliderEntity>,
+    sliders: List<Slider>,
     scrollPosition: Int,
     autoPlay: Boolean = true,
     onScrollSlider: (Int) -> Unit,
-    onClickSlider: (SliderEntity) -> Unit,
+    onClickSlider: (Slider) -> Unit,
 ) {
     val pagerState = rememberPagerState(
         initialPage = scrollPosition,

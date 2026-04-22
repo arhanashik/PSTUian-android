@@ -1,17 +1,17 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
+import com.workfort.pstuian.data.mapper.toNetworkResult
 import com.workfort.pstuian.data.model.BloodDonationRequestDto
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.BloodDonationRequestApiHelper
 import com.workfort.pstuian.data.remote.service.BloodDonationRequestApiService
 
 class BloodDonationRequestApiHelperImpl(
     private val service: BloodDonationRequestApiService
 ) : BloodDonationRequestApiHelper() {
-    override suspend fun getAll(page: Int, limit: Int): List<BloodDonationRequestDto> {
-        val response = service.getAll(page, limit)
-        if(!response.success) throw Exception(response.message)
 
-        return response.data?: throw Exception("No data")
+    override suspend fun getAll(page: Int, limit: Int): NetworkResult<List<BloodDonationRequestDto>> {
+        return service.getAll(page, limit).toNetworkResult()
     }
 
     override suspend fun get(id: Int): BloodDonationRequestDto {

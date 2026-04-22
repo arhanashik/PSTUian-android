@@ -1,16 +1,29 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
+import com.workfort.pstuian.data.mapper.DomainErrorMapper
+import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.BloodDonationRequestApiHelper
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestRepository
 
 class BloodDonationRequestRepositoryImpl(
     private val helper: BloodDonationRequestApiHelper,
+    private val domainErrorMapper: DomainErrorMapper,
 ) : BloodDonationRequestRepository {
 
-    override suspend fun getAll(page: Int) =
-        helper.getAll(page, limit = 20).map { it.toEntity() }
+    private val cache = mutableListOf<BloodDonationRequestEntity>()
+
+    override suspend fun getAll(page: Int): List<BloodDonationRequestEntity> {
+        helper.getAll(page, limit = 20).toDomainResult(domainErrorMapper).map { dtos ->
+            val data = dtos.map { it.toEntity() }
+            cache.clear()
+            cache.addAll(data)
+        }
+
+        return cache
+    }
 
     override suspend fun get(id: Int) = helper.get(id).toEntity()
 

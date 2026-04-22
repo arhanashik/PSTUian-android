@@ -1,21 +1,28 @@
 package com.workfort.pstuian.data.model
 
 import com.workfort.pstuian.featuredomain.model.Device
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeviceDto(
+    @SerialName("device_id")
     val deviceId: String = "",
     val model: String = "",
     val platform: String = "",
+    @SerialName("app_version_code")
     val appVersionCode: Int = 0,
+    @SerialName("app_version_name")
     val appVersionName: String = "",
+    @SerialName("fcm_toke ")
     val fcmToken: String? = null,
     val blocklisted: Boolean = false,
     val lat: String? = null,
     val lng: String? = null,
     val locale: String = "",
+    @SerialName("created_at")
     val createdAt: String = "",
+    @SerialName("updated_at")
     val updatedAt: String = "",
 ) {
     fun toModel() = Device(

@@ -45,6 +45,9 @@ class DomainErrorMapper {
                 // success case shouldn't be coming in error mapper
                 DomainErrorCode.Auth.InternalError
             }
+            ApiResponseCode.MissingParam -> DomainErrorCode.Auth.MissingParam
+            ApiResponseCode.ReadFailed -> DomainErrorCode.Auth.ReadFailed
+            ApiResponseCode.WriteFailed -> DomainErrorCode.Auth.WriteFailed
             ApiResponseCode.Unknown -> DomainErrorCode.Auth.InternalError
             ApiResponseCode.InvalidAuthToken -> DomainErrorCode.Auth.InvalidAuthToken
             ApiResponseCode.DeviceNotFound -> DomainErrorCode.Auth.DeviceNotFound

@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.home
 
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
-import com.workfort.pstuian.featuredomain.model.SliderEntity
+import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.home.state.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +38,7 @@ class HomeUiStateMachine : UiStateMachine<HomeUiState> {
         copy(sliderState = HomeUiState.SliderState.Loading)
     }
 
-    fun showSliders(sliders: List<SliderEntity>, scrollPosition: Int = 0) = updateContent {
+    fun showSliders(sliders: List<Slider>, scrollPosition: Int = 0) = updateContent {
         copy(sliderState = HomeUiState.SliderState.Available(sliders, scrollPosition))
     }
 

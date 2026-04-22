@@ -5,7 +5,7 @@ import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
-import com.workfort.pstuian.featuredomain.model.SliderEntity
+import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
@@ -124,7 +124,7 @@ class HomeViewModel(
         uiStateMachine.updateSliderPosition(position)
     }
 
-    private fun onClickSlider(slider: SliderEntity) {
+    private fun onClickSlider(slider: Slider) {
         slider.imageUrl?.let { imageUrl ->
             _navigation.update { HomeNavigationState.ImagePreviewScreen(imageUrl) }
         }

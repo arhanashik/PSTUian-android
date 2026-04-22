@@ -163,7 +163,7 @@ val repositoryModule = module {
     factoryOf(::DeviceRepositoryImpl) bind DeviceRepository::class
 
     // slider repository injections
-    single<SliderRepository> { SliderRepositoryImpl(get()) }
+    singleOf(::SliderRepositoryImpl) bind SliderRepository::class
 
     // faculty repository injections
     single<FacultyRepository> { FacultyRepositoryImpl(get()) }
