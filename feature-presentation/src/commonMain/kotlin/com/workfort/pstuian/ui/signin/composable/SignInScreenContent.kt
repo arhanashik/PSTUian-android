@@ -79,7 +79,15 @@ private fun SignUpPanelPreviewAuth() {
         SignInScreenContent(
             uiState = SignInUiState.SignUpPanel(
                 isLoading = false,
-                formData = SignUpFormData.StudentSignUpFormData("", "", "", "", "", "", ""),
+                formData = SignUpFormData.StudentSignUpFormData(
+                    name = "",
+                    faculty = null,
+                    email = "",
+                    password = "",
+                    studentId = "",
+                    regNumber = "",
+                    batch = null,
+                ),
             ),
             onUiEvent = {},
         )
@@ -93,7 +101,15 @@ private fun SignUpPanelDarkPreviewAuth() {
         SignInScreenContent(
             uiState = SignInUiState.SignUpPanel(
                 isLoading = false,
-                formData = SignUpFormData.StudentSignUpFormData("", "", "", "", "", "", ""),
+                formData = SignUpFormData.StudentSignUpFormData(
+                    name = "",
+                    faculty = null,
+                    email = "",
+                    password = "",
+                    studentId = "",
+                    regNumber = "",
+                    batch = null,
+                ),
             ),
             onUiEvent = {},
         )
@@ -107,7 +123,14 @@ private fun TeacherSignUpPanelPreviewAuth() {
         SignInScreenContent(
             uiState = SignInUiState.SignUpPanel(
                 isLoading = false,
-                formData = SignUpFormData.TeacherSignUpFormData("", "", "", "", "", ""),
+                formData = SignUpFormData.TeacherSignUpFormData(
+                    name = "",
+                    faculty = null,
+                    email = "",
+                    password = "",
+                    department = "",
+                    designation = "",
+                ),
             ),
             onUiEvent = {},
         )
@@ -121,7 +144,14 @@ private fun TeacherSignUpPanelDarkPreviewAuth() {
         SignInScreenContent(
             uiState = SignInUiState.SignUpPanel(
                 isLoading = false,
-                formData = SignUpFormData.TeacherSignUpFormData("", "", "", "", "", ""),
+                formData = SignUpFormData.TeacherSignUpFormData(
+                    name = "",
+                    faculty = null,
+                    email = "",
+                    password = "",
+                    department = "",
+                    designation = "",
+                ),
             ),
             onUiEvent = {},
         )

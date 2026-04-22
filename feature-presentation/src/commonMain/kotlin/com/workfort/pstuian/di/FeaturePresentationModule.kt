@@ -43,8 +43,6 @@ import com.workfort.pstuian.ui.settings.SettingsUiStateMachine
 import com.workfort.pstuian.ui.settings.SettingsViewModel
 import com.workfort.pstuian.ui.signin.SignInUiStateMachine
 import com.workfort.pstuian.ui.signin.SignInViewModel
-import com.workfort.pstuian.ui.signup.SignUpUiStateMachine
-import com.workfort.pstuian.ui.signup.SignUpViewModel
 import com.workfort.pstuian.ui.splash.SplashUiStateMachine
 import com.workfort.pstuian.ui.splash.SplashViewModel
 import com.workfort.pstuian.ui.studentprofile.StudentProfileUiStateMachine
@@ -153,18 +151,6 @@ private val homeModule = module {
 private val signInModule = module {
     factoryOf(::SignInUiStateMachine)
     factoryOf(::SignInViewModel)
-}
-
-private val signUpModule = module {
-    factoryOf(::SignUpUiStateMachine)
-    factory {
-        SignUpViewModel(
-            authRepo = get(),
-            facultyRepo = get(),
-            stateMachine = get(),
-            coroutineDispatcherProvider = get(),
-        )
-    }
 }
 
 private val splashModule = module {
@@ -311,7 +297,6 @@ val featurePresentationModule = listOf(
     facultyModule,
     homeModule,
     signInModule,
-    signUpModule,
     splashModule,
     studentsModule,
     studentProfileModule,

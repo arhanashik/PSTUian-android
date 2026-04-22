@@ -174,12 +174,12 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
         val formData = cachedStudentSignUpFormData ?: cachedTeacherSignUpFormData?.toStudentSignUpFormData()
             ?: SignUpFormData.StudentSignUpFormData(
                 name = "",
+                faculty = null,
                 email = "",
+                password = "",
                 studentId = "",
                 regNumber = "",
-                faculty = "",
-                batch = "",
-                password = "",
+                batch = null,
             )
         cachedStudentSignUpFormData = formData
         return SignInUiState.SignUpPanel(isLoading, formData)
@@ -189,11 +189,11 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
         val formData = cachedTeacherSignUpFormData ?: cachedStudentSignUpFormData?.toTeacherSignUpFormData()
             ?: SignUpFormData.TeacherSignUpFormData(
                 name = "",
+                faculty = null,
                 email = "",
-                faculty = "",
+                password = "",
                 department = "",
                 designation = "",
-                password = "",
             )
         cachedTeacherSignUpFormData = formData
         return SignInUiState.SignUpPanel(isLoading, formData)

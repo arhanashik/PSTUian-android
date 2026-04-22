@@ -3,10 +3,13 @@ package com.workfort.pstuian.ui.signin
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
+import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
@@ -19,10 +22,13 @@ import com.workfort.pstuian.ui.signin.state.SignInUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SignInViewModel(
     private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
+    private val facultyRepository: FacultyRepository,
     private val stateMachine: SignInUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SignInUiState>(stateMachine) {
@@ -62,7 +68,133 @@ class SignInViewModel(
             is SignInUiEvent.PrivacyPolicyClicked -> {
                 // TODO
             }
+            is SignInUiEvent.SignUpFacultyPickerClicked -> openSignUpFacultySelectionSheet()
+            is SignInUiEvent.SignUpBatchPickerClicked -> openSignUpBatchSelectionSheet()
         }
+    }
+
+    private fun currentSignUpFacultyId(): Int? {
+        val state = uiState.value
+        if (state !is SignInUiState.SignUpPanel) return null
+        return when (val form = state.formData) {
+            is SignUpFormData.StudentSignUpFormData -> form.faculty?.id
+            is SignUpFormData.TeacherSignUpFormData -> form.faculty?.id
+        }
+    }
+
+    private fun currentSignUpBatchId(): Int? {
+        val state = uiState.value
+        if (state !is SignInUiState.SignUpPanel) return null
+        return when (val form = state.formData) {
+            is SignUpFormData.StudentSignUpFormData -> form.batch?.id
+            is SignUpFormData.TeacherSignUpFormData -> null
+        }
+    }
+
+    private fun openSignUpFacultySelectionSheet() {
+        viewModelScope.launch(coroutineDispatcherProvider.io) {
+            runCatching {
+                val faculties = facultyRepository.getFaculties(forceRefresh = false)
+                withContext(coroutineDispatcherProvider.main) {
+                    if (faculties.isEmpty()) {
+                        _message.update {
+                            SignInMessageState.Error("No faculties found. Please try again later.")
+                        }
+                    } else {
+                        val selectedId = currentSignUpFacultyId()
+                        _message.update {
+                            SignInMessageState.FacultySelection(
+                                faculties = faculties,
+                                selectedFacultyId = selectedId,
+                                onSaveAndContinue = { faculty ->
+                                    _message.update { null }
+                                    faculty?.let { applySignUpFaculty(it) }
+                                },
+                            )
+                        }
+                    }
+                }
+            }.onFailure {
+                val msg = it.message ?: "Failed to load faculties"
+                withContext(coroutineDispatcherProvider.main) {
+                    _message.update { SignInMessageState.Error(msg) }
+                }
+            }
+        }
+    }
+
+    private fun openSignUpBatchSelectionSheet() {
+        val facultyId = when (val state = uiState.value) {
+            is SignInUiState.SignUpPanel -> when (val form = state.formData) {
+                is SignUpFormData.StudentSignUpFormData -> form.faculty?.id
+                is SignUpFormData.TeacherSignUpFormData -> null
+            }
+            else -> null
+        }
+        if (facultyId == null) {
+            _message.update {
+                SignInMessageState.Error("Please select a faculty first.")
+            }
+            return
+        }
+        viewModelScope.launch(coroutineDispatcherProvider.io) {
+            runCatching {
+                stateMachine.showLoading(true)
+                val batches = facultyRepository.getBatches(facultyId, forceRefresh = false)
+                stateMachine.showLoading(false)
+                withContext(coroutineDispatcherProvider.main) {
+                    if (batches.isEmpty()) {
+                        _message.update {
+                            SignInMessageState.Error("No batches found for this faculty. Please try again later.")
+                        }
+                    } else {
+                        val selectedId = currentSignUpBatchId()
+                        _message.update {
+                            SignInMessageState.BatchSelection(
+                                batches = batches,
+                                selectedBatchId = selectedId,
+                                onSaveAndContinue = { batch ->
+                                    _message.update { null }
+                                    batch?.let { applySignUpBatch(it) }
+                                },
+                            )
+                        }
+                    }
+                }
+            }.onFailure {
+                stateMachine.showLoading(false)
+                val msg = it.message ?: "Failed to load batches"
+                withContext(coroutineDispatcherProvider.main) {
+                    _message.update { SignInMessageState.Error(msg) }
+                }
+            }
+        }
+    }
+
+    private fun applySignUpBatch(batch: BatchEntity) {
+        val state = uiState.value
+        if (state !is SignInUiState.SignUpPanel) return
+        when (val form = state.formData) {
+            is SignUpFormData.StudentSignUpFormData -> {
+                stateMachine.updateSignUpFormData(form.copy(batch = batch))
+            }
+            is SignUpFormData.TeacherSignUpFormData -> Unit
+        }
+    }
+
+    private fun applySignUpFaculty(faculty: FacultyEntity) {
+        val state = uiState.value
+        if (state !is SignInUiState.SignUpPanel) return
+        val updated = when (val form = state.formData) {
+            is SignUpFormData.StudentSignUpFormData -> form.copy(
+                faculty = faculty,
+                batch = if (form.faculty?.id == faculty.id) form.batch else null,
+            )
+            is SignUpFormData.TeacherSignUpFormData -> form.copy(
+                faculty = faculty,
+            )
+        }
+        stateMachine.updateSignUpFormData(updated)
     }
 
     private fun showSignUpPanelByUserType() {

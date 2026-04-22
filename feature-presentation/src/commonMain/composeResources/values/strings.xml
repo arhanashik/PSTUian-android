@@ -158,6 +158,7 @@
     <string name="txt_create_new_location">Create New Location</string>
     <string name="txt_select_batch">Select Batch</string>
     <string name="txt_select_faculty">Select Faculty</string>
+    <string name="btn_select">Select</string>
     <string name="txt_change">Change</string>
     <string name="txt_change_faculty">Change Faculty</string>
     <string name="txt_please_wait">Please Wait…</string>

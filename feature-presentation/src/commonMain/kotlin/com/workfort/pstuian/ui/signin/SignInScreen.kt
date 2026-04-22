@@ -1,15 +1,24 @@
 package com.workfort.pstuian.ui.signin
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.batchesToListSelectionOptions
+import com.workfort.pstuian.ui.common.composable.facultiesToListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.signin.composable.SignInScreenContent
 import com.workfort.pstuian.ui.signin.state.SignInMessageState
 import com.workfort.pstuian.ui.signin.state.SignInNavigationState
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.btn_select
+import pstuian.feature_presentation.generated.resources.txt_select_batch
+import pstuian.feature_presentation.generated.resources.txt_select_faculty
 
 @Composable
 fun SignInScreen(viewModel: SignInViewModel) {
@@ -23,21 +32,44 @@ fun SignInScreen(viewModel: SignInViewModel) {
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HandleMessageState(
     message: SignInMessageState?,
-    onNavigationHandled: () -> Unit,
+    onMessageHandled: () -> Unit,
 ) {
     message?.let {
         when (it) {
+            is SignInMessageState.FacultySelection -> {
+                ListSelectionBottomSheet(
+                    title = stringResource(Res.string.txt_select_faculty),
+                    primaryButtonLabel = stringResource(Res.string.btn_select),
+                    options = facultiesToListSelectionOptions(it.faculties),
+                    initialSelection = it.faculties.find { f -> f.id == it.selectedFacultyId },
+                    scrollable = true,
+                    onDismiss = onMessageHandled,
+                    onConfirm = { faculty -> it.onSaveAndContinue(faculty) },
+                )
+            }
+            is SignInMessageState.BatchSelection -> {
+                ListSelectionBottomSheet(
+                    title = stringResource(Res.string.txt_select_batch),
+                    primaryButtonLabel = stringResource(Res.string.btn_select),
+                    options = batchesToListSelectionOptions(it.batches),
+                    initialSelection = it.batches.find { b -> b.id == it.selectedBatchId },
+                    scrollable = true,
+                    onDismiss = onMessageHandled,
+                    onConfirm = { batch -> it.onSaveAndContinue(batch) },
+                )
+            }
             is SignInMessageState.Success -> {
-                onNavigationHandled()
+                onMessageHandled()
             }
             is SignInMessageState.Error -> {
                 ShowErrorDialog(
                     message = it.message,
-                    onConfirm = onNavigationHandled,
-                    onDismiss = onNavigationHandled,
+                    onConfirm = onMessageHandled,
+                    onDismiss = onMessageHandled,
                 )
             }
         }

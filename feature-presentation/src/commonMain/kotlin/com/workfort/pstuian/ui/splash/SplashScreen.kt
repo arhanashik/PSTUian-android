@@ -5,13 +5,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.workfort.pstuian.ui.common.composable.UserTypeSelectionBottomSheet
+import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
+import com.workfort.pstuian.ui.common.composable.userTypeListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.splash.composable.SplashContentPanel
 import com.workfort.pstuian.ui.splash.state.SplashMessageState
 import com.workfort.pstuian.ui.splash.state.SplashNavigationState
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.btn_save_and_continue
+import pstuian.feature_presentation.generated.resources.helper_app_usage_role_sheet
+import pstuian.feature_presentation.generated.resources.title_select_app_usage_role
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +32,7 @@ fun SplashScreen(viewModel: SplashViewModel) {
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HandleMessageState(
     message: SplashMessageState?,
@@ -34,9 +41,14 @@ private fun HandleMessageState(
     message?.let {
         when (it) {
             is SplashMessageState.UserTypeSelection -> {
-                UserTypeSelectionBottomSheet(
-                    selectedUserType = it.selectedUserType,
-                    onSaveAndContinue = { userType -> it.onSaveAndContinue(userType) },
+                ListSelectionBottomSheet(
+                    title = stringResource(Res.string.title_select_app_usage_role),
+                    helperText = stringResource(Res.string.helper_app_usage_role_sheet),
+                    primaryButtonLabel = stringResource(Res.string.btn_save_and_continue),
+                    options = userTypeListSelectionOptions(),
+                    initialSelection = it.selectedUserType,
+                    scrollable = false,
+                    onConfirm = { userType -> it.onSaveAndContinue(userType) },
                 )
             }
         }

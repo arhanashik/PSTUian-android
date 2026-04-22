@@ -25,4 +25,7 @@ sealed interface SignInUiEvent {
     data class EmailVerificationClicked(val email: String, val password: String) : SignInUiEvent
     data object TermsAndConditionsClicked : SignInUiEvent
     data object PrivacyPolicyClicked : SignInUiEvent
+
+    data object SignUpFacultyPickerClicked : SignInUiEvent
+    data object SignUpBatchPickerClicked : SignInUiEvent
 }

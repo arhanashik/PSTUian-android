@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,12 +36,18 @@ import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.ActionButton
 import com.workfort.pstuian.ui.common.composable.ToggleSwitch
+import com.workfort.pstuian.ui.common.composable.UnderlineSelectorField
+import com.workfort.pstuian.ui.common.composable.batchDisplayLabel
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
 import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
+import org.jetbrains.compose.resources.stringResource
+import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.hint_batch
+import pstuian.feature_presentation.generated.resources.hint_faculty
 
 private val AuthFormFieldSpacing = 18.dp
 
@@ -232,8 +241,6 @@ private fun StudentSignUpInputFields(
     val emailFocus = remember { FocusRequester() }
     val studentIdFocus = remember { FocusRequester() }
     val registrationFocus = remember { FocusRequester() }
-    val facultyFocus = remember { FocusRequester() }
-    val batchFocus = remember { FocusRequester() }
     val passwordFocus = remember { FocusRequester() }
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -270,31 +277,39 @@ private fun StudentSignUpInputFields(
             onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(regNumber = it))) },
             focusRequester = registrationFocus,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { facultyFocus.requestFocus() }),
+            keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
         )
         Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            AuthUnderlinedField(
-                label = "Faculty",
-                value = formData.faculty,
-                onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(faculty = it))) },
+            UnderlineSelectorField(
                 modifier = Modifier.weight(1f),
-                focusRequester = facultyFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { batchFocus.requestFocus() }),
+                label = stringResource(Res.string.hint_faculty),
+                value = formData.faculty?.let { it.shortTitle.ifBlank { it.title } }.orEmpty(),
+                trailingIcon = {
+                    Icon(
+                        Icons.Default.KeyboardArrowDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                    )
+                },
+                onClick = { onUiEvent(SignInUiEvent.SignUpFacultyPickerClicked) },
             )
             Spacer(modifier = Modifier.width(16.dp))
-            AuthUnderlinedField(
-                label = "Batch",
-                value = formData.batch,
-                onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(batch = it))) },
+            UnderlineSelectorField(
                 modifier = Modifier.weight(1f),
-                focusRequester = batchFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
+                label = stringResource(Res.string.hint_batch),
+                value = formData.batch?.let { batchDisplayLabel(it) }.orEmpty(),
+                trailingIcon = {
+                    Icon(
+                        Icons.Default.KeyboardArrowDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                    )
+                },
+                onClick = { onUiEvent(SignInUiEvent.SignUpBatchPickerClicked) },
             )
         }
         Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
@@ -316,7 +331,6 @@ private fun TeacherSignUpInputFields(
     val focusManager = LocalFocusManager.current
     val nameFocus = remember { FocusRequester() }
     val emailFocus = remember { FocusRequester() }
-    val facultyFocus = remember { FocusRequester() }
     val departmentFocus = remember { FocusRequester() }
     val designationFocus = remember { FocusRequester() }
     val passwordFocus = remember { FocusRequester() }
@@ -337,16 +351,20 @@ private fun TeacherSignUpInputFields(
             onValueChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
             focusRequester = emailFocus,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { facultyFocus.requestFocus() }),
+            keyboardActions = KeyboardActions(onNext = { departmentFocus.requestFocus() }),
         )
         Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
-        AuthUnderlinedField(
-            label = "Faculty",
-            value = formData.faculty,
-            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(faculty = it))) },
-            focusRequester = facultyFocus,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { departmentFocus.requestFocus() }),
+        UnderlineSelectorField(
+            label = stringResource(Res.string.hint_faculty),
+            value = formData.faculty?.let { it.shortTitle.ifBlank { it.title } }.orEmpty(),
+            trailingIcon = {
+                Icon(
+                    Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
+            },
+            onClick = { onUiEvent(SignInUiEvent.SignUpFacultyPickerClicked) },
         )
         Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(

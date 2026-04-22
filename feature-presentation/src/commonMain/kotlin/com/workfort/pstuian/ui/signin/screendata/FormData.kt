@@ -1,5 +1,7 @@
 package com.workfort.pstuian.ui.signin.screendata
 
+import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.util.isValidEmail
 
 data class SignInFormData(
@@ -14,18 +16,18 @@ data class SignInFormData(
 
 sealed interface SignUpFormData {
     val name: String
-    val faculty: String
+    val faculty: FacultyEntity?
     val email: String
     val password: String
 
     data class StudentSignUpFormData(
         override val name: String,
-        override val faculty: String,
+        override val faculty: FacultyEntity? = null,
         override val email: String,
         override val password: String,
         val studentId: String,
         val regNumber: String,
-        val batch: String,
+        val batch: BatchEntity? = null,
     ) : SignUpFormData {
 
         fun isInvalid(): Boolean = name.isEmpty() ||
@@ -33,8 +35,8 @@ sealed interface SignUpFormData {
                 email.isValidEmail().not() ||
                 studentId.isEmpty() ||
                 regNumber.isEmpty() ||
-                faculty.isEmpty() ||
-                batch.isEmpty() ||
+                faculty == null ||
+                batch == null ||
                 password.isEmpty() ||
                 password.length < 6
 
@@ -57,7 +59,7 @@ sealed interface SignUpFormData {
 
     data class TeacherSignUpFormData(
         override val name: String,
-        override val faculty: String,
+        override val faculty: FacultyEntity? = null,
         override val email: String,
         override val password: String,
         val department: String,
@@ -67,7 +69,7 @@ sealed interface SignUpFormData {
         fun isInvalid(): Boolean = name.isEmpty() ||
                 email.isEmpty() ||
                 email.isValidEmail().not() ||
-                faculty.isEmpty() ||
+                faculty == null ||
                 department.isEmpty() ||
                 designation.isEmpty() ||
                 password.isEmpty() ||
@@ -80,7 +82,7 @@ sealed interface SignUpFormData {
             password = password,
             studentId = "",
             regNumber = "",
-            batch = "",
+            batch = null,
         )
 
         fun copyFromCommonFields(studentFormData: StudentSignUpFormData) = copy(
