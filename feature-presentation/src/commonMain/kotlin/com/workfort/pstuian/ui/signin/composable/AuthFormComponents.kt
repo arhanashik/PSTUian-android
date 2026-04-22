@@ -8,38 +8,44 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 
 @Composable
 internal fun AuthBottomLink(
@@ -47,18 +53,17 @@ internal fun AuthBottomLink(
     action: String,
     onAction: () -> Unit,
 ) {
-    Text(
-        text = prefix,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontSize = 14.sp,
-    )
-    Text(
-        text = action,
-        color = MaterialTheme.colorScheme.tertiary,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.clickable(onClick = onAction),
-    )
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = prefix,
+            style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+        )
+        Text(
+            text = action,
+            style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.tertiary),
+            modifier = Modifier.clickable(onClick = onAction),
+        )
+    }
 }
 
 @Composable
@@ -106,54 +111,24 @@ internal fun RememberMeRow(
         }
         Text(
             text = "Forgot Password?",
-            color = MaterialTheme.colorScheme.tertiary,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.tertiary),
             modifier = Modifier.clickable(onClick = onForgotPassword),
         )
     }
 }
 
 @Composable
-internal fun PrimaryAuthButton(
-    label: String,
-    onClick: () -> Unit,
+internal fun AuthFormPanelLayout(
     modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(54.dp)
-            .clip(RoundedCornerShape(27.dp))
-            .background(MaterialTheme.colorScheme.primary)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = label,
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                letterSpacing = 2.sp,
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Box(
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(16.dp),
-                )
-            }
-        }
-    }
+            .padding(horizontal = 32.dp)
+            .padding(top = 40.dp, bottom = 24.dp),
+        content = content,
+    )
 }
 
 @Composable
@@ -171,23 +146,17 @@ internal fun AuthUnderlinedField(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
-    val underlineColor = if (focused) {
-        MaterialTheme.colorScheme.secondary
+
+    val (underlineColor, iconTint) = if (focused) {
+        MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.tertiary
     } else {
-        MaterialTheme.colorScheme.outlineVariant
-    }
-    val iconTint = if (focused) {
-        MaterialTheme.colorScheme.tertiary
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+        MaterialTheme.colorScheme.outlineVariant to MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = label,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
+            style = TextStyle.label2.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
         )
         Spacer(modifier = Modifier.height(6.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -212,11 +181,7 @@ internal fun AuthUnderlinedField(
                             Modifier
                         },
                     ),
-                textStyle = TextStyle(
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                textStyle = TextStyle.body1.copy(color = AppColors.textPrimary),
                 singleLine = true,
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.tertiary),
                 visualTransformation = visualTransformation,
@@ -237,4 +202,40 @@ internal fun AuthUnderlinedField(
                 .background(underlineColor),
         )
     }
+}
+
+@Composable
+internal fun AuthPasswordField(
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    keyboardOptions: KeyboardOptions,
+    keyboardActions: KeyboardActions,
+    modifier: Modifier = Modifier,
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
+    AuthUnderlinedField(
+        label = "Password",
+        value = password,
+        onValueChange = onPasswordChange,
+        modifier = modifier,
+        focusRequester = focusRequester,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        visualTransformation = if (passwordVisible) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation()
+        },
+        trailingContent = {
+            Icon(
+                imageVector = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                modifier = Modifier
+                    .size(20.dp)
+                    .clickable { passwordVisible = !passwordVisible },
+            )
+        },
+    )
 }

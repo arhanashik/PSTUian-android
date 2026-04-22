@@ -69,7 +69,7 @@ class CheckInListViewModel(
     }
 
     private fun onClickItem(item: CheckInEntity) {
-        val userType = UserType.create(item.userType) ?: return
+        val userType = UserType.fromType(item.userType) ?: return
         _navigation.update {
             CheckInListNavigationState.ProfileScreen(
                 userId = item.userId,

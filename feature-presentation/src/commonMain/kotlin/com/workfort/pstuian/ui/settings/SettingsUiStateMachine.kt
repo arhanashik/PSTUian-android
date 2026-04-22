@@ -1,8 +1,9 @@
 package com.workfort.pstuian.ui.settings
 
-import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
+import com.workfort.pstuian.ui.settings.state.DebugPanelData
 import com.workfort.pstuian.ui.settings.state.SettingsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,24 +27,22 @@ class SettingsUiStateMachine : UiStateMachine<SettingsUiState> {
     }
 
     fun showInitialState(
-        showNotification: Boolean,
+        userType: UserType?,
         theme: ThemeMode,
-        isDebug: Boolean,
-        fcmToken: String,
-        appUsageRole: AppUsageRole?,
+        showNotification: Boolean,
         appVersionName: String,
         appVersionCode: Int,
         deviceId: String,
+        debugPanelData: DebugPanelData?,
     ) = updateUiState {
         SettingsUiState.Content(
-            showNotification = showNotification,
+            userType = userType,
             theme = theme,
-            isDebug = isDebug,
-            fcmToken = fcmToken,
-            appUsageRole = appUsageRole,
+            showNotification = showNotification,
             appVersionName = appVersionName,
             appVersionCode = appVersionCode,
             deviceId = deviceId,
+            debugPanelData = debugPanelData,
         )
     }
 
@@ -52,14 +51,14 @@ class SettingsUiStateMachine : UiStateMachine<SettingsUiState> {
     }
 
     fun setFcmToken(fcmToken: String) = updateContent {
-        copy(fcmToken = fcmToken)
+        copy(debugPanelData = debugPanelData?.copy(fcmToken = fcmToken))
     }
 
     fun setShowNotification(show: Boolean) = updateContent {
         copy(showNotification = show)
     }
 
-    fun setAppUsageRole(role: AppUsageRole?) = updateContent {
-        copy(appUsageRole = role)
+    fun setUserType(userType: UserType?) = updateContent {
+        copy(userType = userType)
     }
 }

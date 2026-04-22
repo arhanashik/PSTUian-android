@@ -3,13 +3,13 @@ package com.workfort.pstuian.ui.splash
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetInitialScreenUseCase
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.featuredomain.usecase.RegisterDeviceUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.splash.state.SplashMessageState
 import com.workfort.pstuian.ui.splash.state.SplashNavigationState
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
@@ -27,6 +27,9 @@ class SplashViewModel(
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SplashUiState>(stateMachine) {
 
+    private val _message = MutableStateFlow<SplashMessageState?>(null)
+    val message: StateFlow<SplashMessageState?> = _message.asStateFlow()
+
     private val _navigation = MutableStateFlow<SplashNavigationState?>(null)
     val navigation: StateFlow<SplashNavigationState?> = _navigation.asStateFlow()
 
@@ -43,17 +46,10 @@ class SplashViewModel(
                     refreshConfig()
                 }
             }
-            is SplashUiEvent.SelectAppUsageRole -> stateMachine.setSelectedAppUsageRole(event.role)
-            SplashUiEvent.SaveAppUsageRoleAndContinue -> onSaveAppUsageRoleAndContinue()
         }
     }
 
-    private fun onSaveAppUsageRoleAndContinue() {
-        val selected = stateMachine.uiState.value.selectedAppUsageRole ?: return
-        settingsRepository.setAppUsageRole(selected)
-        stateMachine.setShowAppUsageRolePicker(false)
-        _navigation.update { SplashNavigationState.HomeScreen }
-    }
+    fun onMessageHandled() = _message.update { null }
 
     fun onNavigationHandled() = _navigation.update { null }
 
@@ -126,14 +122,22 @@ class SplashViewModel(
                     descriptionText = null,
                     actionBtnText = null,
                 )
-                val stored = settingsRepository.getAppUsageRole()
-                if (stored == null || stored == AppUsageRole.VISITOR) {
-                    val initialSelection = stored?.takeIf { it == AppUsageRole.VISITOR }
-                    stateMachine.setShowAppUsageRolePicker(show = true, initialSelection = initialSelection)
-                } else {
+                checkUserTypeAndNavigateToHome()
+            }
+        }
+    }
+
+    private fun checkUserTypeAndNavigateToHome() {
+        val selectedUserType = settingsRepository.getUserType()
+        if (selectedUserType == null) {
+            _message.update {
+                SplashMessageState.UserTypeSelection(selectedUserType) { userType ->
+                    settingsRepository.setUserType(userType)
                     _navigation.update { SplashNavigationState.HomeScreen }
                 }
             }
+        } else {
+            _navigation.update { SplashNavigationState.HomeScreen }
         }
     }
 }

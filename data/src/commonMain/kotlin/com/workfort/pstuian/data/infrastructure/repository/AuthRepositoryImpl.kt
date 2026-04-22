@@ -39,7 +39,7 @@ class AuthRepositoryImpl(
 
     override fun getSignInUserType(): UserType? {
         val userTypeStr = sharedPrefRepository.getString(SharedPrefKey.USER_TYPE) ?: return null
-        return UserType.create(userTypeStr)
+        return UserType.fromType(userTypeStr)
     }
 
     override suspend fun storeSignInTeacher(teacher: TeacherEntity) {
@@ -150,7 +150,7 @@ class AuthRepositoryImpl(
         sharedPrefRepository.remove(SharedPrefKey.AUTH_TOKEN)
         sharedPrefRepository.remove(SharedPrefKey.USER)
         sharedPrefRepository.remove(SharedPrefKey.USER_TYPE)
-        sharedPrefRepository.remove(SharedPrefKey.APP_USAGE_ROLE)
+        sharedPrefRepository.remove(SharedPrefKey.SELECTED_USER_TYPE)
     }
 
     override suspend fun deleteAccount(password: String): String {

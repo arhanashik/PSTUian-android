@@ -7,10 +7,6 @@ enum class AppUsageRole(val storageValue: String) {
     VISITOR("visitor");
 
     companion object {
-        fun fromStorage(value: String?): AppUsageRole? = when (value) {
-            null -> null
-            "none" -> VISITOR
-            else -> entries.firstOrNull { it.storageValue == value }
-        }
+        fun fromStorage(value: String?): AppUsageRole? = entries.firstOrNull { it.storageValue == value }
     }
 }

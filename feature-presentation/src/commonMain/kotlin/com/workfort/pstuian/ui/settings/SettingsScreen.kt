@@ -1,13 +1,12 @@
 package com.workfort.pstuian.ui.settings
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.workfort.pstuian.ui.common.composable.AppUsageRoleSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
+import com.workfort.pstuian.ui.common.composable.UserTypeSelectionBottomSheet
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.settings.composable.SettingsScreenContent
@@ -30,7 +29,6 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HandleMessageState(
     message: SettingsMessageState?,
@@ -53,11 +51,10 @@ private fun HandleMessageState(
                     onDismiss = onMessageHandled,
                 )
             }
-            is SettingsMessageState.AppUsageRoleSelection -> {
-                AppUsageRoleSelectionBottomSheet(
-                    selectedRole = it.selectedRole,
-                    onSelectRole = it.onSelectRole,
-                    onSaveAndContinue = it.onSaveAndContinue,
+            is SettingsMessageState.UserTypeSelection -> {
+                UserTypeSelectionBottomSheet(
+                    selectedUserType = it.selectedUserType,
+                    onSaveAndContinue = { userType -> it.onSaveAndContinue(userType) },
                     onDismiss = onMessageHandled,
                 )
             }

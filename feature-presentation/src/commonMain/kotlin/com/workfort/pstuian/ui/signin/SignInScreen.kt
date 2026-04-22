@@ -10,7 +10,6 @@ import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.signin.composable.SignInScreenContent
 import com.workfort.pstuian.ui.signin.state.SignInMessageState
 import com.workfort.pstuian.ui.signin.state.SignInNavigationState
-import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import org.koin.compose.koinInject
 
 @Composable
@@ -21,32 +20,25 @@ fun SignInScreen(viewModel: SignInViewModel) {
 
     SignInScreenContent(uiState = uiState, onUiEvent = viewModel::onUiEvent)
 
-    HandleMessageState(message, viewModel::onUiEvent)
+    HandleMessageState(message, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
 @Composable
 private fun HandleMessageState(
     message: SignInMessageState?,
-    onUiEvent: (SignInUiEvent) -> Unit,
+    onNavigationHandled: () -> Unit,
 ) {
     message?.let {
         when (it) {
             is SignInMessageState.Success -> {
-//                if (it.showToast) {
-//                    showToast(it.message)
-//                }
-                onUiEvent(SignInUiEvent.MessageConsumed)
+                onNavigationHandled()
             }
             is SignInMessageState.Error -> {
                 ShowErrorDialog(
                     message = it.message,
-                    onConfirm = {
-                        onUiEvent(SignInUiEvent.MessageConsumed)
-                    },
-                    onDismiss = {
-                        onUiEvent(SignInUiEvent.MessageConsumed)
-                    }
+                    onConfirm = onNavigationHandled,
+                    onDismiss = onNavigationHandled,
                 )
             }
         }

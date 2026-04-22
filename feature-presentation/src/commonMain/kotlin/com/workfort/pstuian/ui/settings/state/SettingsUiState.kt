@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.settings.state
 
 import androidx.compose.runtime.Immutable
-import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.UserType
 
 @Immutable
 sealed interface SettingsUiState {
@@ -10,13 +10,16 @@ sealed interface SettingsUiState {
     data object None: SettingsUiState
 
     data class Content(
-        val showNotification: Boolean,
+        val userType: UserType?,
         val theme: ThemeMode,
-        val isDebug: Boolean,
-        val fcmToken: String,
-        val appUsageRole: AppUsageRole?,
+        val showNotification: Boolean,
         val appVersionName: String,
         val appVersionCode: Int,
         val deviceId: String,
+        val debugPanelData: DebugPanelData?,
     ): SettingsUiState
 }
+
+data class DebugPanelData(
+    val fcmToken: String,
+)

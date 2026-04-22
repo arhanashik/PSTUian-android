@@ -3,10 +3,10 @@ package com.workfort.pstuian.ui.settings
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.settings.state.DebugPanelData
 import com.workfort.pstuian.ui.settings.state.SettingsMessageState
 import com.workfort.pstuian.ui.settings.state.SettingsNavigationState
 import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
@@ -34,69 +34,48 @@ class SettingsViewModel(
     val navigation: StateFlow<SettingsNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {
+        val debugPanelData = if (platformInfo.isDebug) {
+            DebugPanelData(
+                fcmToken = settingsRepository.getFcmToken() ?: "N/A",
+            )
+        } else null
+
         stateMachine.showInitialState(
-            showNotification = settingsRepository.shouldShowNotification(),
+            userType = settingsRepository.getUserType(),
             theme = settingsRepository.getTheme(),
-            isDebug = platformInfo.isDebug,
-            fcmToken = settingsRepository.getFcmToken() ?: "N/A",
-            appUsageRole = settingsRepository.getAppUsageRole(),
+            showNotification = settingsRepository.shouldShowNotification(),
             appVersionName = platformInfo.appVersionName,
             appVersionCode = platformInfo.appVersionCode,
             deviceId = platformInfo.deviceId,
+            debugPanelData = debugPanelData,
         )
     }
 
     fun onUiEvent(event: SettingsUiEvent) {
         viewModelScope.launch {
             when (event) {
-                is SettingsUiEvent.OnClickBack -> onClickBack()
-                is SettingsUiEvent.OnClickContactUs -> onClickContactUs()
-                is SettingsUiEvent.SetShowNotification -> setShowNotification(event.show)
-                is SettingsUiEvent.OnChangeTheme -> onChangeTheme(event.theme)
-                is SettingsUiEvent.OnRefreshFcmToken -> onRefreshFcmToken()
-                is SettingsUiEvent.OnClearSharedPrefs -> onClearSharedPrefs()
-                SettingsUiEvent.OnClickEditAppUsageRole -> openAppUsageRoleSelectionMessage()
+                is SettingsUiEvent.BackClicked -> _navigation.update { SettingsNavigationState.GoBack }
+                SettingsUiEvent.UserTypeClicked -> openAppUsageRoleSelectionMessage()
+                is SettingsUiEvent.ShowNotificationToggled -> setShowNotification(event.show)
+                is SettingsUiEvent.ChangeThemeClicked -> onChangeTheme(event.theme)
+                is SettingsUiEvent.RefreshFcmTokenClicked -> onRefreshFcmToken()
+                is SettingsUiEvent.ClearSharedPrefsClicked -> onClearSharedPrefs()
             }
         }
-    }
-
-    private fun openAppUsageRoleSelectionMessage() {
-        _message.update {
-            SettingsMessageState.AppUsageRoleSelection(
-                selectedRole = settingsRepository.getAppUsageRole(),
-                onSelectRole = { role -> onAppUsageRoleSheetSelect(role) },
-                onSaveAndContinue = { onAppUsageRoleSheetSave() },
-            )
-        }
-    }
-
-    private fun onAppUsageRoleSheetSelect(role: AppUsageRole) {
-        _message.update { prev ->
-            when (prev) {
-                is SettingsMessageState.AppUsageRoleSelection -> prev.copy(selectedRole = role)
-                else -> prev
-            }
-        }
-    }
-
-    private fun onAppUsageRoleSheetSave() {
-        val sheet = _message.value as? SettingsMessageState.AppUsageRoleSelection ?: return
-        val role = sheet.selectedRole ?: return
-        settingsRepository.setAppUsageRole(role)
-        stateMachine.setAppUsageRole(role)
-        onMessageHandled()
     }
 
     fun onMessageHandled() = _message.update { null }
 
     fun onNavigationHandled() = _navigation.update { null }
 
-    private fun onClickBack() {
-        _navigation.update { SettingsNavigationState.GoBack }
-    }
-
-    private fun onClickContactUs() {
-        _navigation.update { SettingsNavigationState.GoToContactUs }
+    private fun openAppUsageRoleSelectionMessage() {
+        _message.update {
+            SettingsMessageState.UserTypeSelection(selectedUserType = settingsRepository.getUserType()) { userType ->
+                settingsRepository.setUserType(userType)
+                stateMachine.setUserType(userType)
+                onMessageHandled()
+            }
+        }
     }
 
     private fun setShowNotification(show: Boolean) {
@@ -122,12 +101,11 @@ class SettingsViewModel(
             SettingsMessageState.ConfirmClearPrefs(
                 title = "Clear Data",
                 message = "Are you sure you want to clear all app data? This will log you out and reset all settings.",
-                onConfirm = {
-                    settingsRepository.clearSharedPrefs()
-                    onUiReady()
-                    onMessageHandled()
-                }
-            )
+            ) {
+                settingsRepository.clearSharedPrefs()
+                onUiReady()
+                onMessageHandled()
+            }
         }
     }
 }

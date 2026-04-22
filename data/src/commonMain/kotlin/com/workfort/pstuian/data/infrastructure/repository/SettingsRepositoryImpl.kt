@@ -1,8 +1,8 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import kotlinx.coroutines.flow.Flow
@@ -49,12 +49,12 @@ class SettingsRepositoryImpl(
         sharedPrefRepository.clear()
     }
 
-    override fun getAppUsageRole(): AppUsageRole? {
-        val raw = sharedPrefRepository.getString(SharedPrefKey.APP_USAGE_ROLE, null)
-        return AppUsageRole.fromStorage(raw)
+    override fun getUserType(): UserType? {
+        val type = sharedPrefRepository.getString(SharedPrefKey.SELECTED_USER_TYPE) ?: return null
+        return UserType.fromType(type)
     }
 
-    override fun setAppUsageRole(role: AppUsageRole) {
-        sharedPrefRepository.putString(SharedPrefKey.APP_USAGE_ROLE, role.storageValue)
+    override fun setUserType(userType: UserType?) {
+        sharedPrefRepository.putString(SharedPrefKey.SELECTED_USER_TYPE, userType?.type)
     }
 }

@@ -10,6 +10,8 @@ import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
+import com.workfort.pstuian.ui.signin.screendata.SignInFormData
+import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 
@@ -42,10 +44,14 @@ internal fun SignInScreenContent(
 
 @Preview
 @Composable
-private fun SignInScreenContentPreview() {
+private fun SignInPanelPreview() {
     AppTheme {
         SignInScreenContent(
-            uiState = SignInUiState(),
+            uiState = SignInUiState.SignInPanel(
+                isLoading = false,
+                formData = SignInFormData(email = "", password = ""),
+                rememberMe = false,
+            ),
             onUiEvent = {},
         )
     }
@@ -53,10 +59,14 @@ private fun SignInScreenContentPreview() {
 
 @Preview
 @Composable
-private fun SignInScreenContentDarkPreview() {
+private fun SignInPanelDarkPreview() {
     AppTheme(theme = ThemeMode.Dark) {
         SignInScreenContent(
-            uiState = SignInUiState(),
+            uiState = SignInUiState.SignInPanel(
+                isLoading = false,
+                formData = SignInFormData(email = "", password = ""),
+                rememberMe = false,
+            ),
             onUiEvent = {},
         )
     }
@@ -64,33 +74,29 @@ private fun SignInScreenContentDarkPreview() {
 
 @Preview
 @Composable
-private fun SignInScreenUiPreview() {
+private fun SignUpPanelPreviewAuth() {
     AppTheme {
-        SignInScreenUi()
+        SignInScreenContent(
+            uiState = SignInUiState.SignUpPanel(
+                isLoading = false,
+                formData = SignUpFormData("", "", "", "", "", "", ""),
+            ),
+            onUiEvent = {},
+        )
     }
 }
 
 @Preview
 @Composable
-private fun SignInScreenUiDarkPreview() {
+private fun SignUpPanelDarkPreviewAuth() {
     AppTheme(theme = ThemeMode.Dark) {
-        SignInScreenUi()
-    }
-}
-
-@Preview
-@Composable
-private fun SignUpPanelPreview() {
-    AppTheme {
-        SignInScreenUi(initialPanel = AuthPanel.SignUp)
-    }
-}
-
-@Preview
-@Composable
-private fun SignUpPanelDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
-        SignInScreenUi(initialPanel = AuthPanel.SignUp)
+        SignInScreenContent(
+            uiState = SignInUiState.SignUpPanel(
+                isLoading = false,
+                formData = SignUpFormData("", "", "", "", "", "", ""),
+            ),
+            onUiEvent = {},
+        )
     }
 }
 
@@ -98,7 +104,10 @@ private fun SignUpPanelDarkPreview() {
 @Composable
 private fun ForgotPasswordPanelPreview() {
     AppTheme {
-        SignInScreenUi(initialPanel = AuthPanel.ForgotPassword)
+        SignInScreenContent(
+            uiState = SignInUiState.ForgotPasswordPanel(isLoading = false, email = ""),
+            onUiEvent = {},
+        )
     }
 }
 
@@ -106,7 +115,10 @@ private fun ForgotPasswordPanelPreview() {
 @Composable
 private fun ForgotPasswordPanelDarkPreview() {
     AppTheme(theme = ThemeMode.Dark) {
-        SignInScreenUi(initialPanel = AuthPanel.ForgotPassword)
+        SignInScreenContent(
+            uiState = SignInUiState.ForgotPasswordPanel(isLoading = false, email = ""),
+            onUiEvent = {},
+        )
     }
 }
 
@@ -114,7 +126,10 @@ private fun ForgotPasswordPanelDarkPreview() {
 @Composable
 private fun EmailVerificationPanelPreview() {
     AppTheme {
-        SignInScreenUi(initialPanel = AuthPanel.EmailVerification)
+        SignInScreenContent(
+            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, email = ""),
+            onUiEvent = {},
+        )
     }
 }
 
@@ -122,6 +137,9 @@ private fun EmailVerificationPanelPreview() {
 @Composable
 private fun EmailVerificationPanelDarkPreview() {
     AppTheme(theme = ThemeMode.Dark) {
-        SignInScreenUi(initialPanel = AuthPanel.EmailVerification)
+        SignInScreenContent(
+            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, email = ""),
+            onUiEvent = {},
+        )
     }
 }

@@ -9,6 +9,6 @@ enum class UserType(val type: String) {
     EMPLOYEE("employee");
 
     companion object {
-        fun create(type: String) = entries.firstOrNull { it.type == type }
+        fun fromType(type: String) = entries.firstOrNull { it.type == type }
     }
 }

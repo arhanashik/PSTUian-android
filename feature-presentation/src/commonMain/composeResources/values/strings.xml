@@ -184,7 +184,7 @@
     <string name="title_select_app_usage_role">How do you use this app?</string>
     <string name="helper_app_usage_role_sheet">You can always change this from Settings or by signing out.</string>
     <string name="label_user_type_row">User type</string>
-    <string name="btn_save_and_continue">Save &amp; continue</string>
+    <string name="btn_save_and_continue">Save &amp; Continue</string>
     <string name="txt_visitor">Visitor</string>
     <string name="label_user_type_not_set">Not set</string>
     <string name="label_settings_footer_version">App version %1$s (%2$d)</string>

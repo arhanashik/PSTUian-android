@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.settings.state
 
-import com.workfort.pstuian.featuredomain.model.AppUsageRole
+import com.workfort.pstuian.featuredomain.model.UserType
 
 sealed interface SettingsMessageState {
     data class Error(val message: String) : SettingsMessageState
@@ -9,9 +9,8 @@ sealed interface SettingsMessageState {
         val message: String,
         val onConfirm: () -> Unit,
     ) : SettingsMessageState
-    data class AppUsageRoleSelection(
-        val selectedRole: AppUsageRole?,
-        val onSelectRole: (AppUsageRole) -> Unit,
-        val onSaveAndContinue: () -> Unit,
+    data class UserTypeSelection(
+        val selectedUserType: UserType?,
+        val onSaveAndContinue: (UserType?) -> Unit,
     ) : SettingsMessageState
 }

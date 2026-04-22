@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.signin.composable
+package com.workfort.pstuian.ui.signin.screendata
 
 enum class AuthPanel {
     SignIn,

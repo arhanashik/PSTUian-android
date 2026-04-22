@@ -161,13 +161,7 @@ private val homeModule = module {
 
 private val signInModule = module {
     factoryOf(::SignInUiStateMachine)
-    factory {
-        SignInViewModel(
-            authRepo = get(),
-            stateMachine = get(),
-            coroutineDispatcherProvider = get(),
-        )
-    }
+    factoryOf(::SignInViewModel)
 }
 
 private val signUpModule = module {

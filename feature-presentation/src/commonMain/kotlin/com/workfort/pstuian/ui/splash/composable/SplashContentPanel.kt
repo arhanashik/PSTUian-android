@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
@@ -23,7 +24,6 @@ import com.workfort.pstuian.ui.splash.state.SplashUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.app_name
-import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SplashContentPanel(
@@ -36,8 +36,7 @@ fun SplashContentPanel(
             contentAlignment = Alignment.Center
         ) {
             when {
-                state.screenState == null ||
-                    (state.showAppUsageRolePicker && state.screenState is InitialScreenState.Home) -> {
+                state.screenState == null || state.screenState is InitialScreenState.Home -> {
                     DefaultSplashContent(state.statusText)
                 }
                 else -> {

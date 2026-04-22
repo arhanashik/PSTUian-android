@@ -5,11 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,22 +41,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.featuredomain.model.AppUsageRole
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.localizedLabel
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
+import com.workfort.pstuian.ui.settings.state.DebugPanelData
 import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
 import com.workfort.pstuian.ui.settings.state.SettingsUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.label_settings_footer_device_id
-import pstuian.feature_presentation.generated.resources.label_settings_footer_version
-import pstuian.feature_presentation.generated.resources.label_user_type_not_set
 import pstuian.feature_presentation.generated.resources.label_user_type_row
+import pstuian.feature_presentation.generated.resources.txt_visitor
 
 @Composable
 fun SettingsContentPanel(
@@ -77,18 +75,18 @@ fun SettingsContentPanel(
                 is SettingsUiState.None -> Unit
                 is SettingsUiState.Content -> {
                     GeneralSettingsView(
-                        appUsageRole = uiState.appUsageRole,
-                        onClickAppUsageRole = { onUiEvent(SettingsUiEvent.OnClickEditAppUsageRole) },
+                        userType = uiState.userType,
+                        onClickUserType = { onUiEvent(SettingsUiEvent.UserTypeClicked) },
                         currentTheme = uiState.theme,
                         showNotification = uiState.showNotification,
-                        onThemeChange = { onUiEvent(SettingsUiEvent.OnChangeTheme(it)) },
-                        onNotificationChange = { onUiEvent(SettingsUiEvent.SetShowNotification(it)) },
+                        onThemeChange = { onUiEvent(SettingsUiEvent.ChangeThemeClicked(it)) },
+                        onNotificationChange = { onUiEvent(SettingsUiEvent.ShowNotificationToggled(it)) },
                     )
-                    if (uiState.isDebug) {
+                    if (uiState.debugPanelData != null) {
                         DebugSettingsView(
-                            fcmToken = uiState.fcmToken,
-                            onRefreshFcmToken = { onUiEvent(SettingsUiEvent.OnRefreshFcmToken) },
-                            onClearPrefs = { onUiEvent(SettingsUiEvent.OnClearSharedPrefs) },
+                            debugPanelData = uiState.debugPanelData,
+                            onRefreshFcmToken = { onUiEvent(SettingsUiEvent.RefreshFcmTokenClicked) },
+                            onClearPrefs = { onUiEvent(SettingsUiEvent.ClearSharedPrefsClicked) },
                         )
                     }
                 }
@@ -105,36 +103,6 @@ fun SettingsContentPanel(
 }
 
 @Composable
-private fun SettingsFooter(
-    appVersionName: String,
-    appVersionCode: Int,
-    deviceId: String,
-) {
-    val small = MaterialTheme.typography.bodySmall.copy(
-        fontSize = 11.sp,
-        lineHeight = 14.sp,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Center,
-    )
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(Res.string.label_settings_footer_version, appVersionName, appVersionCode),
-            style = small,
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = stringResource(Res.string.label_settings_footer_device_id, deviceId),
-            style = small,
-        )
-    }
-}
-
-@Composable
 private fun settingsCardLabelStyle() = TextStyle.title3.copy(
     fontSize = 15.sp,
     fontWeight = FontWeight.SemiBold,
@@ -143,17 +111,15 @@ private fun settingsCardLabelStyle() = TextStyle.title3.copy(
 
 @Composable
 private fun GeneralSettingsView(
-    appUsageRole: AppUsageRole?,
-    onClickAppUsageRole: () -> Unit,
+    userType: UserType?,
+    onClickUserType: () -> Unit,
     currentTheme: ThemeMode,
     showNotification: Boolean,
     onThemeChange: (ThemeMode) -> Unit,
     onNotificationChange: (Boolean) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val roleLabel = appUsageRole?.localizedLabel()
-        ?: stringResource(Res.string.label_user_type_not_set)
-
+    val userTypeLabel: String = userType?.localizedLabel() ?: stringResource(Res.string.txt_visitor)
     val rowLabelStyle = settingsCardLabelStyle()
     ElevatedCard(
         shape = RoundedCornerShape(16.dp),
@@ -162,10 +128,10 @@ private fun GeneralSettingsView(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(modifier = Modifier.padding(vertical = 8.dp)) {
+            // User Type
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = onClickAppUsageRole)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -175,7 +141,7 @@ private fun GeneralSettingsView(
                     style = rowLabelStyle,
                 )
                 Text(
-                    text = roleLabel,
+                    text = userTypeLabel,
                     style = TextStyle.label1.copy(
                         color = AppColors.textPrimary,
                         fontWeight = FontWeight.SemiBold,
@@ -184,9 +150,12 @@ private fun GeneralSettingsView(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
                         .background(AppColors.BrandYellow.copy(alpha = 0.42f))
+                        .clickable(onClick = onClickUserType)
                         .padding(horizontal = 10.dp, vertical = 5.dp),
                 )
             }
+
+            // App Theme
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -227,6 +196,7 @@ private fun GeneralSettingsView(
                 }
             }
 
+            // Show Notification
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -259,7 +229,7 @@ private fun GeneralSettingsView(
 
 @Composable
 private fun DebugSettingsView(
-    fcmToken: String,
+    debugPanelData: DebugPanelData,
     onRefreshFcmToken: () -> Unit,
     onClearPrefs: () -> Unit,
 ) {
@@ -292,7 +262,7 @@ private fun DebugSettingsView(
                     }
                 }
                 Text(
-                    text = fcmToken,
+                    text = debugPanelData.fcmToken,
                     style = TextStyle.body2.copy(color = AppColors.textSecondary),
                 )
             }
@@ -333,5 +303,29 @@ private fun DebugSettingsView(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SettingsFooter(
+    appVersionName: String,
+    appVersionCode: Int,
+    deviceId: String,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = "$appVersionName ($appVersionCode)",
+            style = TextStyle.label3.copy(color = AppColors.textSecondary),
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = deviceId,
+            style = TextStyle.label3.copy(color = AppColors.textSecondary),
+        )
     }
 }

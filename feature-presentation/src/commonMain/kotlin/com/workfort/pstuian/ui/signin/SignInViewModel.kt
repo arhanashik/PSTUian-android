@@ -4,19 +4,21 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.signin.screendata.SignInFormData
+import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInMessageState
 import com.workfort.pstuian.ui.signin.state.SignInNavigationState
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
-import com.workfort.pstuian.ui.signin.state.SignUpFormData
-import com.workfort.pstuian.util.isValidEmail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class SignInViewModel(
-    private val authRepo: AuthRepository,
+    private val authRepository: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     private val stateMachine: SignInUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SignInUiState>(stateMachine) {
@@ -28,7 +30,10 @@ class SignInViewModel(
     val navigation = _navigation.asStateFlow()
 
     override fun onUiReady() {
-        // No initial data needed
+        stateMachine.showInitialState(
+            email = "", // TODO get saved email from shared pref
+            rememberMe = false, // TODO get rememberMe saved value
+        )
     }
 
     fun onUiEvent(event: SignInUiEvent) {
@@ -36,36 +41,22 @@ class SignInViewModel(
             is SignInUiEvent.BackClicked -> {
                 _navigation.update { SignInNavigationState.GoBack(isSignedIn = false) }
             }
-            is SignInUiEvent.UserTypeBtnClicked -> {
-                stateMachine.updateUserType(event.userType)
-            }
-            is SignInUiEvent.SignInClicked -> {
-                signIn(event.email, event.password)
-            }
-            is SignInUiEvent.SignUpSubmitted -> {
-                signUp(event.data)
-            }
-            is SignInUiEvent.ForgotPasswordSubmitted -> {
-                sendPasswordResetLink(event.email)
-            }
-            is SignInUiEvent.EmailVerificationSubmitted -> {
-                sendVerificationEmail(event.email)
-            }
-            is SignInUiEvent.MessageConsumed -> onMessageHandled()
-            is SignInUiEvent.NavigationConsumed -> onNavigationHandled()
+            is SignInUiEvent.AuthPanelChanged -> stateMachine.setAuthPanel(event.panel)
+            is SignInUiEvent.EmailChanged -> stateMachine.updateEmail(event.email)
+            is SignInUiEvent.PasswordChanged -> stateMachine.updatePassword(event.password)
+            is SignInUiEvent.SignInFormDataChanged -> stateMachine.updateSignInForm(event.formData)
+            is SignInUiEvent.SignInRememberMeToggled -> stateMachine.toggleRememberMe(event.rememberMe)
+            is SignInUiEvent.SignUpFormDataChanged -> stateMachine.updateSignUpForm(event.formData)
+            is SignInUiEvent.SignInClicked -> signIn(event.formData)
+            is SignInUiEvent.SignUpClicked -> signUp(event.formData)
+            is SignInUiEvent.ForgotPasswordClicked -> sendPasswordResetLink(event.email)
+            is SignInUiEvent.EmailVerificationClicked -> sendVerificationEmail(event.email)
         }
     }
 
-    private fun signUp(data: SignUpFormData) {
-        // TODO: wire to repository once the sign-up endpoint is ready. For now we just surface a
-        // placeholder message so the UI flow can be exercised end-to-end.
-        _message.update {
-            SignInMessageState.Success(
-                message = "Sign up not implemented yet (received: ${data.email})",
-                showToast = true,
-            )
-        }
-    }
+    fun onMessageHandled() = _message.update { null }
+
+    fun onNavigationHandled() = _navigation.update { null }
 
     private fun sendPasswordResetLink(email: String) {
         // TODO: wire to AuthRepository.sendPasswordResetLink once available.
@@ -87,9 +78,10 @@ class SignInViewModel(
         }
     }
 
-    private fun signIn(email: String, password: String) {
-        val userType = uiState.value.userType
-        if (email.isEmpty() || email.isValidEmail().not() || password.isEmpty() || password.length < 4) {
+    private fun signIn(formData: SignInFormData) {
+        val userType = settingsRepository.getUserType() ?: return
+
+        if (formData.isInvalid()) {
             _message.update {
                 SignInMessageState.Error("Please enter valid credentials and try again")
             }
@@ -98,7 +90,7 @@ class SignInViewModel(
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
             runCatching {
-                authRepo.signIn(email, password, userType)
+                authRepository.signIn(formData.email, formData.password, userType)
             }.onSuccess {
                 stateMachine.showLoading(false)
                 _message.update {
@@ -113,11 +105,20 @@ class SignInViewModel(
         }
     }
 
-    fun onMessageHandled() {
-        _message.update { null }
-    }
-
-    fun onNavigationHandled() {
-        _navigation.update { null }
+    private fun signUp(formData: SignUpFormData) {
+        // TODO: wire to repository once the sign-up endpoint is ready. For now we just surface a
+        // placeholder message so the UI flow can be exercised end-to-end.
+        if (formData.isInvalid()) {
+            _message.update {
+                SignInMessageState.Error("Please enter valid credentials and try again")
+            }
+            return
+        }
+        _message.update {
+            SignInMessageState.Success(
+                message = "Sign up not implemented yet (received: ${formData.email})",
+                showToast = true,
+            )
+        }
     }
 }
