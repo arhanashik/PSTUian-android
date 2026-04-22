@@ -74,7 +74,7 @@ class FirebaseAuthDataSource(
         }
     }
 
-    suspend fun sendEmailVerification(email: String, password: String): NetworkResult<Unit> {
+    suspend fun sendVerificationEmail(email: String, password: String): NetworkResult<Unit> {
         try {
             // firebase sign-in and send email varification
             val firebaseUser = auth.signInWithEmailAndPassword(email, password).user

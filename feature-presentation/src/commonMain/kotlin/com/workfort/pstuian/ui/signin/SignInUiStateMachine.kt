@@ -139,16 +139,17 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
             batch = "",
             password = "",
         )
-        return SignInUiState.SignUpPanel(isLoading = isLoading, formData = formData)
+        return SignInUiState.SignUpPanel(isLoading, formData)
     }
 
     private fun transitionToForgotPassword(isLoading: Boolean): SignInUiState {
         val email = cachedSignInFormData?.email ?: cachedSignUpFormData?.email ?: ""
-        return SignInUiState.ForgotPasswordPanel(isLoading = isLoading, email = email)
+        return SignInUiState.ForgotPasswordPanel(isLoading, email)
     }
 
     private fun transitionToEmailVerification(isLoading: Boolean): SignInUiState {
         val email = cachedSignInFormData?.email ?: cachedSignUpFormData?.email ?: ""
-        return SignInUiState.EmailVerificationPanel(isLoading = isLoading, email = email)
+        val password = cachedSignInFormData?.password ?: cachedSignUpFormData?.password ?: ""
+        return SignInUiState.EmailVerificationPanel(isLoading, email, password)
     }
 }

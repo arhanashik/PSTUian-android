@@ -36,10 +36,7 @@ class AppNavigator {
 
     // Convenience methods for every screen
     suspend fun navigateToSignIn() = navigateTo(AppScreen.SignIn)
-    suspend fun navigateToSignUp() = navigateTo(AppScreen.SignUp)
     suspend fun navigateToChangePassword() = navigateTo(AppScreen.ChangePassword)
-    suspend fun navigateToForgotPassword() = navigateTo(AppScreen.ForgotPassword)
-    suspend fun navigateToEmailVerification() = navigateTo(AppScreen.EmailVerification)
     suspend fun navigateToContactUs() = navigateTo(AppScreen.ContactUs)
     suspend fun navigateToHome() = navigateTo(AppScreen.Home)
     suspend fun navigateToStudents(batchId: Int) = navigateTo(AppScreen.Students(batchId))

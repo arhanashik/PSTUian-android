@@ -27,14 +27,10 @@ import com.workfort.pstuian.ui.donate.DonateUiStateMachine
 import com.workfort.pstuian.ui.donate.DonateViewModel
 import com.workfort.pstuian.ui.donors.DonorsUiStateMachine
 import com.workfort.pstuian.ui.donors.DonorsViewModel
-import com.workfort.pstuian.ui.emailverification.EmailVerificationUiStateMachine
-import com.workfort.pstuian.ui.emailverification.EmailVerificationViewModel
 import com.workfort.pstuian.ui.employeeprofile.EmployeeProfileUiStateMachine
 import com.workfort.pstuian.ui.employeeprofile.EmployeeProfileViewModel
 import com.workfort.pstuian.ui.faculty.FacultyUiStateMachine
 import com.workfort.pstuian.ui.faculty.FacultyViewModel
-import com.workfort.pstuian.ui.forgotpassword.ForgotPasswordUiStateMachine
-import com.workfort.pstuian.ui.forgotpassword.ForgotPasswordViewModel
 import com.workfort.pstuian.ui.home.HomeUiStateMachine
 import com.workfort.pstuian.ui.home.HomeViewModel
 import com.workfort.pstuian.ui.myblooddonationlist.MyBloodDonationListUiStateMachine
@@ -149,11 +145,6 @@ private val facultyModule = module {
     }
 }
 
-private val forgotPasswordModule = module {
-    factoryOf(::ForgotPasswordUiStateMachine)
-    factoryOf(::ForgotPasswordViewModel)
-}
-
 private val homeModule = module {
     factoryOf(::HomeUiStateMachine)
     factoryOf(::HomeViewModel)
@@ -241,13 +232,6 @@ private val deleteAccountModule = module {
     }
 }
 
-private val emailVerificationModule = module {
-    factoryOf(::EmailVerificationUiStateMachine)
-    factory {
-        EmailVerificationViewModel(get(), get())
-    }
-}
-
 private val myBloodDonationListModule = module {
     factoryOf(::MyBloodDonationListUiStateMachine)
     factory { (userId: String, userType: UserType) ->
@@ -325,7 +309,6 @@ val featurePresentationModule = listOf(
     donorsModule,
     donateModule,
     facultyModule,
-    forgotPasswordModule,
     homeModule,
     signInModule,
     signUpModule,
@@ -335,7 +318,6 @@ val featurePresentationModule = listOf(
     teacherProfileModule,
     employeeProfileModule,
     deleteAccountModule,
-    emailVerificationModule,
     myBloodDonationListModule,
     myCheckInListModule,
     myDeviceListModule,

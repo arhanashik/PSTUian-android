@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.ui.common.composable.ActionButton
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
 import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
@@ -52,8 +53,12 @@ internal fun AuthFormForSignInUiState(
         is SignInUiState.EmailVerificationPanel -> {
             EmailVerificationAuthForm(
                 email = uiState.email,
+                password = uiState.password,
                 onEmailChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
-                onSendVerificationClicked = { onUiEvent(SignInUiEvent.EmailVerificationClicked(uiState.email)) },
+                onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
+                onSendVerificationClicked = {
+                    onUiEvent(SignInUiEvent.EmailVerificationClicked(uiState.email, uiState.password))
+                },
                 onSwitchToSignIn = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
             )
         }
@@ -260,12 +265,15 @@ internal fun ForgotPasswordAuthForm(
 @Composable
 internal fun EmailVerificationAuthForm(
     email: String,
+    password: String,
     onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
     onSendVerificationClicked: () -> Unit,
     onSwitchToSignIn: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val emailFocus = remember { FocusRequester() }
+    val passwordFocus = remember { FocusRequester() }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         AuthFormPanelLayout {
@@ -278,10 +286,17 @@ internal fun EmailVerificationAuthForm(
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             )
             Spacer(modifier = Modifier.height(12.dp))
+            AuthPasswordField(
+                password = password,
+                onPasswordChange = { onPasswordChange(it) },
+                focusRequester = passwordFocus,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Enter your email and we'll send you a verification link to confirm your account.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp,
+                text = "A verification link will be sent to your inbox",
+                style = TextStyle.label2.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
             )
             Spacer(modifier = Modifier.height(24.dp))
             ActionButton("SEND VERIFICATION EMAIL", Icons.AutoMirrored.Filled.ArrowForward) {

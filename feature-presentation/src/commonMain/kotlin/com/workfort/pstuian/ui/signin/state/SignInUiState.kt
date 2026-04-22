@@ -27,5 +27,6 @@ sealed interface SignInUiState {
     data class EmailVerificationPanel(
         override val isLoading: Boolean,
         val email: String,
+        val password: String,
     ) : SignInUiState
 }

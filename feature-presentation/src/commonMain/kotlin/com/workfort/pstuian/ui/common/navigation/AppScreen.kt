@@ -13,13 +13,7 @@ sealed interface AppScreen {
     @Serializable
     object SignIn : AppScreen
     @Serializable
-    object SignUp : AppScreen
-    @Serializable
     object ChangePassword : AppScreen
-    @Serializable
-    object ForgotPassword : AppScreen
-    @Serializable
-    object EmailVerification : AppScreen
     @Serializable
     object ContactUs : AppScreen
     @Serializable

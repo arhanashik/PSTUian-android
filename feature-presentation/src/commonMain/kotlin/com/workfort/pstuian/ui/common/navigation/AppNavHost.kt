@@ -26,11 +26,9 @@ import com.workfort.pstuian.ui.cvupload.CvUploadScreen
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
 import com.workfort.pstuian.ui.donate.DonateScreen
 import com.workfort.pstuian.ui.donors.DonorsScreen
-import com.workfort.pstuian.ui.emailverification.EmailVerificationScreen
 import com.workfort.pstuian.ui.employeeprofile.EmployeeProfileScreen
 import com.workfort.pstuian.ui.faculty.FacultyScreen
 import com.workfort.pstuian.ui.facultypicker.FacultyPickerScreen
-import com.workfort.pstuian.ui.forgotpassword.ForgotPasswordScreen
 import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
 import com.workfort.pstuian.ui.imageupload.ImageUploadScreen
@@ -40,7 +38,6 @@ import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListScreen
 import com.workfort.pstuian.ui.mydevicelist.MyDeviceListScreen
 import com.workfort.pstuian.ui.settings.SettingsScreen
 import com.workfort.pstuian.ui.signin.SignInScreen
-import com.workfort.pstuian.ui.signup.SignUpScreen
 import com.workfort.pstuian.ui.splash.SplashScreen
 import com.workfort.pstuian.ui.studentprofile.StudentProfileScreen
 import com.workfort.pstuian.ui.studentprofileedit.StudentProfileEditScreen
@@ -137,21 +134,8 @@ fun AppNavHost(
                 composable<AppScreen.SignIn> {
                     SignInScreen(viewModel = koinViewModel())
                 }
-                composable<AppScreen.SignUp> {
-                    SignUpScreen(
-                        viewModel = koinViewModel(),
-                        facultyId = null,
-                        batchId = null,
-                    )
-                }
                 composable<AppScreen.ChangePassword> {
                     ChangePasswordScreen(viewModel = koinViewModel())
-                }
-                composable<AppScreen.ForgotPassword> {
-                    ForgotPasswordScreen(viewModel = koinViewModel())
-                }
-                composable<AppScreen.EmailVerification> {
-                    EmailVerificationScreen(viewModel = koinViewModel())
                 }
                 composable<AppScreen.ContactUs> {
                     ContactUsScreen(viewModel = koinViewModel())

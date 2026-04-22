@@ -1,12 +1,14 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
 import com.workfort.pstuian.data.mapper.DomainErrorMapper
+import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
 import com.workfort.pstuian.featuredomain.model.AuthUser
+import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
@@ -134,16 +136,12 @@ class AuthRepositoryImpl(
             }
     }
 
-    override suspend fun forgotPassword(userType: String, email: String): String {
-        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
-        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        return helper.forgotPassword(userType, email, deviceId)
+    override suspend fun resetPassword(email: String): DomainResult<Unit> {
+        return firebaseAuthDataSource.resetPassword(email).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun emailVerification(userType: String, email: String): String {
-        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
-        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        return helper.emailVerification(userType, email, deviceId)
+    override suspend fun sendVerificationEmail(email: String, password: String): DomainResult<Unit> {
+        return firebaseAuthDataSource.sendVerificationEmail(email, password).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun deleteAll() {

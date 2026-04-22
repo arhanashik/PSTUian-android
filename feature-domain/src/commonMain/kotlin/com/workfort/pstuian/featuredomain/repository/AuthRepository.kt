@@ -1,6 +1,7 @@
 package com.workfort.pstuian.featuredomain.repository
 
 import com.workfort.pstuian.featuredomain.model.AuthUser
+import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -34,8 +35,8 @@ interface AuthRepository {
 
     suspend fun signOut(fromAllDevice: Boolean = false): String
     suspend fun changePassword(oldPassword: String, newPassword: String): String
-    suspend fun forgotPassword(userType: String, email: String): String
-    suspend fun emailVerification(userType: String, email: String): String
+    suspend fun resetPassword(email: String): DomainResult<Unit>
+    suspend fun sendVerificationEmail(email: String, password: String): DomainResult<Unit>
     suspend fun deleteAll()
     suspend fun deleteAccount(password: String): String
 }

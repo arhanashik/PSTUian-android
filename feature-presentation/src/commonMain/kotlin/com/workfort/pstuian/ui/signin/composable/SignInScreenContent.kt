@@ -127,7 +127,7 @@ private fun ForgotPasswordPanelDarkPreview() {
 private fun EmailVerificationPanelPreview() {
     AppTheme {
         SignInScreenContent(
-            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, email = ""),
+            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, email = "", password = ""),
             onUiEvent = {},
         )
     }
@@ -138,7 +138,7 @@ private fun EmailVerificationPanelPreview() {
 private fun EmailVerificationPanelDarkPreview() {
     AppTheme(theme = ThemeMode.Dark) {
         SignInScreenContent(
-            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, email = ""),
+            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, email = "", password = ""),
             onUiEvent = {},
         )
     }
