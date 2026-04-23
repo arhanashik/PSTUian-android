@@ -266,7 +266,7 @@ private fun getTeacherTabs(isSignedIn: Boolean) = arrayListOf(
 @Composable
 private fun getTeacherAcademicTabItems(profile: TeacherProfile) = listOf(
     ProfileInfoItem(stringResource(Res.string.txt_name), profile.teacher.name),
-    ProfileInfoItem(stringResource(Res.string.txt_id), profile.teacher.id.toString()),
+    ProfileInfoItem(stringResource(Res.string.txt_id), profile.teacher.userId),
     ProfileInfoItem(stringResource(Res.string.txt_designation), profile.teacher.designation),
     ProfileInfoItem(stringResource(Res.string.txt_faculty), profile.faculty.title),
     ProfileInfoItem(stringResource(Res.string.txt_department), profile.teacher.department),

@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.model
 
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
+import com.workfort.pstuian.featuredomain.model.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,20 +17,23 @@ data class EmployeeDto(
     @SerialName("image_url")
     val imageUrl: String?,
 ) {
-    fun toEntity() = EmployeeEntity(
-        id = id,
+    fun toModel() = User.Employee(
+        userId = id.toString(),
         name = name,
-        designation = designation,
-        department = department,
+        email = "",
+        facultyId = facultyId,
         phone = phone,
         address = address,
-        facultyId = facultyId,
-        imageUrl = imageUrl
+        bio = null,
+        blood = null,
+        imageUrl = imageUrl,
+        designation = designation,
+        department = department,
     )
 }
 
-fun EmployeeEntity.toDto() = EmployeeDto(
-    id = id,
+fun User.Employee.toDto() = EmployeeDto(
+    id = userId.toIntOrNull() ?: 0,
     name = name,
     designation = designation,
     department = department,

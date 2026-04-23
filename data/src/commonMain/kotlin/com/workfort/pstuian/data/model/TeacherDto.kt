@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.model
 
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -25,22 +24,6 @@ data class TeacherDto(
     @SerialName("image_url")
     var imageUrl: String?,
 ) {
-    fun toEntity() = TeacherEntity(
-        id = id,
-        name = name,
-        designation = designation,
-        bio = bio,
-        phone = phone,
-        linkedIn = linkedIn,
-        fbLink = fbLink,
-        address = address,
-        email = email,
-        department = department,
-        blood = blood,
-        facultyId = facultyId,
-        imageUrl = imageUrl
-    )
-
     fun toModel() = User.Teacher(
         userId = id.toString(),
         name = name,
@@ -58,8 +41,8 @@ data class TeacherDto(
     )
 }
 
-fun TeacherEntity.toDto() = TeacherDto(
-    id = id,
+fun User.Teacher.toDto() = TeacherDto(
+    id = userId.toIntOrNull() ?: 0,
     name = name,
     designation = designation,
     bio = bio,

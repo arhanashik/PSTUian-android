@@ -2,8 +2,7 @@ package com.workfort.pstuian.ui.faculty.state
 
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.featuredomain.model.User
 
 data class FacultyUiState(
     val title: String = "Faculty",
@@ -21,7 +20,7 @@ data class FacultyUiState(
     )
 
     data class TeacherListState(
-        val teachers: List<TeacherEntity> = emptyList(),
+        val teachers: List<User.Teacher> = emptyList(),
         val isLoading: Boolean = false,
         val error: String? = null,
     )
@@ -33,7 +32,7 @@ data class FacultyUiState(
     )
 
     data class EmployeeListState(
-        val employees: List<EmployeeEntity> = emptyList(),
+        val employees: List<User.Employee> = emptyList(),
         val isLoading: Boolean = false,
         val error: String? = null,
     )

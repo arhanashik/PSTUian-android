@@ -5,10 +5,8 @@ import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.FacultyApiHelper
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
@@ -20,9 +18,9 @@ class FacultyRepositoryImpl(
     private val faculties = mutableListOf<FacultyEntity>()
     private val batches = mutableMapOf<Int, List<BatchEntity>>()
     private val students = mutableMapOf<String, List<User.Student>>()
-    private val teachers = mutableMapOf<Int, List<TeacherEntity>>()
+    private val teachers = mutableMapOf<Int, List<User.Teacher>>()
     private val courses = mutableMapOf<Int, List<CourseEntity>>()
-    private val employees = mutableMapOf<Int, List<EmployeeEntity>>()
+    private val employees = mutableMapOf<Int, List<User.Employee>>()
 
     override suspend fun getFaculties(forceRefresh: Boolean): List<FacultyEntity> {
         if (forceRefresh || faculties.isEmpty()) {
@@ -70,9 +68,9 @@ class FacultyRepositoryImpl(
     override suspend fun getTeachers(
         facultyId: Int,
         forceRefresh: Boolean,
-    ): List<TeacherEntity> {
+    ): List<User.Teacher> {
         if (forceRefresh || !teachers.containsKey(facultyId)) {
-            val newData = helper.getTeachers(facultyId).map { it.toEntity() }
+            val newData = helper.getTeachers(facultyId).map { it.toModel() }
             teachers[facultyId] = newData
         }
         return teachers[facultyId] ?: emptyList()
@@ -92,10 +90,10 @@ class FacultyRepositoryImpl(
     override suspend fun getEmployees(
         facultyId: Int,
         forceRefresh: Boolean,
-    ): List<EmployeeEntity> {
+    ): List<User.Employee> {
         if (forceRefresh || !employees.containsKey(facultyId)) {
             val newData = helper.getEmployees(facultyId).map {
-                it.copy(facultyId = facultyId).toEntity()
+                it.copy(facultyId = facultyId).toModel()
             }
             employees[facultyId] = newData
         }
@@ -103,7 +101,7 @@ class FacultyRepositoryImpl(
     }
 
     override suspend fun getEmployeeProfile(userId: Int): EmployeeProfile {
-        val employee = employees.values.flatten().find { it.id == userId }
+        val employee = employees.values.flatten().find { it.userId == userId.toString() }
             ?: throw Exception("Profile not found")
             
         val facultyId = employee.facultyId

@@ -2,7 +2,6 @@ package com.workfort.pstuian.featuredomain.repository
 
 import com.workfort.pstuian.featuredomain.model.AuthUser
 import com.workfort.pstuian.featuredomain.model.DomainResult
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
 
@@ -11,7 +10,7 @@ interface AuthRepository {
     fun isUserSignedIn(): Boolean
     fun isUserEmailVerified(): Boolean
     fun getSignInUserType(): UserType?
-    suspend fun storeSignInTeacher(teacher: TeacherEntity)
+    suspend fun storeSignInTeacher(teacher: User.Teacher)
     suspend fun signIn(email: String, password: String, userType: UserType): DomainResult<User>
     suspend fun signUpStudent(
         name: String,
@@ -31,7 +30,7 @@ interface AuthRepository {
         email: String,
         password: String,
         facultyId: Int,
-    ): TeacherEntity
+    ): User.Teacher
 
     suspend fun signOut(fromAllDevice: Boolean = false): String
     suspend fun changePassword(oldPassword: String, newPassword: String): String

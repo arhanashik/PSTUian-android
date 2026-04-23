@@ -6,8 +6,7 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.faculty.state.FacultyMessageState
 import com.workfort.pstuian.ui.faculty.state.FacultyNavigationState
@@ -32,10 +31,10 @@ class FacultyViewModel(
     private val _navigation = MutableStateFlow<FacultyNavigationState?>(null)
     val navigation: StateFlow<FacultyNavigationState?> = _navigation.asStateFlow()
 
-    private val teacherListCache = arrayListOf<TeacherEntity>()
+    private val teacherListCache = arrayListOf<User.Teacher>()
     private val batchListCache = arrayListOf<BatchEntity>()
     private val courseListCache = arrayListOf<CourseEntity>()
-    private val employeeListCache = arrayListOf<EmployeeEntity>()
+    private val employeeListCache = arrayListOf<User.Employee>()
 
     override fun onUiReady() {
         setInitialContent()
@@ -67,12 +66,12 @@ class FacultyViewModel(
         _navigation.update { FacultyNavigationState.GoToStudentsScreen(batch.id) }
     }
 
-    private fun onClickTeacher(teacher: TeacherEntity) {
-        _navigation.update { FacultyNavigationState.GoToTeacherScreen(teacher.id.toString()) }
+    private fun onClickTeacher(teacher: User.Teacher) {
+        _navigation.update { FacultyNavigationState.GoToTeacherScreen(teacher.userId) }
     }
 
-    private fun onClickEmployee(employee: EmployeeEntity) {
-        _navigation.update { FacultyNavigationState.GoToEmployeeScreen(employee.id.toString()) }
+    private fun onClickEmployee(employee: User.Employee) {
+        _navigation.update { FacultyNavigationState.GoToEmployeeScreen(employee.userId) }
     }
 
     private fun onClickCall(phoneNumber: String) {

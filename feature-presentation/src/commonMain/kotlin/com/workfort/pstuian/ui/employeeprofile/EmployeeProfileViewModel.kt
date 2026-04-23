@@ -82,7 +82,7 @@ class EmployeeProfileViewModel(
     }
 
     private fun onClickEmail() {
-        // EmployeeEntity does not have an email field yet
+        // Employee profile: email not provided by listing API
     }
 
     private fun onClickSignOut() {
@@ -106,7 +106,7 @@ class EmployeeProfileViewModel(
         profileCache()?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.ImageUploadScreen(
-                    userId = employee.id.toString(),
+                    userId = employee.userId,
                     userType = UserType.EMPLOYEE,
                 )
             }
@@ -132,7 +132,7 @@ class EmployeeProfileViewModel(
             }?.let { mode ->
                 _navigation.update {
                     EmployeeProfileNavigationState.EmployeeProfileEditScreen(
-                        userId = employee.id.toString(),
+                        userId = employee.userId,
                         action = mode,
                     )
                 }
@@ -150,7 +150,7 @@ class EmployeeProfileViewModel(
         profileCache()?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.MyDeviceListScreen(
-                    userId = employee.id.toString(),
+                    userId = employee.userId,
                     userType = UserType.EMPLOYEE,
                 )
             }
@@ -162,7 +162,7 @@ class EmployeeProfileViewModel(
         profileCache()?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.DeleteAccountScreen(
-                    userId = employee.id.toString(),
+                    userId = employee.userId,
                     userType = UserType.EMPLOYEE,
                 )
             }

@@ -2,8 +2,7 @@ package com.workfort.pstuian.ui.faculty
 
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.faculty.state.FacultyUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +36,7 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
         }
     }
 
-    fun updateTeacherList(teachers: List<TeacherEntity>, isLoading: Boolean, error: String? = null) {
+    fun updateTeacherList(teachers: List<User.Teacher>, isLoading: Boolean, error: String? = null) {
         _uiState.update {
             it.copy(
                 teacherListState = it.teacherListState.copy(
@@ -61,7 +60,7 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
         }
     }
 
-    fun updateEmployeeList(employees: List<EmployeeEntity>, isLoading: Boolean, error: String? = null) {
+    fun updateEmployeeList(employees: List<User.Employee>, isLoading: Boolean, error: String? = null) {
         _uiState.update {
             it.copy(
                 employeeListState = it.employeeListState.copy(

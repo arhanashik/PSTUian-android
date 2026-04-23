@@ -10,7 +10,6 @@ import com.workfort.pstuian.featuredomain.model.DomainError
 import com.workfort.pstuian.featuredomain.model.DomainErrorCode
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.getOrElse
@@ -46,7 +45,7 @@ class AuthRepositoryImpl(
         return UserType.fromType(userTypeStr)
     }
 
-    override suspend fun storeSignInTeacher(teacher: TeacherEntity) {
+    override suspend fun storeSignInTeacher(teacher: User.Teacher) {
         val jsonStr = jsonParser.toJson(teacher)
         sharedPrefRepository.apply {
             putString(SharedPrefKey.USER, jsonStr)
@@ -131,12 +130,12 @@ class AuthRepositoryImpl(
         email: String,
         password: String,
         facultyId: Int,
-    ): TeacherEntity {
+    ): User.Teacher {
         val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
         if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
         val data = helper.signUpTeacher(name, designation, department, email, password,
             facultyId, deviceId)
-        return data.first.toEntity()
+        return data.first.toModel()
     }
 
     override suspend fun signOut(fromAllDevice: Boolean): String {

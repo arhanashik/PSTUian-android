@@ -280,7 +280,7 @@ private fun getEmployeeOptionTabItems() = listOf(
 @Composable
 private fun getEmployeeAcademicTabItems(profile: EmployeeProfile) = listOf(
     ProfileInfoItem(stringResource(Res.string.txt_name), profile.employee.name),
-    ProfileInfoItem(stringResource(Res.string.txt_id), profile.employee.id.toString()),
+    ProfileInfoItem(stringResource(Res.string.txt_id), profile.employee.userId),
     ProfileInfoItem(stringResource(Res.string.txt_designation), profile.employee.designation),
     ProfileInfoItem(stringResource(Res.string.txt_faculty), profile.faculty.title),
     ProfileInfoItem(stringResource(Res.string.txt_department), profile.employee.department ?: "~"),

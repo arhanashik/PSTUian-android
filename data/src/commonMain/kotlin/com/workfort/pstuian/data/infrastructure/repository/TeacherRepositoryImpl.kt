@@ -1,8 +1,8 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
 import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
@@ -12,13 +12,13 @@ class TeacherRepositoryImpl(
     private val facultyRepo: FacultyRepository,
     private val helper: TeacherApiHelper,
 ) : TeacherRepository {
-    private val teachers = mutableMapOf<Int, TeacherEntity>()
+    private val teachers = mutableMapOf<Int, User.Teacher>()
 
     override suspend fun getProfile(teacherId: Int): TeacherProfile {
         // get teacher
         var teacher = teachers[teacherId]
         if (teacher == null) {
-            teacher = helper.get(teacherId).toEntity()
+            teacher = helper.get(teacherId).toModel()
             teachers[teacherId] = teacher
         }
         // get faculty
@@ -29,67 +29,70 @@ class TeacherRepositoryImpl(
         return TeacherProfile(teacher, faculty, isSignedIn)
     }
 
-    override suspend fun changeProfileImage(teacher: TeacherEntity, imageUrl: String): Boolean {
-        val isChanged = helper.changeProfileImage(teacher.id, imageUrl)
+    override suspend fun changeProfileImage(teacher: User.Teacher, imageUrl: String): Boolean {
+        val id = teacher.userId.toInt()
+        val isChanged = helper.changeProfileImage(id, imageUrl)
         if (isChanged) {
-            teacher.imageUrl = imageUrl
-            authRepo.storeSignInTeacher(teacher)
-            teachers[teacher.id] = teacher
+            val updated = teacher.copy(imageUrl = imageUrl)
+            authRepo.storeSignInTeacher(updated)
+            teachers[id] = updated
         }
         return isChanged
     }
 
-    override suspend fun changeName(teacher: TeacherEntity, name: String): Boolean {
-        val isChanged = helper.changeName(teacher.id, name)
+    override suspend fun changeName(teacher: User.Teacher, name: String): Boolean {
+        val id = teacher.userId.toInt()
+        val isChanged = helper.changeName(id, name)
         if (isChanged) {
-            teacher.name = name
-            authRepo.storeSignInTeacher(teacher)
-            teachers[teacher.id] = teacher
+            val updated = teacher.copy(name = name)
+            authRepo.storeSignInTeacher(updated)
+            teachers[id] = updated
         }
         return isChanged
     }
 
-    override suspend fun changeBio(teacher: TeacherEntity, bio: String): Boolean {
-        val isChanged = helper.changeBio(teacher.id, bio)
+    override suspend fun changeBio(teacher: User.Teacher, bio: String): Boolean {
+        val id = teacher.userId.toInt()
+        val isChanged = helper.changeBio(id, bio)
         if (isChanged) {
-            teacher.bio = bio
-            authRepo.storeSignInTeacher(teacher)
-            teachers[teacher.id] = teacher
+            val updated = teacher.copy(bio = bio)
+            authRepo.storeSignInTeacher(updated)
+            teachers[id] = updated
         }
         return isChanged
     }
 
     override suspend fun changeAcademicInfo(
-        teacher: TeacherEntity,
+        teacher: User.Teacher,
         name: String,
         designation: String,
         department: String,
         blood: String,
         facultyId: Int
-    ): TeacherEntity {
+    ): User.Teacher {
         helper.changeAcademicInfo(
-            teacher.id, name, designation, department, blood, facultyId
-        ).toEntity().let { updatedTeacher ->
+            teacher.userId.toInt(), name, designation, department, blood, facultyId
+        ).toModel().let { updatedTeacher ->
             authRepo.storeSignInTeacher(updatedTeacher)
-            teachers[updatedTeacher.id] = updatedTeacher
+            teachers[updatedTeacher.userId.toInt()] = updatedTeacher
             return updatedTeacher
         }
     }
 
     override suspend fun changeConnectInfo(
-        teacher: TeacherEntity,
+        teacher: User.Teacher,
         address: String,
         phone: String,
         email: String,
         linkedIn: String,
         fbLink: String
-    ): TeacherEntity {
-        val oldEmail = teacher.email ?: ""
+    ): User.Teacher {
+        val oldEmail = teacher.email
         helper.changeConnectInfo(
-            teacher.id, address, phone, email, oldEmail, linkedIn, fbLink
-        ).toEntity().let { updatedTeacher ->
+            teacher.userId.toInt(), address, phone, email, oldEmail, linkedIn, fbLink
+        ).toModel().let { updatedTeacher ->
             authRepo.storeSignInTeacher(updatedTeacher)
-            teachers[updatedTeacher.id] = updatedTeacher
+            teachers[updatedTeacher.userId.toInt()] = updatedTeacher
             return updatedTeacher
         }
     }

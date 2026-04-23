@@ -18,8 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ScrollableTabView
@@ -101,7 +100,7 @@ private fun FacultyUiState.BatchListState.Handle(
 
 @Composable
 private fun FacultyUiState.TeacherListState.Handle(
-    onClickTeacher: (TeacherEntity) -> Unit,
+    onClickTeacher: (User.Teacher) -> Unit,
     onClickCall: (String) -> Unit,
 ) {
     if (error != null) {
@@ -170,7 +169,7 @@ private fun FacultyUiState.CourseListState.Handle(
 
 @Composable
 private fun FacultyUiState.EmployeeListState.Handle(
-    onClickEmployee: (EmployeeEntity) -> Unit,
+    onClickEmployee: (User.Employee) -> Unit,
     onClickCall: (String) -> Unit,
 ) {
     if (error != null) {
@@ -225,9 +224,9 @@ private fun List<BatchEntity>.BatchListView(
 }
 
 @Composable
-private fun List<TeacherEntity>.TeacherListView(
+private fun List<User.Teacher>.TeacherListView(
     isLoading: Boolean,
-    onClickTeacher: (TeacherEntity) -> Unit,
+    onClickTeacher: (User.Teacher) -> Unit,
     onClickCall: (String) -> Unit,
 ) {
     LazyColumn(
@@ -268,9 +267,9 @@ private fun List<CourseEntity>.CourseListView(
 }
 
 @Composable
-private fun List<EmployeeEntity>.EmployeeListView(
+private fun List<User.Employee>.EmployeeListView(
     isLoading: Boolean,
-    onClickEmployee: (EmployeeEntity) -> Unit,
+    onClickEmployee: (User.Employee) -> Unit,
     onClickCall: (String) -> Unit,
 ) {
     LazyColumn(

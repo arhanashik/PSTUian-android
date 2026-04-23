@@ -2,10 +2,8 @@ package com.workfort.pstuian.featuredomain.repository
 
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.featuredomain.model.FacultyEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
 
 interface FacultyRepository {
@@ -23,11 +21,11 @@ interface FacultyRepository {
         forceRefresh: Boolean = false
     ): List<User.Student>
 
-    suspend fun getTeachers(facultyId: Int, forceRefresh: Boolean = false): List<TeacherEntity>
+    suspend fun getTeachers(facultyId: Int, forceRefresh: Boolean = false): List<User.Teacher>
 
     suspend fun getCourses(facultyId: Int, forceRefresh: Boolean = false): List<CourseEntity>
 
-    suspend fun getEmployees(facultyId: Int, forceRefresh: Boolean = false): List<EmployeeEntity>
+    suspend fun getEmployees(facultyId: Int, forceRefresh: Boolean = false): List<User.Employee>
 
     suspend fun getEmployeeProfile(userId: Int): EmployeeProfile
 

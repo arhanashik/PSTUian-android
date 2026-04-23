@@ -25,8 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.BatchEntity
 import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeEntity
-import com.workfort.pstuian.featuredomain.model.TeacherEntity
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.LabelText
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
@@ -141,7 +140,7 @@ fun BatchListItemSimpleView(
 
 @Composable
 fun TeacherListItemView(
-    teacher: TeacherEntity,
+    teacher: User.Teacher,
     onClickTeacher: () -> Unit,
     onClickCall: () -> Unit,
 ) {
@@ -261,7 +260,7 @@ fun CourseListItemView(
 
 @Composable
 fun EmployeeListItemView(
-    employee: EmployeeEntity,
+    employee: User.Employee,
     onClickEmployee: () -> Unit,
     onClickCall: () -> Unit,
 ) {
