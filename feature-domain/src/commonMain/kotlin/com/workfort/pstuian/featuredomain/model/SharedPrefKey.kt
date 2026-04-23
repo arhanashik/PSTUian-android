@@ -19,7 +19,6 @@ data class SharedPrefKey(
         val AUTH_TOKEN = create("auth_token", true)
         val FIRESTORE_CACHE_CLEARED = create("firestore_cache_cleared", true)
         val DONATION_ID = create("donation_id", true)
-        val USER_TYPE = create("user_type", true)
         val USER = create("user", true)
         val LAST_SHOWN_CHECK_IN_LOCATION_ID = create("last_shown_check_in_location_id", true)
         val SELECTED_USER_TYPE = create("selected_user_type", true)

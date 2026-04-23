@@ -187,6 +187,7 @@ private val studentProfileModule = module {
             studentRepo = get(),
             authRepo = get(),
             uiStateMachine = get(),
+            settingsRepository = get(),
             coroutineDispatcherProvider = get(),
         )
     }
@@ -195,7 +196,14 @@ private val studentProfileModule = module {
 private val teacherProfileModule = module {
     factoryOf(::TeacherProfileUiStateMachine)
     factory { (userId: Int) ->
-        TeacherProfileViewModel(userId, get(), get(), get())
+        TeacherProfileViewModel(
+            userId = userId,
+            teacherRepo = get(),
+            authRepo = get(),
+            uiStateMachine = get(),
+            settingsRepository = get(),
+            coroutineDispatcherProvider = get(),
+        )
     }
 }
 
@@ -206,6 +214,7 @@ private val employeeProfileModule = module {
             userId = userId,
             facultyRepo = get(),
             authRepo = get(),
+            settingsRepository = get(),
             uiStateMachine = get(),
         )
     }
@@ -213,9 +222,7 @@ private val employeeProfileModule = module {
 
 private val deleteAccountModule = module {
     factoryOf(::DeleteAccountUiStateMachine)
-    factory { (userId: Int, userType: UserType) ->
-        DeleteAccountViewModel(userId, userType, get(), get())
-    }
+    factoryOf(::DeleteAccountViewModel)
 }
 
 private val myBloodDonationListModule = module {

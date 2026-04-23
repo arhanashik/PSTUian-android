@@ -10,7 +10,7 @@ sealed interface NetworkErrorCode {
     enum class FirebaseAuth(val code: String): NetworkErrorCode {
         InternalError("FA000"),
         UserNotFound("FA001"),
-        UserCreationFailed("FA002"),
+        UserRegistrationFailed("FA002"),
         UserNotVarified("FA003"),
         UserAlreadyVarified("FA004"),
         ;
@@ -18,10 +18,6 @@ sealed interface NetworkErrorCode {
 
     enum class FireStore(val code: String): NetworkErrorCode {
         InternalError("FS000"),
-        UserNotFound("FS001"),
-        UserCreationFailed("FS002"),
-        UserBlockListed("FS003"),
-        UserAlreadyExist("FA004"),
         ;
     }
 

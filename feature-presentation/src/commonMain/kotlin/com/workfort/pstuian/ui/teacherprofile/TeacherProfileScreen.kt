@@ -221,7 +221,7 @@ private fun HandleNavigationState(
                     )
                 }
                 is TeacherProfileNavigationState.DeleteAccountScreen -> {
-                    navigator?.navigateTo(AppScreen.DeleteAccount(it.userId, it.userType))
+                    navigator?.navigateTo(AppScreen.DeleteAccount)
                 }
             }
             onNavigationHandled()

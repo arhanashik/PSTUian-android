@@ -9,8 +9,6 @@ interface AuthRepository {
     fun getAuthUser(): AuthUser?
     fun isUserSignedIn(): Boolean
     fun isUserEmailVerified(): Boolean
-    fun getSignInUserType(): UserType?
-    suspend fun storeSignInTeacher(teacher: User.Teacher)
     suspend fun signIn(email: String, password: String, userType: UserType): DomainResult<User>
     suspend fun signUpStudent(
         name: String,
@@ -21,21 +19,27 @@ interface AuthRepository {
         session: String,
         email: String,
         password: String,
-    ): User.Student
+    ): DomainResult<User.Student>
 
     suspend fun signUpTeacher(
         name: String,
+        facultyId: Int,
         designation: String,
         department: String,
         email: String,
         password: String,
-        facultyId: Int,
-    ): User.Teacher
+    ): DomainResult<User.Teacher>
 
-    suspend fun signOut(fromAllDevice: Boolean = false): String
-    suspend fun changePassword(oldPassword: String, newPassword: String): String
+    suspend fun signOut(userType: UserType, fromAllDevice: Boolean = false): DomainResult<Unit>
+
+    suspend fun changePassword(
+        userType: UserType,
+        oldPassword: String,
+        newPassword: String,
+    ): DomainResult<Unit>
     suspend fun resetPassword(email: String): DomainResult<Unit>
     suspend fun sendVerificationEmail(email: String, password: String): DomainResult<Unit>
-    suspend fun deleteAll()
-    suspend fun deleteAccount(password: String): String
+
+    suspend fun deleteAccount(userType: UserType, password: String): DomainResult<Unit>
+    suspend fun removeAuthPrefs()
 }

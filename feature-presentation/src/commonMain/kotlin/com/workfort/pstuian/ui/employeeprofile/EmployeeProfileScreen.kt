@@ -221,7 +221,7 @@ private fun HandleNavigationState(
                     )
                 }
                 is EmployeeProfileNavigationState.DeleteAccountScreen -> {
-                    navigator?.navigateTo(AppScreen.DeleteAccount(it.userId, it.userType))
+                    navigator?.navigateTo(AppScreen.DeleteAccount)
                 }
             }
             onNavigationHandled()

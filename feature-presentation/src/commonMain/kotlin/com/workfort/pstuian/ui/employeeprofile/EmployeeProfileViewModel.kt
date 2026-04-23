@@ -6,6 +6,7 @@ import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileMessageState
@@ -23,6 +24,7 @@ class EmployeeProfileViewModel(
     private val userId: Int,
     private val facultyRepo: FacultyRepositoryImpl,
     private val authRepo: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     private val uiStateMachine: EmployeeProfileUiStateMachine,
 ) : UiStateMachineViewModel<EmployeeProfileUiState>(
     uiStateMachine,
@@ -159,14 +161,7 @@ class EmployeeProfileViewModel(
 
     private fun onClickDeleteAccount() {
         if (profileCache()?.isSignedIn != true) return
-        profileCache()?.employee?.let { employee ->
-            _navigation.update {
-                EmployeeProfileNavigationState.DeleteAccountScreen(
-                    userId = employee.userId,
-                    userType = UserType.EMPLOYEE,
-                )
-            }
-        }
+        _navigation.update { EmployeeProfileNavigationState.DeleteAccountScreen }
     }
 
     private fun changeProfileImage(imageUrl: String) {
@@ -178,10 +173,11 @@ class EmployeeProfileViewModel(
     }
 
     fun signOut() {
+        val userType = settingsRepository.getUserType() ?: return
         _message.update { EmployeeProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                authRepo.signOut(fromAllDevice = false)
+                authRepo.signOut(userType, fromAllDevice = false)
                 messageHandled()
                 loadProfile()
             }.onFailure {

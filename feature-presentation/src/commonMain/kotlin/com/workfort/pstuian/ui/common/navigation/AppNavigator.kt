@@ -52,7 +52,7 @@ class AppNavigator {
     suspend fun navigateToStudentProfileEdit(userId: String, action: ProfileEditMode) = navigateTo(AppScreen.StudentProfileEdit(userId, action))
     suspend fun navigateToTeacherProfileEdit(userId: String, action: ProfileEditMode) = navigateTo(AppScreen.TeacherProfileEdit(userId, action))
     suspend fun navigateToEmployeeProfileEdit(userId: String, action: ProfileEditMode) = navigateTo(AppScreen.EmployeeProfileEdit(userId, action))
-    suspend fun navigateToDeleteAccount(userId: String, userType: UserType) = navigateTo(AppScreen.DeleteAccount(userId, userType))
+    suspend fun navigateToDeleteAccount(userId: String, userType: UserType) = navigateTo(AppScreen.DeleteAccount)
     suspend fun navigateToLocationPicker() = navigateTo(AppScreen.LocationPicker)
     suspend fun navigateToDonate() = navigateTo(AppScreen.Donate)
     suspend fun navigateToFacultyPicker(mode: FacultySelectionMode, facultyId: Int? = null, batchId: Int? = null) = navigateTo(AppScreen.FacultyPicker(mode, facultyId, batchId))

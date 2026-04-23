@@ -6,6 +6,7 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ChangePasswordInput
 import com.workfort.pstuian.featuredomain.model.ChangePasswordInputError
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordMessageState
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordNavigationState
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.update
 
 class ChangePasswordViewModel(
     private val authRepo: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     private val uiStateMachine: ChangePasswordUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<ChangePasswordUiState>(uiStateMachine) {
@@ -59,10 +61,13 @@ class ChangePasswordViewModel(
 
         if (validationError.isNotEmpty()) return
 
+        val userType = settingsRepository.getUserType() ?: return
+
         uiStateMachine.showLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 authRepo.changePassword(
+                    userType = userType,
                     oldPassword = input.oldPassword,
                     newPassword = input.newPassword,
                 )

@@ -225,13 +225,8 @@ fun AppNavHost(
                 ) {
                     // TODO: Need Screen for EmployeeProfileEdit
                 }
-                composable<AppScreen.DeleteAccount>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
-                    val screen: AppScreen.DeleteAccount = backStackEntry.toRoute()
-                    DeleteAccountScreen(
-                        viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
-                    )
+                composable<AppScreen.DeleteAccount> {
+                    DeleteAccountScreen(viewModel = koinViewModel())
                 }
                 composable<AppScreen.LocationPicker> {
                     LocationPickerScreen(

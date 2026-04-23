@@ -10,5 +10,5 @@ sealed interface TeacherProfileNavigationState {
     data object ChangePasswordScreen : TeacherProfileNavigationState
     data class MyDeviceListScreen(val userId: String, val userType: UserType) : TeacherProfileNavigationState
     data class TeacherProfileEditScreen(val userId: String, val action: ProfileEditMode) : TeacherProfileNavigationState
-    data class DeleteAccountScreen(val userId: String, val userType: UserType) : TeacherProfileNavigationState
+    data object DeleteAccountScreen : TeacherProfileNavigationState
 }

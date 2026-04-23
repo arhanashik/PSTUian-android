@@ -15,6 +15,7 @@ import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
 import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.mapToErrorMessageForSignInScreen
 import com.workfort.pstuian.ui.signin.state.SignInMessageState
 import com.workfort.pstuian.ui.signin.state.SignInNavigationState
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
@@ -22,7 +23,6 @@ import com.workfort.pstuian.ui.signin.state.SignInUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.withContext
 
 class SignInViewModel(
     private val authRepository: AuthRepository,
@@ -270,33 +270,74 @@ class SignInViewModel(
     }
 
     private fun studentSignUp(formData: SignUpFormData.StudentSignUpFormData) {
-        // TODO: wire to repository once the sign-up endpoint is ready. For now we just surface a
-        // placeholder message so the UI flow can be exercised end-to-end.
         if (formData.isInvalid()) {
             _message.update {
                 SignInMessageState.Error("Please enter valid credentials and try again")
             }
             return
         }
-        _message.update {
-            SignInMessageState.Success(
-                message = "Sign up not implemented yet (received: ${formData.email})",
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            stateMachine.showLoading(true)
+            authRepository.signUpStudent(
+                formData.name,
+                formData.studentId,
+                formData.regNumber,
+                formData.faculty?.id ?: 0, // null check is already in isInvalid check
+                formData.batch?.id ?: 0, // null check is already in isInvalid check
+                formData.session,
+                formData.email,
+                formData.password,
             )
+                .onSuccess {
+                    stateMachine.showLoading(false)
+                    _message.update {
+                        SignInMessageState.Success(
+                            message = "A verification email has been sent to ${formData.email}. " +
+                                    "Please check spam folder if you can't find it in inbox.",
+                        )
+                    }
+                    stateMachine.setAuthPanel(AuthPanel.SignIn)
+                }
+                .onFailure { error ->
+                    stateMachine.showLoading(false)
+                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign up. Please try again."
+                    _message.update { SignInMessageState.Error(msg) }
+                }
         }
     }
 
     private fun teacherSignUp(formData: SignUpFormData.TeacherSignUpFormData) {
-        // TODO: wire teacher sign-up to repository once endpoint is ready.
         if (formData.isInvalid()) {
             _message.update {
                 SignInMessageState.Error("Please enter valid credentials and try again")
             }
             return
         }
-        _message.update {
-            SignInMessageState.Success(
-                message = "Teacher sign up not implemented yet (received: ${formData.email})",
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            stateMachine.showLoading(true)
+            authRepository.signUpTeacher(
+                formData.name,
+                formData.faculty?.id ?: 0, // null check is already in isInvalid check
+                formData.designation,
+                formData.department,
+                formData.email,
+                formData.password,
             )
+                .onSuccess {
+                    stateMachine.showLoading(false)
+                    _message.update {
+                        SignInMessageState.Success(
+                            message = "A verification email has been sent to ${formData.email}. " +
+                                    "Please check spam folder if you can't find it in inbox.",
+                        )
+                    }
+                    stateMachine.setAuthPanel(AuthPanel.SignIn)
+                }
+                .onFailure { error ->
+                    stateMachine.showLoading(false)
+                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign up. Please try again."
+                    _message.update { SignInMessageState.Error(msg) }
+                }
         }
     }
 }

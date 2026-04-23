@@ -8,6 +8,7 @@ import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.DeviceRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.mydevicelist.state.MyDeviceListMessageState
@@ -24,6 +25,7 @@ class MyDeviceListViewModel(
     private val screenData: SharedScreenData,
     private val authRepository: AuthRepository,
     private val deviceRepository: DeviceRepository,
+    private val settingsRepository: SettingsRepository,
     private val stateMachine: MyDeviceListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<MyDeviceListUiState>(stateMachine) {
@@ -105,11 +107,13 @@ class MyDeviceListViewModel(
     }
 
     private fun signOutFromAllDevices() {
+        val userType = settingsRepository.getUserType() ?: return
+
         _message.update { MyDeviceListMessageState.Loading(cancelable = false) }
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
-                authRepository.signOut(fromAllDevice = true)
+                authRepository.signOut(userType, fromAllDevice = true)
             }.onSuccess {
                 _message.update { null }
                 _navigation.update { MyDeviceListNavigationState.GoBack }

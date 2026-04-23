@@ -35,9 +35,6 @@ sealed interface StudentProfileNavigationState {
         val userId: String,
         val action: ProfileEditMode,
     ) : StudentProfileNavigationState
-    data class DeleteAccountScreen(
-        val userId: String,
-        val userType: UserType,
-    ) : StudentProfileNavigationState
+    data object DeleteAccountScreen : StudentProfileNavigationState
     data class ImagePreviewScreen(val encodedImageUrl: String) : StudentProfileNavigationState
 }

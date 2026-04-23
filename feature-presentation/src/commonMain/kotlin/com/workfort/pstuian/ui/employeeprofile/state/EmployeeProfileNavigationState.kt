@@ -10,5 +10,5 @@ sealed interface EmployeeProfileNavigationState {
     data object ChangePasswordScreen : EmployeeProfileNavigationState
     data class MyDeviceListScreen(val userId: String, val userType: UserType) : EmployeeProfileNavigationState
     data class EmployeeProfileEditScreen(val userId: String, val action: ProfileEditMode) : EmployeeProfileNavigationState
-    data class DeleteAccountScreen(val userId: String, val userType: UserType) : EmployeeProfileNavigationState
+    data object DeleteAccountScreen : EmployeeProfileNavigationState
 }

@@ -24,6 +24,7 @@ class FirebaseAuthDataSource(
                 firebaseUser == null -> {
                     NetworkResult.failure(error = NetworkError(code = NetworkErrorCode.FirebaseAuth.UserNotFound))
                 }
+
                 firebaseUser.isEmailVerified.not() -> {
                     if (platformInfo.isDebug) {
                         NetworkResult.success(firebaseUser.toAuthUserDto())
@@ -34,6 +35,7 @@ class FirebaseAuthDataSource(
                         )
                     }
                 }
+
                 else -> NetworkResult.success(firebaseUser.toAuthUserDto())
             }
         } catch (exception: Throwable) {
@@ -50,7 +52,7 @@ class FirebaseAuthDataSource(
             // Create firebase user. Firebase throw errors if account already exists.
             val firebaseUser = auth.createUserWithEmailAndPassword(email, password).user
                 ?: return NetworkResult.failure(
-                    error = NetworkError(code = NetworkErrorCode.FirebaseAuth.UserCreationFailed),
+                    error = NetworkError(code = NetworkErrorCode.FirebaseAuth.UserRegistrationFailed),
                 )
 
             // Update profile with display name
@@ -85,6 +87,7 @@ class FirebaseAuthDataSource(
                         error = NetworkError(code = NetworkErrorCode.FirebaseAuth.UserNotFound),
                     )
                 }
+
                 firebaseUser.isEmailVerified -> {
                     auth.signOut()
                     NetworkResult.failure(
@@ -93,6 +96,7 @@ class FirebaseAuthDataSource(
                         ),
                     )
                 }
+
                 else -> {
                     firebaseUser.sendEmailVerification()
                     auth.signOut()
@@ -181,3 +185,4 @@ class FirebaseAuthDataSource(
         )
     }
 }
+    

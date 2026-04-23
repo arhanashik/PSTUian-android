@@ -2,10 +2,12 @@ package com.workfort.pstuian.ui.teacherprofile
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.teacherprofile.state.ProfileState
@@ -23,7 +25,9 @@ class TeacherProfileViewModel(
     private val userId: Int,
     private val teacherRepo: TeacherRepositoryImpl,
     private val authRepo: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     private val uiStateMachine: TeacherProfileUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<TeacherProfileUiState>(
     uiStateMachine,
     initializationMode = InitializationMode.JustOnce,
@@ -161,14 +165,7 @@ class TeacherProfileViewModel(
 
     private fun onClickDeleteAccount() {
         if (profileCache()?.isSignedIn != true) return
-        profileCache()?.teacher?.let { teacher ->
-            _navigation.update {
-                TeacherProfileNavigationState.DeleteAccountScreen(
-                    userId = teacher.userId,
-                    userType = UserType.TEACHER,
-                )
-            }
-        }
+        _navigation.update { TeacherProfileNavigationState.DeleteAccountScreen }
     }
 
     private fun profileCache(): TeacherProfile? {
@@ -240,10 +237,11 @@ class TeacherProfileViewModel(
     }
 
     fun signOut() {
+        val userType = settingsRepository.getUserType() ?: return
         _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                authRepo.signOut(fromAllDevice = false)
+                authRepo.signOut(userType, fromAllDevice = false)
                 messageHandled()
                 loadProfile()
             }.onFailure {

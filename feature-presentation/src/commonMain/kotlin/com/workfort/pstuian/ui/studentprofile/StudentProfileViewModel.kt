@@ -8,6 +8,7 @@ import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.studentprofile.state.ProfileState
@@ -25,6 +26,7 @@ class StudentProfileViewModel(
     private val userId: String,
     private val studentRepo: StudentRepositoryImpl,
     private val authRepo: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     private val uiStateMachine: StudentProfileUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<StudentProfileUiState>(
@@ -214,14 +216,7 @@ class StudentProfileViewModel(
 
     private fun onClickDeleteAccount() {
         if (profileCache()?.isSignedIn != true) return
-        profileCache()?.student?.let { student ->
-            _navigation.update {
-                StudentProfileNavigationState.DeleteAccountScreen(
-                    userId = student.userId,
-                    userType = UserType.STUDENT,
-                )
-            }
-        }
+        _navigation.update { StudentProfileNavigationState.DeleteAccountScreen }
     }
 
     private fun profileCache(): StudentProfile? {
@@ -292,10 +287,11 @@ class StudentProfileViewModel(
     }
 
     fun signOut() {
+        val userType = settingsRepository.getUserType() ?: return
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                authRepo.signOut(fromAllDevice = false)
+                authRepo.signOut(userType, fromAllDevice = false)
                 messageHandled()
                 loadProfile()
             }.onFailure {

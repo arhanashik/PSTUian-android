@@ -2,7 +2,6 @@ package com.workfort.pstuian.data.infrastructure.repository
 
 import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
-import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
 import com.workfort.pstuian.featuredomain.model.AuthUser
@@ -14,17 +13,21 @@ import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.getOrElse
 import com.workfort.pstuian.featuredomain.model.map
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
-import com.workfort.pstuian.util.helper.JsonParser
 
 class AuthRepositoryImpl(
     private val helper: AuthApiHelper,
     private val firebaseAuthDataSource: FirebaseAuthDataSource,
     private val sharedPrefRepository: SharedPrefRepository,
     private val domainErrorMapper: DomainErrorMapper,
-    private val jsonParser: JsonParser,
 ) : AuthRepository {
+
+    private fun getDeviceId(): String = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID) ?: ""
+    private val invalidDevice = DomainError(DomainErrorCode.Auth.DeviceNotFound)
+    private val invalidAuthUser = DomainError(DomainErrorCode.Auth.UserAuthNotFound)
 
     override fun getAuthUser(): AuthUser? {
         return firebaseAuthDataSource.getCurrentUser()?.let { (userId, dto) ->
@@ -40,25 +43,9 @@ class AuthRepositoryImpl(
         return firebaseAuthDataSource.isUserEmailVerified()
     }
 
-    override fun getSignInUserType(): UserType? {
-        val userTypeStr = sharedPrefRepository.getString(SharedPrefKey.USER_TYPE) ?: return null
-        return UserType.fromType(userTypeStr)
-    }
-
-    override suspend fun storeSignInTeacher(teacher: User.Teacher) {
-        val jsonStr = jsonParser.toJson(teacher)
-        sharedPrefRepository.apply {
-            putString(SharedPrefKey.USER, jsonStr)
-            putString(SharedPrefKey.USER_TYPE, NetworkConst.Params.UserType.TEACHER)
-        }
-    }
-
     override suspend fun signIn(email: String, password: String, userType: UserType): DomainResult<User> {
         // validate device
-        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
-        if(deviceId.isNullOrEmpty()) return DomainResult.failure(
-            DomainError(DomainErrorCode.Auth.DeviceNotFound, Exception("Invalid Device!"))
-        )
+        val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
 
         // validate auth user
         val authResult = firebaseAuthDataSource.signIn(email, password)
@@ -73,20 +60,22 @@ class AuthRepositoryImpl(
         // sign in
         return when(userType) {
             UserType.STUDENT -> {
-                helper.signInStudent(authUser.userId, email, deviceId)
+                helper.signInStudent(authUser.userId, email, password, deviceId)
                     .toDomainResult(domainErrorMapper)
                     .map { (dto, authToken) ->
                         sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
                         dto.toModel()
                     }
+                    .onFailure { firebaseAuthDataSource.signOut() }
             }
             UserType.TEACHER -> {
-                helper.signInTeacher(authUser.userId, email, deviceId)
+                helper.signInTeacher(authUser.userId, email, password, deviceId)
                     .toDomainResult(domainErrorMapper)
                     .map { (dto, authToken) ->
                         sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
                         dto.toModel()
                     }
+                    .onFailure { firebaseAuthDataSource.signOut() }
             }
             else -> {
                 firebaseAuthDataSource.signOut()
@@ -106,10 +95,12 @@ class AuthRepositoryImpl(
         session: String,
         email: String,
         password: String,
-    ): User.Student {
-        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
-        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        val data = helper.signUpStudent(
+    ): DomainResult<User.Student> {
+        // validate device
+        val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
+
+        // sign up
+        val result = helper.signUpStudent(
             name,
             id,
             reg,
@@ -117,48 +108,95 @@ class AuthRepositoryImpl(
             batchId,
             session,
             email,
-            deviceId,
             password,
+            deviceId,
         )
-        return data.first.toModel()
+            .toDomainResult(domainErrorMapper)
+            .map { it.toModel() }
+            .onFailure { error ->
+                return DomainResult.failure(error)
+            }
+
+        // validate auth user
+        firebaseAuthDataSource.signUp(email, password, name)
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { firebaseAuthDataSource.signOut() }
+            .onFailure { error ->
+                return DomainResult.failure(error)
+            }
+
+        return result
     }
 
     override suspend fun signUpTeacher(
         name: String,
+        facultyId: Int,
         designation: String,
         department: String,
         email: String,
         password: String,
-        facultyId: Int,
-    ): User.Teacher {
-        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
-        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        val data = helper.signUpTeacher(name, designation, department, email, password,
-            facultyId, deviceId)
-        return data.first.toModel()
-    }
+    ): DomainResult<User.Teacher> {
+        // validate device
+        val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
 
-    override suspend fun signOut(fromAllDevice: Boolean): String {
-        val userType = getSignInUserType()?.type ?: throw Exception("Invalid user!")
-        val userId = getAuthUser()?.userId ?: throw Exception("Invalid user!")
-        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
-        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        val data = helper.signOut(userId, userType, deviceId, fromAllDevice)
-        deleteAll()
-
-        return data
-    }
-
-    override suspend fun changePassword(oldPassword: String, newPassword: String): String {
-        val userType = getSignInUserType()?.type ?: throw Exception("Invalid user!")
-        val userId = getAuthUser()?.userId ?: throw Exception("Invalid user!")
-        val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
-        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
-        helper.changePassword(userId, userType, oldPassword, newPassword, deviceId)
-            .also { (user, authToken) ->
-                sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
-                return user
+        val result = helper.signUpTeacher(
+            name,
+            facultyId,
+            designation,
+            department,
+            email,
+            password,
+            deviceId,
+        )
+            .toDomainResult(domainErrorMapper)
+            .map { it.toModel() }
+            .onFailure { error ->
+                return DomainResult.failure(error)
             }
+
+        // validate auth user
+        firebaseAuthDataSource.signUp(email, password, name)
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { firebaseAuthDataSource.signOut() }
+            .onFailure { error ->
+                return DomainResult.failure(error)
+            }
+
+        return result
+    }
+
+    override suspend fun signOut(userType: UserType, fromAllDevice: Boolean): DomainResult<Unit> {
+        // validate device
+        val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
+        val userId = getAuthUser()?.userId ?: return DomainResult.failure(invalidAuthUser)
+
+        return helper.signOut(userId, userType.type, deviceId, fromAllDevice)
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { removeAuthPrefs() }
+    }
+
+    override suspend fun changePassword(
+        userType: UserType,
+        oldPassword: String,
+        newPassword: String,
+    ): DomainResult<Unit> {
+        // validate device
+        val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
+        val authUser = getAuthUser() ?: return DomainResult.failure(invalidAuthUser)
+
+        return helper.changePassword(
+            userType.type,
+            authUser.email,
+            oldPassword,
+            newPassword,
+            deviceId
+        )
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { authToken ->
+                sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
+                DomainResult.success(Unit)
+            }
+            .map { } // No need to return any data
     }
 
     override suspend fun resetPassword(email: String): DomainResult<Unit> {
@@ -169,19 +207,18 @@ class AuthRepositoryImpl(
         return firebaseAuthDataSource.sendVerificationEmail(email, password).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun deleteAll() {
-        sharedPrefRepository.remove(SharedPrefKey.AUTH_TOKEN)
-        sharedPrefRepository.remove(SharedPrefKey.USER)
-        sharedPrefRepository.remove(SharedPrefKey.USER_TYPE)
-        sharedPrefRepository.remove(SharedPrefKey.SELECTED_USER_TYPE)
+    override suspend fun deleteAccount(userType: UserType, password: String): DomainResult<Unit> {
+        // validate device
+        val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
+        val authUser = getAuthUser() ?: return DomainResult.failure(invalidAuthUser)
+
+        return helper.deleteAccount(authUser.email, userType.type, password)
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { removeAuthPrefs() }
     }
 
-    override suspend fun deleteAccount(password: String): String {
-        val userType = getSignInUserType()?.type ?: throw Exception("Invalid user!")
-        val user = getAuthUser() ?: throw Exception("Invalid user!")
-        val data = helper.deleteAccount(user.userId, userType, user.email, password)
-        deleteAll()
-
-        return data
+    override suspend fun removeAuthPrefs() {
+        sharedPrefRepository.remove(SharedPrefKey.AUTH_TOKEN)
+        sharedPrefRepository.remove(SharedPrefKey.SELECTED_USER_TYPE)
     }
 }

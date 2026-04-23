@@ -34,7 +34,6 @@ class TeacherRepositoryImpl(
         val isChanged = helper.changeProfileImage(id, imageUrl)
         if (isChanged) {
             val updated = teacher.copy(imageUrl = imageUrl)
-            authRepo.storeSignInTeacher(updated)
             teachers[id] = updated
         }
         return isChanged
@@ -45,7 +44,6 @@ class TeacherRepositoryImpl(
         val isChanged = helper.changeName(id, name)
         if (isChanged) {
             val updated = teacher.copy(name = name)
-            authRepo.storeSignInTeacher(updated)
             teachers[id] = updated
         }
         return isChanged
@@ -56,7 +54,6 @@ class TeacherRepositoryImpl(
         val isChanged = helper.changeBio(id, bio)
         if (isChanged) {
             val updated = teacher.copy(bio = bio)
-            authRepo.storeSignInTeacher(updated)
             teachers[id] = updated
         }
         return isChanged
@@ -73,7 +70,6 @@ class TeacherRepositoryImpl(
         helper.changeAcademicInfo(
             teacher.userId.toInt(), name, designation, department, blood, facultyId
         ).toModel().let { updatedTeacher ->
-            authRepo.storeSignInTeacher(updatedTeacher)
             teachers[updatedTeacher.userId.toInt()] = updatedTeacher
             return updatedTeacher
         }
@@ -91,7 +87,6 @@ class TeacherRepositoryImpl(
         helper.changeConnectInfo(
             teacher.userId.toInt(), address, phone, email, oldEmail, linkedIn, fbLink
         ).toModel().let { updatedTeacher ->
-            authRepo.storeSignInTeacher(updatedTeacher)
             teachers[updatedTeacher.userId.toInt()] = updatedTeacher
             return updatedTeacher
         }

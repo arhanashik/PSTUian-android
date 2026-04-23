@@ -36,8 +36,8 @@ sealed interface SignUpFormData {
                 email.isValidEmail().not() ||
                 studentId.isEmpty() ||
                 regNumber.isEmpty() ||
-                faculty == null ||
                 session.isEmpty() ||
+                faculty == null ||
                 batch == null ||
                 password.isEmpty() ||
                 password.length < 6

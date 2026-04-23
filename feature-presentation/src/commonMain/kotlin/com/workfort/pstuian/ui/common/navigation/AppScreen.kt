@@ -54,7 +54,7 @@ sealed interface AppScreen {
         val action: ProfileEditMode,
     ) : AppScreen
     @Serializable
-    data class DeleteAccount(val userId: String, val userType: UserType) : AppScreen
+    data object DeleteAccount : AppScreen
     @Serializable
     object LocationPicker : AppScreen
     @Serializable

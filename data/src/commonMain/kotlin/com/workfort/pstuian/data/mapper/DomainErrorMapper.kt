@@ -23,7 +23,7 @@ class DomainErrorMapper {
         return when (this) {
             NetworkErrorCode.FirebaseAuth.InternalError -> DomainErrorCode.Auth.InternalError
             NetworkErrorCode.FirebaseAuth.UserNotFound -> DomainErrorCode.Auth.UserAuthNotFound
-            NetworkErrorCode.FirebaseAuth.UserCreationFailed -> DomainErrorCode.Auth.UserAuthCreationFailed
+            NetworkErrorCode.FirebaseAuth.UserRegistrationFailed -> DomainErrorCode.Auth.UserAuthRegistrationFailed
             NetworkErrorCode.FirebaseAuth.UserNotVarified -> DomainErrorCode.Auth.UserNotVarified
             NetworkErrorCode.FirebaseAuth.UserAlreadyVarified -> DomainErrorCode.Auth.UserAlreadyVarified
         }
@@ -32,10 +32,6 @@ class DomainErrorMapper {
     private fun NetworkErrorCode.FireStore.mapToAppErrorCode(): DomainErrorCode.Auth {
         return when (this) {
             NetworkErrorCode.FireStore.InternalError -> DomainErrorCode.Auth.InternalError
-            NetworkErrorCode.FireStore.UserNotFound -> DomainErrorCode.Auth.UserProfileNotFound
-            NetworkErrorCode.FireStore.UserCreationFailed -> DomainErrorCode.Auth.UserProfileCreationFailed
-            NetworkErrorCode.FireStore.UserBlockListed -> DomainErrorCode.Auth.UserBlockListed
-            NetworkErrorCode.FireStore.UserAlreadyExist -> DomainErrorCode.Auth.UserAlreadyExist
         }
     }
 
@@ -58,7 +54,7 @@ class DomainErrorMapper {
             ApiResponseCode.DeviceBlockListed -> DomainErrorCode.Auth.DeviceBlockListed
             ApiResponseCode.DeviceAlreadyExist -> DomainErrorCode.Auth.DeviceAlreadyExist
             ApiResponseCode.UserNotFound -> DomainErrorCode.Auth.UserAuthNotFound
-            ApiResponseCode.UserRegistrationFailed -> DomainErrorCode.Auth.UserProfileCreationFailed
+            ApiResponseCode.UserRegistrationFailed -> DomainErrorCode.Auth.UserRegistrationFailed
             ApiResponseCode.UserBlockListed -> DomainErrorCode.Auth.UserBlockListed
             ApiResponseCode.UserAlreadyExist -> DomainErrorCode.Auth.UserAlreadyExist
         }

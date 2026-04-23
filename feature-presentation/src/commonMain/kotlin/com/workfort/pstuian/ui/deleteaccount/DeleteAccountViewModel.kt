@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.deleteaccount
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountMessageState
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountNavigationState
@@ -15,9 +15,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DeleteAccountViewModel(
-    private val userId: Int,
-    private val userType: UserType,
     private val authRepo: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     private val stateMachine: DeleteAccountUiStateMachine,
 ) : UiStateMachineViewModel<DeleteAccountUiState>(stateMachine) {
 
@@ -68,10 +67,12 @@ class DeleteAccountViewModel(
         val currentState = stateMachine.uiState.value
         if (currentState.validationError.isNotEmpty()) return
 
+        val userType = settingsRepository.getUserType() ?: return
+
         _message.update { DeleteAccountMessageState.Loading(cancelable = false) }
 
         runCatching {
-            authRepo.deleteAccount(password = currentState.input)
+            authRepo.deleteAccount(userType, password = currentState.input)
         }.onSuccess {
             _message.update {
                 DeleteAccountMessageState.Success(

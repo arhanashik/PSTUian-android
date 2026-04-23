@@ -16,9 +16,9 @@ sealed interface DomainErrorCode {
         AuthFailed,
         ValidationFailed,
         UserAuthNotFound,
-        UserProfileNotFound,
-        UserAuthCreationFailed,
-        UserProfileCreationFailed,
+        UserNotFound,
+        UserAuthRegistrationFailed,
+        UserRegistrationFailed,
         UserNotVarified,
         UserAlreadyVarified,
         UserBlockListed,
@@ -31,13 +31,10 @@ sealed interface DomainErrorCode {
         ;
     }
 
-    enum class Validation(val code: String): DomainErrorCode {
-        InputEmpty("SBV001"),
-        InputTooLong("SBV002"),
-        InputInvalid("SBV003"),
-
-        UserInvalid("SBV004"),
-        UserAlreadyAdded("SBV005"),
+    enum class Validation: DomainErrorCode {
+        InputEmpty,
+        InputTooLong,
+        InputInvalid,
         ;
     }
 }

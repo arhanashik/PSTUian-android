@@ -10,7 +10,7 @@ class ClearAllDataUseCase(
     private val sliderRepo: SliderRepository,
 ) {
     suspend operator fun invoke() {
-        authRepository.deleteAll()
+        authRepository.removeAuthPrefs()
         sliderRepo.deleteAll()
         facultyRepo.deleteAll()
     }
