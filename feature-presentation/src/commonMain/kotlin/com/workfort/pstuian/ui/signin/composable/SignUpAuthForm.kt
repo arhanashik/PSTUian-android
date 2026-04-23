@@ -175,7 +175,7 @@ private fun StudentSignUpInputFields(
             value = formData.studentId,
             onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(studentId = it))) },
             focusRequester = studentIdFocus,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { registrationFocus.requestFocus() }),
         )
         Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
