@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TeacherDto(
+    @SerialName("user_id")
+    val userId: String,
     val id: Int,
     var name: String,
     val designation: String,
@@ -25,7 +27,8 @@ data class TeacherDto(
     var imageUrl: String?,
 ) {
     fun toModel() = User.Teacher(
-        userId = id.toString(),
+        userId = userId,
+        id = id,
         name = name,
         designation = designation,
         bio = bio,
@@ -37,12 +40,13 @@ data class TeacherDto(
         department = department,
         blood = blood,
         facultyId = facultyId,
-        imageUrl = imageUrl
+        imageUrl = imageUrl,
     )
 }
 
 fun User.Teacher.toDto() = TeacherDto(
-    id = userId.toIntOrNull() ?: 0,
+    userId = userId,
+    id = id,
     name = name,
     designation = designation,
     bio = bio,

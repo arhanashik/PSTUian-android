@@ -7,6 +7,8 @@ interface StudentApiHelper {
 
     suspend fun get(userId: String): StudentDto?
 
+    suspend fun getByEmail(email: String): NetworkResult<StudentDto>
+
     suspend fun changeProfileImage(userId: String, imageUrl: String): NetworkResult<Unit>
 
     suspend fun changeName(userId: String, name: String): NetworkResult<Unit>

@@ -1,6 +1,8 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
 import com.workfort.pstuian.data.mapper.toNetworkResult
+import com.workfort.pstuian.data.model.ApiResponseCode
+import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.remote.domain.StudentApiHelper
@@ -10,6 +12,14 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
 
     override suspend fun get(userId: String): StudentDto? {
         return service.get(userId).data
+    }
+
+    override suspend fun getByEmail(email: String): NetworkResult<StudentDto> {
+        return runCatching {
+            service.getByEmail(email).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun changeProfileImage(userId: String, imageUrl: String): NetworkResult<Unit> {

@@ -24,6 +24,7 @@ class DomainErrorMapper {
             NetworkErrorCode.FirebaseAuth.InternalError -> DomainErrorCode.Auth.InternalError
             NetworkErrorCode.FirebaseAuth.UserNotFound -> DomainErrorCode.Auth.UserAuthNotFound
             NetworkErrorCode.FirebaseAuth.UserRegistrationFailed -> DomainErrorCode.Auth.UserAuthRegistrationFailed
+            NetworkErrorCode.FirebaseAuth.UserAlreadyRegistered -> DomainErrorCode.Auth.UserAuthAlreadyRegistered
             NetworkErrorCode.FirebaseAuth.UserNotVarified -> DomainErrorCode.Auth.UserNotVarified
             NetworkErrorCode.FirebaseAuth.UserAlreadyVarified -> DomainErrorCode.Auth.UserAlreadyVarified
         }
@@ -53,7 +54,7 @@ class DomainErrorMapper {
             ApiResponseCode.DeviceRegistrationFailed -> DomainErrorCode.Auth.DeviceRegistrationFailed
             ApiResponseCode.DeviceBlockListed -> DomainErrorCode.Auth.DeviceBlockListed
             ApiResponseCode.DeviceAlreadyExist -> DomainErrorCode.Auth.DeviceAlreadyExist
-            ApiResponseCode.UserNotFound -> DomainErrorCode.Auth.UserAuthNotFound
+            ApiResponseCode.UserNotFound -> DomainErrorCode.Auth.UserNotFound
             ApiResponseCode.UserRegistrationFailed -> DomainErrorCode.Auth.UserRegistrationFailed
             ApiResponseCode.UserBlockListed -> DomainErrorCode.Auth.UserBlockListed
             ApiResponseCode.UserAlreadyExist -> DomainErrorCode.Auth.UserAlreadyExist

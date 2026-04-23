@@ -18,6 +18,12 @@ class StudentApiService(private val client: HttpClient) {
         }.body()
     }
 
+    suspend fun getByEmail(email: String): ApiResponse<StudentDto> {
+        return client.get(NetworkConst.Remote.Api.Student.GET_BY_EMAIL) {
+            parameter(NetworkConst.Params.EMAIL, email)
+        }.body()
+    }
+
     suspend fun changeProfileImage(userId: String, imageUrl: String): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Student.CHANGE_PROFILE_IMAGE,

@@ -4,12 +4,16 @@ import com.workfort.pstuian.featuredomain.model.AuthUser
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
+import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     fun getAuthUser(): AuthUser?
     fun isUserSignedIn(): Boolean
     fun isUserEmailVerified(): Boolean
+
+    suspend fun observeSignedInAuthUser(): Flow<AuthUser?>
     suspend fun signIn(email: String, password: String, userType: UserType): DomainResult<User>
+
     suspend fun signUpStudent(
         name: String,
         id: String,
@@ -19,8 +23,7 @@ interface AuthRepository {
         session: String,
         email: String,
         password: String,
-    ): DomainResult<User.Student>
-
+    ): DomainResult<Unit>
     suspend fun signUpTeacher(
         name: String,
         facultyId: Int,
@@ -28,7 +31,7 @@ interface AuthRepository {
         department: String,
         email: String,
         password: String,
-    ): DomainResult<User.Teacher>
+    ): DomainResult<Unit>
 
     suspend fun signOut(userType: UserType, fromAllDevice: Boolean = false): DomainResult<Unit>
 

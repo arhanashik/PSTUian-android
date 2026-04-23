@@ -122,8 +122,8 @@ private val networkModule = module {
     single { FacultyApiService(get()) }
     factoryOf(::FacultyApiHelperImpl) bind FacultyApiHelper::class
 
-    single { StudentApiService(get()) }
-    factoryOf(::StudentApiHelperImpl) bind StudentApiHelper::class
+    singleOf(::StudentApiService)
+    singleOf(::StudentApiHelperImpl) bind StudentApiHelper::class
 
     single { TeacherApiService(get()) }
     factoryOf(::TeacherApiHelperImpl) bind TeacherApiHelper::class
@@ -157,7 +157,7 @@ val repositoryModule = module {
     factoryOf(::AppConfigRepositoryImpl) bind AppConfigRepository::class
 
     // auth repository
-    factoryOf(::AuthRepositoryImpl) bind AuthRepository::class
+    singleOf(::AuthRepositoryImpl) bind AuthRepository::class
 
     // device repo
     factoryOf(::DeviceRepositoryImpl) bind DeviceRepository::class

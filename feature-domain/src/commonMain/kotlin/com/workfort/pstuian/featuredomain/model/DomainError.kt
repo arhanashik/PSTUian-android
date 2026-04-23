@@ -18,6 +18,7 @@ sealed interface DomainErrorCode {
         UserAuthNotFound,
         UserNotFound,
         UserAuthRegistrationFailed,
+        UserAuthAlreadyRegistered,
         UserRegistrationFailed,
         UserNotVarified,
         UserAlreadyVarified,

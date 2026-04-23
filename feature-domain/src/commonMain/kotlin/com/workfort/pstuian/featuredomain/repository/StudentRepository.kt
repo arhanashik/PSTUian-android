@@ -8,6 +8,8 @@ interface StudentRepository {
 
     suspend fun getUser(userId: String): User.Student?
 
+    suspend fun getUserByEmail(email: String): DomainResult<User.Student>
+
     suspend fun getProfile(studentId: String): StudentProfile?
 
     suspend fun changeProfileImage(userId: String, imageUrl: String): DomainResult<Unit>

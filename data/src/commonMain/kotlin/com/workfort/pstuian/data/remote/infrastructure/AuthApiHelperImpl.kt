@@ -101,6 +101,19 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         }
     }
 
+    override suspend fun updateUserId(
+        userId: String,
+        userType: String,
+        email: String,
+        password: String
+    ): NetworkResult<String> {
+        return runCatching {
+            service.updateUserId(userId, userType, email, password).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
+    }
+
     override suspend fun signOut(
         userId: String,
         userType: String,

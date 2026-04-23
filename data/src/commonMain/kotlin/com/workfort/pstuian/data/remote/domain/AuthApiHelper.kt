@@ -43,6 +43,13 @@ interface AuthApiHelper {
         deviceId: String,
     ): NetworkResult<TeacherDto>
 
+    suspend fun updateUserId(
+        userId: String,
+        userType: String,
+        email: String,
+        password: String,
+    ): NetworkResult<String>
+
     suspend fun signOut(
         userId: String,
         userType: String,

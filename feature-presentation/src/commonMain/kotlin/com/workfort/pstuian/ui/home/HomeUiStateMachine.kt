@@ -16,8 +16,8 @@ class HomeUiStateMachine : UiStateMachine<HomeUiState> {
 
     private fun updateUiState(updater: HomeUiState.() -> HomeUiState) = _uiState.update(updater)
 
-    fun setInitialContent() = updateUiState {
-        HomeUiState.Content()
+    fun setInitialContent(isSignedInUser: Boolean) = updateUiState {
+        HomeUiState.Content(isSignedInUser)
     }
 
     private fun updateContent(
@@ -25,13 +25,11 @@ class HomeUiStateMachine : UiStateMachine<HomeUiState> {
     ) = updateUiState {
         if (this is HomeUiState.Content) {
             updater()
-        } else {
-            HomeUiState.Content().updater()
-        }
+        } else this
     }
 
-    fun showProfile(imageUrl: String?) = updateContent {
-        copy(profileImageUrl = imageUrl)
+    fun updateSignedInState(isSignedInUser: Boolean) = updateContent {
+        copy(isSignedInUser = isSignedInUser)
     }
 
     fun showSliderLoading() = updateContent {

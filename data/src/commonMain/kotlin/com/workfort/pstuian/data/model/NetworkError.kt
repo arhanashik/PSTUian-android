@@ -1,5 +1,7 @@
 package com.workfort.pstuian.data.model
 
+import dev.gitlive.firebase.auth.FirebaseAuthUserCollisionException
+
 class NetworkError(
     val code: NetworkErrorCode,
     val exception: Throwable? = null,
@@ -11,8 +13,9 @@ sealed interface NetworkErrorCode {
         InternalError("FA000"),
         UserNotFound("FA001"),
         UserRegistrationFailed("FA002"),
-        UserNotVarified("FA003"),
-        UserAlreadyVarified("FA004"),
+        UserAlreadyRegistered("FA003"),
+        UserNotVarified("FA004"),
+        UserAlreadyVarified("FA005"),
         ;
     }
 
@@ -31,10 +34,16 @@ sealed interface NetworkErrorCode {
 
 object CommonNetworkError {
 
-    fun firebaseInternalError(exception: Throwable) = NetworkError(
-        code = NetworkErrorCode.FirebaseAuth.InternalError,
-        exception = exception,
-    )
+    fun firebaseInternalError(exception: Throwable): NetworkError {
+        val code = when (exception) {
+            is FirebaseAuthUserCollisionException -> NetworkErrorCode.FirebaseAuth.UserAlreadyVarified // Email already exists
+            else -> NetworkErrorCode.FirebaseAuth.InternalError
+        }
+        return NetworkError(
+            code = NetworkErrorCode.FirebaseAuth.InternalError,
+            exception = exception,
+        )
+    }
 
     fun fireStoreInternalError(exception: Throwable) = NetworkError(
         code = NetworkErrorCode.FireStore.InternalError,

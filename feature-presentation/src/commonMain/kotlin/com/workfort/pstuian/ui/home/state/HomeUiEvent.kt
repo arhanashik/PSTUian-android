@@ -5,10 +5,6 @@ import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.ui.home.ActionItem
 
 sealed interface HomeUiEvent {
-    data object LoadInitialData : HomeUiEvent
-    data object GetSliders : HomeUiEvent
-    data object GetFaculties : HomeUiEvent
-    data object GetUserProfile : HomeUiEvent
     data object SignInClicked : HomeUiEvent
     data object UserProfileClicked : HomeUiEvent
     data object NotificationClicked : HomeUiEvent

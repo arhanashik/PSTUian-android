@@ -8,9 +8,11 @@ import com.workfort.pstuian.featuredomain.model.FacultyEntity
 import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
+import com.workfort.pstuian.featuredomain.usecase.GetSignedInUserUseCase
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.home.state.HomeMessageState
@@ -20,12 +22,16 @@ import com.workfort.pstuian.ui.home.state.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class HomeViewModel(
+    private val authRepository: AuthRepository,
     private val sliderRepo: SliderRepository,
     private val facultyRepo: FacultyRepository,
     private val sharedScreenData: SharedScreenData,
+    private val getSignedInUserUseCase: GetSignedInUserUseCase,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val uiStateMachine: HomeUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -37,17 +43,17 @@ class HomeViewModel(
     private val _navigation = MutableStateFlow<HomeNavigationState?>(null)
     val navigation: StateFlow<HomeNavigationState?> = _navigation.asStateFlow()
 
+    private fun isSignedInUser(): Boolean = authRepository.isUserSignedIn()
+
     override fun onUiReady() {
-        uiStateMachine.setInitialContent()
-        loadInitialData()
+        uiStateMachine.setInitialContent(isSignedInUser())
+        observeSignedInUser()
+        loadSliders()
+        loadFaculties()
     }
 
     fun onUiEvent(event: HomeUiEvent) {
         when (event) {
-            is HomeUiEvent.LoadInitialData -> loadInitialData()
-            is HomeUiEvent.GetSliders -> getSliders()
-            is HomeUiEvent.GetFaculties -> getFaculties()
-            is HomeUiEvent.GetUserProfile -> getUserProfile()
             is HomeUiEvent.SignInClicked -> onClickSignIn()
             is HomeUiEvent.UserProfileClicked -> onClickUserProfile()
             is HomeUiEvent.NotificationClicked -> onClickNotification()
@@ -83,7 +89,41 @@ class HomeViewModel(
         }
     }
 
-    private fun isSignedInUser(): Boolean = sharedScreenData.getCurrentUser() != null
+    private fun observeSignedInUser() {
+        viewModelScope.launch (coroutineDispatcherProvider.io) {
+            authRepository.observeSignedInAuthUser().collectLatest { authUser ->
+                uiStateMachine.updateSignedInState(isSignedInUser = authUser != null)
+            }
+        }
+    }
+
+    private fun loadSliders() {
+        uiStateMachine.showSliderLoading()
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            runCatching {
+                sliderRepo.getSliders()
+            }.onSuccess {
+                uiStateMachine.showSliders(it)
+            }.onFailure {
+                val message = it.message ?: "Failed to load slides"
+                uiStateMachine.showSliderError(message)
+            }
+        }
+    }
+
+    private fun loadFaculties() {
+        uiStateMachine.showFacultyLoading()
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            runCatching {
+                facultyRepo.getFaculties()
+            }.onSuccess {
+                uiStateMachine.showFaculties(it)
+            }.onFailure {
+                val message = it.message ?: "Failed to load faculties"
+                uiStateMachine.showFacultyError(message)
+            }
+        }
+    }
 
     fun onMessageHandled() {
         _message.update { null }
@@ -172,44 +212,6 @@ class HomeViewModel(
 
     private fun onClickClearData() {
         _message.update { HomeMessageState.ClearAllData }
-    }
-
-    private fun loadInitialData() {
-        getSliders()
-        getFaculties()
-        getUserProfile()
-    }
-
-    fun getSliders() {
-        uiStateMachine.showSliderLoading()
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                sliderRepo.getSliders()
-            }.onSuccess {
-                uiStateMachine.showSliders(it)
-            }.onFailure {
-                val message = it.message ?: "Failed to load slides"
-                uiStateMachine.showSliderError(message)
-            }
-        }
-    }
-
-    fun getFaculties() {
-        uiStateMachine.showFacultyLoading()
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                facultyRepo.getFaculties()
-            }.onSuccess {
-                uiStateMachine.showFaculties(it)
-            }.onFailure {
-                val message = it.message ?: "Failed to load faculties"
-                uiStateMachine.showFacultyError(message)
-            }
-        }
-    }
-
-    fun getUserProfile() {
-        uiStateMachine.showProfile(sharedScreenData.getCurrentUser()?.imageUrl)
     }
 
     fun clearAllData() {

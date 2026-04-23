@@ -8,7 +8,7 @@ sealed interface HomeUiState {
     data object None : HomeUiState
 
     data class Content(
-        val profileImageUrl: String? = null,
+        val isSignedInUser: Boolean,
         val sliderState: SliderState = SliderState.None,
         val facultyState: FacultyState = FacultyState.None,
     ) : HomeUiState

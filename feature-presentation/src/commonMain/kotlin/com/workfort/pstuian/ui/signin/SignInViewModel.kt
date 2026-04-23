@@ -263,7 +263,7 @@ class SignInViewModel(
                 }
                 .onFailure { error ->
                     stateMachine.showLoading(false)
-                    val msg = error.message ?: "Failed to Sign in. Please try again."
+                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
                     _message.update { SignInMessageState.Error(msg) }
                 }
         }

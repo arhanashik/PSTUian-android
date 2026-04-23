@@ -6,6 +6,7 @@ import com.workfort.pstuian.data.remote.domain.StudentApiHelper
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
@@ -20,6 +21,10 @@ class StudentRepositoryImpl(
 
     override suspend fun getUser(userId: String): User.Student? {
         return helper.get(userId)?.toModel()
+    }
+
+    override suspend fun getUserByEmail(email: String): DomainResult<User.Student> {
+        return helper.getByEmail(email).toDomainResult(domainErrorMapper).map { it.toModel() }
     }
 
     override suspend fun getProfile(studentId: String): StudentProfile? {

@@ -119,6 +119,7 @@ object NetworkConst {
                 const val SIGN_IN = "${AUTH_API_PATH}signIn"
                 const val SIGN_UP_STUDENT = "${AUTH_API_PATH}signUpStudent"
                 const val SIGN_UP_TEACHER = "${AUTH_API_PATH}signUpTeacher"
+                const val UPDATE_USER_ID = "${AUTH_API_PATH}updateUserId"
                 const val SIGN_OUT = "${AUTH_API_PATH}signOut"
                 const val SIGN_OUT_FROM_ALL_DEVICE = "${AUTH_API_PATH}signOutFromAllDevice"
                 const val CHANGE_PASSWORD = "${AUTH_API_PATH}changePassword"
@@ -140,6 +141,7 @@ object NetworkConst {
             object Student {
                 const val GET_ALL = "${STUDENT_API_PATH}getAll"
                 const val GET = "${STUDENT_API_PATH}get"
+                const val GET_BY_EMAIL = "${STUDENT_API_PATH}getByEmail"
                 const val CHANGE_PROFILE_IMAGE = "${STUDENT_API_PATH}updateImageUrl"
                 const val UPDATE_NAME = "${STUDENT_API_PATH}updateName"
                 const val UPDATE_BIO= "${STUDENT_API_PATH}updateBio"

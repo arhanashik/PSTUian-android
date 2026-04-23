@@ -55,10 +55,7 @@ class FirebaseAuthDataSource(
                     error = NetworkError(code = NetworkErrorCode.FirebaseAuth.UserRegistrationFailed),
                 )
 
-            // Update profile with display name
             firebaseUser.updateProfile(displayName = displayName)
-
-            // Send verification email
             firebaseUser.sendEmailVerification()
 
             return NetworkResult.success(firebaseUser.toAuthUserDto())

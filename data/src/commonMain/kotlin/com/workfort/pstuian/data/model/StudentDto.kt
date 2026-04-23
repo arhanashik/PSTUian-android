@@ -9,9 +9,14 @@ data class StudentDto(
     @SerialName("user_id")
     val userId: String,
     val name: String,
-    @SerialName("student_id")
+    @SerialName("id")
     val studentId: String,
     val reg: String,
+    @SerialName("faculty_id")
+    val facultyId: Int,
+    @SerialName("batch_id")
+    val batchId: Int,
+    val session: String,
     val phone: String?,
     @SerialName("linked_in")
     val linkedIn: String?,
@@ -20,11 +25,6 @@ data class StudentDto(
     val blood: String?,
     val address: String?,
     val email: String,
-    @SerialName("batch_id")
-    val batchId: Int,
-    val session: String,
-    @SerialName("faculty_id")
-    val facultyId: Int,
     @SerialName("image_url")
     val imageUrl: String?,
     @SerialName("cv_link")

@@ -98,6 +98,23 @@ class AuthApiService(private val client: HttpClient) {
         ).body()
     }
 
+    suspend fun updateUserId(
+        userId: String,
+        userType: String,
+        email: String,
+        password: String,
+    ): ApiResponse<String> {
+        return client.submitForm(
+            url = NetworkConst.Remote.Api.Auth.UPDATE_USER_ID,
+            formParameters = parameters {
+                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.USER_TYPE, userType)
+                append(NetworkConst.Params.EMAIL, email)
+                append(NetworkConst.Params.PASSWORD, password)
+            }
+        ).body()
+    }
+
     suspend fun signOut(
         userId: String,
         userType: String,
@@ -106,7 +123,7 @@ class AuthApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_OUT,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, userId)
+                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
             }

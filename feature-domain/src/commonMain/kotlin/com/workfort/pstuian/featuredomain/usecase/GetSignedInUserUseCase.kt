@@ -11,13 +11,14 @@ class GetSignedInUserUseCase(
     private val studentRepository: StudentRepository,
     private val settingsRepository: SettingsRepository,
 ) {
+
     suspend operator fun invoke(): User? {
         val authUser = authRepository.getAuthUser() ?: return null
 
         return when (settingsRepository.getUserType()) {
-            UserType.STUDENT -> studentRepository.getUser(authUser.userId)
-            UserType.TEACHER -> studentRepository.getUser(authUser.userId) // TODO: get teacher
-            UserType.EMPLOYEE -> studentRepository.getUser(authUser.userId) // TODO: get employee
+            UserType.STUDENT -> studentRepository.getUserByEmail(authUser.email).getOrNull()
+            UserType.TEACHER -> null // TODO: get teacher
+            UserType.EMPLOYEE -> null // TODO: get employee
             else -> null
         }
     }
