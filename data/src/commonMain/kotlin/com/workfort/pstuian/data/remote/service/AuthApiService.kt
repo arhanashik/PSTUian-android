@@ -5,7 +5,7 @@ import com.workfort.pstuian.data.model.ConfigDto
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.NetworkConst
-import com.workfort.pstuian.featuredomain.model.AuthResponse
+import com.workfort.pstuian.data.model.ApiAuthResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
@@ -18,35 +18,33 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun signInStudent(
+        userId: String,
         email: String,
-        password: String,
         deviceId: String,
-        userType: String = NetworkConst.Params.UserType.STUDENT,
-    ): AuthResponse<StudentDto> {
+    ): ApiAuthResponse<StudentDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_IN,
             formParameters = parameters {
+                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.USER_TYPE, NetworkConst.Params.UserType.STUDENT)
                 append(NetworkConst.Params.EMAIL, email)
-                append(NetworkConst.Params.PASSWORD, password)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
-                append(NetworkConst.Params.USER_TYPE, userType)
             }
         ).body()
     }
 
     suspend fun signInTeacher(
+        userId: String,
         email: String,
-        password: String,
         deviceId: String,
-        userType: String = NetworkConst.Params.UserType.TEACHER,
-    ): AuthResponse<TeacherDto> {
+    ): ApiAuthResponse<TeacherDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_IN,
             formParameters = parameters {
+                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.USER_TYPE, NetworkConst.Params.UserType.TEACHER)
                 append(NetworkConst.Params.EMAIL, email)
-                append(NetworkConst.Params.PASSWORD, password)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
-                append(NetworkConst.Params.USER_TYPE, userType)
             }
         ).body()
     }
@@ -61,7 +59,7 @@ class AuthApiService(private val client: HttpClient) {
         email: String,
         deviceId: String,
         password: String,
-    ): AuthResponse<StudentDto> {
+    ): ApiAuthResponse<StudentDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_UP_STUDENT,
             formParameters = parameters {
@@ -86,7 +84,7 @@ class AuthApiService(private val client: HttpClient) {
         password: String,
         facultyId: Int,
         deviceId: String
-    ): AuthResponse<TeacherDto> {
+    ): ApiAuthResponse<TeacherDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_UP_TEACHER,
             formParameters = parameters {
@@ -105,7 +103,7 @@ class AuthApiService(private val client: HttpClient) {
         userId: String,
         userType: String,
         deviceId: String,
-    ): AuthResponse<String> {
+    ): ApiAuthResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_OUT,
             formParameters = parameters {
@@ -120,7 +118,7 @@ class AuthApiService(private val client: HttpClient) {
         userId: String,
         userType: String,
         deviceId: String,
-    ): AuthResponse<String> {
+    ): ApiAuthResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_OUT_FROM_ALL_DEVICE,
             formParameters = parameters {
@@ -137,7 +135,7 @@ class AuthApiService(private val client: HttpClient) {
         oldPassword: String,
         newPassword: String,
         deviceId: String,
-    ): AuthResponse<String> {
+    ): ApiAuthResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.CHANGE_PASSWORD,
             formParameters = parameters {
@@ -154,7 +152,7 @@ class AuthApiService(private val client: HttpClient) {
         userType: String,
         email: String,
         deviceId: String,
-    ): AuthResponse<String> {
+    ): ApiAuthResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.FORGOT_PASSWORD,
             formParameters = parameters {
@@ -169,7 +167,7 @@ class AuthApiService(private val client: HttpClient) {
         userType: String,
         email: String,
         deviceId: String,
-    ): AuthResponse<String> {
+    ): ApiAuthResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.EMAIL_VERIFICATION,
             formParameters = parameters {
@@ -185,7 +183,7 @@ class AuthApiService(private val client: HttpClient) {
         userType: String,
         email: String,
         password: String,
-    ): AuthResponse<String> {
+    ): ApiAuthResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.DELETE_ACCOUNT,
             formParameters = parameters {

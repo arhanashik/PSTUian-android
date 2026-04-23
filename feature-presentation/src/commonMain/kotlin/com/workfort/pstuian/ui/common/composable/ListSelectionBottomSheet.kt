@@ -174,7 +174,7 @@ internal fun facultiesToListSelectionOptions(
 ): List<ListSelectionOption<FacultyEntity>> = faculties.map { faculty ->
     ListSelectionOption(
         value = faculty,
-        label = faculty.shortTitle.ifBlank { faculty.title },
+        label = faculty.title.ifBlank { faculty.shortTitle },
     )
 }
 

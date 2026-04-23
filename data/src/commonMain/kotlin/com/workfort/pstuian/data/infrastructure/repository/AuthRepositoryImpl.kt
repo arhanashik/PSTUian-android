@@ -2,17 +2,19 @@ package com.workfort.pstuian.data.infrastructure.repository
 
 import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
-import com.workfort.pstuian.data.model.StudentDto
-import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
 import com.workfort.pstuian.featuredomain.model.AuthUser
+import com.workfort.pstuian.featuredomain.model.DomainError
+import com.workfort.pstuian.featuredomain.model.DomainErrorCode
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.TeacherEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.getOrElse
+import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.util.helper.JsonParser
@@ -52,23 +54,47 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun signIn(email: String, password: String, userType: UserType): User {
+    override suspend fun signIn(email: String, password: String, userType: UserType): DomainResult<User> {
+        // validate device
         val deviceId = sharedPrefRepository.getString(SharedPrefKey.DEVICE_ID)
-        if(deviceId.isNullOrEmpty()) throw Exception("Invalid device!")
+        if(deviceId.isNullOrEmpty()) return DomainResult.failure(
+            DomainError(DomainErrorCode.Auth.DeviceNotFound, Exception("Invalid Device!"))
+        )
 
-        val (user, authToken) = when(userType) {
-            UserType.STUDENT -> helper.signInStudent(email, password, deviceId)
-            UserType.TEACHER -> helper.signInTeacher(email, password, deviceId)
-            else -> throw Exception("Invalid User Type!")
+        // validate auth user
+        val authResult = firebaseAuthDataSource.signIn(email, password)
+            .toDomainResult(domainErrorMapper)
+            .map { (id, dto) -> dto.toAuthUser(id) }
+        val authUser = authResult.getOrElse {
+            val authError = authResult.exceptionOrNull()
+                ?: DomainError(DomainErrorCode.Auth.AuthFailed, Exception("Authentication failed!"))
+            return DomainResult.failure(authError)
         }
 
-        sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
-        sharedPrefRepository.putString(SharedPrefKey.USER_TYPE, userType.type)
-
-        return when (user) {
-            is StudentDto -> user.toModel()
-            is TeacherDto -> user.toModel()
-            else -> throw Exception("Invalid User Type!")
+        // sign in
+        return when(userType) {
+            UserType.STUDENT -> {
+                helper.signInStudent(authUser.userId, email, deviceId)
+                    .toDomainResult(domainErrorMapper)
+                    .map { (dto, authToken) ->
+                        sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
+                        dto.toModel()
+                    }
+            }
+            UserType.TEACHER -> {
+                helper.signInTeacher(authUser.userId, email, deviceId)
+                    .toDomainResult(domainErrorMapper)
+                    .map { (dto, authToken) ->
+                        sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
+                        dto.toModel()
+                    }
+            }
+            else -> {
+                firebaseAuthDataSource.signOut()
+                DomainResult.failure(
+                    DomainError(DomainErrorCode.Auth.InvalidParam, Exception("Invalid User Type!"))
+                )
+            }
         }
     }
 

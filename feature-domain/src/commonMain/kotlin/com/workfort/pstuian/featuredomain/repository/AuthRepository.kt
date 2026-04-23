@@ -12,7 +12,7 @@ interface AuthRepository {
     fun isUserEmailVerified(): Boolean
     fun getSignInUserType(): UserType?
     suspend fun storeSignInTeacher(teacher: TeacherEntity)
-    suspend fun signIn(email: String, password: String, userType: UserType): User
+    suspend fun signIn(email: String, password: String, userType: UserType): DomainResult<User>
     suspend fun signUpStudent(
         name: String,
         id: String,

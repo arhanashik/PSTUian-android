@@ -108,6 +108,9 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
                     }
                     current.copy(formData = updatedFormData)
                 }
+                is SignInUiState.EmailVerificationPanel -> {
+                    current.copy(password = password)
+                }
                 else -> current
             }
         }

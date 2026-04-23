@@ -1,6 +1,8 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
 import com.workfort.pstuian.data.model.ConfigDto
+import com.workfort.pstuian.data.model.NetworkError
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
@@ -16,23 +18,29 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
     }
 
     override suspend fun signInStudent(
+        userId: String,
         email: String,
-        password: String,
         deviceId: String
-    ): Pair<StudentDto, String> {
-        val response = service.signInStudent(email, password, deviceId)
-        if(!response.success) throw Exception(response.message)
-        return Pair(response.data!!, response.authToken!!)
+    ): NetworkResult<Pair<StudentDto, String?>> {
+        val response = service.signInStudent(userId, email, deviceId)
+        return if (response.isError || response.data == null) {
+            NetworkResult.failure(NetworkError(response.responseCode))
+        } else {
+            NetworkResult.Success(response.data to response.authToken)
+        }
     }
 
     override suspend fun signInTeacher(
+        userId: String,
         email: String,
-        password: String,
         deviceId: String
-    ): Pair<TeacherDto, String> {
-        val response = service.signInTeacher(email, password, deviceId)
-        if(!response.success) throw Exception(response.message)
-        return Pair(response.data!!, response.authToken!!)
+    ): NetworkResult<Pair<TeacherDto, String?>> {
+        val response = service.signInTeacher(userId, email, deviceId)
+        return if (response.isError || response.data == null) {
+            NetworkResult.failure(NetworkError(response.responseCode))
+        } else {
+            NetworkResult.Success(response.data to response.authToken)
+        }
     }
 
     override suspend fun signUpStudent(

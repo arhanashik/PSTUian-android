@@ -47,7 +47,7 @@ internal fun EmailVerificationAuthForm(
             Spacer(modifier = Modifier.height(12.dp))
             AuthPasswordField(
                 password = password,
-                onPasswordChange = { onPasswordChange(it) },
+                onPasswordChange = onPasswordChange,
                 focusRequester = passwordFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),

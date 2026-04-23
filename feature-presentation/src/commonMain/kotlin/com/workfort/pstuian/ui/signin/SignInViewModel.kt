@@ -22,7 +22,6 @@ import com.workfort.pstuian.ui.signin.state.SignInUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SignInViewModel(
@@ -73,6 +72,10 @@ class SignInViewModel(
         }
     }
 
+    fun onMessageHandled() = _message.update { null }
+
+    fun onNavigationHandled() = _navigation.update { null }
+
     private fun currentSignUpFacultyId(): Int? {
         val state = uiState.value
         if (state !is SignInUiState.SignUpPanel) return null
@@ -92,80 +95,54 @@ class SignInViewModel(
     }
 
     private fun openSignUpFacultySelectionSheet() {
-        viewModelScope.launch(coroutineDispatcherProvider.io) {
-            runCatching {
-                val faculties = facultyRepository.getFaculties(forceRefresh = false)
-                withContext(coroutineDispatcherProvider.main) {
-                    if (faculties.isEmpty()) {
-                        _message.update {
-                            SignInMessageState.Error("No faculties found. Please try again later.")
-                        }
-                    } else {
-                        val selectedId = currentSignUpFacultyId()
-                        _message.update {
-                            SignInMessageState.FacultySelection(
-                                faculties = faculties,
-                                selectedFacultyId = selectedId,
-                                onSaveAndContinue = { faculty ->
-                                    _message.update { null }
-                                    faculty?.let { applySignUpFaculty(it) }
-                                },
-                            )
-                        }
-                    }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            val faculties = facultyRepository.getFaculties(forceRefresh = false)
+            if (faculties.isEmpty()) {
+                _message.update {
+                    SignInMessageState.Error("No faculties found. Please try again later.")
                 }
-            }.onFailure {
-                val msg = it.message ?: "Failed to load faculties"
-                withContext(coroutineDispatcherProvider.main) {
-                    _message.update { SignInMessageState.Error(msg) }
+            } else {
+                _message.update {
+                    SignInMessageState.FacultySelection(
+                        faculties = faculties,
+                        selectedFacultyId = currentSignUpFacultyId(),
+                        onSaveAndContinue = { faculty ->
+                            _message.update { null }
+                            faculty?.let { applySignUpFaculty(it) }
+                        },
+                    )
                 }
             }
         }
     }
 
     private fun openSignUpBatchSelectionSheet() {
-        val facultyId = when (val state = uiState.value) {
-            is SignInUiState.SignUpPanel -> when (val form = state.formData) {
-                is SignUpFormData.StudentSignUpFormData -> form.faculty?.id
-                is SignUpFormData.TeacherSignUpFormData -> null
-            }
-            else -> null
-        }
+        val facultyId = currentSignUpFacultyId()
         if (facultyId == null) {
             _message.update {
                 SignInMessageState.Error("Please select a faculty first.")
             }
             return
         }
-        viewModelScope.launch(coroutineDispatcherProvider.io) {
-            runCatching {
-                stateMachine.showLoading(true)
-                val batches = facultyRepository.getBatches(facultyId, forceRefresh = false)
-                stateMachine.showLoading(false)
-                withContext(coroutineDispatcherProvider.main) {
-                    if (batches.isEmpty()) {
-                        _message.update {
-                            SignInMessageState.Error("No batches found for this faculty. Please try again later.")
-                        }
-                    } else {
-                        val selectedId = currentSignUpBatchId()
-                        _message.update {
-                            SignInMessageState.BatchSelection(
-                                batches = batches,
-                                selectedBatchId = selectedId,
-                                onSaveAndContinue = { batch ->
-                                    _message.update { null }
-                                    batch?.let { applySignUpBatch(it) }
-                                },
-                            )
-                        }
-                    }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            stateMachine.showLoading(true)
+            val batches = facultyRepository.getBatches(facultyId, forceRefresh = false)
+            stateMachine.showLoading(false)
+            if (batches.isEmpty()) {
+                _message.update {
+                    SignInMessageState.Error("No batches found for this faculty. Please try again later.")
                 }
-            }.onFailure {
-                stateMachine.showLoading(false)
-                val msg = it.message ?: "Failed to load batches"
-                withContext(coroutineDispatcherProvider.main) {
-                    _message.update { SignInMessageState.Error(msg) }
+            } else {
+                val selectedId = currentSignUpBatchId()
+                _message.update {
+                    SignInMessageState.BatchSelection(
+                        batches = batches,
+                        selectedBatchId = selectedId,
+                        onSaveAndContinue = { batch ->
+                            _message.update { null }
+                            batch?.let { applySignUpBatch(it) }
+                        },
+                    )
                 }
             }
         }
@@ -223,10 +200,6 @@ class SignInViewModel(
         }
     }
 
-    fun onMessageHandled() = _message.update { null }
-
-    fun onNavigationHandled() = _navigation.update { null }
-
     private fun sendPasswordResetLink(email: String) {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
@@ -236,7 +209,7 @@ class SignInViewModel(
                     _message.update {
                         SignInMessageState.Success("Password reset link request has been sent to $email")
                     }
-                    _navigation.update { SignInNavigationState.GoBack }
+                    stateMachine.setAuthPanel(AuthPanel.SignIn)
                 }
                 .onFailure { error ->
                     stateMachine.showLoading(false)
@@ -258,7 +231,7 @@ class SignInViewModel(
                     _message.update {
                         SignInMessageState.Success("A verification link has been sent to $email")
                     }
-                    _navigation.update { SignInNavigationState.GoBack }
+                    stateMachine.setAuthPanel(AuthPanel.SignIn)
                 }
                 .onFailure { error ->
                     stateMachine.showLoading(false)
@@ -282,19 +255,17 @@ class SignInViewModel(
         }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
-            runCatching {
-                authRepository.signIn(formData.email, formData.password, userType)
-            }.onSuccess {
-                stateMachine.showLoading(false)
-                _message.update {
-                    SignInMessageState.Success(message = "Signed in successfully!")
+            authRepository.signIn(formData.email, formData.password, userType)
+                .onSuccess { user ->
+                    stateMachine.showLoading(false)
+                    _message.update { SignInMessageState.Success(message = "Welcome ${user.name}!") }
+                    _navigation.update { SignInNavigationState.GoBack }
                 }
-                _navigation.update { SignInNavigationState.GoBack }
-            }.onFailure {
-                val msg = it.message ?: "Failed to Sign in. Please try again."
-                stateMachine.showLoading(false)
-                _message.update { SignInMessageState.Error(msg) }
-            }
+                .onFailure { error ->
+                    stateMachine.showLoading(false)
+                    val msg = error.message ?: "Failed to Sign in. Please try again."
+                    _message.update { SignInMessageState.Error(msg) }
+                }
         }
     }
 

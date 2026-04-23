@@ -165,7 +165,7 @@
     <string name="txt_confirmation">Confirmation</string>
     <string name="default_success_dialog_title">Success!</string>
     <string name="default_success_dialog_message">Operation successful. Everything seems alright!</string>
-    <string name="default_error_dialog_title">Ops, something went wrong!</string>
+    <string name="default_error_dialog_title">Ops!</string>
     <string name="default_error_dialog_message">Please check if everything is alright and try again. Sorry for the inconvenience.</string>
     <string name="txt_information">Information</string>
     <string name="hint_old_password">Old Password</string>
