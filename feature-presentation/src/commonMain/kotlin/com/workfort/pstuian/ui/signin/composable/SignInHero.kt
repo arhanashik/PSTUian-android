@@ -25,6 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.workfort.pstuian.ui.signin.screendata.SectionResizeDurationMillis
+import com.workfort.pstuian.ui.signin.screendata.SectionResizeEasing
 import org.jetbrains.compose.resources.painterResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.ic_logo

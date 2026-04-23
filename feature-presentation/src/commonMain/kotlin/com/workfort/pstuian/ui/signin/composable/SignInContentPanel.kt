@@ -17,7 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
+import com.workfort.pstuian.ui.signin.screendata.CompactHeaderHeight
+import com.workfort.pstuian.ui.signin.screendata.ExpandedGreenHeightFraction
+import com.workfort.pstuian.ui.signin.screendata.SectionResizeDurationMillis
+import com.workfort.pstuian.ui.signin.screendata.SectionResizeEasing
+import com.workfort.pstuian.ui.signin.screendata.SignInGreenHeightFraction
 import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
+import com.workfort.pstuian.ui.signin.screendata.SignUpToggleResizeDurationMillis
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 import com.workfort.pstuian.ui.signin.state.SignInUiState
 
@@ -73,7 +79,31 @@ fun SignInContentPanel(
                 onSkip = { onUiEvent(SignInUiEvent.BackClicked) },
                 onBackToSignIn = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
             ) {
-                AuthFormForSignInUiState(uiState, onUiEvent)
+                when (uiState) {
+                    is SignInUiState.None -> Unit
+                    is SignInUiState.SignInPanel -> SignInAuthForm(uiState.formData, uiState.rememberMe, onUiEvent)
+                    is SignInUiState.SignUpPanel -> SignUpAuthFormContent(uiState.formData, onUiEvent)
+                    is SignInUiState.ForgotPasswordPanel -> {
+                        ForgotPasswordAuthForm(
+                            email = uiState.email,
+                            onEmailChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
+                            onResetPasswordClicked = { onUiEvent(SignInUiEvent.ForgotPasswordClicked(uiState.email)) },
+                            onSwitchToSignIn = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
+                        )
+                    }
+                    is SignInUiState.EmailVerificationPanel -> {
+                        EmailVerificationAuthForm(
+                            email = uiState.email,
+                            password = uiState.password,
+                            onEmailChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
+                            onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
+                            onSendVerificationClicked = {
+                                onUiEvent(SignInUiEvent.EmailVerificationClicked(uiState.email, uiState.password))
+                            },
+                            onSwitchToSignIn = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
+                        )
+                    }
+                }
             }
         }
 

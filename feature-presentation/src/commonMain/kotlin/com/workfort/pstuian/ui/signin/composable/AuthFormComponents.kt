@@ -48,6 +48,19 @@ import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 
 @Composable
+internal fun AuthFormPanelLayout(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(32.dp),
+        content = content,
+    )
+}
+
+@Composable
 internal fun AuthBottomLink(
     prefix: String,
     action: String,
@@ -154,20 +167,6 @@ internal fun RememberMeRow(
             modifier = Modifier.clickable(onClick = onForgotPassword),
         )
     }
-}
-
-@Composable
-internal fun AuthFormPanelLayout(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 32.dp)
-            .padding(top = 40.dp, bottom = 24.dp),
-        content = content,
-    )
 }
 
 @Composable

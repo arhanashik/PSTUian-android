@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
+import com.workfort.pstuian.ui.signin.screendata.SectionCornerRadius
 
 /**
  * Green header (crossfading top bar + hero) and white form section with safe-area padding.

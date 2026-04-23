@@ -46,8 +46,11 @@ class DomainErrorMapper {
                 DomainErrorCode.Auth.InternalError
             }
             ApiResponseCode.MissingParam -> DomainErrorCode.Auth.MissingParam
+            ApiResponseCode.InvalidParam -> DomainErrorCode.Auth.InvalidParam
             ApiResponseCode.ReadFailed -> DomainErrorCode.Auth.ReadFailed
             ApiResponseCode.WriteFailed -> DomainErrorCode.Auth.WriteFailed
+            ApiResponseCode.AuthFailed -> DomainErrorCode.Auth.AuthFailed
+            ApiResponseCode.ValidationFailed -> DomainErrorCode.Auth.ValidationFailed
             ApiResponseCode.Unknown -> DomainErrorCode.Auth.InternalError
             ApiResponseCode.InvalidAuthToken -> DomainErrorCode.Auth.InvalidAuthToken
             ApiResponseCode.DeviceNotFound -> DomainErrorCode.Auth.DeviceNotFound
@@ -55,7 +58,7 @@ class DomainErrorMapper {
             ApiResponseCode.DeviceBlockListed -> DomainErrorCode.Auth.DeviceBlockListed
             ApiResponseCode.DeviceAlreadyExist -> DomainErrorCode.Auth.DeviceAlreadyExist
             ApiResponseCode.UserNotFound -> DomainErrorCode.Auth.UserAuthNotFound
-            ApiResponseCode.UserCreationFailed -> DomainErrorCode.Auth.UserProfileCreationFailed
+            ApiResponseCode.UserRegistrationFailed -> DomainErrorCode.Auth.UserProfileCreationFailed
             ApiResponseCode.UserBlockListed -> DomainErrorCode.Auth.UserBlockListed
             ApiResponseCode.UserAlreadyExist -> DomainErrorCode.Auth.UserAlreadyExist
         }

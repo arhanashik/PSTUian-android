@@ -7,24 +7,27 @@ data class DomainError(
 
 sealed interface DomainErrorCode {
 
-    enum class Auth(val code: String): DomainErrorCode {
-        InternalError("SBA000"),
-        MissingParam("SBA001"),
-        ReadFailed("SBA002"),
-        WriteFailed("SBA003"),
-        UserAuthNotFound("SBA004"),
-        UserProfileNotFound("SBA005"),
-        UserAuthCreationFailed("SBA006"),
-        UserProfileCreationFailed("SB007"),
-        UserNotVarified("SBA008"),
-        UserAlreadyVarified("SBA009"),
-        UserBlockListed("SBA010"),
-        UserAlreadyExist("SBA011"),
-        InvalidAuthToken("SBA012"),
-        DeviceNotFound("SBA013"),
-        DeviceRegistrationFailed("SBA014"),
-        DeviceBlockListed("SBA015"),
-        DeviceAlreadyExist("SBA016"),
+    enum class Auth: DomainErrorCode {
+        InternalError,
+        MissingParam,
+        InvalidParam,
+        ReadFailed,
+        WriteFailed,
+        AuthFailed,
+        ValidationFailed,
+        UserAuthNotFound,
+        UserProfileNotFound,
+        UserAuthCreationFailed,
+        UserProfileCreationFailed,
+        UserNotVarified,
+        UserAlreadyVarified,
+        UserBlockListed,
+        UserAlreadyExist,
+        InvalidAuthToken,
+        DeviceNotFound,
+        DeviceRegistrationFailed,
+        DeviceBlockListed,
+        DeviceAlreadyExist,
         ;
     }
 

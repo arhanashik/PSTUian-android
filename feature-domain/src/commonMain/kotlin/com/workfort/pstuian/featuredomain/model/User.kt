@@ -27,11 +27,11 @@ sealed interface User {
         val studentId: String,
         val reg: String,
         val batchId: Int,
+        val session: String,
         val linkedIn: String?,
         val fbLink: String?,
-        val session: String,
         val cvLink: String?,
-    ): User
+    ) : User
 
     @Serializable
     data class Teacher(
@@ -49,7 +49,7 @@ sealed interface User {
         val fbLink: String?,
         val department: String,
         val description: String? = null,
-    ): User
+    ) : User
 
     @Serializable
     data class Employee(
@@ -64,5 +64,5 @@ sealed interface User {
         override val imageUrl: String?,
         val designation: String,
         val department: String?,
-    ): User
+    ) : User
 }

@@ -3,8 +3,11 @@ package com.workfort.pstuian.data.model
 enum class ApiResponseCode(val code: String): NetworkErrorCode {
     Success("S00000"),
     MissingParam("S00001"),
-    ReadFailed("S00002"),
-    WriteFailed("S00003"),
+    InvalidParam("S00002"),
+    ReadFailed("S00003"),
+    WriteFailed("S00004"),
+    AuthFailed("S00005"),
+    ValidationFailed("S00006"),
     Unknown("S11111"),
 
     // Auth
@@ -17,8 +20,8 @@ enum class ApiResponseCode(val code: String): NetworkErrorCode {
     DeviceAlreadyExist("SD004"),
 
     // User
-    UserNotFound("SU01"),
-    UserCreationFailed("SU002"),
+    UserNotFound("SU001"),
+    UserRegistrationFailed("SU002"),
     UserBlockListed("SU003"),
     UserAlreadyExist("SU004"),
     ;

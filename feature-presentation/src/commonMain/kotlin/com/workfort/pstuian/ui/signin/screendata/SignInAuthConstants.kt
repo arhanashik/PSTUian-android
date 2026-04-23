@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.signin.composable
+package com.workfort.pstuian.ui.signin.screendata
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.ui.unit.dp
@@ -18,3 +18,5 @@ internal const val ExpandedGreenHeightFraction = 0.58f
 internal val SectionResizeEasing = LinearOutSlowInEasing
 internal const val SectionResizeDurationMillis = 300
 internal const val SignUpToggleResizeDurationMillis = 180
+
+internal val AuthFormFieldSpacing = 18.dp

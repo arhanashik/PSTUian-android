@@ -27,6 +27,7 @@ sealed interface SignUpFormData {
         override val password: String,
         val studentId: String,
         val regNumber: String,
+        val session: String,
         val batch: BatchEntity? = null,
     ) : SignUpFormData {
 
@@ -36,6 +37,7 @@ sealed interface SignUpFormData {
                 studentId.isEmpty() ||
                 regNumber.isEmpty() ||
                 faculty == null ||
+                session.isEmpty() ||
                 batch == null ||
                 password.isEmpty() ||
                 password.length < 6
@@ -82,6 +84,7 @@ sealed interface SignUpFormData {
             password = password,
             studentId = "",
             regNumber = "",
+            session = "",
             batch = null,
         )
 

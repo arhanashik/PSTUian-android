@@ -179,6 +179,7 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
                 password = "",
                 studentId = "",
                 regNumber = "",
+                session = "",
                 batch = null,
             )
         cachedStudentSignUpFormData = formData
