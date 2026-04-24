@@ -3,7 +3,7 @@ package com.workfort.pstuian.featuredomain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BatchEntity (
+data class Batch (
     var id: Int,
     var name: String,
     var title: String?,

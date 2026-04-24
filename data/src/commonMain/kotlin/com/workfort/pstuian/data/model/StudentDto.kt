@@ -10,7 +10,7 @@ data class StudentDto(
     val userId: String,
     val name: String,
     @SerialName("id")
-    val studentId: String,
+    val studentId: Int,
     val reg: String,
     @SerialName("faculty_id")
     val facultyId: Int,

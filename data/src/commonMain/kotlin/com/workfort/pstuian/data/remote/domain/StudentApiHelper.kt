@@ -5,7 +5,7 @@ import com.workfort.pstuian.data.model.StudentDto
 
 interface StudentApiHelper {
 
-    suspend fun get(userId: String): StudentDto?
+    suspend fun get(studentId: Int): NetworkResult<StudentDto>
 
     suspend fun getByEmail(email: String): NetworkResult<StudentDto>
 
@@ -18,7 +18,7 @@ interface StudentApiHelper {
     suspend fun changeAcademicInfo(
         userId: String,
         name: String,
-        studentId: String,
+        studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,

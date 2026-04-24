@@ -2,8 +2,8 @@ package com.workfort.pstuian.ui.facultypicker
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
-import com.workfort.pstuian.featuredomain.model.BatchEntity
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.facultypicker.state.FacultyPickerNavigationState
@@ -37,7 +37,7 @@ class FacultyPickerViewModel(
         )
     )
 
-    fun onClickFaculty(faculty: FacultyEntity) {
+    fun onClickFaculty(faculty: Faculty) {
         cache = cache.copy(selectedFacultyId = faculty.id)
         when (selectionMode) {
             FacultySelectionMode.FACULTY -> {
@@ -54,7 +54,7 @@ class FacultyPickerViewModel(
         }
     }
 
-    fun onClickBatch(batch: BatchEntity) {
+    fun onClickBatch(batch: Batch) {
         cache = cache.copy(selectedBatchId = batch.id)
         stateMachine.navigateTo(
             FacultyPickerNavigationState.GoBack(
@@ -134,8 +134,8 @@ class FacultyPickerViewModel(
     private data class Cache(
         val selectedFacultyId: Int,
         val selectedBatchId: Int,
-        val faculties: ArrayList<FacultyEntity>,
-        val batches: ArrayList<BatchEntity>,
+        val faculties: ArrayList<Faculty>,
+        val batches: ArrayList<Batch>,
     )
 
     private fun initializeCache() = Cache(

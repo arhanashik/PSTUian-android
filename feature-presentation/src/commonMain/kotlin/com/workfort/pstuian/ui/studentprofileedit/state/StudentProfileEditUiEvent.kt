@@ -9,7 +9,5 @@ sealed interface StudentProfileEditUiEvent {
     data object ClickSave : StudentProfileEditUiEvent
     data object ClickFaculty : StudentProfileEditUiEvent
     data object ClickBatch : StudentProfileEditUiEvent
-    data class ChangeFaculty(val facultyId: Int) : StudentProfileEditUiEvent
-    data class ChangeBatch(val batchId: Int) : StudentProfileEditUiEvent
     data object Save : StudentProfileEditUiEvent
 }

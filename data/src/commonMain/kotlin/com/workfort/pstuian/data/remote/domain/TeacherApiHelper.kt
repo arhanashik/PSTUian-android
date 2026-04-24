@@ -4,7 +4,7 @@ import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.TeacherDto
 
 interface TeacherApiHelper {
-    suspend fun get(id: Int): TeacherDto
+    suspend fun get(id: Int): NetworkResult<TeacherDto>
 
     suspend fun getByEmail(email: String): NetworkResult<TeacherDto>
 

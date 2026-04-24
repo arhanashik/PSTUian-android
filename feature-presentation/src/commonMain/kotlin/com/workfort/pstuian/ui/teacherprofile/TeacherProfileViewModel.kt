@@ -3,11 +3,15 @@ package com.workfort.pstuian.ui.teacherprofile
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.featuredomain.usecase.GetTeacherProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.teacherprofile.state.ProfileState
@@ -26,6 +30,7 @@ class TeacherProfileViewModel(
     private val teacherRepo: TeacherRepositoryImpl,
     private val authRepo: AuthRepository,
     private val settingsRepository: SettingsRepository,
+    private val getTeacherProfileUserUseCase: GetTeacherProfileUserUseCase,
     private val uiStateMachine: TeacherProfileUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<TeacherProfileUiState>(
@@ -181,15 +186,15 @@ class TeacherProfileViewModel(
 
     private fun getProfile(teacherId: Int) {
         uiStateMachine.showProfileLoading()
-        viewModelScope.launch {
-            runCatching {
-                teacherRepo.getProfile(teacherId)
-            }.onSuccess {
-                uiStateMachine.showProfile(it)
-            }.onFailure {
-                val message = it.message ?: "Failed to load teacher profile"
-                uiStateMachine.showProfileError(message)
-            }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            getTeacherProfileUserUseCase(teacherId)
+                .onSuccess {
+                    uiStateMachine.showProfile(it)
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load teacher profile"
+                    uiStateMachine.showProfileError(message)
+                }
         }
     }
 

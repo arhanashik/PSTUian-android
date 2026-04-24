@@ -18,11 +18,11 @@ class StudentProfileUiStateMachine : UiStateMachine<StudentProfileUiState> {
         _uiState.update { it.copy(profileState = ProfileState.Loading) }
     }
 
-    fun showProfile(profile: StudentProfile) {
+    fun showProfile(profile: StudentProfile, isSignedIn: Boolean) {
         _uiState.update {
             it.copy(
                 profileState = ProfileState.Available(profile),
-                isSignedIn = profile.isSignedIn
+                isSignedIn = isSignedIn,
             )
         }
     }

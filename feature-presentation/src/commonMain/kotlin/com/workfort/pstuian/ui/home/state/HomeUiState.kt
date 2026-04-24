@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.home.state
 
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.Slider
 
 sealed interface HomeUiState {
@@ -26,7 +26,7 @@ sealed interface HomeUiState {
     sealed interface FacultyState {
         data object None : FacultyState
         data object Loading : FacultyState
-        data class Available(val faculties: List<FacultyEntity>) : FacultyState
+        data class Available(val faculties: List<Faculty>) : FacultyState
         data class Error(val message: String) : FacultyState
     }
 }

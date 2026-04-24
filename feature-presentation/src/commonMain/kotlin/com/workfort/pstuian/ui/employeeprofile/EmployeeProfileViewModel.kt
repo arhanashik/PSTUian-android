@@ -2,11 +2,16 @@ package com.workfort.pstuian.ui.employeeprofile
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.featuredomain.usecase.GetEmployeeProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.employeeprofile.state.EmployeeProfileMessageState
@@ -25,7 +30,9 @@ class EmployeeProfileViewModel(
     private val facultyRepo: FacultyRepositoryImpl,
     private val authRepo: AuthRepository,
     private val settingsRepository: SettingsRepository,
+    private val getEmployeeProfileUserUseCase: GetEmployeeProfileUserUseCase,
     private val uiStateMachine: EmployeeProfileUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<EmployeeProfileUiState>(
     uiStateMachine,
     initializationMode = InitializationMode.JustOnce,
@@ -195,20 +202,16 @@ class EmployeeProfileViewModel(
     }
 
     fun loadProfile() {
-        getProfile(userId)
-    }
-
-    private fun getProfile(employeeId: Int) {
         uiStateMachine.showProfileLoading()
-        viewModelScope.launch {
-            runCatching {
-                facultyRepo.getEmployeeProfile(employeeId)
-            }.onSuccess {
-                uiStateMachine.showProfile(it)
-            }.onFailure {
-                val message = it.message ?: "Failed to load employee profile"
-                uiStateMachine.showProfileError(message)
-            }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            getEmployeeProfileUserUseCase(userId)
+                .onSuccess {
+                    uiStateMachine.showProfile(it)
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load employee profile"
+                    uiStateMachine.showProfileError(message)
+                }
         }
     }
 }

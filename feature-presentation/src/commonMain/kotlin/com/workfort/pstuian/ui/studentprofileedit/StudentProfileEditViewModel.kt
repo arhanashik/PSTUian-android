@@ -9,6 +9,7 @@ import com.workfort.pstuian.featuredomain.model.StudentConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
+import com.workfort.pstuian.featuredomain.usecase.GetStudentProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditMessageState
 import com.workfort.pstuian.ui.studentprofileedit.state.StudentProfileEditNavigationState
@@ -20,10 +21,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class StudentProfileEditViewModel(
-    private val userId: String,
+    private val userId: Int,
     private val mode: ProfileEditMode,
     private val studentRepo: StudentRepository,
     private val facultyRepo: FacultyRepository,
+    private val getStudentProfileUserUseCase: GetStudentProfileUserUseCase,
     private val stateMachine: StudentProfileEditUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<StudentProfileEditUiState>(stateMachine) {
@@ -53,8 +55,6 @@ class StudentProfileEditViewModel(
                 is StudentProfileEditUiEvent.ClickSave -> onClickSave()
                 is StudentProfileEditUiEvent.ClickFaculty -> onClickFaculty()
                 is StudentProfileEditUiEvent.ClickBatch -> onClickBatch()
-                is StudentProfileEditUiEvent.ChangeFaculty -> onChangeFaculty(event.facultyId)
-                is StudentProfileEditUiEvent.ChangeBatch -> onChangeBatch(event.batchId)
                 is StudentProfileEditUiEvent.Save -> updateProfile()
             }
         }
@@ -96,48 +96,6 @@ class StudentProfileEditViewModel(
         }
     }
 
-    private suspend fun onChangeFaculty(facultyId: Int) {
-        if (newProfileCache?.faculty?.id == facultyId) return
-        _message.update { StudentProfileEditMessageState.Loading(cancelable = false) }
-        runCatching {
-            val faculty = facultyRepo.getFaculty(facultyId)
-            newProfileCache?.let {
-                val newProfile = it.copy(
-                    student = it.student.copy(facultyId = faculty.id),
-                    faculty = faculty,
-                )
-                newProfileCache = newProfile
-                onMessageHandled()
-                updateProfileScreenState()
-            }
-        }.onFailure {
-            val message = it.message ?: "Failed to load faculty"
-            _message.update { StudentProfileEditMessageState.Error(message) }
-        }
-    }
-
-    private suspend fun onChangeBatch(batchId: Int) {
-        if (newProfileCache?.batch?.id == batchId) return
-        _message.update { StudentProfileEditMessageState.Loading(cancelable = false) }
-        runCatching {
-            val batch = facultyRepo.getBatch(batchId)
-            val faculty = facultyRepo.getFaculty(batch.facultyId)
-            newProfileCache?.let {
-                val newProfile = it.copy(
-                    student = it.student.copy(batchId = batch.id, facultyId = faculty.id),
-                    batch = batch,
-                    faculty = faculty,
-                )
-                newProfileCache = newProfile
-                onMessageHandled()
-                updateProfileScreenState()
-            }
-        }.onFailure {
-            val message = it.message ?: "Failed to load batch"
-            _message.update { StudentProfileEditMessageState.Error(message) }
-        }
-    }
-
     private fun onChangeProfile(profile: StudentProfile) {
         newProfileCache = profile
         when (mode) {
@@ -150,7 +108,7 @@ class StudentProfileEditViewModel(
     private suspend fun loadProfile() {
         stateMachine.updatePanelState(StudentProfileEditUiState.PanelState.Loading)
         runCatching {
-            oldProfileCache = studentRepo.getProfile(userId)
+            oldProfileCache = getStudentProfileUserUseCase(userId).getOrNull()
             newProfileCache = oldProfileCache
             when (mode) {
                 ProfileEditMode.ACADEMIC -> {

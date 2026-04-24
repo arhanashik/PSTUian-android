@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.CourseEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.LabelText
@@ -40,8 +40,8 @@ import pstuian.feature_presentation.generated.resources.txt_total_students
 
 @Composable
 fun BatchListItemView(
-    batch: BatchEntity,
-    onClickBatch: (batch: BatchEntity) -> Unit,
+    batch: Batch,
+    onClickBatch: (batch: Batch) -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -100,8 +100,8 @@ fun BatchListItemView(
 
 @Composable
 fun BatchListItemSimpleView(
-    batch: BatchEntity,
-    onClickBatch: (batch: BatchEntity) -> Unit,
+    batch: Batch,
+    onClickBatch: (batch: Batch) -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier

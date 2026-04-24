@@ -16,7 +16,7 @@ data class CheckInDto(
     val count: Int,
     val privacy: String,
     @SerialName("user_id")
-    val userId: String,
+    val userId: Int,
     @SerialName("user_type")
     val userType: String,
     val name: String,

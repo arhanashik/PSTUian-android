@@ -4,9 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.CourseEntity
 import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.faculty.state.FacultyMessageState
 import com.workfort.pstuian.ui.faculty.state.FacultyNavigationState
@@ -32,7 +34,7 @@ class FacultyViewModel(
     val navigation: StateFlow<FacultyNavigationState?> = _navigation.asStateFlow()
 
     private val teacherListCache = arrayListOf<User.Teacher>()
-    private val batchListCache = arrayListOf<BatchEntity>()
+    private val batchListCache = arrayListOf<Batch>()
     private val courseListCache = arrayListOf<CourseEntity>()
     private val employeeListCache = arrayListOf<User.Employee>()
 
@@ -62,7 +64,7 @@ class FacultyViewModel(
 
     private fun onClickBack() = _navigation.update { FacultyNavigationState.GoBack }
 
-    private fun onClickBatch(batch: BatchEntity) {
+    private fun onClickBatch(batch: Batch) {
         _navigation.update { FacultyNavigationState.GoToStudentsScreen(batch.id) }
     }
 
@@ -83,18 +85,18 @@ class FacultyViewModel(
     }
 
     private fun setInitialContent() {
-        viewModelScope.launch {
-            runCatching {
-                facultyRepo.getFaculty(currentFacultyId).title
-            }.onSuccess { title ->
-                uiStateMachine.setInitialContent(
-                    title = title,
-                    tabs = listOf("Batch", "Teacher", "Course", "Employee"),
-                    selectedTab = 0,
-                )
-            }.onFailure {
-                onClickBack()
-            }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            facultyRepo.getFaculty(currentFacultyId)
+                .onSuccess { faculty ->
+                    uiStateMachine.setInitialContent(
+                        title = faculty.title,
+                        tabs = listOf("Batch", "Teacher", "Course", "Employee"),
+                        selectedTab = 0,
+                    )
+                }
+                .onFailure {
+                    _navigation.update { FacultyNavigationState.GoBack }
+                }
         }
     }
 

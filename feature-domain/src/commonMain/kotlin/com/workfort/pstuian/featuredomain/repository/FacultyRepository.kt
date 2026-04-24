@@ -1,24 +1,24 @@
 package com.workfort.pstuian.featuredomain.repository
 
-import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.CourseEntity
-import com.workfort.pstuian.featuredomain.model.EmployeeProfile
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.DomainResult
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.User
 
 interface FacultyRepository {
-    suspend fun getFaculties(forceRefresh: Boolean = false): List<FacultyEntity>
+    suspend fun getFaculties(forceRefresh: Boolean = false): List<Faculty>
 
-    suspend fun getFaculty(id: Int): FacultyEntity
+    suspend fun getFaculty(id: Int): DomainResult<Faculty>
 
-    suspend fun getBatches(facultyId: Int, forceRefresh: Boolean = false): List<BatchEntity>
+    suspend fun getBatches(facultyId: Int, forceRefresh: Boolean = false): List<Batch>
 
-    suspend fun getBatch(batchId: Int): BatchEntity
+    suspend fun getBatch(batchId: Int): DomainResult<Batch>
 
     suspend fun getStudents(
         facultyId: Int,
         batchId: Int,
-        forceRefresh: Boolean = false
+        forceRefresh: Boolean = false,
     ): List<User.Student>
 
     suspend fun getTeachers(facultyId: Int, forceRefresh: Boolean = false): List<User.Teacher>
@@ -27,7 +27,7 @@ interface FacultyRepository {
 
     suspend fun getEmployees(facultyId: Int, forceRefresh: Boolean = false): List<User.Employee>
 
-    suspend fun getEmployeeProfile(userId: Int): EmployeeProfile
+    suspend fun getEmployee(id: Int): DomainResult<User.Employee>
 
     suspend fun deleteAll()
 }

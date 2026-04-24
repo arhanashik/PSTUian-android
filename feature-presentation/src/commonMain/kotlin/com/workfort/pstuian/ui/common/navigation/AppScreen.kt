@@ -31,7 +31,7 @@ sealed interface AppScreen {
     @Serializable
     data class BloodDonationRequestEdit(val donationId: Int) : AppScreen
     @Serializable
-    data class Profile(val userId: String, val userType: UserType) : AppScreen
+    data class Profile(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
     data class MyBloodDonationList(val userId: String, val userType: UserType) : AppScreen
     @Serializable
@@ -40,7 +40,7 @@ sealed interface AppScreen {
     data class MyDeviceList(val userId: String, val userType: UserType) : AppScreen
     @Serializable
     data class StudentProfileEdit(
-        val userId: String,
+        val userId: Int,
         val action: ProfileEditMode,
     ) : AppScreen
     @Serializable

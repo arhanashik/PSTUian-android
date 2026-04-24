@@ -10,7 +10,7 @@ data class CheckInEntity(
     val locationImageUrl: String?,
     val count: Int,
     val privacy: String,
-    val userId: String,
+    val userId: Int,
     val userType: String,
     val name: String,
     val batch: String,

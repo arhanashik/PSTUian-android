@@ -181,13 +181,14 @@ private val studentsModule = module {
 
 private val studentProfileModule = module {
     factoryOf(::StudentProfileUiStateMachine)
-    factory { (userId: String) ->
+    factory { (userId: Int) ->
         StudentProfileViewModel(
             userId = userId,
             studentRepo = get(),
             authRepo = get(),
             uiStateMachine = get(),
             settingsRepository = get(),
+            getStudentProfileUserUseCase = get(),
             coroutineDispatcherProvider = get(),
         )
     }
@@ -200,8 +201,9 @@ private val teacherProfileModule = module {
             userId = userId,
             teacherRepo = get(),
             authRepo = get(),
-            uiStateMachine = get(),
             settingsRepository = get(),
+            getTeacherProfileUserUseCase = get(),
+            uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
     }
@@ -215,7 +217,9 @@ private val employeeProfileModule = module {
             facultyRepo = get(),
             authRepo = get(),
             settingsRepository = get(),
+            getEmployeeProfileUserUseCase = get(),
             uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
         )
     }
 }
@@ -263,12 +267,13 @@ private val settingsModule = module {
 
 private val studentProfileEditModule = module {
     factoryOf(::StudentProfileEditUiStateMachine)
-    factory { (userId: String, mode: ProfileEditMode) ->
+    factory { (userId: Int, mode: ProfileEditMode) ->
         StudentProfileEditViewModel(
             userId = userId,
             mode = mode,
             studentRepo = get(),
             facultyRepo = get(),
+            getStudentProfileUserUseCase = get(),
             stateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
@@ -283,6 +288,7 @@ private val teacherProfileEditModule = module {
             mode = mode,
             teacherRepo = get(),
             facultyRepo = get(),
+            getTeacherProfileUserUseCase = get(),
             stateMachine = get(),
             coroutineDispatcherProvider = get(),
         )

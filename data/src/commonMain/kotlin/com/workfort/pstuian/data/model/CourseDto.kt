@@ -17,7 +17,7 @@ data class CourseDto (
     val facultyId: Int,
     val status: Int,
 ) {
-    fun toEntity() = CourseEntity(
+    fun toModel() = CourseEntity(
         id = id,
         courseCode = courseCode,
         courseTitle = courseTitle,

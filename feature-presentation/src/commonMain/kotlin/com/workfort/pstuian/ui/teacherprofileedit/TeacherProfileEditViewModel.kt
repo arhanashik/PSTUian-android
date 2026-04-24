@@ -7,8 +7,11 @@ import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
+import com.workfort.pstuian.featuredomain.usecase.GetTeacherProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.teacherprofileedit.state.TeacherProfileEditMessageState
 import com.workfort.pstuian.ui.teacherprofileedit.state.TeacherProfileEditNavigationState
@@ -24,6 +27,7 @@ class TeacherProfileEditViewModel(
     private val mode: ProfileEditMode,
     private val teacherRepo: TeacherRepository,
     private val facultyRepo: FacultyRepository,
+    private val getTeacherProfileUserUseCase: GetTeacherProfileUserUseCase,
     private val stateMachine: TeacherProfileEditUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<TeacherProfileEditUiState>(stateMachine) {
@@ -87,20 +91,23 @@ class TeacherProfileEditViewModel(
     private suspend fun onChangeFaculty(facultyId: Int) {
         if (newProfileCache?.faculty?.id == facultyId) return
         _message.update { TeacherProfileEditMessageState.Loading(cancelable = false) }
-        runCatching {
-            val faculty = facultyRepo.getFaculty(facultyId)
-            newProfileCache?.let {
-                val newProfile = it.copy(
-                    teacher = it.teacher.copy(facultyId = faculty.id),
-                    faculty = faculty,
-                )
-                newProfileCache = newProfile
-                onMessageHandled()
-                updateProfileScreenState()
-            }
-        }.onFailure {
-            val message = it.message ?: "Failed to load faculty"
-            _message.update { TeacherProfileEditMessageState.Error(message) }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            facultyRepo.getFaculty(facultyId)
+                .onSuccess { faculty ->
+                    newProfileCache?.let {
+                        val newProfile = it.copy(
+                            teacher = it.teacher.copy(facultyId = faculty.id),
+                            faculty = faculty,
+                        )
+                        newProfileCache = newProfile
+                        onMessageHandled()
+                        updateProfileScreenState()
+                    }
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load faculty"
+                    _message.update { TeacherProfileEditMessageState.Error(message) }
+                }
         }
     }
 
@@ -113,25 +120,29 @@ class TeacherProfileEditViewModel(
         updateProfileScreenState()
     }
 
-    private suspend fun loadProfile() {
+    private fun loadProfile() {
         stateMachine.updatePanelState(TeacherProfileEditUiState.PanelState.Loading)
-        runCatching {
-            oldProfileCache = teacherRepo.getProfile(userId)
-            newProfileCache = oldProfileCache
-            when (mode) {
-                ProfileEditMode.ACADEMIC -> {
-                    academicValidationError = newProfileCache?.let { stateMachine.validateAcademic(it) }
-                        ?: TeacherAcademicInfoInputError.INITIAL
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            getTeacherProfileUserUseCase(userId)
+                .onSuccess {
+                    oldProfileCache = it
+                    newProfileCache = it
+                    when (mode) {
+                        ProfileEditMode.ACADEMIC -> {
+                            academicValidationError = newProfileCache?.let { stateMachine.validateAcademic(it) }
+                                ?: TeacherAcademicInfoInputError.INITIAL
+                        }
+                        ProfileEditMode.CONNECT -> {
+                            connectValidationError = newProfileCache?.let { stateMachine.validateConnect(it) }
+                                ?: TeacherConnectInfoInputError.INITIAL
+                        }
+                    }
+                    updateProfileScreenState()
                 }
-                ProfileEditMode.CONNECT -> {
-                    connectValidationError = newProfileCache?.let { stateMachine.validateConnect(it) }
-                        ?: TeacherConnectInfoInputError.INITIAL
+                .onFailure {
+                    val message = it.message ?: "Failed to load profile"
+                    stateMachine.updatePanelState(TeacherProfileEditUiState.PanelState.Error(message))
                 }
-            }
-            updateProfileScreenState()
-        }.onFailure {
-            val message = it.message ?: "Failed to load profile"
-            stateMachine.updatePanelState(TeacherProfileEditUiState.PanelState.Error(message))
         }
     }
 

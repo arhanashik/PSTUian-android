@@ -10,10 +10,12 @@ import com.workfort.pstuian.data.remote.service.TeacherApiService
 
 class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiHelper {
 
-    override suspend fun get(id: Int): TeacherDto {
-        val response = service.get(id)
-        if(!response.success) throw Exception(response.message)
-        return response.data?: throw Exception("Empty data")
+    override suspend fun get(id: Int): NetworkResult<TeacherDto> {
+        return runCatching {
+            service.get(id).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun getByEmail(email: String): NetworkResult<TeacherDto> {

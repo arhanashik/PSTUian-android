@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.common.composable.AppBar
@@ -116,9 +116,9 @@ private fun mockUiState() = HomeUiState.Content(
     ),
     facultyState = HomeUiState.FacultyState.Available(
         faculties = listOf(
-            FacultyEntity(id = 1, shortTitle = "CSE", title = "Computer Science and Engineering", icon = ""),
-            FacultyEntity(id = 2, shortTitle = "Ag", title = "Agriculture", icon = ""),
-            FacultyEntity(id = 3, shortTitle = "BA", title = "Business Administration", icon = ""),
+            Faculty(id = 1, shortTitle = "CSE", title = "Computer Science and Engineering", icon = ""),
+            Faculty(id = 2, shortTitle = "Ag", title = "Agriculture", icon = ""),
+            Faculty(id = 3, shortTitle = "BA", title = "Business Administration", icon = ""),
         )
     )
 )

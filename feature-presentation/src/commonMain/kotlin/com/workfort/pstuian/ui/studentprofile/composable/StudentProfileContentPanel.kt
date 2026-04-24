@@ -86,7 +86,7 @@ fun StudentProfileContentPanel(
         is ProfileState.None -> Unit
         is ProfileState.Loading -> LoadingOverlay()
         is ProfileState.Available -> {
-            ProfileView(state.profile, uiState.selectedTabIndex, onUiEvent)
+            ProfileView(state.profile, uiState.isSignedIn, uiState.selectedTabIndex, onUiEvent)
         }
         is ProfileState.Error -> {
             Column(
@@ -104,11 +104,12 @@ fun StudentProfileContentPanel(
 @Composable
 private fun ProfileView(
     profile: StudentProfile,
+    isSignedIn: Boolean,
     selectedTabIndex: Int,
     onUiEvent: (StudentProfileUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val tabs = getStudentsTabs(profile.isSignedIn)
+    val tabs = getStudentsTabs(isSignedIn)
     val pagerState = rememberPagerState(pageCount = { tabs.size })
 
     LaunchedEffect(key1 = pagerState.currentPage) {
@@ -148,7 +149,7 @@ private fun ProfileView(
                     url = imageUrl,
                     size = 96.dp,
                 )
-                if (profile.isSignedIn) {
+                if (isSignedIn) {
                     Icon(
                         Icons.Default.PhotoCamera,
                         contentDescription = null,
@@ -164,7 +165,7 @@ private fun ProfileView(
             IconButton(
                 onClick = {
                     onUiEvent(
-                        if (profile.isSignedIn) {
+                        if (isSignedIn) {
                             StudentProfileUiEvent.SignOutClicked
                         } else {
                             StudentProfileUiEvent.CallClicked
@@ -172,7 +173,7 @@ private fun ProfileView(
                     )
                 },
             ) {
-                if (profile.isSignedIn) {
+                if (isSignedIn) {
                     Icon(
                         Icons.AutoMirrored.Filled.Logout,
                         contentDescription = stringResource(Res.string.txt_sign_out),
@@ -196,7 +197,7 @@ private fun ProfileView(
                 textAlign = TextAlign.Center,
             )
         }
-        if (profile.isSignedIn) {
+        if (isSignedIn) {
             Text(
                 text = stringResource(Res.string.txt_edit_bio),
                 fontSize = 12.sp,
@@ -210,7 +211,7 @@ private fun ProfileView(
             )
         }
         TabView(
-            tabs = getStudentsTabs(profile.isSignedIn),
+            tabs = getStudentsTabs(isSignedIn),
             selectedTabIndex = selectedTabIndex,
         ) { index ->
             scope.launch {
@@ -225,7 +226,7 @@ private fun ProfileView(
                 1 -> getStudentConnectTabItems(profile).ProfileInfoListView {
                     HandleProfileInfoItemAction(it.action, onUiEvent)
                 }
-                2 -> if (profile.isSignedIn) {
+                2 -> if (isSignedIn) {
                     getStudentOptionTabItems().ProfileInfoListView {
                         HandleProfileInfoItemAction(it.action, onUiEvent)
                     }

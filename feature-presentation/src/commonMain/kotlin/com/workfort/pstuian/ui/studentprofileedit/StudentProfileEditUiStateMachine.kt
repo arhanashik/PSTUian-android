@@ -52,7 +52,7 @@ class StudentProfileEditUiStateMachine : UiStateMachine<StudentProfileEditUiStat
 
     fun validateAcademic(profile: StudentProfile) = StudentAcademicInfoInputError.INITIAL.copy(
         name = if (profile.student.name.isEmpty()) "*Required" else "",
-        id = if (profile.student.studentId.isEmpty()) "*Required" else "",
+        id = if (profile.student.studentId == 0) "*Required" else "",
         reg = if (profile.student.reg.isEmpty()) "*Required" else "",
         session = if (profile.student.session.isEmpty()) "*Required" else "",
     )

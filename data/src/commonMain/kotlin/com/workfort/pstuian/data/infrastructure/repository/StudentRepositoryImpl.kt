@@ -4,24 +4,26 @@ import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.StudentApiHelper
 import com.workfort.pstuian.featuredomain.model.DomainResult
-import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.model.onSuccess
-import com.workfort.pstuian.featuredomain.repository.AuthRepository
-import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
 
 class StudentRepositoryImpl(
-    private val authRepo: AuthRepository,
-    private val facultyRepo: FacultyRepository,
     private val helper: StudentApiHelper,
     private val domainErrorMapper: DomainErrorMapper,
 ) : StudentRepository {
-    private val cache = mutableListOf<User.Student>()
 
-    override suspend fun getUser(userId: String): User.Student? {
-        return helper.get(userId)?.toModel()
+    private val cache = mutableSetOf<User.Student>()
+
+    override suspend fun getUser(studentId: Int): DomainResult<User.Student> {
+        cache.firstOrNull { it.studentId == studentId }?.let { cache ->
+            return DomainResult.success(cache)
+        }
+        return helper.get(studentId)
+            .toDomainResult(domainErrorMapper)
+            .map { it.toModel() }
+            .onSuccess { cache.add(it) }
     }
 
     override suspend fun getUserByEmail(email: String): DomainResult<User.Student> {
@@ -32,22 +34,6 @@ class StudentRepositoryImpl(
             .toDomainResult(domainErrorMapper)
             .map { it.toModel() }
             .onSuccess { cache.add(it) }
-    }
-
-    override suspend fun getProfile(studentId: String): StudentProfile? {
-        // get student
-        val student = cache.firstOrNull { it.studentId == studentId } ?: helper.get(studentId)?.toModel()
-        if (student == null) {
-            return null
-        }
-        // get faculty
-        val faculty = facultyRepo.getFaculty(student.facultyId)
-        // get batch
-        val batch = facultyRepo.getBatch(student.batchId)
-        // get sign in state
-        val isSignedIn = authRepo.getAuthUser()?.userId == studentId
-
-        return StudentProfile(student, faculty, batch, isSignedIn)
     }
 
     override suspend fun changeProfileImage(
@@ -74,7 +60,7 @@ class StudentRepositoryImpl(
     override suspend fun changeAcademicInfo(
         userId: String,
         name: String,
-        studentId: String,
+        studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,

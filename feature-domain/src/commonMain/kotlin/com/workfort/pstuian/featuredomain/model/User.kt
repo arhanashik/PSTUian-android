@@ -24,7 +24,7 @@ sealed interface User {
         override val bio: String?,
         override val blood: String?,
         override val imageUrl: String?,
-        val studentId: String,
+        val studentId: Int,
         val reg: String,
         val batchId: Int,
         val session: String,
@@ -63,6 +63,7 @@ sealed interface User {
         override val bio: String?,
         override val blood: String?,
         override val imageUrl: String?,
+        val id: Int,
         val designation: String,
         val department: String?,
     ) : User

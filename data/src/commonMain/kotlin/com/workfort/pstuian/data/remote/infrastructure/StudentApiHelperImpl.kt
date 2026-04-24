@@ -10,8 +10,12 @@ import com.workfort.pstuian.data.remote.service.StudentApiService
 
 class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiHelper {
 
-    override suspend fun get(userId: String): StudentDto? {
-        return service.get(userId).data
+    override suspend fun get(studentId: Int): NetworkResult<StudentDto> {
+        return runCatching {
+            service.get(studentId).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun getByEmail(email: String): NetworkResult<StudentDto> {
@@ -37,7 +41,7 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     override suspend fun changeAcademicInfo(
         userId: String,
         name: String,
-        studentId: String,
+        studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,

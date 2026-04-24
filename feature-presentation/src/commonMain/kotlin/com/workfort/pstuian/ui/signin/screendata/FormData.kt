@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.signin.screendata
 
-import com.workfort.pstuian.featuredomain.model.BatchEntity
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.util.isValidEmail
 
 data class SignInFormData(
@@ -16,19 +16,19 @@ data class SignInFormData(
 
 sealed interface SignUpFormData {
     val name: String
-    val faculty: FacultyEntity?
+    val faculty: Faculty?
     val email: String
     val password: String
 
     data class StudentSignUpFormData(
         override val name: String,
-        override val faculty: FacultyEntity? = null,
+        override val faculty: Faculty? = null,
         override val email: String,
         override val password: String,
         val studentId: String,
         val regNumber: String,
         val session: String,
-        val batch: BatchEntity? = null,
+        val batch: Batch? = null,
     ) : SignUpFormData {
 
         fun isInvalid(): Boolean = name.isEmpty() ||
@@ -45,7 +45,7 @@ sealed interface SignUpFormData {
 
     data class TeacherSignUpFormData(
         override val name: String,
-        override val faculty: FacultyEntity? = null,
+        override val faculty: Faculty? = null,
         override val email: String,
         override val password: String,
         val department: String,

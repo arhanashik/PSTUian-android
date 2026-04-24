@@ -29,8 +29,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.BatchEntity
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
@@ -170,8 +170,8 @@ private fun ListSelectionOptionRow(
 }
 
 internal fun facultiesToListSelectionOptions(
-    faculties: List<FacultyEntity>,
-): List<ListSelectionOption<FacultyEntity>> = faculties.map { faculty ->
+    faculties: List<Faculty>,
+): List<ListSelectionOption<Faculty>> = faculties.map { faculty ->
     ListSelectionOption(
         value = faculty,
         label = faculty.title.ifBlank { faculty.shortTitle },
@@ -179,12 +179,12 @@ internal fun facultiesToListSelectionOptions(
 }
 
 internal fun batchesToListSelectionOptions(
-    batches: List<BatchEntity>,
-): List<ListSelectionOption<BatchEntity>> = batches.map { batch ->
+    batches: List<Batch>,
+): List<ListSelectionOption<Batch>> = batches.map { batch ->
     ListSelectionOption(batch, batchDisplayLabel(batch))
 }
 
-internal fun batchDisplayLabel(batch: BatchEntity): String =
+internal fun batchDisplayLabel(batch: Batch): String =
     batch.title?.takeIf { it.isNotBlank() } ?: batch.name
 
 @Composable

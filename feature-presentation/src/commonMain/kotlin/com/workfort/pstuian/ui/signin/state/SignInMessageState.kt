@@ -1,19 +1,19 @@
 package com.workfort.pstuian.ui.signin.state
 
-import com.workfort.pstuian.featuredomain.model.BatchEntity
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.Faculty
 
 sealed interface SignInMessageState {
     data class Success(val message: String) : SignInMessageState
     data class Error(val message: String) : SignInMessageState
     data class FacultySelection(
-        val faculties: List<FacultyEntity>,
+        val faculties: List<Faculty>,
         val selectedFacultyId: Int?,
-        val onSaveAndContinue: (FacultyEntity?) -> Unit,
+        val onSaveAndContinue: (Faculty?) -> Unit,
     ) : SignInMessageState
     data class BatchSelection(
-        val batches: List<BatchEntity>,
+        val batches: List<Batch>,
         val selectedBatchId: Int?,
-        val onSaveAndContinue: (BatchEntity?) -> Unit,
+        val onSaveAndContinue: (Batch?) -> Unit,
     ) : SignInMessageState
 }

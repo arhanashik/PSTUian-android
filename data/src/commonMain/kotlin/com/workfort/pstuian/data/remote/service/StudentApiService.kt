@@ -12,9 +12,9 @@ import io.ktor.http.parameters
 
 class StudentApiService(private val client: HttpClient) {
 
-    suspend fun get(userId: String): ApiResponse<StudentDto> {
+    suspend fun get(studentId: Int): ApiResponse<StudentDto> {
         return client.get(NetworkConst.Remote.Api.Student.GET) {
-            parameter(NetworkConst.Params.USER_ID, userId)
+            parameter(NetworkConst.Params.ID, studentId)
         }.body()
     }
 
@@ -57,7 +57,7 @@ class StudentApiService(private val client: HttpClient) {
     suspend fun changeAcademicInfo(
         userId: String,
         name: String,
-        studentId: String,
+        studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,
@@ -69,7 +69,7 @@ class StudentApiService(private val client: HttpClient) {
             formParameters = parameters {
                 append(NetworkConst.Params.NAME, name)
                 append(NetworkConst.Params.USER_ID, userId)
-                append(NetworkConst.Params.ID, studentId)
+                append(NetworkConst.Params.ID, studentId.toString())
                 append(NetworkConst.Params.REG, reg)
                 append(NetworkConst.Params.BLOOD, blood)
                 append(NetworkConst.Params.FACULTY_ID, facultyId.toString())

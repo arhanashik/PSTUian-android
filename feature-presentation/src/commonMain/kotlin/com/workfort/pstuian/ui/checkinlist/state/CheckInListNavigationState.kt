@@ -4,6 +4,6 @@ import com.workfort.pstuian.featuredomain.model.UserType
 
 sealed interface CheckInListNavigationState {
     data object GoBack : CheckInListNavigationState
-    data class ProfileScreen(val userId: String, val userType: UserType) : CheckInListNavigationState
+    data class ProfileScreen(val userId: Int, val userType: UserType) : CheckInListNavigationState
     data object LocationPickerScreen : CheckInListNavigationState
 }

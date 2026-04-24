@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StudentProfile (
-    var student: User.Student,
-    var faculty: FacultyEntity,
-    var batch: BatchEntity,
+    val student: User.Student,
+    val faculty: Faculty,
+    val batch: Batch,
     val isSignedIn: Boolean,
 )

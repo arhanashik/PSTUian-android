@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.common.theme.bgCircle
@@ -27,7 +27,7 @@ import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.ic_education_gray
 
 @Composable
-fun FacultyView(modifier: Modifier, faculty: FacultyEntity) {
+fun FacultyView(modifier: Modifier, faculty: Faculty) {
     ElevatedCard(
         modifier = modifier.clip(RoundedCornerShape(24.dp)),
         colors = CardDefaults.cardColors(

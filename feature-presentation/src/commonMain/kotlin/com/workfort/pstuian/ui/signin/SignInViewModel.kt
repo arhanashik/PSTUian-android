@@ -3,8 +3,8 @@ package com.workfort.pstuian.ui.signin
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.BatchEntity
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
@@ -155,7 +155,7 @@ class SignInViewModel(
         }
     }
 
-    private fun applySignUpBatch(batch: BatchEntity) {
+    private fun applySignUpBatch(batch: Batch) {
         val state = uiState.value
         if (state !is SignInUiState.SignUpPanel) return
         when (val form = state.formData) {
@@ -166,7 +166,7 @@ class SignInViewModel(
         }
     }
 
-    private fun applySignUpFaculty(faculty: FacultyEntity) {
+    private fun applySignUpFaculty(faculty: Faculty) {
         val state = uiState.value
         if (state !is SignInUiState.SignUpPanel) return
         val updated = when (val form = state.formData) {

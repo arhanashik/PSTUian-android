@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.facultypicker.state
 
-import com.workfort.pstuian.featuredomain.model.BatchEntity
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.Faculty
 
 data class FacultyPickerUiState(
     val panelState: PanelState = PanelState.None,
@@ -12,13 +12,13 @@ data class FacultyPickerUiState(
     sealed interface PanelState {
         data object None : PanelState
         data class SelectFaculty(
-            val faculties: List<FacultyEntity>,
-            val currentSelection: FacultyEntity?,
+            val faculties: List<Faculty>,
+            val currentSelection: Faculty?,
         ) : PanelState
         data class SelectBatch(
-            val selectedFaculty: FacultyEntity,
-            val batches: List<BatchEntity>,
-            val currentSelection: BatchEntity?,
+            val selectedFaculty: Faculty,
+            val batches: List<Batch>,
+            val currentSelection: Batch?,
         ) : PanelState
         data class Error(val message: String) : PanelState
     }

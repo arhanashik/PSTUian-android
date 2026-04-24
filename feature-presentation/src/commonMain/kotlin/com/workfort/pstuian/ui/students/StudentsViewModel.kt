@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.students.state.StudentsMessageState
@@ -50,7 +52,7 @@ class StudentsViewModel(
     }
 
     private fun onClickStudent(student: User.Student) {
-        _navigation.update { StudentsNavigationState.GoToStudentProfile(student.userId) }
+        _navigation.update { StudentsNavigationState.GoToStudentProfile(student.studentId) }
     }
 
     private fun onClickCall(phoneNumber: String) {
@@ -63,13 +65,14 @@ class StudentsViewModel(
 
     private fun loadStudentList() {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                val batch = facultyRepo.getBatch(batchId)
-                uiStateMachine.updateTitle(batch.title ?: batch.name)
-                getStudents(batch.facultyId, batchId)
-            }.onFailure {
-                uiStateMachine.updateTitle("Batch")
-            }
+            facultyRepo.getBatch(batchId)
+                .onSuccess { batch ->
+                    uiStateMachine.updateTitle(batch.title ?: batch.name)
+                    getStudents(batch.facultyId, batchId)
+                }
+                .onFailure {
+                    uiStateMachine.updateTitle("Batch")
+                }
         }
     }
 

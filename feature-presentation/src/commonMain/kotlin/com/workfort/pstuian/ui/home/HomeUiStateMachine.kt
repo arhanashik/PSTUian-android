@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.home
 
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.home.state.HomeUiState
@@ -56,7 +56,7 @@ class HomeUiStateMachine : UiStateMachine<HomeUiState> {
         copy(facultyState = HomeUiState.FacultyState.Loading)
     }
 
-    fun showFaculties(faculties: List<FacultyEntity>) = updateContent {
+    fun showFaculties(faculties: List<Faculty>) = updateContent {
         copy(facultyState = HomeUiState.FacultyState.Available(faculties))
     }
 

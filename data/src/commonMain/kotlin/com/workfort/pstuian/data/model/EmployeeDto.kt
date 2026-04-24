@@ -19,6 +19,7 @@ data class EmployeeDto(
 ) {
     fun toModel() = User.Employee(
         userId = id.toString(),
+        id = id,
         name = name,
         email = "",
         facultyId = facultyId,
@@ -33,7 +34,7 @@ data class EmployeeDto(
 }
 
 fun User.Employee.toDto() = EmployeeDto(
-    id = userId.toIntOrNull() ?: 0,
+    id = id,
     name = name,
     designation = designation,
     department = department,

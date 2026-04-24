@@ -7,8 +7,8 @@ data class StudentSignUpInput(
     val id: String,
     val reg: String,
     val session: String,
-    val faculty: FacultyEntity?,
-    val batch: BatchEntity?,
+    val faculty: Faculty?,
+    val batch: Batch?,
     val email: String,
     val password: String,
 ) {
@@ -64,7 +64,7 @@ data class StudentSignUpInputValidationError(
 data class TeacherSignUpInput(
     val name: String,
     val designation: String,
-    val faculty: FacultyEntity?,
+    val faculty: Faculty?,
     val department: String,
     val email: String,
     val password: String,

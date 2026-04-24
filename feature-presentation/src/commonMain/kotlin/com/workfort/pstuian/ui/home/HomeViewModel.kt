@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.FacultyEntity
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -174,13 +174,13 @@ class HomeViewModel(
         if (user == null) {
             _message.update { HomeMessageState.SignInNecessary }
         } else {
-            val userType = when (user) {
-                is User.Student -> UserType.STUDENT
-                is User.Teacher -> UserType.TEACHER
-                is User.Employee -> UserType.EMPLOYEE
+            val (userId, userType) = when (user) {
+                is User.Student -> user.studentId to UserType.STUDENT
+                is User.Teacher -> user.id to UserType.TEACHER
+                is User.Employee -> (user.userId.toIntOrNull() ?: 0) to UserType.EMPLOYEE
             }
 
-            _navigation.update { HomeNavigationState.GoToProfileScreen(user.userId, userType) }
+            _navigation.update { HomeNavigationState.GoToProfileScreen(userId, userType) }
         }
     }
 
@@ -198,7 +198,7 @@ class HomeViewModel(
         }
     }
 
-    private fun onClickFaculty(faculty: FacultyEntity) {
+    private fun onClickFaculty(faculty: Faculty) {
         if (isSignedInUser()) {
             _navigation.update { HomeNavigationState.FacultyScreen(faculty) }
         } else {

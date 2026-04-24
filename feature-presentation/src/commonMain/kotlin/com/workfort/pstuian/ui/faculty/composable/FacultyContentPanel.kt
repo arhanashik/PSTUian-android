@@ -16,7 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.CourseEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
@@ -68,7 +68,7 @@ fun FacultyContentPanel(
 
 @Composable
 private fun FacultyUiState.BatchListState.Handle(
-    onClickBatch: (BatchEntity) -> Unit,
+    onClickBatch: (Batch) -> Unit,
 ) {
     if (error != null) {
         Column(
@@ -205,9 +205,9 @@ private fun FacultyUiState.EmployeeListState.Handle(
 }
 
 @Composable
-private fun List<BatchEntity>.BatchListView(
+private fun List<Batch>.BatchListView(
     isLoading: Boolean,
-    onClickBatch: (batch: BatchEntity) -> Unit,
+    onClickBatch: (batch: Batch) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

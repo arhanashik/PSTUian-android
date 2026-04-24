@@ -7,8 +7,11 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.featuredomain.usecase.GetStudentProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.studentprofile.state.ProfileState
@@ -23,16 +26,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class StudentProfileViewModel(
-    private val userId: String,
+    private val userId: Int,
     private val studentRepo: StudentRepositoryImpl,
     private val authRepo: AuthRepository,
     private val settingsRepository: SettingsRepository,
+    private val getStudentProfileUserUseCase: GetStudentProfileUserUseCase,
     private val uiStateMachine: StudentProfileUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-) : UiStateMachineViewModel<StudentProfileUiState>(
-    uiStateMachine,
-    initializationMode = InitializationMode.JustOnce,
-) {
+) : UiStateMachineViewModel<StudentProfileUiState>(uiStateMachine) {
 
     private val _message = MutableStateFlow<StudentProfileMessageState?>(null)
     val message: StateFlow<StudentProfileMessageState?> = _message.asStateFlow()
@@ -46,7 +47,7 @@ class StudentProfileViewModel(
 
     fun onUiEvent(event: StudentProfileUiEvent) {
         when (event) {
-            is StudentProfileUiEvent.BackClicked -> onClickBack()
+            is StudentProfileUiEvent.BackClicked -> _navigation.update { StudentProfileNavigationState.GoBack }
             is StudentProfileUiEvent.ImageClicked -> onClickImage(event.url)
             is StudentProfileUiEvent.CallClicked -> onClickCall()
             is StudentProfileUiEvent.EmailClicked -> onClickEmail()
@@ -71,7 +72,20 @@ class StudentProfileViewModel(
 
     fun navigationHandled() = _navigation.update { null }
 
-    private fun onClickBack() = _navigation.update { StudentProfileNavigationState.GoBack }
+    private fun loadProfile() {
+        uiStateMachine.showProfileLoading()
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            getStudentProfileUserUseCase(userId)
+                .onSuccess { profile ->
+                    val isSignedIn = authRepo.getAuthUser()?.email == profile.student.email
+                    uiStateMachine.showProfile(profile, isSignedIn)
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load student profile"
+                    uiStateMachine.showProfileError(message)
+                }
+        }
+    }
 
     private fun onClickImage(url: String) {
         _navigation.update { StudentProfileNavigationState.ImagePreviewScreen(url) }
@@ -94,7 +108,7 @@ class StudentProfileViewModel(
     }
 
     private fun onClickSignOut() {
-        if (profileCache()?.isSignedIn == true) {
+        if (isSignedIn()) {
             _message.update {
                 StudentProfileMessageState.ConfirmSignOut {
                     signOut()
@@ -110,7 +124,8 @@ class StudentProfileViewModel(
     private fun onClickRefresh() = loadProfile()
 
     private fun onClickChangeImage() {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.ImageUploadScreen(
@@ -122,7 +137,8 @@ class StudentProfileViewModel(
     }
 
     private fun onClickEditBio() {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         profileCache()?.student?.let { student ->
             val currentBio = student.bio.orEmpty()
             _message.update {
@@ -132,7 +148,8 @@ class StudentProfileViewModel(
     }
 
     private fun onClickEdit(selectedTabIndex: Int) {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         profileCache()?.student?.let { student ->
             when (selectedTabIndex) {
                 0 -> ProfileEditMode.ACADEMIC
@@ -141,7 +158,7 @@ class StudentProfileViewModel(
             }?.let { action ->
                 _navigation.update {
                     StudentProfileNavigationState.StudentProfileEditScreen(
-                        userId = student.userId,
+                        userId = student.studentId,
                         action = action,
                     )
                 }
@@ -150,7 +167,8 @@ class StudentProfileViewModel(
     }
 
     private fun onClickMyBloodDonationList() {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyBloodDonationListScreen(
@@ -162,7 +180,8 @@ class StudentProfileViewModel(
     }
 
     private fun onClickChangePassword() {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         _navigation.update { StudentProfileNavigationState.ChangePasswordScreen }
     }
 
@@ -179,7 +198,8 @@ class StudentProfileViewModel(
     }
 
     private fun onClickUploadCv() {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.UploadCvScreen(
@@ -191,7 +211,8 @@ class StudentProfileViewModel(
     }
 
     private fun onClickMyCheckInList() {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyCheckInListScreen(
@@ -203,7 +224,8 @@ class StudentProfileViewModel(
     }
 
     private fun onClickMyDeviceList() {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         profileCache()?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyDeviceListScreen(
@@ -215,7 +237,8 @@ class StudentProfileViewModel(
     }
 
     private fun onClickDeleteAccount() {
-        if (profileCache()?.isSignedIn != true) return
+        if (!isSignedIn()) return
+
         _navigation.update { StudentProfileNavigationState.DeleteAccountScreen }
     }
 
@@ -226,27 +249,14 @@ class StudentProfileViewModel(
         }
     }
 
-    fun loadProfile() {
-        getProfile(userId)
-    }
-
-    private fun getProfile(studentId: String) {
-        uiStateMachine.showProfileLoading()
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            val profile = studentRepo.getProfile(studentId)
-            if (profile == null) {
-                val message = "Failed to load student profile"
-                uiStateMachine.showProfileError(message)
-                return@launchOnMain
-            }
-            uiStateMachine.showProfile(profile)
-        }
+    private fun isSignedIn(): Boolean {
+        return authRepo.getAuthUser()?.email == profileCache()?.student?.email
     }
 
     private var isChangingPhoto = false
     fun changeProfileImage(imageUrl: String) {
         profileCache()?.let { cache ->
-            if (isChangingPhoto || cache.isSignedIn.not()) {
+            if (isChangingPhoto || isSignedIn().not()) {
                 return
             }
             isChangingPhoto = true

@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.faculty.state
 
-import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.CourseEntity
 import com.workfort.pstuian.featuredomain.model.User
 
@@ -14,7 +14,7 @@ data class FacultyUiState(
     val employeeListState: EmployeeListState = EmployeeListState(),
 ) {
     data class BatchListState(
-        val batches: List<BatchEntity> = emptyList(),
+        val batches: List<Batch> = emptyList(),
         val isLoading: Boolean = false,
         val error: String? = null,
     )

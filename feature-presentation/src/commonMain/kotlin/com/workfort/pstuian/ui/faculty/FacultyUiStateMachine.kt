@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.faculty
 
-import com.workfort.pstuian.featuredomain.model.BatchEntity
+import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.CourseEntity
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
@@ -24,7 +24,7 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
         _uiState.update { it.copy(selectedTab = index) }
     }
 
-    fun updateBatchList(batches: List<BatchEntity>, isLoading: Boolean, error: String? = null) {
+    fun updateBatchList(batches: List<Batch>, isLoading: Boolean, error: String? = null) {
         _uiState.update {
             it.copy(
                 batchListState = it.batchListState.copy(

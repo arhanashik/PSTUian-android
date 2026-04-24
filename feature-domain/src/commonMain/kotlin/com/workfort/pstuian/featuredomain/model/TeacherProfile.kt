@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TeacherProfile (
     var teacher: User.Teacher,
-    var faculty: FacultyEntity,
+    var faculty: Faculty,
     var isSignedIn: Boolean,
 )
