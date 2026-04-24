@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.settings.state.DebugPanelData
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
+    private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
     private val platformInfo: PlatformInfo,
     private val pushNotificationProvider: PushNotificationProvider,
@@ -59,7 +61,7 @@ class SettingsViewModel(
                 is SettingsUiEvent.ShowNotificationToggled -> setShowNotification(event.show)
                 is SettingsUiEvent.ChangeThemeClicked -> onChangeTheme(event.theme)
                 is SettingsUiEvent.RefreshFcmTokenClicked -> onRefreshFcmToken()
-                is SettingsUiEvent.ClearSharedPrefsClicked -> onClearSharedPrefs()
+                is SettingsUiEvent.ClearCacheClicked -> onClearCache()
             }
         }
     }
@@ -96,15 +98,19 @@ class SettingsViewModel(
         }
     }
 
-    private fun onClearSharedPrefs() {
+    private fun onClearCache() {
+        val userType = settingsRepository.getUserType() ?: return
         _message.update {
             SettingsMessageState.ConfirmClearPrefs(
                 title = "Clear Data",
                 message = "Are you sure you want to clear all app data? This will log you out and reset all settings.",
             ) {
-                settingsRepository.clearSharedPrefs()
-                onUiReady()
                 onMessageHandled()
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    authRepository.signOut(userType, fromAllDevice = false)
+                    settingsRepository.clearSharedPrefs()
+                    _navigation.update { SettingsNavigationState.ResetToRoot }
+                }
             }
         }
     }

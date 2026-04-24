@@ -10,7 +10,6 @@ import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.userTypeListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.settings.composable.SettingsScreenContent
 import com.workfort.pstuian.ui.settings.state.SettingsMessageState
 import com.workfort.pstuian.ui.settings.state.SettingsNavigationState
@@ -84,7 +83,7 @@ private fun HandleNavigationState(
         navigation?.let {
             when (it) {
                 is SettingsNavigationState.GoBack -> navigator?.goBack()
-                is SettingsNavigationState.GoToContactUs -> navigator?.navigateTo(AppScreen.ContactUs)
+                is SettingsNavigationState.ResetToRoot -> navigator?.popToRoot()
             }
             onNavigationHandled()
         }

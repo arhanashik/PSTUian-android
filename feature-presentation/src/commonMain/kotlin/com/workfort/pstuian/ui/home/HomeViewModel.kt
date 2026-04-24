@@ -12,7 +12,6 @@ import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
-import com.workfort.pstuian.featuredomain.usecase.GetSignedInUserUseCase
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.home.state.HomeMessageState
@@ -31,7 +30,6 @@ class HomeViewModel(
     private val sliderRepo: SliderRepository,
     private val facultyRepo: FacultyRepository,
     private val sharedScreenData: SharedScreenData,
-    private val getSignedInUserUseCase: GetSignedInUserUseCase,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val uiStateMachine: HomeUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,

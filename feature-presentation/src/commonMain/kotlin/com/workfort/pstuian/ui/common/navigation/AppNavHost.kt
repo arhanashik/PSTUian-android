@@ -92,7 +92,12 @@ fun AppNavHost(
                         }
 
                         is NavEvent.PopToRoot -> {
-                            navController.popBackStack<AppScreen.Splash>(inclusive = false)
+                            // Splash is removed from the stack when leaving it (resetAll in SplashScreen),
+                            // so popBackStack to Splash would not find a destination. Clear the graph and
+                            // land on splash like a fresh launch.
+                            navController.navigate(AppScreen.Splash) {
+                                popUpTo(0) { inclusive = true }
+                            }
                         }
                     }
                 }

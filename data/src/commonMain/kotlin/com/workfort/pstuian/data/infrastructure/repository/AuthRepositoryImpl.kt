@@ -159,12 +159,10 @@ class AuthRepositoryImpl(
         val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
         val userId = getAuthUser()?.userId ?: return DomainResult.failure(invalidAuthUser)
 
+        firebaseAuthDataSource.signOut()
         return helper.signOut(userId, userType.type, deviceId, fromAllDevice)
             .toDomainResult(domainErrorMapper)
-            .onSuccess {
-                firebaseAuthDataSource.signOut()
-                removeAuthPrefs()
-            }
+            .onSuccess { removeAuthPrefs() }
     }
 
     override suspend fun changePassword(
@@ -200,16 +198,12 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun deleteAccount(userType: UserType, password: String): DomainResult<Unit> {
-        // validate device
-        val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
         val authUser = getAuthUser() ?: return DomainResult.failure(invalidAuthUser)
 
+        firebaseAuthDataSource.signOut()
         return helper.deleteAccount(authUser.email, userType.type, password)
             .toDomainResult(domainErrorMapper)
-            .onSuccess {
-                firebaseAuthDataSource.signOut()
-                removeAuthPrefs()
-            }
+            .onSuccess { removeAuthPrefs() }
     }
 
     override suspend fun removeAuthPrefs() {

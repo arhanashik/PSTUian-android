@@ -86,7 +86,7 @@ fun SettingsContentPanel(
                         DebugSettingsView(
                             debugPanelData = uiState.debugPanelData,
                             onRefreshFcmToken = { onUiEvent(SettingsUiEvent.RefreshFcmTokenClicked) },
-                            onClearPrefs = { onUiEvent(SettingsUiEvent.ClearSharedPrefsClicked) },
+                            onClearCache = { onUiEvent(SettingsUiEvent.ClearCacheClicked) },
                         )
                     }
                 }
@@ -231,7 +231,7 @@ private fun GeneralSettingsView(
 private fun DebugSettingsView(
     debugPanelData: DebugPanelData,
     onRefreshFcmToken: () -> Unit,
-    onClearPrefs: () -> Unit,
+    onClearCache: () -> Unit,
 ) {
     val rowLabelStyle = settingsCardLabelStyle()
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -284,11 +284,11 @@ private fun DebugSettingsView(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "Clear SharedPreferences",
+                    text = "Clear Cache",
                     style = rowLabelStyle,
                 )
                 OutlinedButton(
-                    onClick = onClearPrefs,
+                    onClick = onClearCache,
                     modifier = Modifier.height(30.dp),
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                 ) {

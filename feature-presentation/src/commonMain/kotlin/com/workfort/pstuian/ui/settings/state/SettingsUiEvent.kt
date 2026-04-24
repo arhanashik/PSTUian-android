@@ -8,5 +8,5 @@ sealed interface SettingsUiEvent {
     data class ShowNotificationToggled(val show: Boolean) : SettingsUiEvent
     data class ChangeThemeClicked(val theme: ThemeMode) : SettingsUiEvent
     data object RefreshFcmTokenClicked : SettingsUiEvent
-    data object ClearSharedPrefsClicked : SettingsUiEvent
+    data object ClearCacheClicked : SettingsUiEvent
 }
