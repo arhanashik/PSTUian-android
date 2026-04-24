@@ -1,8 +1,8 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.data.remote.NetworkConst
-import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.model.ApiResponse
+import com.workfort.pstuian.data.model.TeacherDto
+import com.workfort.pstuian.data.remote.NetworkConst
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
@@ -11,9 +11,16 @@ import io.ktor.client.request.parameter
 import io.ktor.http.parameters
 
 class TeacherApiService(private val client: HttpClient) {
+
     suspend fun get(id: Int): ApiResponse<TeacherDto> {
         return client.get(NetworkConst.Remote.Api.Teacher.GET) {
             parameter(NetworkConst.Params.ID, id)
+        }.body()
+    }
+
+    suspend fun getByEmail(email: String): ApiResponse<TeacherDto> {
+        return client.get(NetworkConst.Remote.Api.Teacher.GET_BY_EMAIL) {
+            parameter(NetworkConst.Params.EMAIL, email)
         }.body()
     }
 

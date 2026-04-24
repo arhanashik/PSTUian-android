@@ -10,6 +10,7 @@ import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
+import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
 import com.workfort.pstuian.model.SharedScreenData
@@ -29,6 +30,7 @@ class HomeViewModel(
     private val authRepository: AuthRepository,
     private val sliderRepo: SliderRepository,
     private val facultyRepo: FacultyRepository,
+    private val settingsRepository: SettingsRepository,
     private val sharedScreenData: SharedScreenData,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val uiStateMachine: HomeUiStateMachine,
@@ -132,7 +134,35 @@ class HomeViewModel(
     }
 
     private fun onClickSignIn() {
-        _navigation.update { HomeNavigationState.SignInScreen }
+        when (settingsRepository.getUserType()) {
+            UserType.STUDENT, UserType.TEACHER -> {
+                _navigation.update { HomeNavigationState.SignInScreen }
+            }
+            else -> {
+                _message.update {
+                    HomeMessageState.UserTypeSelectionForSignIn(
+                        selectedUserType = settingsRepository.getUserType(),
+                        onSaveAndContinue = { selected ->
+                            when (selected) {
+                                UserType.STUDENT, UserType.TEACHER -> {
+                                    settingsRepository.setUserType(selected)
+                                    _message.update { null }
+                                    _navigation.update { HomeNavigationState.SignInScreen }
+                                }
+                                else -> {
+                                    _message.update { null }
+                                    _message.update {
+                                        HomeMessageState.SignInNotSupportedForUserType(
+                                            message = "Sign in is not yet supported for this user type.",
+                                        )
+                                    }
+                                }
+                            }
+                        },
+                    )
+                }
+            }
+        }
     }
 
     private fun showNotificationPermissionConfirmation() {

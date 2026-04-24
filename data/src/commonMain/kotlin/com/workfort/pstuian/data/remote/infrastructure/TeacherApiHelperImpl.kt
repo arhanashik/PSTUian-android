@@ -1,27 +1,27 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
+import com.workfort.pstuian.data.mapper.toNetworkResult
+import com.workfort.pstuian.data.model.ApiResponseCode
+import com.workfort.pstuian.data.model.CommonNetworkError
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
 import com.workfort.pstuian.data.remote.service.TeacherApiService
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 01 Nov, 2021 at 1:15 AM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
+class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiHelper {
 
-class TeacherApiHelperImpl(private val service: TeacherApiService) :
-    TeacherApiHelper {
     override suspend fun get(id: Int): TeacherDto {
         val response = service.get(id)
         if(!response.success) throw Exception(response.message)
         return response.data?: throw Exception("Empty data")
+    }
+
+    override suspend fun getByEmail(email: String): NetworkResult<TeacherDto> {
+        return runCatching {
+            service.getByEmail(email).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun changeProfileImage(id: Int, imageUrl: String): Boolean {

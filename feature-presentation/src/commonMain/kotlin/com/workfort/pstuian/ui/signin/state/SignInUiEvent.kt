@@ -9,13 +9,12 @@ sealed interface SignInUiEvent {
     data object BackClicked : SignInUiEvent
     data class AuthPanelChanged(val panel: AuthPanel) : SignInUiEvent
 
-    // Common ui event for Email/Password, so that same change can be reflected to all Auth panel
     data class EmailChanged(val email: String) : SignInUiEvent
     data class PasswordChanged(val password: String) : SignInUiEvent
     data class SignInFormDataChanged(val formData: SignInFormData) : SignInUiEvent
     data class SignInRememberMeToggled(val rememberMe: Boolean) : SignInUiEvent
+    data class AuthUserTypeForFormsToggled(val userType: UserType) : SignInUiEvent
     data object SignUpFromSignInClicked : SignInUiEvent
-    data class SignUpUserTypeToggled(val userType: UserType) : SignInUiEvent
     data class SignUpFormDataChanged(val formData: SignUpFormData) : SignInUiEvent
 
     data class SignInClicked(val formData: SignInFormData) : SignInUiEvent

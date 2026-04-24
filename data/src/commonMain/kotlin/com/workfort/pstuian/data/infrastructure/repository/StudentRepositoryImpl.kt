@@ -7,6 +7,7 @@ import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.map
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
@@ -17,19 +18,25 @@ class StudentRepositoryImpl(
     private val helper: StudentApiHelper,
     private val domainErrorMapper: DomainErrorMapper,
 ) : StudentRepository {
-    private val students = mutableMapOf<String, User.Student>()
+    private val cache = mutableListOf<User.Student>()
 
     override suspend fun getUser(userId: String): User.Student? {
         return helper.get(userId)?.toModel()
     }
 
     override suspend fun getUserByEmail(email: String): DomainResult<User.Student> {
-        return helper.getByEmail(email).toDomainResult(domainErrorMapper).map { it.toModel() }
+        cache.firstOrNull { it.email == email }?.let { cache ->
+            return DomainResult.success(cache)
+        }
+        return helper.getByEmail(email)
+            .toDomainResult(domainErrorMapper)
+            .map { it.toModel() }
+            .onSuccess { cache.add(it) }
     }
 
     override suspend fun getProfile(studentId: String): StudentProfile? {
         // get student
-        val student = students[studentId] ?: helper.get(studentId)?.toModel()
+        val student = cache.firstOrNull { it.studentId == studentId } ?: helper.get(studentId)?.toModel()
         if (student == null) {
             return null
         }

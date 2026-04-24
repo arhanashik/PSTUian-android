@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SectionCornerRadius
 
@@ -35,6 +38,9 @@ import com.workfort.pstuian.ui.signin.screendata.SectionCornerRadius
 internal fun SignInAuthForeground(
     greenHeight: Dp,
     panel: AuthPanel,
+    showStudentTeacherToggle: Boolean,
+    authUserTypeForForms: UserType,
+    onAuthUserTypeForFormsChange: (UserType) -> Unit,
     onSkip: () -> Unit,
     onBackToSignIn: () -> Unit,
     formContent: @Composable () -> Unit,
@@ -112,7 +118,31 @@ internal fun SignInAuthForeground(
                         shape = whiteShape,
                     ),
             ) {
-                formContent()
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    if (showStudentTeacherToggle) {
+                        val toggleIndex = when (authUserTypeForForms) {
+                            UserType.STUDENT -> 0
+                            UserType.TEACHER -> 1
+                            UserType.EMPLOYEE -> 0
+                        }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 32.dp)
+                                .padding(top = 16.dp, bottom = 16.dp),
+                        ) {
+                            ToggleSwitch(
+                                options = listOf("Student", "Teacher"),
+                                selectedIndex = toggleIndex,
+                                onSelectedIndexChange = { index ->
+                                    val type = if (index == 0) UserType.STUDENT else UserType.TEACHER
+                                    onAuthUserTypeForFormsChange(type)
+                                },
+                            )
+                        }
+                    }
+                    formContent()
+                }
             }
         }
     }

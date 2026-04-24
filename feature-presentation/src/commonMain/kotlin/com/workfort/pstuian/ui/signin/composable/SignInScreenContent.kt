@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
@@ -51,6 +52,7 @@ private fun SignInPanelPreview() {
                 isLoading = false,
                 formData = SignInFormData(email = "", password = ""),
                 rememberMe = false,
+                authUserTypeForForms = UserType.STUDENT,
             ),
             onUiEvent = {},
         )
@@ -66,6 +68,7 @@ private fun SignInPanelDarkPreview() {
                 isLoading = false,
                 formData = SignInFormData(email = "", password = ""),
                 rememberMe = false,
+                authUserTypeForForms = UserType.STUDENT,
             ),
             onUiEvent = {},
         )
@@ -89,6 +92,7 @@ private fun SignUpPanelPreviewAuth() {
                     session = "",
                     batch = null,
                 ),
+                authUserTypeForForms = UserType.STUDENT,
             ),
             onUiEvent = {},
         )
@@ -112,6 +116,7 @@ private fun SignUpPanelDarkPreviewAuth() {
                     session = "",
                     batch = null,
                 ),
+                authUserTypeForForms = UserType.STUDENT,
             ),
             onUiEvent = {},
         )
@@ -133,6 +138,7 @@ private fun TeacherSignUpPanelPreviewAuth() {
                     department = "",
                     designation = "",
                 ),
+                authUserTypeForForms = UserType.TEACHER,
             ),
             onUiEvent = {},
         )
@@ -154,6 +160,7 @@ private fun TeacherSignUpPanelDarkPreviewAuth() {
                     department = "",
                     designation = "",
                 ),
+                authUserTypeForForms = UserType.TEACHER,
             ),
             onUiEvent = {},
         )

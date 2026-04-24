@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.CompactHeaderHeight
@@ -73,16 +74,33 @@ fun SignInContentPanel(
                 label = "greenSectionHeight",
             )
 
+            val showStudentTeacherToggle =
+                uiState is SignInUiState.SignInPanel || uiState is SignInUiState.SignUpPanel
+            val authUserTypeForForms = when (uiState) {
+                is SignInUiState.SignInPanel -> uiState.authUserTypeForForms
+                is SignInUiState.SignUpPanel -> uiState.authUserTypeForForms
+                else -> UserType.STUDENT
+            }
             SignInAuthForeground(
                 greenHeight = greenHeight,
                 panel = panel,
+                showStudentTeacherToggle = showStudentTeacherToggle,
+                authUserTypeForForms = authUserTypeForForms,
+                onAuthUserTypeForFormsChange = { onUiEvent(SignInUiEvent.AuthUserTypeForFormsToggled(it)) },
                 onSkip = { onUiEvent(SignInUiEvent.BackClicked) },
                 onBackToSignIn = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
             ) {
                 when (uiState) {
                     is SignInUiState.None -> Unit
-                    is SignInUiState.SignInPanel -> SignInAuthForm(uiState.formData, uiState.rememberMe, onUiEvent)
-                    is SignInUiState.SignUpPanel -> SignUpAuthFormContent(uiState.formData, onUiEvent)
+                    is SignInUiState.SignInPanel -> SignInAuthForm(
+                        formData = uiState.formData,
+                        rememberMe = uiState.rememberMe,
+                        onUiEvent = onUiEvent,
+                    )
+                    is SignInUiState.SignUpPanel -> SignUpAuthFormContent(
+                        formData = uiState.formData,
+                        onUiEvent = onUiEvent,
+                    )
                     is SignInUiState.ForgotPasswordPanel -> {
                         ForgotPasswordAuthForm(
                             email = uiState.email,

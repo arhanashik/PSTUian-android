@@ -152,6 +152,7 @@ object NetworkConst {
             object Teacher {
                 const val GET_ALL = "${TEACHER_API_PATH}getAll"
                 const val GET = "${TEACHER_API_PATH}get"
+                const val GET_BY_EMAIL = "${TEACHER_API_PATH}getByEmail"
                 const val CHANGE_PROFILE_IMAGE = "${TEACHER_API_PATH}updateImageUrl"
                 const val UPDATE_NAME = "${TEACHER_API_PATH}updateName"
                 const val UPDATE_BIO= "${TEACHER_API_PATH}updateBio"

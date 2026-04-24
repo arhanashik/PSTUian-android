@@ -1,21 +1,12 @@
 package com.workfort.pstuian.data.remote.domain
 
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.TeacherDto
-
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 01 Nov, 2021 at 1:15 AM.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
 
 interface TeacherApiHelper {
     suspend fun get(id: Int): TeacherDto
+
+    suspend fun getByEmail(email: String): NetworkResult<TeacherDto>
 
     suspend fun changeProfileImage(
         id: Int,

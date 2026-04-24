@@ -1,8 +1,12 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
+import com.workfort.pstuian.data.mapper.DomainErrorMapper
+import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
+import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.TeacherProfile
 import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
@@ -11,15 +15,20 @@ class TeacherRepositoryImpl(
     private val authRepo: AuthRepository,
     private val facultyRepo: FacultyRepository,
     private val helper: TeacherApiHelper,
+    private val domainErrorMapper: DomainErrorMapper,
 ) : TeacherRepository {
-    private val teachers = mutableMapOf<Int, User.Teacher>()
+    private val cache = mutableMapOf<Int, User.Teacher>()
+
+    override suspend fun getUserByEmail(email: String): DomainResult<User.Teacher> {
+        return helper.getByEmail(email).toDomainResult(domainErrorMapper).map { it.toModel() }
+    }
 
     override suspend fun getProfile(teacherId: Int): TeacherProfile {
         // get teacher
-        var teacher = teachers[teacherId]
+        var teacher = cache[teacherId]
         if (teacher == null) {
             teacher = helper.get(teacherId).toModel()
-            teachers[teacherId] = teacher
+            cache[teacherId] = teacher
         }
         // get faculty
         val faculty = facultyRepo.getFaculty(teacher.facultyId)
@@ -34,7 +43,7 @@ class TeacherRepositoryImpl(
         val isChanged = helper.changeProfileImage(id, imageUrl)
         if (isChanged) {
             val updated = teacher.copy(imageUrl = imageUrl)
-            teachers[id] = updated
+            cache[id] = updated
         }
         return isChanged
     }
@@ -44,7 +53,7 @@ class TeacherRepositoryImpl(
         val isChanged = helper.changeName(id, name)
         if (isChanged) {
             val updated = teacher.copy(name = name)
-            teachers[id] = updated
+            cache[id] = updated
         }
         return isChanged
     }
@@ -54,7 +63,7 @@ class TeacherRepositoryImpl(
         val isChanged = helper.changeBio(id, bio)
         if (isChanged) {
             val updated = teacher.copy(bio = bio)
-            teachers[id] = updated
+            cache[id] = updated
         }
         return isChanged
     }
@@ -70,7 +79,7 @@ class TeacherRepositoryImpl(
         helper.changeAcademicInfo(
             teacher.userId.toInt(), name, designation, department, blood, facultyId
         ).toModel().let { updatedTeacher ->
-            teachers[updatedTeacher.userId.toInt()] = updatedTeacher
+            cache[updatedTeacher.userId.toInt()] = updatedTeacher
             return updatedTeacher
         }
     }
@@ -87,7 +96,7 @@ class TeacherRepositoryImpl(
         helper.changeConnectInfo(
             teacher.userId.toInt(), address, phone, email, oldEmail, linkedIn, fbLink
         ).toModel().let { updatedTeacher ->
-            teachers[updatedTeacher.userId.toInt()] = updatedTeacher
+            cache[updatedTeacher.userId.toInt()] = updatedTeacher
             return updatedTeacher
         }
     }

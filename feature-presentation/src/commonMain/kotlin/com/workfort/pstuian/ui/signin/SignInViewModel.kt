@@ -38,10 +38,17 @@ class SignInViewModel(
     private val _navigation = MutableStateFlow<SignInNavigationState?>(null)
     val navigation = _navigation.asStateFlow()
 
+    private fun coercedStudentOrTeacherUserType(): UserType =
+        when (val t = settingsRepository.getUserType()) {
+            UserType.STUDENT, UserType.TEACHER -> t
+            else -> UserType.STUDENT
+        }
+
     override fun onUiReady() {
         stateMachine.showInitialState(
             email = "", // TODO get saved email from shared pref
             rememberMe = false, // TODO get rememberMe saved value
+            authUserTypeForForms = coercedStudentOrTeacherUserType(),
         )
     }
 
@@ -53,8 +60,8 @@ class SignInViewModel(
             is SignInUiEvent.PasswordChanged -> stateMachine.updatePassword(event.password)
             is SignInUiEvent.SignInFormDataChanged -> stateMachine.updateSignInForm(event.formData)
             is SignInUiEvent.SignInRememberMeToggled -> stateMachine.toggleRememberMe(event.rememberMe)
+            is SignInUiEvent.AuthUserTypeForFormsToggled -> onAuthUserTypeForFormsToggled(event.userType)
             is SignInUiEvent.SignUpFromSignInClicked -> showSignUpPanelByUserType()
-            is SignInUiEvent.SignUpUserTypeToggled -> onSignUpUserTypeToggled(event.userType)
             is SignInUiEvent.SignUpFormDataChanged -> stateMachine.updateSignUpFormData(event.formData)
             is SignInUiEvent.SignInClicked -> signIn(event.formData)
             is SignInUiEvent.StudentSignUpClicked -> studentSignUp(event.formData)
@@ -191,13 +198,10 @@ class SignInViewModel(
         }
     }
 
-    private fun onSignUpUserTypeToggled(userType: UserType) {
+    private fun onAuthUserTypeForFormsToggled(userType: UserType) {
         settingsRepository.setUserType(userType)
-        when (userType) {
-            UserType.STUDENT -> stateMachine.setAuthPanel(AuthPanel.StudentSignUp)
-            UserType.TEACHER -> stateMachine.setAuthPanel(AuthPanel.TeacherSignUp)
-            UserType.EMPLOYEE -> Unit
-        }
+        val switchSignUpChildPanel = uiState.value is SignInUiState.SignUpPanel
+        stateMachine.applyAuthUserTypeFromToggle(userType, switchSignUpChildPanel = switchSignUpChildPanel)
     }
 
     private fun sendPasswordResetLink(email: String) {
@@ -245,7 +249,7 @@ class SignInViewModel(
     }
 
     private fun signIn(formData: SignInFormData) {
-        val userType = settingsRepository.getUserType() ?: return
+        val userType = (uiState.value as? SignInUiState.SignInPanel)?.authUserTypeForForms ?: return
 
         if (formData.isInvalid()) {
             _message.update {

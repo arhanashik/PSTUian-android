@@ -1,5 +1,6 @@
 package com.workfort.pstuian.ui.signin
 
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
@@ -16,13 +17,18 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
     override val uiState: StateFlow<SignInUiState> = _uiState.asStateFlow()
 
     private var cachedSignInFormData: SignInFormData? = null
+    private var cachedSignInRememberMe: Boolean = false
+    private var cachedAuthUserTypeForForms: UserType = UserType.STUDENT
     private var cachedStudentSignUpFormData: SignUpFormData.StudentSignUpFormData? = null
     private var cachedTeacherSignUpFormData: SignUpFormData.TeacherSignUpFormData? = null
 
     fun showInitialState(
         email: String,
         rememberMe: Boolean,
+        authUserTypeForForms: UserType,
     ) {
+        cachedAuthUserTypeForForms = authUserTypeForForms
+        cachedSignInRememberMe = rememberMe
         val initialFormData = SignInFormData(email = email, password = "")
         cachedSignInFormData = initialFormData
 
@@ -31,7 +37,32 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
                 isLoading = false,
                 formData = initialFormData,
                 rememberMe = rememberMe,
+                authUserTypeForForms = cachedAuthUserTypeForForms,
             )
+        }
+    }
+
+    /**
+     * Persists [userType] to cache and UI. When [switchSignUpChildPanel] is true (sign-up panel is
+     * showing), switches student/teacher form data in the same update so the toggle and fields stay aligned.
+     */
+    fun applyAuthUserTypeFromToggle(userType: UserType, switchSignUpChildPanel: Boolean) {
+        cachedAuthUserTypeForForms = userType
+        if (switchSignUpChildPanel && (userType == UserType.STUDENT || userType == UserType.TEACHER)) {
+            _uiState.update { current ->
+                when (userType) {
+                    UserType.STUDENT -> transitionToStudentSignUp(current.isLoading)
+                    UserType.TEACHER -> transitionToTeacherSignUp(current.isLoading)
+                }
+            }
+        } else {
+            _uiState.update { current ->
+                when (current) {
+                    is SignInUiState.SignInPanel -> current.copy(authUserTypeForForms = userType)
+                    is SignInUiState.SignUpPanel -> current.copy(authUserTypeForForms = userType)
+                    else -> current
+                }
+            }
         }
     }
 
@@ -61,15 +92,11 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
                         is SignUpFormData.StudentSignUpFormData -> {
                             val updatedStudentForm = formData.copy(email = email)
                             cachedStudentSignUpFormData = updatedStudentForm
-                            cachedTeacherSignUpFormData = cachedTeacherSignUpFormData
-                                ?.copyFromCommonFields(updatedStudentForm)
                             updatedStudentForm
                         }
                         is SignUpFormData.TeacherSignUpFormData -> {
                             val updatedTeacherForm = formData.copy(email = email)
                             cachedTeacherSignUpFormData = updatedTeacherForm
-                            cachedStudentSignUpFormData = cachedStudentSignUpFormData
-                                ?.copyFromCommonFields(updatedTeacherForm)
                             updatedTeacherForm
                         }
                     }
@@ -94,15 +121,11 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
                         is SignUpFormData.StudentSignUpFormData -> {
                             val updatedStudentForm = formData.copy(password = password)
                             cachedStudentSignUpFormData = updatedStudentForm
-                            cachedTeacherSignUpFormData = cachedTeacherSignUpFormData
-                                ?.copyFromCommonFields(updatedStudentForm)
                             updatedStudentForm
                         }
                         is SignUpFormData.TeacherSignUpFormData -> {
                             val updatedTeacherForm = formData.copy(password = password)
                             cachedTeacherSignUpFormData = updatedTeacherForm
-                            cachedStudentSignUpFormData = cachedStudentSignUpFormData
-                                ?.copyFromCommonFields(updatedTeacherForm)
                             updatedTeacherForm
                         }
                     }
@@ -127,6 +150,7 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
     }
 
     fun toggleRememberMe(rememberMe: Boolean) {
+        cachedSignInRememberMe = rememberMe
         _uiState.update { current ->
             when (current) {
                 is SignInUiState.SignInPanel -> current.copy(rememberMe = rememberMe)
@@ -137,16 +161,8 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
 
     fun updateSignUpFormData(formData: SignUpFormData) {
         when (formData) {
-            is SignUpFormData.StudentSignUpFormData -> {
-                cachedStudentSignUpFormData = formData
-                cachedTeacherSignUpFormData = cachedTeacherSignUpFormData
-                    ?.copyFromCommonFields(formData)
-            }
-            is SignUpFormData.TeacherSignUpFormData -> {
-                cachedTeacherSignUpFormData = formData
-                cachedStudentSignUpFormData = cachedStudentSignUpFormData
-                    ?.copyFromCommonFields(formData)
-            }
+            is SignUpFormData.StudentSignUpFormData -> cachedStudentSignUpFormData = formData
+            is SignUpFormData.TeacherSignUpFormData -> cachedTeacherSignUpFormData = formData
         }
         _uiState.update { current ->
             when (current) {
@@ -170,56 +186,58 @@ class SignInUiStateMachine : UiStateMachine<SignInUiState> {
 
     private fun transitionToSignIn(isLoading: Boolean): SignInUiState {
         val formData = cachedSignInFormData ?: SignInFormData(email = "", password = "")
-        return SignInUiState.SignInPanel(isLoading = isLoading, formData = formData, rememberMe = false)
+        return SignInUiState.SignInPanel(
+            isLoading = isLoading,
+            formData = formData,
+            rememberMe = cachedSignInRememberMe,
+            authUserTypeForForms = cachedAuthUserTypeForForms,
+        )
     }
 
     private fun transitionToStudentSignUp(isLoading: Boolean): SignInUiState {
-        val formData = cachedStudentSignUpFormData ?: cachedTeacherSignUpFormData?.toStudentSignUpFormData()
-            ?: SignUpFormData.StudentSignUpFormData(
-                name = "",
-                faculty = null,
-                email = "",
-                password = "",
-                studentId = "",
-                regNumber = "",
-                session = "",
-                batch = null,
-            )
+        val formData = cachedStudentSignUpFormData ?: SignUpFormData.StudentSignUpFormData(
+            name = "",
+            faculty = null,
+            email = "",
+            password = "",
+            studentId = "",
+            regNumber = "",
+            session = "",
+            batch = null,
+        )
         cachedStudentSignUpFormData = formData
-        return SignInUiState.SignUpPanel(isLoading, formData)
+        return SignInUiState.SignUpPanel(
+            isLoading = isLoading,
+            formData = formData,
+            authUserTypeForForms = cachedAuthUserTypeForForms,
+        )
     }
 
     private fun transitionToTeacherSignUp(isLoading: Boolean): SignInUiState {
-        val formData = cachedTeacherSignUpFormData ?: cachedStudentSignUpFormData?.toTeacherSignUpFormData()
-            ?: SignUpFormData.TeacherSignUpFormData(
-                name = "",
-                faculty = null,
-                email = "",
-                password = "",
-                department = "",
-                designation = "",
-            )
+        val formData = cachedTeacherSignUpFormData ?: SignUpFormData.TeacherSignUpFormData(
+            name = "",
+            faculty = null,
+            email = "",
+            password = "",
+            department = "",
+            designation = "",
+        )
         cachedTeacherSignUpFormData = formData
-        return SignInUiState.SignUpPanel(isLoading, formData)
+        return SignInUiState.SignUpPanel(
+            isLoading = isLoading,
+            formData = formData,
+            authUserTypeForForms = cachedAuthUserTypeForForms,
+        )
     }
 
     private fun transitionToForgotPassword(isLoading: Boolean): SignInUiState {
-        val email = cachedSignInFormData?.email
-            ?: cachedStudentSignUpFormData?.email
-            ?: cachedTeacherSignUpFormData?.email
-            ?: ""
+        val email = cachedSignInFormData?.email.orEmpty()
         return SignInUiState.ForgotPasswordPanel(isLoading, email)
     }
 
     private fun transitionToEmailVerification(isLoading: Boolean): SignInUiState {
-        val email = cachedSignInFormData?.email
-            ?: cachedStudentSignUpFormData?.email
-            ?: cachedTeacherSignUpFormData?.email
-            ?: ""
-        val password = cachedSignInFormData?.password
-            ?: cachedStudentSignUpFormData?.password
-            ?: cachedTeacherSignUpFormData?.password
-            ?: ""
+        val email = cachedSignInFormData?.email.orEmpty()
+        val password = cachedSignInFormData?.password.orEmpty()
         return SignInUiState.EmailVerificationPanel(isLoading, email, password)
     }
 }

@@ -30,9 +30,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.ActionButton
-import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.common.composable.UnderlineSelectorField
 import com.workfort.pstuian.ui.common.composable.batchDisplayLabel
 import com.workfort.pstuian.ui.signin.screendata.AuthFormFieldSpacing
@@ -55,15 +53,6 @@ internal fun SignUpAuthFormContent(
     }
     Column(modifier = Modifier.fillMaxWidth()) {
         AuthFormPanelLayout {
-            ToggleSwitch(
-                listOf("Student", "Teacher"),
-                selectedIndex = selectedIndex,
-                onSelectedIndexChange = { index ->
-                    val userType = if (index == 0) UserType.STUDENT else UserType.TEACHER
-                    onUiEvent(SignInUiEvent.SignUpUserTypeToggled(userType))
-                },
-            )
-            Spacer(modifier = Modifier.height(16.dp))
             AnimatedContent(
                 targetState = selectedIndex,
                 transitionSpec = {
