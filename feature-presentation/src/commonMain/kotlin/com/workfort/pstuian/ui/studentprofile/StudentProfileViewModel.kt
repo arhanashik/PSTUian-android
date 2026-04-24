@@ -48,6 +48,7 @@ class StudentProfileViewModel(
     fun onUiEvent(event: StudentProfileUiEvent) {
         when (event) {
             is StudentProfileUiEvent.BackClicked -> _navigation.update { StudentProfileNavigationState.GoBack }
+            is StudentProfileUiEvent.FollowClicked -> onClickFollow()
             is StudentProfileUiEvent.ImageClicked -> onClickImage(event.url)
             is StudentProfileUiEvent.CallClicked -> onClickCall()
             is StudentProfileUiEvent.EmailClicked -> onClickEmail()
@@ -85,6 +86,10 @@ class StudentProfileViewModel(
                     uiStateMachine.showProfileError(message)
                 }
         }
+    }
+
+    private fun onClickFollow() {
+        _message.update { StudentProfileMessageState.Success("Follow feature will be available soon!") }
     }
 
     private fun onClickImage(url: String) {

@@ -1,81 +1,57 @@
 package com.workfort.pstuian.ui.studentprofile.composable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.ProfileInfoItem
 import com.workfort.pstuian.featuredomain.model.ProfileInfoItemAction
 import com.workfort.pstuian.featuredomain.model.StudentProfile
+import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
-import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
-import com.workfort.pstuian.ui.common.composable.LoadingOverlay
 import com.workfort.pstuian.ui.common.composable.ProfileInfoListView
-import com.workfort.pstuian.ui.common.composable.TabView
-import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.ToggleSwitch
+import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.studentprofile.state.ProfileState
 import com.workfort.pstuian.ui.studentprofile.state.StudentProfileUiEvent
 import com.workfort.pstuian.ui.studentprofile.state.StudentProfileUiState
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.hint_upload_new_cv
 import pstuian.feature_presentation.generated.resources.txt_academic
-import pstuian.feature_presentation.generated.resources.txt_account
 import pstuian.feature_presentation.generated.resources.txt_address
 import pstuian.feature_presentation.generated.resources.txt_batch
-import pstuian.feature_presentation.generated.resources.txt_blood_donation
 import pstuian.feature_presentation.generated.resources.txt_blood_group
-import pstuian.feature_presentation.generated.resources.txt_call
-import pstuian.feature_presentation.generated.resources.txt_change_password
-import pstuian.feature_presentation.generated.resources.txt_check_in
 import pstuian.feature_presentation.generated.resources.txt_connect
 import pstuian.feature_presentation.generated.resources.txt_cv
-import pstuian.feature_presentation.generated.resources.txt_delete_account
-import pstuian.feature_presentation.generated.resources.txt_devices
-import pstuian.feature_presentation.generated.resources.txt_edit_bio
 import pstuian.feature_presentation.generated.resources.txt_email
 import pstuian.feature_presentation.generated.resources.txt_facebook
 import pstuian.feature_presentation.generated.resources.txt_faculty
-import pstuian.feature_presentation.generated.resources.txt_go_back
 import pstuian.feature_presentation.generated.resources.txt_id
 import pstuian.feature_presentation.generated.resources.txt_linked_in
-import pstuian.feature_presentation.generated.resources.txt_my_check_in_list
-import pstuian.feature_presentation.generated.resources.txt_my_donation_list
 import pstuian.feature_presentation.generated.resources.txt_name
-import pstuian.feature_presentation.generated.resources.txt_option
-import pstuian.feature_presentation.generated.resources.txt_password
 import pstuian.feature_presentation.generated.resources.txt_phone
 import pstuian.feature_presentation.generated.resources.txt_registration_number
 import pstuian.feature_presentation.generated.resources.txt_session
-import pstuian.feature_presentation.generated.resources.txt_sign_out
-import pstuian.feature_presentation.generated.resources.txt_signed_in_devices
 
 @Composable
 fun StudentProfileContentPanel(
@@ -84,9 +60,14 @@ fun StudentProfileContentPanel(
 ) {
     when (val state = uiState.profileState) {
         is ProfileState.None -> Unit
-        is ProfileState.Loading -> LoadingOverlay()
+        is ProfileState.Loading -> StudentProfileShimmer()
         is ProfileState.Available -> {
-            ProfileView(state.profile, uiState.isSignedIn, uiState.selectedTabIndex, onUiEvent)
+            ProfileView(
+                profile = state.profile,
+                isSignedIn = uiState.isSignedIn,
+                selectedTabIndex = uiState.selectedTabIndex,
+                onUiEvent = onUiEvent,
+            )
         }
         is ProfileState.Error -> {
             Column(
@@ -109,126 +90,75 @@ private fun ProfileView(
     onUiEvent: (StudentProfileUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val tabs = getStudentsTabs(isSignedIn)
-    val pagerState = rememberPagerState(pageCount = { tabs.size })
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val academicLabel = stringResource(Res.string.txt_academic)
+    val connectLabel = stringResource(Res.string.txt_connect)
 
-    LaunchedEffect(key1 = pagerState.currentPage) {
+    LaunchedEffect(pagerState.currentPage) {
         onUiEvent(StudentProfileUiEvent.TabClicked(pagerState.currentPage))
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Row(
+    Column(modifier = Modifier.fillMaxSize()) {
+        StudentProfileTopBar(
+            isSignedIn = isSignedIn,
+            profile = profile,
+            onUiEvent = onUiEvent,
+        )
+
+        val headerCardGradient = Brush.verticalGradient(
+            colors = listOf(
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.10f),
+                MaterialTheme.colorScheme.surface,
+            ),
+        )
+
+        // Header card (no elevation)
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
-                .padding(horizontal = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(headerCardGradient),
         ) {
-            IconButton(
-                onClick = { onUiEvent(StudentProfileUiEvent.BackClicked) },
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(Res.string.txt_go_back),
-                )
-            }
-            Box(contentAlignment = Alignment.BottomEnd) {
-                val imageUrl = profile.student.imageUrl
-                val imageModifier = if (imageUrl.isNullOrEmpty()) {
-                    Modifier
-                } else {
-                    Modifier.clickable {
-                        onUiEvent(StudentProfileUiEvent.ImageClicked(imageUrl))
-                    }
-                }
-                LoadAsyncUserImage(
-                    modifier = imageModifier,
-                    url = imageUrl,
-                    size = 96.dp,
-                )
-                if (isSignedIn) {
-                    Icon(
-                        Icons.Default.PhotoCamera,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .clip(CircleShape)
-                            .clickable {
-                                onUiEvent(StudentProfileUiEvent.ChangeImageClicked)
-                            },
-                    )
-                }
-            }
-            IconButton(
-                onClick = {
-                    onUiEvent(
-                        if (isSignedIn) {
-                            StudentProfileUiEvent.SignOutClicked
-                        } else {
-                            StudentProfileUiEvent.CallClicked
-                        }
-                    )
-                },
-            ) {
-                if (isSignedIn) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.Logout,
-                        contentDescription = stringResource(Res.string.txt_sign_out),
-                    )
-                } else {
-                    Icon(
-                        Icons.Filled.Call,
-                        contentDescription = stringResource(Res.string.txt_call),
-                    )
-                }
-            }
+            StudentProfileHeader(
+                profile = profile,
+                isSignedIn = isSignedIn,
+                selectedTabIndex = selectedTabIndex,
+                onUiEvent = onUiEvent,
+            )
         }
-        TitleTextSmall(
-            modifier = Modifier.padding(start = 16.dp, top = 10.dp, end = 16.dp),
-            text = profile.student.name,
+
+        // Toggle is outside content card, between header and content
+        ToggleSwitch(
+            options = listOf(academicLabel, connectLabel),
+            selectedIndex = selectedTabIndex,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            onSelectedIndexChange = { index ->
+                scope.launch { pagerState.animateScrollToPage(index) }
+            },
         )
-        profile.student.bio?.let { bio ->
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = bio,
-                textAlign = TextAlign.Center,
-            )
-        }
-        if (isSignedIn) {
-            Text(
-                text = stringResource(Res.string.txt_edit_bio),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.primary,
+
+        // Content card under the toggle switch
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.surface),
+        ) {
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable {
-                        onUiEvent(StudentProfileUiEvent.EditBioClicked)
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) { page ->
+                when (page) {
+                    0 -> getAcademicTabItems(profile).ProfileInfoListView {
+                        handleProfileInfoItemAction(it.action, onUiEvent)
                     }
-                    .padding(horizontal = 8.dp),
-            )
-        }
-        TabView(
-            tabs = getStudentsTabs(isSignedIn),
-            selectedTabIndex = selectedTabIndex,
-        ) { index ->
-            scope.launch {
-                pagerState.animateScrollToPage(index)
-            }
-        }
-        HorizontalPager(state = pagerState) { page ->
-            when (page) {
-                0 -> getStudentAcademicTabItems(profile).ProfileInfoListView {
-                    HandleProfileInfoItemAction(it.action, onUiEvent)
-                }
-                1 -> getStudentConnectTabItems(profile).ProfileInfoListView {
-                    HandleProfileInfoItemAction(it.action, onUiEvent)
-                }
-                2 -> if (isSignedIn) {
-                    getStudentOptionTabItems().ProfileInfoListView {
-                        HandleProfileInfoItemAction(it.action, onUiEvent)
+                    1 -> getConnectTabItems(profile).ProfileInfoListView {
+                        handleProfileInfoItemAction(it.action, onUiEvent)
                     }
                 }
             }
@@ -236,7 +166,9 @@ private fun ProfileView(
     }
 }
 
-private fun HandleProfileInfoItemAction(
+// ── Tab item action dispatcher ────────────────────────────────────────────────
+
+private fun handleProfileInfoItemAction(
     action: ProfileInfoItemAction,
     onUiEvent: (StudentProfileUiEvent) -> Unit,
 ) {
@@ -246,7 +178,7 @@ private fun HandleProfileInfoItemAction(
         is ProfileInfoItemAction.Call -> onUiEvent(StudentProfileUiEvent.CallClicked)
         is ProfileInfoItemAction.Email -> onUiEvent(StudentProfileUiEvent.EmailClicked)
         is ProfileInfoItemAction.DownloadCv -> onUiEvent(StudentProfileUiEvent.DownloadCvClicked(action.url))
-        is ProfileInfoItemAction.Link -> onUiEvent(StudentProfileUiEvent.ImageClicked(action.url)) // Or handle link separately if needed
+        is ProfileInfoItemAction.Link -> onUiEvent(StudentProfileUiEvent.ImageClicked(action.url))
         is ProfileInfoItemAction.Password -> onUiEvent(StudentProfileUiEvent.ChangePasswordClicked)
         is ProfileInfoItemAction.UploadCv -> onUiEvent(StudentProfileUiEvent.UploadCvClicked)
         is ProfileInfoItemAction.BloodDonationList -> onUiEvent(StudentProfileUiEvent.MyBloodDonationListClicked)
@@ -256,20 +188,12 @@ private fun HandleProfileInfoItemAction(
     }
 }
 
-@Composable
-private fun getStudentsTabs(isSignedIn: Boolean) = arrayListOf(
-    stringResource(Res.string.txt_academic),
-    stringResource(Res.string.txt_connect),
-).also {
-    if (isSignedIn) {
-        it.add(stringResource(Res.string.txt_option))
-    }
-}
+// ── Tab content builders ──────────────────────────────────────────────────────
 
 @Composable
-private fun getStudentAcademicTabItems(profile: StudentProfile) = listOf(
+private fun getAcademicTabItems(profile: StudentProfile) = listOf(
     ProfileInfoItem(stringResource(Res.string.txt_name), profile.student.name),
-    ProfileInfoItem(stringResource(Res.string.txt_id), profile.student.userId.toString()),
+    ProfileInfoItem(stringResource(Res.string.txt_id), profile.student.userId),
     ProfileInfoItem(stringResource(Res.string.txt_registration_number), profile.student.reg),
     ProfileInfoItem(stringResource(Res.string.txt_blood_group), profile.student.blood ?: "~"),
     ProfileInfoItem(stringResource(Res.string.txt_faculty), profile.faculty.title),
@@ -278,85 +202,136 @@ private fun getStudentAcademicTabItems(profile: StudentProfile) = listOf(
 )
 
 @Composable
-private fun getStudentConnectTabItems(profile: StudentProfile) = listOf(
+private fun getConnectTabItems(profile: StudentProfile) = listOf(
     ProfileInfoItem(stringResource(Res.string.txt_address), profile.student.address ?: "~"),
     ProfileInfoItem(
         stringResource(Res.string.txt_phone),
         profile.student.phone ?: "~",
-        if (profile.student.phone.isNullOrEmpty()) {
-            ProfileInfoItemAction.None
-        } else {
-            ProfileInfoItemAction.Call(profile.student.phone.orEmpty())
-        },
+        if (profile.student.phone.isNullOrEmpty()) ProfileInfoItemAction.None
+        else ProfileInfoItemAction.Call(profile.student.phone.orEmpty()),
     ),
     ProfileInfoItem(
         stringResource(Res.string.txt_email),
-        profile.student.email ?: "~",
-        if (profile.student.email.isNullOrEmpty()) {
-            ProfileInfoItemAction.None
-        } else {
-            ProfileInfoItemAction.Email(profile.student.email.orEmpty())
-        },
+        profile.student.email,
+        if (profile.student.email.isEmpty()) ProfileInfoItemAction.None
+        else ProfileInfoItemAction.Email(profile.student.email),
     ),
     ProfileInfoItem(
         stringResource(Res.string.txt_cv),
         profile.student.cvLink ?: "~",
-        if (profile.student.cvLink.isNullOrEmpty()) {
-            ProfileInfoItemAction.None
-        } else {
-            ProfileInfoItemAction.DownloadCv(profile.student.cvLink.orEmpty())
-        }
+        if (profile.student.cvLink.isNullOrEmpty()) ProfileInfoItemAction.None
+        else ProfileInfoItemAction.DownloadCv(profile.student.cvLink.orEmpty()),
     ),
     ProfileInfoItem(
         stringResource(Res.string.txt_linked_in),
         profile.student.linkedIn ?: "~",
-        if (profile.student.linkedIn.isNullOrEmpty()) {
-            ProfileInfoItemAction.None
-        } else {
-            ProfileInfoItemAction.Link(profile.student.linkedIn.orEmpty())
-        }
+        if (profile.student.linkedIn.isNullOrEmpty()) ProfileInfoItemAction.None
+        else ProfileInfoItemAction.Link(profile.student.linkedIn.orEmpty()),
     ),
     ProfileInfoItem(
         stringResource(Res.string.txt_facebook),
         profile.student.fbLink ?: "~",
-        if (profile.student.fbLink.isNullOrEmpty()) {
-            ProfileInfoItemAction.None
-        } else {
-            ProfileInfoItemAction.Link(profile.student.fbLink.orEmpty())
-        },
+        if (profile.student.fbLink.isNullOrEmpty()) ProfileInfoItemAction.None
+        else ProfileInfoItemAction.Link(profile.student.fbLink.orEmpty()),
     ),
 )
 
-@Composable
-private fun getStudentOptionTabItems() = listOf(
-    ProfileInfoItem(
-        stringResource(Res.string.txt_password),
-        stringResource(Res.string.txt_change_password),
-        ProfileInfoItemAction.Password,
+// ── Preview helpers ───────────────────────────────────────────────────────────
+
+private fun mockProfile(withBio: Boolean = true) = StudentProfile(
+    student = User.Student(
+        userId = "42",
+        studentId = 42,
+        name = "Diana Richards",
+        email = "diana.richards@pstu.ac.bd",
+        facultyId = 1,
+        phone = "+880 1711-000000",
+        address = "Patuakhali, Bangladesh",
+        bio = if (withBio) "Passionate about technology and innovation. CSE graduate." else null,
+        blood = "B+",
+        imageUrl = null,
+        reg = "2018-215-001",
+        batchId = 10,
+        session = "2018-19",
+        linkedIn = "https://linkedin.com/in/diana",
+        fbLink = "https://facebook.com/diana",
+        cvLink = null,
     ),
-    ProfileInfoItem(
-        stringResource(Res.string.txt_cv),
-        stringResource(Res.string.hint_upload_new_cv),
-        ProfileInfoItemAction.UploadCv,
-    ),
-    ProfileInfoItem(
-        stringResource(Res.string.txt_blood_donation),
-        stringResource(Res.string.txt_my_donation_list),
-        ProfileInfoItemAction.BloodDonationList,
-    ),
-    ProfileInfoItem(
-        stringResource(Res.string.txt_check_in),
-        stringResource(Res.string.txt_my_check_in_list),
-        ProfileInfoItemAction.CheckInList,
-    ),
-    ProfileInfoItem(
-        stringResource(Res.string.txt_devices),
-        stringResource(Res.string.txt_signed_in_devices),
-        ProfileInfoItemAction.SignedInDevices,
-    ),
-    ProfileInfoItem(
-        stringResource(Res.string.txt_account),
-        stringResource(Res.string.txt_delete_account),
-        ProfileInfoItemAction.DeleteAccount,
-    ),
+    faculty = Faculty(id = 1, shortTitle = "CSE", title = "Computer Science & Engineering", icon = null),
+    batch = Batch(id = 10, name = "10th Batch", title = "Batch 10", session = "2018-19", facultyId = 1, totalStudent = 120, registeredStudent = 98),
+    isSignedIn = false,
 )
+
+private fun mockUiState(
+    isSignedIn: Boolean = false,
+    withBio: Boolean = true,
+    selectedTab: Int = 0,
+) = StudentProfileUiState(
+    selectedTabIndex = selectedTab,
+    isSignedIn = isSignedIn,
+    profileState = ProfileState.Available(mockProfile(withBio)),
+)
+
+// ── Previews ──────────────────────────────────────────────────────────────────
+
+@Preview(showBackground = true, name = "Light – Not Signed In")
+@Composable
+fun StudentProfileContentPanelPreview() {
+    AppTheme {
+        StudentProfileContentPanel(uiState = mockUiState(), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Dark – Not Signed In")
+@Composable
+fun StudentProfileContentPanelDarkPreview() {
+    AppTheme(theme = ThemeMode.Dark) {
+        StudentProfileContentPanel(uiState = mockUiState(), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Signed In – Academic Tab")
+@Composable
+fun StudentProfileContentPanelSignedInPreview() {
+    AppTheme {
+        StudentProfileContentPanel(uiState = mockUiState(isSignedIn = true), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Signed In – Connect Tab")
+@Composable
+fun StudentProfileContentPanelConnectTabPreview() {
+    AppTheme {
+        StudentProfileContentPanel(uiState = mockUiState(isSignedIn = true, selectedTab = 1), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "No Bio")
+@Composable
+fun StudentProfileContentPanelNoBioPreview() {
+    AppTheme {
+        StudentProfileContentPanel(uiState = mockUiState(isSignedIn = true, withBio = false), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Shimmer Loading")
+@Composable
+fun StudentProfileContentPanelLoadingPreview() {
+    AppTheme {
+        StudentProfileContentPanel(
+            uiState = StudentProfileUiState(profileState = ProfileState.Loading),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Error")
+@Composable
+fun StudentProfileContentPanelErrorPreview() {
+    AppTheme {
+        StudentProfileContentPanel(
+            uiState = StudentProfileUiState(profileState = ProfileState.Error("Failed to load profile")),
+            onUiEvent = {},
+        )
+    }
+}

@@ -2,6 +2,7 @@ package com.workfort.pstuian.ui.studentprofile.state
 
 sealed interface StudentProfileUiEvent {
     data object BackClicked : StudentProfileUiEvent
+    data object FollowClicked : StudentProfileUiEvent
     data class ImageClicked(val url: String) : StudentProfileUiEvent
     data object CallClicked : StudentProfileUiEvent
     data object EmailClicked : StudentProfileUiEvent

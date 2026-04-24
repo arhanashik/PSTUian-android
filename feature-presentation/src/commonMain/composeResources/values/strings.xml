@@ -37,6 +37,9 @@
     <string name="txt_sign_up">Sign Up</string>
     <string name="hint_sign_up">Need a new account?</string>
     <string name="txt_student">Student</string>
+    <string name="txt_student_profile">Student Profile</string>
+    <string name="txt_follow">Follow</string>
+    <string name="txt_message">Message</string>
     <string name="txt_teacher">Teacher</string>
     <string name="hint_name">Name</string>
     <string name="hint_id">Id</string>
