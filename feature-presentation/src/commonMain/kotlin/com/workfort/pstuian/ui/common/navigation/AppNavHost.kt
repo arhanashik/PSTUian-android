@@ -26,7 +26,6 @@ import com.workfort.pstuian.ui.cvupload.CvUploadScreen
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
 import com.workfort.pstuian.ui.donate.DonateScreen
 import com.workfort.pstuian.ui.donors.DonorsScreen
-import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileScreen
 import com.workfort.pstuian.ui.faculty.FacultyScreen
 import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
@@ -35,14 +34,15 @@ import com.workfort.pstuian.ui.locationpicker.LocationPickerScreen
 import com.workfort.pstuian.ui.myblooddonationlist.MyBloodDonationListScreen
 import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListScreen
 import com.workfort.pstuian.ui.mydevicelist.MyDeviceListScreen
+import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileScreen
+import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileScreen
+import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditScreen
+import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileScreen
+import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditScreen
 import com.workfort.pstuian.ui.settings.SettingsScreen
 import com.workfort.pstuian.ui.signin.SignInScreen
 import com.workfort.pstuian.ui.splash.SplashScreen
-import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileScreen
-import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditScreen
 import com.workfort.pstuian.ui.students.StudentsScreen
-import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileScreen
-import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditScreen
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -150,14 +150,6 @@ fun AppNavHost(
                 composable<AppScreen.Students> { backStackEntry ->
                     val screen: AppScreen.Students = backStackEntry.toRoute()
                     StudentsScreen(viewModel = koinViewModel { parametersOf(screen.batchId) })
-                }
-                composable<AppScreen.Teachers> { backStackEntry ->
-                    val screen: AppScreen.Teachers = backStackEntry.toRoute()
-                    TeacherProfileScreen(viewModel = koinViewModel { parametersOf(screen.userId) })
-                }
-                composable<AppScreen.Employees> { backStackEntry ->
-                    val screen: AppScreen.Employees = backStackEntry.toRoute()
-                    EmployeeProfileScreen(viewModel = koinViewModel { parametersOf(screen.userId) })
                 }
                 composable<AppScreen.BloodDonationRequestList> {
                     BloodDonationRequestListScreen(viewModel = koinViewModel())

@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
@@ -81,11 +82,11 @@ private fun HandleNavigationState(
                 is FacultyNavigationState.GoToStudentsScreen -> {
                     navigator?.navigateTo(AppScreen.Students(it.batchId))
                 }
-                is FacultyNavigationState.GoToTeacherScreen -> {
-                    navigator?.navigateTo(AppScreen.Teachers(it.userId))
+                is FacultyNavigationState.GoToTeacherProfileScreen -> {
+                    navigator?.navigateToProfile(it.userId, UserType.TEACHER)
                 }
-                is FacultyNavigationState.GoToEmployeeScreen -> {
-                    navigator?.navigateTo(AppScreen.Employees(it.userId))
+                is FacultyNavigationState.GoToEmployeeProfileScreen -> {
+                    navigator?.navigateToProfile(it.userId, UserType.EMPLOYEE)
                 }
             }
             onNavigationHandled()
