@@ -1,12 +1,18 @@
 package com.workfort.pstuian.ui.faculty.composable
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
@@ -20,6 +26,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,51 +57,100 @@ fun BatchListItemView(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(0.75f)
-                    .padding(end = 16.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
             ) {
-                TitleTextSmall(text = batch.title ?: batch.name)
-                Text(text = batch.name, fontSize = 16.sp)
-                Row {
-                    Column(modifier = Modifier.weight(0.6f)) {
-                        LabelText(text = stringResource(Res.string.txt_total_registered_students))
-                        Text(text = batch.registeredStudent.toString(), fontSize = 14.sp)
-                    }
-                    Column(
-                        modifier = Modifier.weight(0.4f),
-                        horizontalAlignment = Alignment.End,
-                    ) {
-                        LabelText(text = stringResource(Res.string.txt_total_students))
-                        Text(text = batch.totalStudent.toString(), fontSize = 12.sp)
-                    }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    TitleTextSmall(text = batch.title ?: batch.name)
+                    Text(
+                        text = batch.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
+                InfoBadge(text = "Session ${batch.session}")
             }
-            VerticalDivider(
+
+            Row(
                 modifier = Modifier
-                    .weight(0.05f)
-                    .height(84.dp),
-                thickness = 1.dp,
-                color = Color.LightGray,
-            )
-            Column(
-                modifier = Modifier.weight(0.2f),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .fillMaxWidth()
+                    .padding(top = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Text(text = "Session", fontSize = 10.sp, color = Color.LightGray)
-                Text(text = batch.session, fontSize = 14.sp)
+                BatchMetricCard(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(Res.string.txt_total_registered_students),
+                    value = batch.registeredStudent.toString(),
+                )
+                BatchMetricCard(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(Res.string.txt_total_students),
+                    value = batch.totalStudent.toString(),
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun InfoBadge(text: String) {
+    Row(
+        modifier = Modifier
+            .defaultMinSize(minHeight = 28.dp)
+            .clip(RoundedCornerShape(99.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f))
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .height(8.dp)
+                .width(8.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary),
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun BatchMetricCard(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(1.dp),
+    ) {
+        LabelText(text = label)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 
@@ -151,60 +207,58 @@ fun TeacherListItemView(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(0.8f)
-                    .padding(end = 16.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     LoadAsyncUserImage(
                         url = teacher.imageUrl,
                         size = 42.dp,
                         modifier = Modifier.bgCircle(),
                     )
-                    Spacer(modifier = Modifier.padding(start = 16.dp))
-                    TitleTextSmall(text = teacher.name)
-                }
-                Row {
-                    Column(modifier = Modifier.weight(0.5f)) {
-                        LabelText(text = stringResource(Res.string.txt_designation))
-                        Text(text = teacher.designation, fontSize = 14.sp)
-                    }
                     Column(
-                        modifier = Modifier.weight(0.5f),
-                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
-                        LabelText(text = stringResource(Res.string.txt_department))
-                        Text(text = teacher.department, fontSize = 12.sp)
+                        TitleTextSmall(text = teacher.name)
+                        Text(
+                            text = teacher.department,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
+                }
+                IconButton(onClick = { onClickCall() }, enabled = teacher.phone.isNullOrEmpty().not()) {
+                    Icon(imageVector = Icons.Default.Call, contentDescription = "Call teacher")
                 }
             }
-            VerticalDivider(
-                modifier = Modifier
-                    .weight(0.05f)
-                    .height(84.dp),
-                thickness = 1.dp,
-                color = Color.LightGray,
-            )
-            IconButton(
-                modifier = Modifier.weight(0.15f),
-                onClick = { onClickCall() },
-                enabled = teacher.phone.isNullOrEmpty().not(),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Default.Call,
-                    contentDescription = "Call Icon",
+                BatchMetricCard(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(Res.string.txt_designation),
+                    value = teacher.designation,
+                )
+                BatchMetricCard(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(Res.string.txt_department),
+                    value = teacher.department,
                 )
             }
         }
@@ -223,36 +277,32 @@ fun CourseListItemView(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(0.8f)
-                    .padding(end = 16.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
             ) {
-                TitleTextSmall(text = course.courseCode)
-                Text(text = course.courseTitle, fontSize = 16.sp)
-            }
-            VerticalDivider(
-                modifier = Modifier
-                    .weight(0.05f)
-                    .height(64.dp),
-                thickness = 1.dp,
-                color = Color.LightGray,
-            )
-            Column(
-                modifier = Modifier.weight(0.2f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(text = course.creditHour, fontSize = 18.sp)
-                LabelText(text = stringResource(Res.string.txt_credit))
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    TitleTextSmall(text = course.courseCode)
+                    Text(
+                        text = course.courseTitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                InfoBadge(text = "${course.creditHour} ${stringResource(Res.string.txt_credit)}")
             }
         }
     }
@@ -271,60 +321,58 @@ fun EmployeeListItemView(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(0.8f)
-                    .padding(end = 16.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     LoadAsyncUserImage(
                         url = employee.imageUrl,
                         size = 42.dp,
                         modifier = Modifier.bgCircle(),
                     )
-                    Spacer(modifier = Modifier.padding(start = 16.dp))
-                    TitleTextSmall(text = employee.name)
-                }
-                Row {
-                    Column(modifier = Modifier.weight(0.5f)) {
-                        LabelText(text = stringResource(Res.string.txt_designation))
-                        Text(text = employee.designation, fontSize = 14.sp)
-                    }
                     Column(
-                        modifier = Modifier.weight(0.5f),
-                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
-                        LabelText(text = stringResource(Res.string.txt_department))
-                        Text(text = employee.department ?: "-", fontSize = 14.sp)
+                        TitleTextSmall(text = employee.name)
+                        Text(
+                            text = employee.department ?: "-",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
+                }
+                IconButton(onClick = { onClickCall() }, enabled = employee.phone.isNullOrEmpty().not()) {
+                    Icon(imageVector = Icons.Default.Call, contentDescription = "Call employee")
                 }
             }
-            VerticalDivider(
-                modifier = Modifier
-                    .weight(0.05f)
-                    .height(84.dp),
-                thickness = 1.dp,
-                color = Color.LightGray,
-            )
-            IconButton(
-                modifier = Modifier.weight(0.15f),
-                onClick = { onClickCall() },
-                enabled = employee.phone.isNullOrEmpty().not(),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Default.Call,
-                    contentDescription = "Call Icon",
+                BatchMetricCard(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(Res.string.txt_designation),
+                    value = employee.designation,
+                )
+                BatchMetricCard(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(Res.string.txt_department),
+                    value = employee.department ?: "-",
                 )
             }
         }
