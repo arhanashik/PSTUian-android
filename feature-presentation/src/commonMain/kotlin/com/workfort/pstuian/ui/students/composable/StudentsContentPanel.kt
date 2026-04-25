@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.LabelText
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
+import com.workfort.pstuian.ui.common.composable.LoadingOverlay
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.students.state.StudentsUiEvent
 import com.workfort.pstuian.ui.students.state.StudentsUiState
@@ -45,33 +45,26 @@ import pstuian.feature_presentation.generated.resources.txt_registration_number
 
 @Composable
 fun StudentsContentPanel(
-    uiState: StudentsUiState,
+    uiState: StudentsUiState.Content,
     onUiEvent: (StudentsUiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        if (uiState.error != null) {
+        if (uiState.students.isEmpty() && uiState.isLoading) {
+            LoadingOverlay()
+            return
+        }
+
+        if (uiState.students.isEmpty()) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                AnimatedErrorView(modifier = Modifier.fillMaxWidth())
-            }
-        } else if (uiState.items.isEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
-                }
+                AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
             }
         } else {
             StudentListView(
-                students = uiState.items,
+                students = uiState.students,
                 isLoading = uiState.isLoading,
                 onUiEvent = onUiEvent,
             )

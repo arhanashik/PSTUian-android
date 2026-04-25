@@ -31,13 +31,12 @@ class StudentsViewModel(
     val navigation: StateFlow<StudentsNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {
-        loadStudentList()
+        loadData()
     }
 
     fun onUiEvent(event: StudentsUiEvent) {
         when (event) {
-            is StudentsUiEvent.LoadStudentList -> loadStudentList()
-            is StudentsUiEvent.BackClicked -> onClickBack()
+            is StudentsUiEvent.BackClicked -> _navigation.update { StudentsNavigationState.GoBack }
             is StudentsUiEvent.StudentClicked -> onClickStudent(event.student)
             is StudentsUiEvent.CallClicked -> onClickCall(event.phoneNumber)
         }
@@ -46,10 +45,6 @@ class StudentsViewModel(
     fun onMessageHandled() = _message.update { null }
 
     fun onNavigationHandled() = _navigation.update { null }
-
-    private fun onClickBack() {
-        _navigation.update { StudentsNavigationState.GoBack }
-    }
 
     private fun onClickStudent(student: User.Student) {
         _navigation.update { StudentsNavigationState.GoToStudentProfile(student.studentId) }
@@ -63,43 +58,38 @@ class StudentsViewModel(
         }
     }
 
-    private fun loadStudentList() {
+    private fun loadData() {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            uiStateMachine.showOperationLoading()
             facultyRepo.getBatch(batchId)
                 .onSuccess { batch ->
-                    uiStateMachine.updateTitle(batch.title ?: batch.name)
+                    uiStateMachine.showInitialState(title = batch.title ?: batch.name)
                     getStudents(batch.facultyId, batchId)
                 }
                 .onFailure {
-                    uiStateMachine.updateTitle("Batch")
+                    uiStateMachine.showError(it.message ?: "Failed to load data")
                 }
         }
     }
 
-    private val studentListCache = arrayListOf<User.Student>()
+    private val studentListCache = mutableListOf<User.Student>()
     private var hasMoreData = true
     private fun getStudents(facultyId: Int, batchId: Int) {
         if (hasMoreData.not()) return
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            uiStateMachine.showLoading(true)
-            if (studentListCache.isNotEmpty()) {
-                uiStateMachine.showContent(studentListCache.toList())
-            }
 
-            runCatching {
-                val students = facultyRepo.getStudents(facultyId, batchId, forceRefresh = true)
-                studentListCache.clear()
-                studentListCache.addAll(students)
-                uiStateMachine.showContent(studentListCache.toList())
-            }.onFailure {
-                val message = it.message ?: "Failed to load students"
-                hasMoreData = false
-                if (studentListCache.isEmpty()) {
-                    uiStateMachine.showError(message)
-                } else {
-                    uiStateMachine.showLoading(false)
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            uiStateMachine.showContentLoading(isLoading = true)
+            facultyRepo.getStudents(facultyId, batchId, forceRefresh = true)
+                .onSuccess { students ->
+                    studentListCache.clear()
+                    studentListCache.addAll(students)
+                    uiStateMachine.showStudents(studentListCache)
                 }
-            }
+                .onFailure {
+                    uiStateMachine.showContentLoading(isLoading = false)
+                    val message = it.message ?: "Failed to load students"
+                    uiStateMachine.showError(message)
+                }
         }
     }
 }

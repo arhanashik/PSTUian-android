@@ -10,22 +10,36 @@ import kotlinx.coroutines.flow.update
 
 class StudentsUiStateMachine : UiStateMachine<StudentsUiState> {
 
-    private val _uiState = MutableStateFlow(StudentsUiState())
+    private val _uiState = MutableStateFlow<StudentsUiState>(StudentsUiState.None)
     override val uiState: StateFlow<StudentsUiState> = _uiState.asStateFlow()
 
-    fun showLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isLoading = isLoading) }
+    fun showInitialState(title: String) {
+        _uiState.update { StudentsUiState.Content(title = title) }
     }
 
-    fun updateTitle(title: String) {
-        _uiState.update { it.copy(title = title) }
+    fun showOperationLoading() {
+        _uiState.update { StudentsUiState.Loading }
     }
 
-    fun showContent(items: List<User.Student>) {
-        _uiState.update { it.copy(items = items, isLoading = false, error = null) }
+    fun showContentLoading(isLoading: Boolean) {
+        _uiState.update { current ->
+            when (current) {
+                is StudentsUiState.Content -> current.copy(isLoading = isLoading)
+                else -> current
+            }
+        }
     }
 
-    fun showError(message: String) {
-        _uiState.update { it.copy(error = message, isLoading = false) }
+    fun showStudents(students: List<User.Student>) {
+        _uiState.update { current ->
+            when (current) {
+                is StudentsUiState.Content -> current.copy(students = students, isLoading = false)
+                else -> current
+            }
+        }
+    }
+
+    fun showError(error: String) {
+        _uiState.update { StudentsUiState.Error(error) }
     }
 }

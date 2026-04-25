@@ -72,15 +72,18 @@ class FacultyRepositoryImpl(
         facultyId: Int,
         batchId: Int,
         forceRefresh: Boolean,
-    ): List<User.Student> {
+    ): DomainResult<List<User.Student>> {
         val key = "${facultyId}_${batchId}"
-        if (forceRefresh || !studentsCache.containsKey(key)) {
-            helper.getStudents(facultyId, batchId)
-                .toDomainResult(domainErrorMapper)
-                .map { dtos -> dtos.map { it.toModel() } }
-                .onSuccess { studentsCache[key] = it }
+
+        val cache = studentsCache[key]
+        if (!forceRefresh && !cache.isNullOrEmpty()) {
+            return DomainResult.success(cache)
         }
-        return studentsCache[key] ?: emptyList()
+
+        return helper.getStudents(facultyId, batchId)
+            .toDomainResult(domainErrorMapper)
+            .map { dtos -> dtos.map { it.toModel() } }
+            .onSuccess { studentsCache[key] = it }
     }
 
     override suspend fun getTeachers(facultyId: Int, forceRefresh: Boolean): DomainResult<List<User.Teacher>> {
