@@ -50,6 +50,7 @@ fun BatchListItemView(
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
             .clickable { onClickBatch(batch) },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -160,6 +161,7 @@ fun TeacherListItemView(
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
             .clickable { onClickTeacher() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -230,6 +232,7 @@ fun CourseListItemView(
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
             .clickable { onClickCourse(course) },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -274,6 +277,7 @@ fun EmployeeListItemView(
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
             .clickable { onClickEmployee() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
