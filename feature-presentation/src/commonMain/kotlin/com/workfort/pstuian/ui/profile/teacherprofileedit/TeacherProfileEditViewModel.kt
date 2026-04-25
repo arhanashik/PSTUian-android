@@ -81,15 +81,10 @@ class TeacherProfileEditViewModel(
     }
 
     private fun onClickFaculty() = newProfileCache?.let { profile ->
-        _navigation.update {
-            TeacherProfileEditNavigationState.GoToFacultyPickerScreen(
-                mode = FacultySelectionMode.FACULTY,
-                facultyId = profile.teacher.facultyId,
-            )
-        }
+        // TODO Show faculty picker
     }
 
-    private suspend fun onChangeFaculty(facultyId: Int) {
+    private fun onChangeFaculty(facultyId: Int) {
         if (newProfileCache?.faculty?.id == facultyId) return
         _message.update { TeacherProfileEditMessageState.Loading(cancelable = false) }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {

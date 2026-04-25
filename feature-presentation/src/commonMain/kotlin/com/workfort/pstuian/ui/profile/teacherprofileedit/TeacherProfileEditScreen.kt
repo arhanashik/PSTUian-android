@@ -30,7 +30,6 @@ import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.profile.teacherprofileedit.composable.TeacherProfileEditContentPanel
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditMessageState
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditNavigationState
@@ -170,15 +169,6 @@ private fun HandleNavigationState(
             when (it) {
                 is TeacherProfileEditNavigationState.GoBack -> {
                     navigator?.goBack()
-                }
-                is TeacherProfileEditNavigationState.GoToFacultyPickerScreen -> {
-                    navigator?.navigateTo(
-                        AppScreen.FacultyPicker(
-                            mode = it.mode,
-                            facultyId = it.facultyId,
-                            batchId = null,
-                        )
-                    )
                 }
             }
             onNavigationHandled()

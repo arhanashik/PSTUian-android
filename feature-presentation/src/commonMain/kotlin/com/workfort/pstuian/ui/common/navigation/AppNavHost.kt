@@ -28,7 +28,6 @@ import com.workfort.pstuian.ui.donate.DonateScreen
 import com.workfort.pstuian.ui.donors.DonorsScreen
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileScreen
 import com.workfort.pstuian.ui.faculty.FacultyScreen
-import com.workfort.pstuian.ui.facultypicker.FacultyPickerScreen
 import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
 import com.workfort.pstuian.ui.imageupload.ImageUploadScreen
@@ -241,17 +240,6 @@ fun AppNavHost(
                 }
                 composable<AppScreen.Donate> {
                     DonateScreen(viewModel = koinViewModel())
-                }
-                composable<AppScreen.FacultyPicker>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
-                    val screen: AppScreen.FacultyPicker = backStackEntry.toRoute()
-                    FacultyPickerScreen(
-                        viewModel = koinViewModel {
-                            parametersOf(screen.mode, screen.facultyId ?: -1, screen.batchId ?: -1)
-                        },
-                        navController = navController,
-                    )
                 }
                 composable<AppScreen.ImageUpload>(
                     typeMap = navTypeMap

@@ -174,15 +174,6 @@ private fun HandleNavigationState(
                 is StudentProfileEditNavigationState.GoBack -> {
                     navigator.goBack()
                 }
-                is StudentProfileEditNavigationState.GoToFacultyPickerScreen -> {
-                    navigator.navigateTo(
-                        AppScreen.FacultyPicker(
-                            mode = it.mode,
-                            facultyId = it.facultyId,
-                            batchId = it.batchId,
-                        )
-                    )
-                }
             }
             onNavigationHandled()
         }

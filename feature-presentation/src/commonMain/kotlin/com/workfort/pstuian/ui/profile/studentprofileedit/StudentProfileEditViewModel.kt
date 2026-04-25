@@ -78,23 +78,11 @@ class StudentProfileEditViewModel(
     }
 
     private fun onClickFaculty() = newProfileCache?.let { profile ->
-        _navigation.update {
-            StudentProfileEditNavigationState.GoToFacultyPickerScreen(
-                mode = FacultySelectionMode.BOTH,
-                facultyId = profile.student.facultyId,
-                batchId = profile.student.batchId,
-            )
-        }
+        // TODO show faculty picker bottom sheet
     }
 
     private fun onClickBatch() = newProfileCache?.let { profile ->
-        _navigation.update {
-            StudentProfileEditNavigationState.GoToFacultyPickerScreen(
-                mode = FacultySelectionMode.BATCH,
-                facultyId = profile.student.facultyId,
-                batchId = profile.student.batchId,
-            )
-        }
+        // TODO show batch picker bottom sheet
     }
 
     private fun onChangeProfile(profile: StudentProfile) {

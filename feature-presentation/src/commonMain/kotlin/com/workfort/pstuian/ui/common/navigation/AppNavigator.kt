@@ -1,6 +1,5 @@
 package com.workfort.pstuian.ui.common.navigation
 
-import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -55,7 +54,6 @@ class AppNavigator {
     suspend fun navigateToDeleteAccount(userId: String, userType: UserType) = navigateTo(AppScreen.DeleteAccount)
     suspend fun navigateToLocationPicker() = navigateTo(AppScreen.LocationPicker)
     suspend fun navigateToDonate() = navigateTo(AppScreen.Donate)
-    suspend fun navigateToFacultyPicker(mode: FacultySelectionMode, facultyId: Int? = null, batchId: Int? = null) = navigateTo(AppScreen.FacultyPicker(mode, facultyId, batchId))
     suspend fun navigateToImageUpload(userId: String, userType: UserType) = navigateTo(AppScreen.ImageUpload(userId, userType))
     suspend fun navigateToImagePreview(encodedImageUrl: String) = navigateTo(AppScreen.ImagePreview(encodedImageUrl))
     suspend fun navigateToDownloadCv(userId: String, userType: UserType, url: String) = navigateTo(AppScreen.DownloadCv(userId, userType, url))

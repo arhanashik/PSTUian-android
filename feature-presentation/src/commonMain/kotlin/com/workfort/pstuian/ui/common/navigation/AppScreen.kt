@@ -60,12 +60,6 @@ sealed interface AppScreen {
     @Serializable
     object Donate : AppScreen
     @Serializable
-    data class FacultyPicker(
-        val mode: FacultySelectionMode,
-        val facultyId: Int?,
-        val batchId: Int?,
-    ) : AppScreen
-    @Serializable
     data class ImageUpload(val userId: String, val userType: UserType) : AppScreen
     @Serializable
     data class ImagePreview(val encodedImageUrl: String) : AppScreen
