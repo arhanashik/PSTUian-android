@@ -16,7 +16,7 @@ class BloodDonationRequestApiHelperImpl(
 
     override suspend fun get(id: Int): BloodDonationRequestDto {
         val response = service.get(id)
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
 
         return response.data?: throw Exception("No data")
     }
@@ -30,7 +30,7 @@ class BloodDonationRequestApiHelperImpl(
         info: String?
     ): BloodDonationRequestDto {
         val response = service.insert(userId, userType, bloodGroup, beforeDate, contact, info)
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
 
         return response.data?: throw Exception("No data")
     }
@@ -43,14 +43,14 @@ class BloodDonationRequestApiHelperImpl(
         info: String
     ): BloodDonationRequestDto {
         val response = service.update(id, bloodGroup, beforeDate, contact, info)
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
 
         return response.data?: throw Exception("No data")
     }
 
     override suspend fun delete(id: Int): Boolean {
         val response = service.delete(id)
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
 
         return true
     }

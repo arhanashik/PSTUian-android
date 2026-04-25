@@ -24,7 +24,7 @@ class SupportApiHelperImpl(private val service: SupportApiService) :
         query: String
     ): String {
         val response = service.sendInquiry(name, email, type, query)
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
 
         return response.message
     }

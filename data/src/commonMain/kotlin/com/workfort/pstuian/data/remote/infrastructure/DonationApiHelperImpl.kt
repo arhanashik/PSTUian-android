@@ -20,7 +20,7 @@ class DonationApiHelperImpl(private val service: DonationApiService) :
     DonationApiHelper {
     override suspend fun getDonationOption(): String {
         val response = service.getDonationOption()
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
 
         return response.data?: ""
     }
@@ -32,14 +32,14 @@ class DonationApiHelperImpl(private val service: DonationApiService) :
         reference: String
     ): Int {
         val response = service.saveDonation(name, info, email, reference)
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
 
         return response.data?: -1
     }
 
     override suspend fun getDonors(): List<DonorDto> {
         val response = service.getDonors()
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
 
         return response.data?: emptyList()
     }

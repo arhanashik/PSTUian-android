@@ -144,7 +144,7 @@ private fun HandleNavigationState(
                     // TODO navigate to image preview
                 }
                 is HomeNavigationState.ContactUsScreen -> {
-                    // TODO navigate to contact us
+                    navigator?.navigateToContactUs()
                 }
                 is HomeNavigationState.DonorsScreen -> {
                     navigator?.navigateToBloodDonationRequestList()

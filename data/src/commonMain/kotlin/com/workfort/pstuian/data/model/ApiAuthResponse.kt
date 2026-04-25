@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ApiAuthResponse<T> (
     val code: String = "",
-    val success: Boolean = false,
     val message: String = "",
     val data: T? = null,
     @SerialName("auth_token")

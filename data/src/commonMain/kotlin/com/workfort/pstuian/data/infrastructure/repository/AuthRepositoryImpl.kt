@@ -159,10 +159,12 @@ class AuthRepositoryImpl(
         val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
         val userId = getAuthUser()?.userId ?: return DomainResult.failure(invalidAuthUser)
 
-        firebaseAuthDataSource.signOut()
         return helper.signOut(userId, userType.type, deviceId, fromAllDevice)
             .toDomainResult(domainErrorMapper)
-            .onSuccess { removeAuthPrefs() }
+            .onSuccess {
+                firebaseAuthDataSource.signOut()
+                removeAuthPrefs()
+            }
     }
 
     override suspend fun changePassword(

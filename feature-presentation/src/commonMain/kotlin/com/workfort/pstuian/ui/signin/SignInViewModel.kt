@@ -103,23 +103,27 @@ class SignInViewModel(
 
     private fun openSignUpFacultySelectionSheet() {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            val faculties = facultyRepository.getFaculties(forceRefresh = false)
-            if (faculties.isEmpty()) {
-                _message.update {
-                    SignInMessageState.Error("No faculties found. Please try again later.")
+            facultyRepository.getFaculties()
+                .onSuccess { faculties ->
+                    if (faculties.isEmpty()) {
+                        _message.update { SignInMessageState.Error("No faculties found. Please try again later.") }
+                    } else {
+                        _message.update {
+                            SignInMessageState.FacultySelection(
+                                faculties = faculties,
+                                selectedFacultyId = currentSignUpFacultyId(),
+                                onSaveAndContinue = { faculty ->
+                                    _message.update { null }
+                                    faculty?.let { applySignUpFaculty(it) }
+                                },
+                            )
+                        }
+                    }
                 }
-            } else {
-                _message.update {
-                    SignInMessageState.FacultySelection(
-                        faculties = faculties,
-                        selectedFacultyId = currentSignUpFacultyId(),
-                        onSaveAndContinue = { faculty ->
-                            _message.update { null }
-                            faculty?.let { applySignUpFaculty(it) }
-                        },
-                    )
+                .onFailure {
+                    val message = it.message ?: "Failed to load faculties. Please try again later."
+                    _message.update { SignInMessageState.Error(message) }
                 }
-            }
         }
     }
 

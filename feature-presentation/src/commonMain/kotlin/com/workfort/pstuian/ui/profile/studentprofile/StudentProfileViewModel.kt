@@ -14,10 +14,10 @@ import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetStudentProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
+import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
 import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileMessageState
 import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileNavigationState
-import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -121,7 +121,12 @@ class StudentProfileViewModel(
 
     private fun onClickSignOut() {
         if (profileCache?.isSignedIn != true) return
-        _message.update { StudentProfileMessageState.ConfirmSignOut(::signOut) }
+        _message.update {
+            StudentProfileMessageState.ConfirmSignOut {
+                messageHandled()
+                signOut()
+            }
+        }
     }
 
     private fun onClickTab(index: Int) {
@@ -292,17 +297,18 @@ class StudentProfileViewModel(
     }
 
     fun signOut() {
-        val userType = settingsRepository.getUserType() ?: return
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
-        viewModelScope.launch {
-            runCatching {
-                authRepo.signOut(userType, fromAllDevice = false)
-                messageHandled()
-                loadProfile()
-            }.onFailure {
-                val message = it.message ?: "Signing out failed. Please try again."
-                _message.update { StudentProfileMessageState.Error(message) }
-            }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            authRepo.signOut(UserType.STUDENT)
+                .onSuccess {
+                    messageHandled()
+                    loadProfile()
+                }
+                .onFailure {
+                    messageHandled()
+                    val message = it.message ?: "Signing out failed. Please try again."
+                    _message.update { StudentProfileMessageState.Error(message) }
+                }
         }
     }
 }

@@ -121,11 +121,14 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         fromAllDevice: Boolean,
     ): NetworkResult<Unit> {
         return runCatching {
-            if (fromAllDevice) {
-                service.signOutFromAllDevice(userId, userType, deviceId).toNetworkResult()
+            val response = if (fromAllDevice) {
+                service.signOutFromAllDevice(userId, userType, deviceId)
             } else {
-                service.signOut(userId, userType, deviceId).toNetworkResult()
+                service.signOut(userId, userType, deviceId)
             }
+
+            return if (response.isSuccess) NetworkResult.success(Unit)
+            else NetworkResult.failure(NetworkError(response.responseCode))
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

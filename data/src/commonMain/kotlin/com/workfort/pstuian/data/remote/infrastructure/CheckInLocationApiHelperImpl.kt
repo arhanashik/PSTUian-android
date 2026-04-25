@@ -16,7 +16,7 @@ class CheckInLocationApiHelperImpl(
 
     override suspend fun get(id: Int): CheckInLocationDto {
         service.get(id).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return it.data?: throw Exception("No data")
         }
     }
@@ -27,7 +27,7 @@ class CheckInLocationApiHelperImpl(
         limit: Int
     ): List<CheckInLocationDto> {
         service.search(query, page, limit).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return it.data?: throw Exception("No data")
         }
     }
@@ -41,7 +41,7 @@ class CheckInLocationApiHelperImpl(
         link: String?
     ): CheckInLocationDto {
         service.insert(userId, userType, name, details, imageUrl, link).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return it.data?: throw Exception("No data")
         }
     }

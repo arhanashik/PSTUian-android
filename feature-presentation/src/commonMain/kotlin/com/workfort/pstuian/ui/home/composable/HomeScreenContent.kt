@@ -76,7 +76,7 @@ private fun ProfileView(isSignedInUser: Boolean, onUiEvent: (HomeUiEvent) -> Uni
             ) {
                 Text(
                     text = stringResource(Res.string.txt_sign_in),
-                    style = TextStyle.label1.copy(color = AppColors.textPrimary),
+                    style = TextStyle.label1.copy(color = AppColors.onPrimary),
                 )
             }
         }

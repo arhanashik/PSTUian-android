@@ -28,20 +28,20 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
 
     override suspend fun changeProfileImage(id: Int, imageUrl: String): Boolean {
         val response = service.changeProfileImage(id, imageUrl)
-        if(!response.success) throw Exception(response.message)
-        return response.success
+        if(!response.isSuccess) throw Exception(response.message)
+        return response.isSuccess
     }
 
     override suspend fun changeName(id: Int, name: String): Boolean {
         val response = service.changeName(id, name)
-        if(!response.success) throw Exception(response.message)
-        return response.success
+        if(!response.isSuccess) throw Exception(response.message)
+        return response.isSuccess
     }
 
     override suspend fun changeBio(id: Int, bio: String): Boolean {
         val response = service.changeBio(id, bio)
-        if(!response.success) throw Exception(response.message)
-        return response.success
+        if(!response.isSuccess) throw Exception(response.message)
+        return response.isSuccess
     }
 
     override suspend fun changeAcademicInfo(
@@ -54,7 +54,7 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     ): TeacherDto {
         val response = service.changeAcademicInfo(id, name, designation, department,
             blood, facultyId)
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
         return response.data?: throw Exception("Empty data")
     }
 
@@ -69,7 +69,7 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     ): TeacherDto {
         val response = service.changeConnectInfo(id, address, phone,
             email, oldEmail, linkedIn, fbLink)
-        if(!response.success) throw Exception(response.message)
+        if(!response.isSuccess) throw Exception(response.message)
         return response.data?: throw Exception("Empty data")
     }
 }

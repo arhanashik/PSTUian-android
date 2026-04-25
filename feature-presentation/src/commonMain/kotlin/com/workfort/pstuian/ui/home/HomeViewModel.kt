@@ -8,11 +8,13 @@ import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
-import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
+import com.workfort.pstuian.featuredomain.usecase.ClearCacheUseCase
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.home.state.HomeMessageState
@@ -32,7 +34,7 @@ class HomeViewModel(
     private val facultyRepo: FacultyRepository,
     private val settingsRepository: SettingsRepository,
     private val sharedScreenData: SharedScreenData,
-    private val clearAllDataUseCase: ClearAllDataUseCase,
+    private val clearCacheUseCase: ClearCacheUseCase,
     private val uiStateMachine: HomeUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<HomeUiState>(uiStateMachine) {
@@ -100,28 +102,28 @@ class HomeViewModel(
     private fun loadSliders() {
         uiStateMachine.showSliderLoading()
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                sliderRepo.getSliders()
-            }.onSuccess {
-                uiStateMachine.showSliders(it)
-            }.onFailure {
-                val message = it.message ?: "Failed to load slides"
-                uiStateMachine.showSliderError(message)
-            }
+            sliderRepo.getSliders()
+                .onSuccess {
+                    uiStateMachine.showSliders(it)
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load slides"
+                    uiStateMachine.showSliderError(message)
+                }
         }
     }
 
     private fun loadFaculties() {
         uiStateMachine.showFacultyLoading()
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                facultyRepo.getFaculties()
-            }.onSuccess {
-                uiStateMachine.showFaculties(it)
-            }.onFailure {
-                val message = it.message ?: "Failed to load faculties"
-                uiStateMachine.showFacultyError(message)
-            }
+            facultyRepo.getFaculties()
+                .onSuccess {
+                    uiStateMachine.showFaculties(it)
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load faculties"
+                    uiStateMachine.showFacultyError(message)
+                }
         }
     }
 
@@ -245,7 +247,7 @@ class HomeViewModel(
     fun clearAllData() {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
-                clearAllDataUseCase()
+                clearCacheUseCase()
             }.onSuccess {
                 _navigation.update { HomeNavigationState.SplashScreen }
             }.onFailure {

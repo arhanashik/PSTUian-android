@@ -3,31 +3,28 @@ package com.workfort.pstuian.data.infrastructure.repository
 import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.SliderApiHelper
+import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.Slider
 import com.workfort.pstuian.featuredomain.model.map
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
-import io.github.aakira.napier.Napier
 
 class SliderRepositoryImpl(
     private val helper: SliderApiHelper,
     private val domainErrorMapper: DomainErrorMapper,
 ) : SliderRepository {
-    private val cache = mutableListOf<Slider>()
+    private val cache = mutableSetOf<Slider>()
 
-    override suspend fun getSliders(forceRefresh: Boolean): List<Slider> {
-        if (forceRefresh || cache.isEmpty()) {
-            helper.getAll().toDomainResult(domainErrorMapper).map { dtos ->
-                val newData = dtos.map { it.toModel() }
-                cache.clear()
-                cache.addAll(newData)
-                Napier.e("testR data")
-                Napier.e("testR $newData")
+    override suspend fun getSliders(forceRefresh: Boolean): DomainResult<List<Slider>> {
+        if (forceRefresh) cache.clear()
+
+        if (cache.isNotEmpty()) return DomainResult.success(cache.toList())
+
+        return helper.getAll()
+            .toDomainResult(domainErrorMapper)
+            .map { dtos -> dtos.map { it.toModel() } }
+            .onSuccess {
+                cache.addAll(it)
             }
-        }
-        return cache
-    }
-
-    override suspend fun deleteAll() {
-        cache.clear()
     }
 }

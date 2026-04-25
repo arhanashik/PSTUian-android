@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.workfort.pstuian.ui.common.composable.AppBar
+import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
@@ -57,7 +58,7 @@ fun ContactUsScreen(viewModel: ContactUsViewModel) {
             AppBar(
                 title = stringResource(Res.string.label_contact_us),
                 navigation = {
-                    viewModel.onUiEvent(ContactUsUiEvent.OnClickBack)
+                    NavigationButton { viewModel.onUiEvent(ContactUsUiEvent.OnClickBack) }
                 },
                 scrollBehavior = scrollBehavior,
             )

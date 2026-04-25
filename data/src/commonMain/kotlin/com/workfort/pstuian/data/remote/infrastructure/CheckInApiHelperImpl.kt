@@ -26,7 +26,7 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         limit: Int
     ): List<CheckInDto> {
         service.getAllByLocation(locationId, page, limit).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return it.data?: throw Exception("No data")
         }
     }
@@ -41,14 +41,14 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         limit: Int
     ): List<CheckInDto> {
         service.getAllByUser(userId, userType, page, limit).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return it.data?: throw Exception("No data")
         }
     }
 
     override suspend fun getMyCheckIn(userId: String, userType: String): CheckInDto {
         service.get(userId, userType).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return it.data ?: throw Exception("No data")
         }
     }
@@ -59,21 +59,21 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         userType: String
     ): CheckInDto {
         service.checkIn(locationId, userId, userType).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return it.data?: throw Exception("No data")
         }
     }
 
     override suspend fun updatePrivacy(checkInId: Int, privacy: String): CheckInDto {
         service.updatePrivacy(checkInId, privacy).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return it.data?: throw Exception("No data")
         }
     }
 
     override suspend fun delete(id: Int): Boolean {
         service.delete(id).also {
-            if(!it.success) throw Exception(it.message)
+            if(!it.isSuccess) throw Exception(it.message)
             return true
         }
     }

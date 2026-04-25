@@ -7,7 +7,7 @@ import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.User
 
 interface FacultyRepository {
-    suspend fun getFaculties(forceRefresh: Boolean = false): List<Faculty>
+    suspend fun getFaculties(forceRefresh: Boolean = false): DomainResult<List<Faculty>>
 
     suspend fun getFaculty(id: Int): DomainResult<Faculty>
 
@@ -30,5 +30,5 @@ interface FacultyRepository {
 
     suspend fun getEmployee(id: Int): DomainResult<User.Employee>
 
-    suspend fun deleteAll()
+    suspend fun clearCache()
 }

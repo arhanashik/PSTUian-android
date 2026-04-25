@@ -25,17 +25,18 @@ class FacultyRepositoryImpl(
     private val coursesCache = mutableMapOf<Int, List<Course>>()
     private val employeesCache = mutableMapOf<Int, List<User.Employee>>()
 
-    override suspend fun getFaculties(forceRefresh: Boolean): List<Faculty> {
-        if (forceRefresh || facultiesCache.isEmpty()) {
-            helper.getFaculties()
-                .toDomainResult(domainErrorMapper)
-                .map { dtos -> dtos.map { it.toModel() } }
-                .onSuccess { faculties ->
-                    facultiesCache.clear()
-                    facultiesCache.addAll(faculties)
-                }
-        }
-        return facultiesCache.toMutableList()
+    override suspend fun getFaculties(forceRefresh: Boolean): DomainResult<List<Faculty>> {
+        if (forceRefresh) facultiesCache.clear()
+
+        if (facultiesCache.isNotEmpty()) return DomainResult.success(facultiesCache.toList())
+
+        return helper.getFaculties()
+            .toDomainResult(domainErrorMapper)
+            .map { dtos -> dtos.map { it.toModel() } }
+            .onSuccess { faculties ->
+                facultiesCache.clear()
+                facultiesCache.addAll(faculties)
+            }
     }
 
     override suspend fun getFaculty(id: Int): DomainResult<Faculty> {
@@ -131,7 +132,7 @@ class FacultyRepositoryImpl(
         return DomainResult.failure(DomainError(DomainErrorCode.Auth.UserNotFound)) // TODO: Api call
     }
 
-    override suspend fun deleteAll() {
+    override suspend fun clearCache() {
         facultiesCache.clear()
         batchesCache.clear()
         studentsCache.clear()

@@ -2,7 +2,7 @@ package com.workfort.pstuian.featuredomain.di
 
 import com.workfort.pstuian.featuredomain.framework.coroutine.AppCoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
-import com.workfort.pstuian.featuredomain.usecase.ClearAllDataUseCase
+import com.workfort.pstuian.featuredomain.usecase.ClearCacheUseCase
 import com.workfort.pstuian.featuredomain.usecase.GetEmployeeProfileUserUseCase
 import com.workfort.pstuian.featuredomain.usecase.GetInitialScreenUseCase
 import com.workfort.pstuian.featuredomain.usecase.GetSignedInUserUseCase
@@ -18,7 +18,7 @@ private val frameworkModule = module {
 }
 
 private val useCaseModule = module {
-    factoryOf(::ClearAllDataUseCase)
+    factoryOf(::ClearCacheUseCase)
     factoryOf(::GetInitialScreenUseCase)
     factoryOf(::GetSignedInUserUseCase)
     factoryOf(::GetStudentProfileUserUseCase)
