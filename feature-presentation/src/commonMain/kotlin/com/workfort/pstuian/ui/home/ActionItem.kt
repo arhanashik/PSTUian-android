@@ -77,6 +77,11 @@ val optionsItems = listOf(
         action = Action.CheckIn,
     ),
     ActionItem(
+        Res.string.txt_settings,
+        Icons.Default.Settings,
+        action = Action.Settings,
+    ),
+    ActionItem(
         Res.string.txt_rate_app,
         Icons.Default.Star,
         action = Action.RateApp,
@@ -85,11 +90,6 @@ val optionsItems = listOf(
         Res.string.label_clear_data,
         Icons.Outlined.Delete,
         action = Action.ClearData,
-    ),
-    ActionItem(
-        Res.string.txt_settings,
-        Icons.Default.Settings,
-        action = Action.Settings,
     ),
     ActionItem(
         Res.string.txt_donate,

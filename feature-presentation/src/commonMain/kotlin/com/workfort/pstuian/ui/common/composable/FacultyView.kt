@@ -1,5 +1,6 @@
 package com.workfort.pstuian.ui.common.composable
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,14 +28,21 @@ import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.ic_education_gray
 
 @Composable
-fun FacultyView(modifier: Modifier, faculty: Faculty) {
+fun FacultyView(
+    modifier: Modifier,
+    faculty: Faculty,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(24.dp)
     ElevatedCard(
-        modifier = modifier.clip(RoundedCornerShape(24.dp)),
+        modifier = modifier
+            .clip(shape)
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = shape,
     ) {
         Column(
             modifier = Modifier

@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -121,13 +120,11 @@ fun HomeContentPanel(
                 InformationCornerView(
                     item = item,
                     isLeftItem = index % 2 == 0,
+                    onClick = { onUiEvent(HomeUiEvent.ActionItemClicked(item)) },
                     modifier = Modifier
                         .fillMaxWidth(0.48f)
                         .height(84.dp)
-                        .padding(vertical = 8.dp)
-                        .clickable {
-                            onUiEvent(HomeUiEvent.ActionItemClicked(item))
-                        },
+                        .padding(vertical = 8.dp),
                 )
             }
         }
@@ -153,13 +150,11 @@ fun HomeContentPanel(
             optionsItems.forEach { item ->
                 OptionView(
                     item = item,
+                    onClick = { onUiEvent(HomeUiEvent.ActionItemClicked(item)) },
                     modifier = Modifier
                         .fillMaxWidth(0.3f)
                         .height(84.dp)
-                        .padding(vertical = 8.dp)
-                        .clickable {
-                            onUiEvent(HomeUiEvent.ActionItemClicked(item))
-                        },
+                        .padding(vertical = 8.dp),
                 )
             }
         }
@@ -252,11 +247,9 @@ private fun FacultyViewWrapper(
                     FacultyView(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(vertical = 8.dp)
-                            .clickable {
-                                onUiEvent(HomeUiEvent.FacultyClicked(item))
-                            },
+                            .padding(vertical = 8.dp),
                         faculty = item,
+                        onClick = { onUiEvent(HomeUiEvent.FacultyClicked(item)) },
                     )
                 }
             }
@@ -273,11 +266,14 @@ private fun FacultyViewWrapper(
 private fun InformationCornerView(
     item: ActionItem,
     isLeftItem: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier,
 ) {
-    val cardShape = informationCardShape(isLeftItem)
+    val cardShape = RoundedCornerShape(16.dp)
     ElevatedCard(
-        modifier = modifier.clip(cardShape),
+        modifier = modifier
+            .clip(cardShape)
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -319,26 +315,9 @@ private fun InformationCornerView(
     }
 }
 
-private fun informationCardShape(isLeftItem: Boolean): Shape =
-    if (isLeftItem) {
-        RoundedCornerShape(
-            topStart = 24.dp,
-            bottomStart = 24.dp,
-            topEnd = 4.dp,
-            bottomEnd = 4.dp,
-        )
-    } else {
-        RoundedCornerShape(
-            topStart = 4.dp,
-            bottomStart = 4.dp,
-            topEnd = 24.dp,
-            bottomEnd = 24.dp,
-        )
-    }
-
 @Composable
 private fun RowScope.InformationItemIcon(item: ActionItem) {
-    val iconContainerShape = RoundedCornerShape(10.dp)
+    val iconContainerShape = RoundedCornerShape(16.dp)
     val iconContainerModifier = Modifier
         .fillMaxHeight()
         .weight(0.4f)
@@ -379,14 +358,21 @@ private fun RowScope.InformationItemIcon(item: ActionItem) {
 }
 
 @Composable
-private fun OptionView(item: ActionItem, modifier: Modifier) {
+private fun OptionView(
+    item: ActionItem,
+    onClick: () -> Unit,
+    modifier: Modifier,
+) {
+    val cardShape = RoundedCornerShape(16.dp)
     ElevatedCard(
-        modifier = modifier.clip(RoundedCornerShape(24.dp)),
+        modifier = modifier
+            .clip(cardShape)
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = cardShape,
     ) {
         Row(
             modifier = Modifier
