@@ -71,16 +71,17 @@ class FacultyRepositoryImpl(
     override suspend fun getStudents(
         facultyId: Int,
         batchId: Int,
-        forceRefresh: Boolean,
+        page: Int,
+        useCache: Boolean,
     ): DomainResult<List<User.Student>> {
-        val key = "${facultyId}_${batchId}"
+        if (!useCache) studentsCache.clear()
 
+        val key = "${facultyId}_${batchId}_${page}"
         val cache = studentsCache[key]
-        if (!forceRefresh && !cache.isNullOrEmpty()) {
-            return DomainResult.success(cache)
-        }
 
-        return helper.getStudents(facultyId, batchId)
+        if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
+
+        return helper.getStudents(facultyId, batchId, page)
             .toDomainResult(domainErrorMapper)
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { studentsCache[key] = it }

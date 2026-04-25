@@ -47,9 +47,14 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         }
     }
 
-    override suspend fun getStudents(facultyId: Int, batchId: Int): NetworkResult<List<StudentDto>> {
+    override suspend fun getStudents(
+        facultyId: Int,
+        batchId: Int,
+        page: Int,
+        limit: Int,
+    ): NetworkResult<List<StudentDto>> {
         return runCatching {
-            service.getStudents(facultyId, batchId).toNetworkResult()
+            service.getStudents(facultyId, batchId, page, limit).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

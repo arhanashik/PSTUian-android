@@ -18,7 +18,8 @@ interface FacultyRepository {
     suspend fun getStudents(
         facultyId: Int,
         batchId: Int,
-        forceRefresh: Boolean = false,
+        page: Int = 1,
+        useCache: Boolean = true,
     ): DomainResult<List<User.Student>>
 
     suspend fun getTeachers(facultyId: Int, forceRefresh: Boolean = false): DomainResult<List<User.Teacher>>

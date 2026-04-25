@@ -37,10 +37,17 @@ class FacultyApiService(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getStudents(facultyId: Int, batchId: Int): ApiResponse<List<StudentDto>> {
+    suspend fun getStudents(
+        facultyId: Int,
+        batchId: Int,
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<StudentDto>> {
         return client.get(NetworkConst.Remote.Api.Student.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
             parameter(NetworkConst.Params.BATCH_ID, batchId)
+            parameter(NetworkConst.Params.PAGE, page)
+            parameter(NetworkConst.Params.LIMIT, limit)
         }.body()
     }
 

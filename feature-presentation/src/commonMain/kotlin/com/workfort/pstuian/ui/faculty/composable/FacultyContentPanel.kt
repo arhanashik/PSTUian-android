@@ -52,9 +52,9 @@ fun FacultyContentPanel(
         }
     }
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (uiState.selectedTab != pagerState.currentPage) {
-            onUiEvent(FacultyUiEvent.SelectTab(pagerState.currentPage))
+    LaunchedEffect(pagerState.settledPage) {
+        if (uiState.selectedTab != pagerState.settledPage) {
+            onUiEvent(FacultyUiEvent.SelectTab(pagerState.settledPage))
         }
     }
 

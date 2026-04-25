@@ -3,6 +3,7 @@ package com.workfort.pstuian.ui.students
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
+import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
@@ -30,6 +31,11 @@ class StudentsViewModel(
     private val _navigation = MutableStateFlow<StudentsNavigationState?>(null)
     val navigation: StateFlow<StudentsNavigationState?> = _navigation.asStateFlow()
 
+    private var batchCache: Batch? = null
+    private val studentListCache = mutableListOf<User.Student>()
+    private var currentPage = 1
+    private var hasMoreData = true
+
     override fun onUiReady() {
         loadData()
     }
@@ -37,6 +43,12 @@ class StudentsViewModel(
     fun onUiEvent(event: StudentsUiEvent) {
         when (event) {
             is StudentsUiEvent.BackClicked -> _navigation.update { StudentsNavigationState.GoBack }
+            is StudentsUiEvent.Refresh -> batchCache?.let {
+                getStudents(it.facultyId, batchId, refresh = true)
+            }
+            is StudentsUiEvent.LoadMore -> batchCache?.let {
+                getStudents(it.facultyId, batchId, refresh = false)
+            }
             is StudentsUiEvent.StudentClicked -> onClickStudent(event.student)
             is StudentsUiEvent.CallClicked -> onClickCall(event.phoneNumber)
         }
@@ -63,8 +75,9 @@ class StudentsViewModel(
             uiStateMachine.showOperationLoading()
             facultyRepo.getBatch(batchId)
                 .onSuccess { batch ->
+                    batchCache = batch
                     uiStateMachine.showInitialState(title = batch.title ?: batch.name)
-                    getStudents(batch.facultyId, batchId)
+                    getStudents(batch.facultyId, batchId, refresh = false)
                 }
                 .onFailure {
                     uiStateMachine.showError(it.message ?: "Failed to load data")
@@ -72,23 +85,33 @@ class StudentsViewModel(
         }
     }
 
-    private val studentListCache = mutableListOf<User.Student>()
-    private var hasMoreData = true
-    private fun getStudents(facultyId: Int, batchId: Int) {
-        if (hasMoreData.not()) return
+    private fun getStudents(facultyId: Int, batchId: Int, refresh: Boolean) {
+        if (refresh) {
+            studentListCache.clear()
+            currentPage = 1
+            hasMoreData = true
+        } else if (hasMoreData.not()) {
+            return
+        }
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showContentLoading(isLoading = true)
-            facultyRepo.getStudents(facultyId, batchId, forceRefresh = true)
+            facultyRepo.getStudents(facultyId, batchId, currentPage, useCache = !refresh)
                 .onSuccess { students ->
-                    studentListCache.clear()
+                    if (students.isEmpty()) {
+                        hasMoreData = false
+                    } else {
+                        currentPage++
+                    }
                     studentListCache.addAll(students)
                     uiStateMachine.showStudents(studentListCache)
                 }
                 .onFailure {
                     uiStateMachine.showContentLoading(isLoading = false)
-                    val message = it.message ?: "Failed to load students"
-                    uiStateMachine.showError(message)
+                    if (studentListCache.isEmpty()) {
+                        val message = it.message ?: "Failed to load students"
+                        uiStateMachine.showError(message)
+                    }
                 }
         }
     }
