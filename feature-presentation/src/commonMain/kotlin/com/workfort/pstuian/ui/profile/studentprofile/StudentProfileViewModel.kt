@@ -13,6 +13,7 @@ import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetStudentProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
 import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileMessageState
 import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileNavigationState
@@ -30,7 +31,7 @@ class StudentProfileViewModel(
     private val settingsRepository: SettingsRepository,
     private val getStudentProfileUserUseCase: GetStudentProfileUserUseCase,
     private val displayDataMapper: StudentProfileDisplayDataMapper,
-    private val uiStateMachine: StudentProfileUiStateMachine,
+    private val uiStateMachine: ProfileScreenUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<ProfileUiState>(uiStateMachine) {
 

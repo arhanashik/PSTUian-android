@@ -27,7 +27,8 @@ import com.workfort.pstuian.ui.donate.DonateUiStateMachine
 import com.workfort.pstuian.ui.donate.DonateViewModel
 import com.workfort.pstuian.ui.donors.DonorsUiStateMachine
 import com.workfort.pstuian.ui.donors.DonorsViewModel
-import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileUiStateMachine
+import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
+import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileDisplayDataMapper
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileViewModel
 import com.workfort.pstuian.ui.faculty.FacultyUiStateMachine
 import com.workfort.pstuian.ui.faculty.FacultyViewModel
@@ -46,13 +47,12 @@ import com.workfort.pstuian.ui.signin.SignInUiStateMachine
 import com.workfort.pstuian.ui.signin.SignInViewModel
 import com.workfort.pstuian.ui.splash.SplashUiStateMachine
 import com.workfort.pstuian.ui.splash.SplashViewModel
-import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileUiStateMachine
 import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileViewModel
 import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditUiStateMachine
 import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditViewModel
 import com.workfort.pstuian.ui.students.StudentsUiStateMachine
 import com.workfort.pstuian.ui.students.StudentsViewModel
-import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileUiStateMachine
+import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileDisplayDataMapper
 import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileViewModel
 import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditUiStateMachine
 import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditViewModel
@@ -64,6 +64,10 @@ private val appCommonModule = module {
     singleOf(::AppViewModel)
     singleOf(::SharedScreenData)
     singleOf(::AppNavigator)
+}
+
+private val profileScreenStateModule = module {
+    factoryOf(::ProfileScreenUiStateMachine)
 }
 
 private val bloodDonationCreateModule = module {
@@ -182,7 +186,6 @@ private val studentsModule = module {
 
 private val studentProfileModule = module {
     factoryOf(::StudentProfileDisplayDataMapper)
-    factoryOf(::StudentProfileUiStateMachine)
     factory { (userId: Int) ->
         StudentProfileViewModel(
             userId = userId,
@@ -198,7 +201,7 @@ private val studentProfileModule = module {
 }
 
 private val teacherProfileModule = module {
-    factoryOf(::TeacherProfileUiStateMachine)
+    factoryOf(::TeacherProfileDisplayDataMapper)
     factory { (userId: Int) ->
         TeacherProfileViewModel(
             userId = userId,
@@ -206,6 +209,7 @@ private val teacherProfileModule = module {
             authRepo = get(),
             settingsRepository = get(),
             getTeacherProfileUserUseCase = get(),
+            displayDataMapper = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
@@ -213,14 +217,14 @@ private val teacherProfileModule = module {
 }
 
 private val employeeProfileModule = module {
-    factoryOf(::EmployeeProfileUiStateMachine)
+    factoryOf(::EmployeeProfileDisplayDataMapper)
     factory { (userId: Int) ->
         EmployeeProfileViewModel(
             userId = userId,
-            facultyRepo = get(),
             authRepo = get(),
             settingsRepository = get(),
             getEmployeeProfileUserUseCase = get(),
+            displayDataMapper = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
@@ -300,6 +304,7 @@ private val teacherProfileEditModule = module {
 
 val featurePresentationModule = listOf(
     appCommonModule,
+    profileScreenStateModule,
     bloodDonationCreateModule,
     bloodDonationRequestCreateModule,
     bloodDonationRequestListModule,

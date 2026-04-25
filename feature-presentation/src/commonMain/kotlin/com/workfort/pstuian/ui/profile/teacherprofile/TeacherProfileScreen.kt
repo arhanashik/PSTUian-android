@@ -1,29 +1,12 @@
 package com.workfort.pstuian.ui.profile.teacherprofile
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowInputDialog
@@ -31,12 +14,9 @@ import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
-import com.workfort.pstuian.ui.profile.teacherprofile.composable.TeacherProfileContentPanel
+import com.workfort.pstuian.ui.profile.teacherprofile.composable.TeacherProfileScreenContent
 import com.workfort.pstuian.ui.profile.teacherprofile.state.TeacherProfileMessageState
 import com.workfort.pstuian.ui.profile.teacherprofile.state.TeacherProfileNavigationState
-import com.workfort.pstuian.ui.profile.teacherprofile.state.TeacherProfileUiEvent
-import com.workfort.pstuian.ui.profile.teacherprofile.state.TeacherProfileUiState
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
@@ -44,7 +24,6 @@ import pstuian.feature_presentation.generated.resources.hint_bio
 import pstuian.feature_presentation.generated.resources.msg_sign_out
 import pstuian.feature_presentation.generated.resources.txt_call
 import pstuian.feature_presentation.generated.resources.txt_change_bio
-import pstuian.feature_presentation.generated.resources.txt_edit
 import pstuian.feature_presentation.generated.resources.txt_email
 import pstuian.feature_presentation.generated.resources.txt_msg_call
 import pstuian.feature_presentation.generated.resources.txt_msg_email
@@ -65,50 +44,7 @@ fun TeacherProfileScreen(viewModel: TeacherProfileViewModel) {
     HandleNavigationState(navigation, viewModel::navigationHandled)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TeacherProfileScreenContent(
-    uiState: TeacherProfileUiState,
-    onUiEvent: (TeacherProfileUiEvent) -> Unit,
-) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    var fabButtonExpanded by remember { mutableStateOf(true) }
 
-    LaunchedEffect(key1 = null) {
-        delay(1000)
-        fabButtonExpanded = false
-    }
-
-    AppScaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        floatingActionButton = {
-            if (uiState.isSignedIn && uiState.selectedTabIndex < 2) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    ExtendedFloatingActionButton(
-                        expanded = fabButtonExpanded,
-                        text = {
-                            Text(text = stringResource(Res.string.txt_edit))
-                        },
-                        onClick = {
-                            onUiEvent(
-                                TeacherProfileUiEvent.EditClicked(
-                                    uiState.selectedTabIndex,
-                                )
-                            )
-                        },
-                        icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
-                        shape = CircleShape,
-                    )
-                }
-            }
-        },
-    ) {
-        TeacherProfileContentPanel(uiState, onUiEvent)
-    }
-}
 
 @Composable
 private fun HandleMessageState(

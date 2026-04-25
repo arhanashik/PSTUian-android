@@ -31,10 +31,10 @@ import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_go_back
-import pstuian.feature_presentation.generated.resources.txt_student_profile
 
 @Composable
 internal fun ProfileTopBar(
+    title: String,
     onNavigationBack: () -> Unit,
     profileDropdown: @Composable (expanded: Boolean, onDismiss: () -> Unit) -> Unit,
 ) {
@@ -54,7 +54,7 @@ internal fun ProfileTopBar(
         )
 
         Text(
-            text = stringResource(Res.string.txt_student_profile),
+            text = title,
             modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,

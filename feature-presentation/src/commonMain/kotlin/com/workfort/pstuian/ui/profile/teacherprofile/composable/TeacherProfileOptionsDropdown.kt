@@ -1,13 +1,10 @@
-package com.workfort.pstuian.ui.profile.studentprofile.composable
+package com.workfort.pstuian.ui.profile.teacherprofile.composable
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
@@ -20,27 +17,21 @@ import androidx.compose.runtime.Composable
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.hint_upload_new_cv
 import pstuian.feature_presentation.generated.resources.txt_call
 import pstuian.feature_presentation.generated.resources.txt_change_password
 import pstuian.feature_presentation.generated.resources.txt_delete_account
 import pstuian.feature_presentation.generated.resources.txt_email
-import pstuian.feature_presentation.generated.resources.txt_my_check_in_list
-import pstuian.feature_presentation.generated.resources.txt_my_donation_list
 import pstuian.feature_presentation.generated.resources.txt_sign_out
 import pstuian.feature_presentation.generated.resources.txt_signed_in_devices
 
 @Composable
-fun StudentProfileOptionsDropdown(
+fun TeacherProfileOptionsDropdown(
     expanded: Boolean,
     isSignedIn: Boolean,
     onDismiss: () -> Unit,
     onUiEvent: (ProfileUiEvent) -> Unit,
 ) {
     val changePasswordLabel = stringResource(Res.string.txt_change_password)
-    val uploadCvLabel = stringResource(Res.string.hint_upload_new_cv)
-    val bloodDonationLabel = stringResource(Res.string.txt_my_donation_list)
-    val checkInLabel = stringResource(Res.string.txt_my_check_in_list)
     val devicesLabel = stringResource(Res.string.txt_signed_in_devices)
     val signOutLabel = stringResource(Res.string.txt_sign_out)
     val deleteAccountLabel = stringResource(Res.string.txt_delete_account)
@@ -51,22 +42,6 @@ fun StudentProfileOptionsDropdown(
                 text = { Text(changePasswordLabel) },
                 leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
                 onClick = { onUiEvent(ProfileUiEvent.ChangePasswordClicked) },
-            )
-            DropdownMenuItem(
-                text = { Text(uploadCvLabel) },
-                leadingIcon = { Icon(Icons.Filled.KeyboardArrowUp, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.UploadCvClicked) },
-            )
-            HorizontalDivider()
-            DropdownMenuItem(
-                text = { Text(bloodDonationLabel) },
-                leadingIcon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.MyBloodDonationListClicked) },
-            )
-            DropdownMenuItem(
-                text = { Text(checkInLabel) },
-                leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.MyCheckInListClicked) },
             )
             DropdownMenuItem(
                 text = { Text(devicesLabel) },

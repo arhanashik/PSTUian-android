@@ -1,7 +1,6 @@
 package com.workfort.pstuian.ui.profile.employeeprofile
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
@@ -12,13 +11,12 @@ import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetEmployeeProfileUserUseCase
-import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
+import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
+import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
 import com.workfort.pstuian.ui.profile.employeeprofile.state.EmployeeProfileMessageState
 import com.workfort.pstuian.ui.profile.employeeprofile.state.EmployeeProfileNavigationState
-import com.workfort.pstuian.ui.profile.employeeprofile.state.EmployeeProfileUiEvent
-import com.workfort.pstuian.ui.profile.employeeprofile.state.EmployeeProfileUiState
-import com.workfort.pstuian.ui.profile.employeeprofile.state.ProfileState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,16 +25,13 @@ import kotlinx.coroutines.launch
 
 class EmployeeProfileViewModel(
     private val userId: Int,
-    private val facultyRepo: FacultyRepositoryImpl,
     private val authRepo: AuthRepository,
     private val settingsRepository: SettingsRepository,
     private val getEmployeeProfileUserUseCase: GetEmployeeProfileUserUseCase,
-    private val uiStateMachine: EmployeeProfileUiStateMachine,
+    private val displayDataMapper: EmployeeProfileDisplayDataMapper,
+    private val uiStateMachine: ProfileScreenUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-) : UiStateMachineViewModel<EmployeeProfileUiState>(
-    uiStateMachine,
-    initializationMode = InitializationMode.JustOnce,
-) {
+) : UiStateMachineViewModel<ProfileUiState>(uiStateMachine) {
 
     private val _message = MutableStateFlow<EmployeeProfileMessageState?>(null)
     val message: StateFlow<EmployeeProfileMessageState?> = _message.asStateFlow()
@@ -44,29 +39,33 @@ class EmployeeProfileViewModel(
     private val _navigation = MutableStateFlow<EmployeeProfileNavigationState?>(null)
     val navigation: StateFlow<EmployeeProfileNavigationState?> = _navigation.asStateFlow()
 
+    private var profileCache: EmployeeProfile? = null
+
     override fun onUiReady() {
         loadProfile()
     }
 
-    fun onUiEvent(event: EmployeeProfileUiEvent) {
+    fun onUiEvent(event: ProfileUiEvent) {
         when (event) {
-            is EmployeeProfileUiEvent.LoadProfile -> loadProfile()
-            is EmployeeProfileUiEvent.BackClicked -> onClickBack()
-            is EmployeeProfileUiEvent.ImageClicked -> onClickImage(event.url)
-            is EmployeeProfileUiEvent.CallClicked -> onClickCall()
-            is EmployeeProfileUiEvent.EmailClicked -> onClickEmail()
-            is EmployeeProfileUiEvent.SignOutClicked -> onClickSignOut()
-            is EmployeeProfileUiEvent.TabClicked -> onClickTab(event.index)
-            is EmployeeProfileUiEvent.RefreshClicked -> onClickRefresh()
-            is EmployeeProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
-            is EmployeeProfileUiEvent.EditBioClicked -> onClickEditBio()
-            is EmployeeProfileUiEvent.EditClicked -> onClickEdit(event.selectedTabIndex)
-            is EmployeeProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
-            is EmployeeProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
-            is EmployeeProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
-            is EmployeeProfileUiEvent.ChangeProfileImage -> changeProfileImage(event.imageUrl)
-            is EmployeeProfileUiEvent.ChangeBio -> changeBio(event.newBio)
-            is EmployeeProfileUiEvent.SignOut -> signOut()
+            is ProfileUiEvent.BackClicked -> _navigation.update { EmployeeProfileNavigationState.GoBack }
+            is ProfileUiEvent.FollowClicked -> onClickFollow()
+            is ProfileUiEvent.ImageClicked -> onClickImage(event.url)
+            is ProfileUiEvent.CallClicked -> onClickCall()
+            is ProfileUiEvent.EmailClicked -> onClickEmail()
+            is ProfileUiEvent.SignOutClicked -> onClickSignOut()
+            is ProfileUiEvent.TabClicked -> onClickTab(event.index)
+            is ProfileUiEvent.RefreshClicked -> onClickRefresh()
+            is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
+            is ProfileUiEvent.EditBioClicked -> onClickEditBio()
+            is ProfileUiEvent.EditClicked -> onClickEdit(event.selectedTabIndex)
+            is ProfileUiEvent.MyBloodDonationListClicked -> Unit
+            is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
+            is ProfileUiEvent.DownloadCvClicked -> Unit
+            is ProfileUiEvent.UploadCvClicked -> Unit
+            is ProfileUiEvent.MyCheckInListClicked -> Unit
+            is ProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
+            is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
+            is ProfileUiEvent.ChangeProfileImage -> changeProfileImage(event.imageUrl)
         }
     }
 
@@ -74,34 +73,56 @@ class EmployeeProfileViewModel(
 
     fun navigationHandled() = _navigation.update { null }
 
-    private fun onClickBack() = _navigation.update { EmployeeProfileNavigationState.GoBack }
+    private fun loadProfile() {
+        uiStateMachine.showProfileLoading()
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            getEmployeeProfileUserUseCase(userId)
+                .onSuccess { profile ->
+                    profileCache = profile
+                    uiStateMachine.showProfile(
+                        headerDisplayData = displayDataMapper.mapHeaderData(profile),
+                        academicContents = displayDataMapper.mapAcademicContents(profile),
+                        connectContents = displayDataMapper.mapConnectContents(profile),
+                        isSignedIn = profile.isSignedIn,
+                    )
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load employee profile"
+                    uiStateMachine.showProfileError(message)
+                }
+        }
+    }
+
+    private fun onClickFollow() {
+        _message.update { EmployeeProfileMessageState.Success("Follow feature will be available soon!") }
+    }
 
     private fun onClickImage(url: String) {
         _navigation.update { EmployeeProfileNavigationState.ImagePreviewScreen(url) }
     }
 
-    private fun onClickCall() = profileCache()?.employee?.phone?.let { phoneNumber ->
+    private fun onClickCall() = profileCache?.employee?.phone?.let { phoneNumber ->
         if (phoneNumber.isNotEmpty()) {
             _message.update {
                 EmployeeProfileMessageState.CallConfirmation(phoneNumber) {
-                    // Handle call in screen or via navigation
+                    // call here
                 }
             }
         }
     }
 
-    private fun onClickEmail() {
-        // Employee profile: email not provided by listing API
+    private fun onClickEmail() = profileCache?.employee?.email?.let { email ->
+        if (email.isEmpty()) return@let
+        _message.update {
+            EmployeeProfileMessageState.EmailConfirmation(email) {
+                // send email here
+            }
+        }
     }
 
     private fun onClickSignOut() {
-        if (profileCache()?.isSignedIn == true) {
-            _message.update {
-                EmployeeProfileMessageState.ConfirmSignOut {
-                    signOut()
-                }
-            }
-        }
+        if (profileCache?.isSignedIn != true) return
+        _message.update { EmployeeProfileMessageState.ConfirmSignOut(::signOut) }
     }
 
     private fun onClickTab(index: Int) {
@@ -111,8 +132,9 @@ class EmployeeProfileViewModel(
     private fun onClickRefresh() = loadProfile()
 
     private fun onClickChangeImage() {
-        if (profileCache()?.isSignedIn != true) return
-        profileCache()?.employee?.let { employee ->
+        if (profileCache?.isSignedIn != true) return
+
+        profileCache?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.ImageUploadScreen(
                     userId = employee.userId,
@@ -123,8 +145,9 @@ class EmployeeProfileViewModel(
     }
 
     private fun onClickEditBio() {
-        if (profileCache()?.isSignedIn != true) return
-        profileCache()?.employee?.let { employee ->
+        if (profileCache?.isSignedIn != true) return
+
+        profileCache?.employee?.let { employee ->
             _message.update {
                 EmployeeProfileMessageState.InputBio(employee.bio.orEmpty(), ::changeBio)
             }
@@ -132,8 +155,9 @@ class EmployeeProfileViewModel(
     }
 
     private fun onClickEdit(selectedTabIndex: Int) {
-        if (profileCache()?.isSignedIn != true) return
-        profileCache()?.employee?.let { employee ->
+        if (profileCache?.isSignedIn != true) return
+
+        profileCache?.employee?.let { employee ->
             when (selectedTabIndex) {
                 0 -> ProfileEditMode.ACADEMIC
                 1 -> ProfileEditMode.CONNECT
@@ -150,13 +174,15 @@ class EmployeeProfileViewModel(
     }
 
     private fun onClickChangePassword() {
-        if (profileCache()?.isSignedIn != true) return
+        if (profileCache?.isSignedIn != true) return
+
         _navigation.update { EmployeeProfileNavigationState.ChangePasswordScreen }
     }
 
     private fun onClickMyDeviceList() {
-        if (profileCache()?.isSignedIn != true) return
-        profileCache()?.employee?.let { employee ->
+        if (profileCache?.isSignedIn != true) return
+
+        profileCache?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.MyDeviceListScreen(
                     userId = employee.userId,
@@ -167,16 +193,21 @@ class EmployeeProfileViewModel(
     }
 
     private fun onClickDeleteAccount() {
-        if (profileCache()?.isSignedIn != true) return
-        _navigation.update { EmployeeProfileNavigationState.DeleteAccountScreen }
+        if (profileCache?.isSignedIn == true) {
+            _navigation.update { EmployeeProfileNavigationState.DeleteAccountScreen }
+        }
     }
 
-    private fun changeProfileImage(imageUrl: String) {
-        // Implementation for changing profile image
+    fun changeProfileImage(imageUrl: String) {
+        _message.update {
+            EmployeeProfileMessageState.Error("Changing profile photo is not supported for this profile yet.")
+        }
     }
 
     fun changeBio(newBio: String) {
-        // Implementation for changing bio
+        _message.update {
+            EmployeeProfileMessageState.Error("Bio update is not supported for this profile yet.")
+        }
     }
 
     fun signOut() {
@@ -191,27 +222,6 @@ class EmployeeProfileViewModel(
                 val message = it.message ?: "Signing out failed. Please try again."
                 _message.update { EmployeeProfileMessageState.Error(message) }
             }
-        }
-    }
-
-    private fun profileCache(): EmployeeProfile? {
-        return when (val state = uiState.value.profileState) {
-            is ProfileState.Available -> state.profile
-            else -> null
-        }
-    }
-
-    fun loadProfile() {
-        uiStateMachine.showProfileLoading()
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            getEmployeeProfileUserUseCase(userId)
-                .onSuccess {
-                    uiStateMachine.showProfile(it)
-                }
-                .onFailure {
-                    val message = it.message ?: "Failed to load employee profile"
-                    uiStateMachine.showProfileError(message)
-                }
         }
     }
 }

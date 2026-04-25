@@ -53,7 +53,7 @@ internal fun ProfileHeader(
 ) {
     val followLabel = stringResource(Res.string.txt_follow)
     val messageLabel = stringResource(Res.string.txt_message)
-    val editLabel = stringResource(Res.string.txt_edit)
+    val editLabel = "Edit Profile"
 
     Column(
         modifier = Modifier
