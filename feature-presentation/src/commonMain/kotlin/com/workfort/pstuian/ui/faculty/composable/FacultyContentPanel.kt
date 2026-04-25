@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +23,7 @@ import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
-import com.workfort.pstuian.ui.common.composable.ScrollableTabView
+import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
 import com.workfort.pstuian.ui.faculty.state.FacultyUiState
 import kotlinx.coroutines.launch
@@ -35,16 +37,30 @@ fun FacultyContentPanel(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { uiState.tabs.size })
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        ScrollableTabView(
-            tabs = uiState.tabs,
-            selectedTabIndex = uiState.selectedTab,
-        ) { index ->
-            scope.launch {
-                pagerState.animateScrollToPage(index)
-            }
-            onUiEvent(FacultyUiEvent.SelectTab(index))
+    LaunchedEffect(uiState.selectedTab) {
+        if (pagerState.currentPage != uiState.selectedTab) {
+            pagerState.scrollToPage(uiState.selectedTab)
         }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (uiState.selectedTab != pagerState.currentPage) {
+            onUiEvent(FacultyUiEvent.SelectTab(pagerState.currentPage))
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        ToggleSwitch(
+            options = uiState.tabs,
+            selectedIndex = uiState.selectedTab,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            onSelectedIndexChange = { index ->
+                scope.launch {
+                    pagerState.animateScrollToPage(index)
+                }
+                onUiEvent(FacultyUiEvent.SelectTab(index))
+            }
+        )
         HorizontalPager(state = pagerState) { page ->
             when (page) {
                 0 -> uiState.batchListState.Handle {

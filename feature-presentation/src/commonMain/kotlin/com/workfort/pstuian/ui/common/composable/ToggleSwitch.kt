@@ -12,18 +12,24 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.theme.TextStyle
+import kotlin.math.roundToInt
 
 @Composable
 internal fun ToggleSwitch(
@@ -33,6 +39,7 @@ internal fun ToggleSwitch(
     modifier: Modifier = Modifier,
     height: Dp = 40.dp,
     cornerRadius: Dp = 20.dp,
+    minOptionWidth: Dp = 84.dp,
 ) {
     if (options.isEmpty()) return
 
@@ -45,7 +52,10 @@ internal fun ToggleSwitch(
             .clip(RoundedCornerShape(cornerRadius))
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
     ) {
-        val segmentWidth = maxWidth / options.size
+        val segmentWidth = (maxWidth / options.size).coerceAtLeast(minOptionWidth)
+        val contentWidth = segmentWidth * options.size
+        val scrollState = rememberScrollState()
+        val density = LocalDensity.current
         val indicatorOffset by animateDpAsState(
             targetValue = segmentWidth * normalizedIndex + 2.dp,
             animationSpec = spring(
@@ -57,16 +67,32 @@ internal fun ToggleSwitch(
         val segmentHeight = (height - 4.dp).coerceAtLeast(0.dp)
         val interactionSource = remember { MutableInteractionSource() }
 
+        LaunchedEffect(normalizedIndex, segmentWidth, maxWidth) {
+            val selectedCenterPx = with(density) {
+                (segmentWidth * normalizedIndex + (segmentWidth / 2)).toPx()
+            }
+            val viewportWidthPx = with(density) { maxWidth.toPx() }
+            val targetOffset = (selectedCenterPx - (viewportWidthPx / 2f)).roundToInt()
+                .coerceAtLeast(0)
+                .coerceAtMost(scrollState.maxValue)
+            scrollState.animateScrollTo(targetOffset)
+        }
+
         Box(
             modifier = Modifier
                 .offset(x = indicatorOffset, y = 2.dp)
                 .height(segmentHeight)
-                .fillMaxWidth(1f / options.size)
+                .requiredWidth(segmentWidth - 4.dp)
                 .clip(RoundedCornerShape((cornerRadius - 2.dp).coerceAtLeast(0.dp)))
                 .background(MaterialTheme.colorScheme.primary),
         )
 
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(scrollState)
+                .requiredWidth(contentWidth),
+        ) {
             options.forEachIndexed { index, label ->
                 val segmentShape = when (index) {
                     0 -> RoundedCornerShape(topStart = cornerRadius, bottomStart = cornerRadius)
@@ -77,7 +103,7 @@ internal fun ToggleSwitch(
 
                 Box(
                     modifier = Modifier
-                        .weight(1f)
+                        .requiredWidth(segmentWidth)
                         .fillMaxHeight()
                         .clip(segmentShape)
                         .clickable(
