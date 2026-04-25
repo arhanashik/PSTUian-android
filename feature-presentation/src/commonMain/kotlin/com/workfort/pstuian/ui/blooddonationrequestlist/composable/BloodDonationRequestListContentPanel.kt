@@ -57,9 +57,9 @@ internal fun BloodDonationRequestListContentPanel(
             if (uiState.isLoading) {
                 CircularProgressIndicator()
             } else if (uiState.loadError != null) {
-                AnimatedErrorView(modifier = Modifier.width(200.dp))
+                AnimatedErrorView()
             } else {
-                AnimatedEmptyView(modifier = Modifier.width(200.dp))
+                AnimatedEmptyView()
             }
         }
     } else {

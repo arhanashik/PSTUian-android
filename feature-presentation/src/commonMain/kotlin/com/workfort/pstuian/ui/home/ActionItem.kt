@@ -8,10 +8,10 @@ import androidx.compose.material.icons.outlined.Delete
 import com.workfort.pstuian.ui.common.icons.AppIcons
 import org.jetbrains.compose.resources.StringResource
 import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.ic_logo
 import pstuian.feature_presentation.generated.resources.img_admission_support
 import pstuian.feature_presentation.generated.resources.img_donors
 import pstuian.feature_presentation.generated.resources.img_help
-import pstuian.feature_presentation.generated.resources.img_pstu_website
 import pstuian.feature_presentation.generated.resources.label_admission_support
 import pstuian.feature_presentation.generated.resources.label_clear_data
 import pstuian.feature_presentation.generated.resources.label_donation_list
@@ -44,6 +44,11 @@ data class ActionItem(
 
 val informationItems = listOf(
     ActionItem(
+        Res.string.label_university_website,
+        Res.drawable.ic_logo,
+        action = Action.VarsityWebsite,
+    ),
+    ActionItem(
         Res.string.label_admission_support,
         Res.drawable.img_admission_support,
         action = Action.AdmissionSupport,
@@ -52,11 +57,6 @@ val informationItems = listOf(
         Res.string.label_donation_list,
         Res.drawable.img_donors,
         action = Action.Donors,
-    ),
-    ActionItem(
-        Res.string.label_university_website,
-        Res.drawable.img_pstu_website,
-        action = Action.VarsityWebsite,
     ),
     ActionItem(
         Res.string.txt_need_help,

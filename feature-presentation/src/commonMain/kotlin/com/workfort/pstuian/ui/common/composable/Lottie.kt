@@ -1,9 +1,11 @@
 package com.workfort.pstuian.ui.common.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
@@ -20,7 +22,7 @@ fun AnimatedListLoaderView(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AnimatedEmptyView(modifier: Modifier = Modifier) {
+fun AnimatedEmptyView(modifier: Modifier = Modifier.size(200.dp)) {
     LottieAnimationView(
         modifier = modifier,
         resourcePath = "files/empty_box.json",
@@ -28,7 +30,7 @@ fun AnimatedEmptyView(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AnimatedImagePlaceholderView(modifier: Modifier = Modifier) {
+fun AnimatedImagePlaceholderView(modifier: Modifier = Modifier.size(200.dp)) {
     LottieAnimationView(
         modifier = modifier,
         resourcePath = "files/image_placeholder.json",
@@ -36,7 +38,7 @@ fun AnimatedImagePlaceholderView(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AnimatedErrorView(modifier: Modifier = Modifier) {
+fun AnimatedErrorView(modifier: Modifier = Modifier.size(200.dp)) {
     LottieAnimationView(
         modifier = modifier,
         resourcePath = "files/error_cat.json",

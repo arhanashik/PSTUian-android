@@ -62,11 +62,11 @@ fun MyBloodDonationListContentPanel(
                 }
             } else if (uiState.error != null) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    AnimatedErrorView(modifier = Modifier.width(200.dp))
+                    AnimatedErrorView()
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    AnimatedEmptyView(modifier = Modifier.width(200.dp))
+                    AnimatedEmptyView()
                 }
             }
         } else {

@@ -76,7 +76,7 @@ fun StudentsContentPanel(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
+                    AnimatedEmptyView()
                 }
             }
         } else {

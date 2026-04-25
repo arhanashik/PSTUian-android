@@ -270,7 +270,7 @@ private fun LocationPickerUiState.LocationListState.Handle(
                         CreateCheckInLocationItemView {
                             onUiEvent(LocationPickerUiEvent.OnClickAddLocation)
                         }
-                        AnimatedEmptyView(modifier = Modifier.width(200.dp))
+                        AnimatedEmptyView()
                     }
                 }
             } else {
@@ -287,7 +287,7 @@ private fun LocationPickerUiState.LocationListState.Handle(
                 CreateCheckInLocationItemView {
                     onUiEvent(LocationPickerUiEvent.OnClickAddLocation)
                 }
-                AnimatedErrorView(modifier = Modifier.width(200.dp))
+                AnimatedErrorView()
             }
         }
     }

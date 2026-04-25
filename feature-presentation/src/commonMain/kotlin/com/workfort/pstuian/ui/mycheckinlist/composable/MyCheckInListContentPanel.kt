@@ -71,7 +71,7 @@ fun MyCheckInListContentPanel(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AnimatedErrorView(modifier = Modifier.width(200.dp))
+            AnimatedErrorView()
         }
         return
     }
@@ -85,7 +85,7 @@ fun MyCheckInListContentPanel(
                 if (uiState.isLoading) {
                     CircularProgressIndicator()
                 } else {
-                    AnimatedEmptyView(modifier = Modifier.width(200.dp))
+                    AnimatedEmptyView()
                 }
             }
         } else {

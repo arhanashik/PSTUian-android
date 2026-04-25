@@ -97,7 +97,7 @@ internal fun CheckInListContentPanel(
                 if (uiState.isLoading) {
                     CircularProgressIndicator()
                 } else {
-                    AnimatedEmptyView(modifier = Modifier.width(200.dp))
+                    AnimatedEmptyView()
                 }
             }
         } else {

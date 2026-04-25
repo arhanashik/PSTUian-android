@@ -1,6 +1,8 @@
 package com.workfort.pstuian.ui.home.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -113,9 +117,10 @@ fun HomeContentPanel(
             maxItemsInEachRow = 2,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            informationItems.forEach { item ->
+            informationItems.forEachIndexed { index, item ->
                 InformationCornerView(
                     item = item,
+                    isLeftItem = index % 2 == 0,
                     modifier = Modifier
                         .fillMaxWidth(0.48f)
                         .height(84.dp)
@@ -265,50 +270,110 @@ private fun FacultyViewWrapper(
 }
 
 @Composable
-private fun InformationCornerView(item: ActionItem, modifier: Modifier) {
+private fun InformationCornerView(
+    item: ActionItem,
+    isLeftItem: Boolean,
+    modifier: Modifier,
+) {
+    val cardShape = informationCardShape(isLeftItem)
     ElevatedCard(
-        modifier = modifier.clip(RoundedCornerShape(24.dp)),
+        modifier = modifier.clip(cardShape),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = cardShape,
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = stringResource(item.title),
-                modifier = Modifier
-                    .weight(0.6f)
-                    .padding(start = 12.dp),
-                style = TextStyle.body2.copy(
-                    color = AppColors.textPrimary,
-                    fontWeight = FontWeight.SemiBold
-                ),
-            )
-            val icon = item.icon
-            if (icon is DrawableResource) {
-                Image(
-                    painterResource(icon),
-                    contentDescription = "",
-                    contentScale = ContentScale.Inside,
+            if (isLeftItem) {
+                Text(
+                    text = stringResource(item.title),
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(0.4f)
-                        .padding(8.dp),
+                        .weight(0.6f)
+                        .padding(horizontal = 12.dp),
+                    textAlign = TextAlign.Center,
+                    style = TextStyle.body2.copy(
+                        color = AppColors.textPrimary,
+                        fontWeight = FontWeight.SemiBold
+                    ),
                 )
-            } else if (icon is ImageVector) {
+                InformationItemIcon(item = item)
+            } else {
+                InformationItemIcon(item = item)
+                Text(
+                    text = stringResource(item.title),
+                    modifier = Modifier
+                        .weight(0.6f)
+                        .padding(horizontal = 12.dp),
+                    textAlign = TextAlign.Center,
+                    style = TextStyle.body2.copy(
+                        color = AppColors.textPrimary,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                )
+            }
+        }
+    }
+}
+
+private fun informationCardShape(isLeftItem: Boolean): Shape =
+    if (isLeftItem) {
+        RoundedCornerShape(
+            topStart = 24.dp,
+            bottomStart = 24.dp,
+            topEnd = 4.dp,
+            bottomEnd = 4.dp,
+        )
+    } else {
+        RoundedCornerShape(
+            topStart = 4.dp,
+            bottomStart = 4.dp,
+            topEnd = 24.dp,
+            bottomEnd = 24.dp,
+        )
+    }
+
+@Composable
+private fun RowScope.InformationItemIcon(item: ActionItem) {
+    val iconContainerShape = RoundedCornerShape(10.dp)
+    val iconContainerModifier = Modifier
+        .fillMaxHeight()
+        .weight(0.4f)
+        .padding(4.dp)
+        .clip(iconContainerShape)
+        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f))
+        .border(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+            shape = iconContainerShape,
+        )
+
+    val icon = item.icon
+    Box(
+        modifier = iconContainerModifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        when (icon) {
+            is DrawableResource -> {
+                Image(
+                    painter = painterResource(icon),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+            is ImageVector -> {
                 Icon(
                     imageVector = icon,
                     contentDescription = "",
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(0.4f)
-                        .padding(12.dp),
+                    tint = AppColors.textPrimary,
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
+            else -> Unit
         }
     }
 }

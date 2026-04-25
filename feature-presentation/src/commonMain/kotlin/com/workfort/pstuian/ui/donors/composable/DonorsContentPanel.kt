@@ -62,7 +62,7 @@ private fun EmptyView() {
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AnimatedEmptyView(modifier = Modifier.width(200.dp))
+        AnimatedEmptyView()
     }
 }
 

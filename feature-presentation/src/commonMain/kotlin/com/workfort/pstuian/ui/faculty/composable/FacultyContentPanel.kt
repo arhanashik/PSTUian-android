@@ -115,7 +115,7 @@ private fun FacultyUiState.BatchListState.Handle(
             if (isLoading) {
                 BatchListShimmer()
             } else {
-                AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
+                AnimatedEmptyView()
             }
         }
     } else {
@@ -148,7 +148,7 @@ private fun FacultyUiState.TeacherListState.Handle(
             if (isLoading) {
                 TeacherListShimmer()
             } else {
-                AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
+                AnimatedEmptyView()
             }
         }
     } else {
@@ -184,7 +184,7 @@ private fun FacultyUiState.CourseListState.Handle(
             if (isLoading) {
                 CourseListShimmer()
             } else {
-                AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
+                AnimatedEmptyView()
             }
         }
     } else {
@@ -217,7 +217,7 @@ private fun FacultyUiState.EmployeeListState.Handle(
             if (isLoading) {
                 EmployeeListShimmer()
             } else {
-                AnimatedEmptyView(modifier = Modifier.fillMaxWidth())
+                AnimatedEmptyView()
             }
         }
     } else {
