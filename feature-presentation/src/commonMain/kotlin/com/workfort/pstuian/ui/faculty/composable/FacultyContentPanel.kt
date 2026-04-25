@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.Batch
-import com.workfort.pstuian.featuredomain.model.CourseEntity
+import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FacultyContentPanel(
-    uiState: FacultyUiState,
+    uiState: FacultyUiState.Content,
     onUiEvent: (FacultyUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -137,7 +137,7 @@ private fun FacultyUiState.TeacherListState.Handle(
 
 @Composable
 private fun FacultyUiState.CourseListState.Handle(
-    onClickCourse: (course: CourseEntity) -> Unit,
+    onClickCourse: (course: Course) -> Unit,
 ) {
     if (error != null) {
         Column(
@@ -248,9 +248,9 @@ private fun List<User.Teacher>.TeacherListView(
 }
 
 @Composable
-private fun List<CourseEntity>.CourseListView(
+private fun List<Course>.CourseListView(
     isLoading: Boolean,
-    onClickCourse: (course: CourseEntity) -> Unit,
+    onClickCourse: (course: Course) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

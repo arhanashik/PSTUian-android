@@ -140,7 +140,7 @@ private val facultyModule = module {
     factoryOf(::FacultyUiStateMachine)
     factory { (facultyId: Int) ->
         FacultyViewModel(
-            currentFacultyId = facultyId,
+            facultyId = facultyId,
             facultyRepo = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),

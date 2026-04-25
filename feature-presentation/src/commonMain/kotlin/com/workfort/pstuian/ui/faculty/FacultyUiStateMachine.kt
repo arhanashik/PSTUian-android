@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.faculty
 
 import com.workfort.pstuian.featuredomain.model.Batch
-import com.workfort.pstuian.featuredomain.model.CourseEntity
+import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.faculty.state.FacultyUiState
@@ -11,64 +11,99 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
-    private val _uiState = MutableStateFlow(FacultyUiState())
+    private val _uiState = MutableStateFlow<FacultyUiState>(FacultyUiState.None())
     override val uiState: StateFlow<FacultyUiState> = _uiState.asStateFlow()
 
-    fun setInitialContent(title: String, tabs: List<String>, selectedTab: Int) {
+    fun setInitialContent(
+        title: String,
+        tabs: List<String>,
+        selectedTab: Int,
+    ) {
         _uiState.update {
-            it.copy(title = title, tabs = tabs as MutableList<String>, selectedTab = selectedTab)
+            FacultyUiState.Content(
+                showLoadingOverlay = false,
+                title = title,
+                tabs = tabs,
+                selectedTab = selectedTab,
+            )
+        }
+    }
+
+    fun showLoadingOverlay(isLoading: Boolean) {
+        _uiState.update { current ->
+            when (current) {
+                is FacultyUiState.None -> current.copy(showLoadingOverlay = isLoading)
+                is FacultyUiState.Content -> current.copy(showLoadingOverlay = isLoading)
+            }
         }
     }
 
     fun selectTab(index: Int) {
-        _uiState.update { it.copy(selectedTab = index) }
-    }
-
-    fun updateBatchList(batches: List<Batch>, isLoading: Boolean, error: String? = null) {
-        _uiState.update {
-            it.copy(
-                batchListState = it.batchListState.copy(
-                    batches = batches,
-                    isLoading = isLoading,
-                    error = error
-                )
-            )
+        _uiState.update { current ->
+            when (current) {
+                is FacultyUiState.Content -> current.copy(selectedTab = index)
+                else -> current
+            }
         }
     }
 
-    fun updateTeacherList(teachers: List<User.Teacher>, isLoading: Boolean, error: String? = null) {
-        _uiState.update {
-            it.copy(
-                teacherListState = it.teacherListState.copy(
-                    teachers = teachers,
-                    isLoading = isLoading,
-                    error = error
+    fun updateBatchList(
+        isLoading: Boolean = false,
+        batches: List<Batch> = emptyList(),
+        error: String? = null,
+    ) {
+        _uiState.update { current ->
+            when (current) {
+                is FacultyUiState.Content -> current.copy(
+                    batchListState = FacultyUiState.BatchListState(isLoading, batches, error),
                 )
-            )
+                else -> current
+            }
         }
     }
 
-    fun updateCourseList(courses: List<CourseEntity>, isLoading: Boolean, error: String? = null) {
-        _uiState.update {
-            it.copy(
-                courseListState = it.courseListState.copy(
-                    courses = courses,
-                    isLoading = isLoading,
-                    error = error
+    fun updateTeacherList(
+        isLoading: Boolean = false,
+        teachers: List<User.Teacher> = emptyList(),
+        error: String? = null,
+    ) {
+        _uiState.update { current ->
+            when (current) {
+                is FacultyUiState.Content -> current.copy(
+                    teacherListState = FacultyUiState.TeacherListState(isLoading, teachers, error),
                 )
-            )
+                else -> current
+            }
         }
     }
 
-    fun updateEmployeeList(employees: List<User.Employee>, isLoading: Boolean, error: String? = null) {
-        _uiState.update {
-            it.copy(
-                employeeListState = it.employeeListState.copy(
-                    employees = employees,
-                    isLoading = isLoading,
-                    error = error
+    fun updateCourseList(
+        isLoading: Boolean = false,
+        courses: List<Course> = emptyList(),
+        error: String? = null,
+    ) {
+        _uiState.update { current ->
+            when (current) {
+                is FacultyUiState.Content -> current.copy(
+                    courseListState = FacultyUiState.CourseListState(isLoading, courses, error),
                 )
-            )
+                else -> current
+            }
+        }
+    }
+
+    fun updateEmployeeList(
+        isLoading: Boolean = false,
+        employees: List<User.Employee> = emptyList(),
+        error: String? = null,
+    ) {
+        _uiState.update { current ->
+            when (current) {
+                is FacultyUiState.Content -> current.copy(
+                    employeeListState = FacultyUiState.EmployeeListState(isLoading, employees, error),
+                )
+                else -> current
+            }
         }
     }
 }

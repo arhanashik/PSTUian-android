@@ -1,8 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
+  </component>
+  <component name="CidrRootsConfiguration">
+    <libraryRoots>
+      <file path="$PROJECT_DIR$/iosApp/pstuian/Pods" />
+    </libraryRoots>
   </component>
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">

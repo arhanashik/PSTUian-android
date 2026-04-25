@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.Batch
-import com.workfort.pstuian.featuredomain.model.CourseEntity
+import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.LabelText
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
@@ -213,8 +213,8 @@ fun TeacherListItemView(
 
 @Composable
 fun CourseListItemView(
-    course: CourseEntity,
-    onClickCourse: (course: CourseEntity) -> Unit,
+    course: Course,
+    onClickCourse: (course: Course) -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier

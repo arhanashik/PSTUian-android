@@ -2,26 +2,18 @@ package com.workfort.pstuian.ui.faculty
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.common.theme.bgCircle
-import com.workfort.pstuian.ui.faculty.composable.FacultyContentPanel
+import com.workfort.pstuian.ui.faculty.composable.FacultyScreenContent
 import com.workfort.pstuian.ui.faculty.state.FacultyMessageState
 import com.workfort.pstuian.ui.faculty.state.FacultyNavigationState
-import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
-import com.workfort.pstuian.ui.faculty.state.FacultyUiState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
@@ -39,28 +31,6 @@ fun FacultyScreen(viewModel: FacultyViewModel) {
 
     HandleMessageState(message, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationConsumed)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun FacultyScreenContent(
-    uiState: FacultyUiState,
-    onUiEvent: (FacultyUiEvent) -> Unit,
-) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    AppScaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppBar(
-                title = uiState.title,
-                navigation = { onUiEvent(FacultyUiEvent.BackClicked) },
-                scrollBehavior = scrollBehavior,
-            )
-        },
-    ) {
-        FacultyContentPanel(uiState, onUiEvent)
-    }
 }
 
 @Composable

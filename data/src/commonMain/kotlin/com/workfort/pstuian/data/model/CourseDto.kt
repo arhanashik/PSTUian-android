@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.model
 
-import com.workfort.pstuian.featuredomain.model.CourseEntity
+import com.workfort.pstuian.featuredomain.model.Course
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,7 +17,7 @@ data class CourseDto (
     val facultyId: Int,
     val status: Int,
 ) {
-    fun toModel() = CourseEntity(
+    fun toModel() = Course(
         id = id,
         courseCode = courseCode,
         courseTitle = courseTitle,
@@ -27,7 +27,7 @@ data class CourseDto (
     )
 }
 
-fun CourseEntity.toDto() = CourseDto(
+fun Course.toDto() = CourseDto(
     id = id,
     courseCode = courseCode,
     courseTitle = courseTitle,

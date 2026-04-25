@@ -1,6 +1,6 @@
 package com.workfort.pstuian.featuredomain.model
 
-data class CourseEntity (
+data class Course (
     var id: Int,
     var courseCode: String,
     var courseTitle: String,

@@ -133,25 +133,33 @@ class SignInViewModel(
         }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
-            val batches = facultyRepository.getBatches(facultyId, forceRefresh = false)
-            stateMachine.showLoading(false)
-            if (batches.isEmpty()) {
-                _message.update {
-                    SignInMessageState.Error("No batches found for this faculty. Please try again later.")
+            facultyRepository.getBatches(facultyId)
+                .onSuccess { batches ->
+                    stateMachine.showLoading(false)
+                    if (batches.isEmpty()) {
+                        _message.update {
+                            SignInMessageState.Error("No batches found for this faculty. Please try again later.")
+                        }
+                    } else {
+                        val selectedId = currentSignUpBatchId()
+                        _message.update {
+                            SignInMessageState.BatchSelection(
+                                batches = batches,
+                                selectedBatchId = selectedId,
+                                onSaveAndContinue = { batch ->
+                                    _message.update { null }
+                                    batch?.let { applySignUpBatch(it) }
+                                },
+                            )
+                        }
+                    }
                 }
-            } else {
-                val selectedId = currentSignUpBatchId()
-                _message.update {
-                    SignInMessageState.BatchSelection(
-                        batches = batches,
-                        selectedBatchId = selectedId,
-                        onSaveAndContinue = { batch ->
-                            _message.update { null }
-                            batch?.let { applySignUpBatch(it) }
-                        },
-                    )
+                .onFailure {
+                    stateMachine.showLoading(false)
+                    val error = it.message ?: "Failed to load data. Please try again later."
+                    _message.update { SignInMessageState.Error(error) }
                 }
-            }
+
         }
     }
 
