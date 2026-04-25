@@ -9,7 +9,6 @@ import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.LoadingOverlay
 import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
@@ -36,8 +35,8 @@ internal fun FacultyScreenContent(
             is FacultyUiState.Content -> FacultyContentPanel(uiState, onUiEvent)
         }
 
-        if (uiState.showLoadingOverlay) {
-            LoadingOverlay()
+        if (uiState.showOperationLoading) {
+            FacultyScreenShimmer()
         }
     }
 }
@@ -114,30 +113,34 @@ private fun mockEmployees() = listOf(
 private fun mockUiState(
     selectedTab: Int = 0,
     showLoadingOverlay: Boolean = false,
+    showBatchShimmer: Boolean = false,
+    showTeacherShimmer: Boolean = false,
+    showCourseShimmer: Boolean = false,
+    showEmployeeShimmer: Boolean = false,
 ): FacultyUiState.Content {
     return FacultyUiState.Content(
         title = "Faculty of CSE",
-        showLoadingOverlay = showLoadingOverlay,
+        showOperationLoading = showLoadingOverlay,
         tabs = listOf("Batch", "Teacher", "Course", "Employee"),
         selectedTab = selectedTab,
         batchListState = FacultyUiState.BatchListState(
-            isLoading = false,
-            batches = mockBatches(),
+            isLoading = showBatchShimmer,
+            batches = if (showBatchShimmer) emptyList() else mockBatches(),
             error = null,
         ),
         teacherListState = FacultyUiState.TeacherListState(
-            isLoading = false,
-            teachers = mockTeachers(),
+            isLoading = showTeacherShimmer,
+            teachers = if (showTeacherShimmer) emptyList() else mockTeachers(),
             error = null,
         ),
         courseListState = FacultyUiState.CourseListState(
-            isLoading = false,
-            courses = mockCourses(),
+            isLoading = showCourseShimmer,
+            courses = if (showCourseShimmer) emptyList() else mockCourses(),
             error = null,
         ),
         employeeListState = FacultyUiState.EmployeeListState(
-            isLoading = false,
-            employees = mockEmployees(),
+            isLoading = showEmployeeShimmer,
+            employees = if (showEmployeeShimmer) emptyList() else mockEmployees(),
             error = null,
         ),
     )
@@ -191,7 +194,62 @@ fun FacultyScreenContentLoadingOverlayPreview() {
 fun FacultyScreenContentNonePreview() {
     AppTheme {
         FacultyScreenContent(
-            uiState = FacultyUiState.None(showLoadingOverlay = true),
+            uiState = FacultyUiState.None(showOperationLoading = true),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Screen Shimmer")
+@Composable
+fun FacultyScreenContentScreenShimmerPreview() {
+    AppTheme {
+        FacultyScreenContent(
+            uiState = FacultyUiState.None(),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Batch List Shimmer")
+@Composable
+fun FacultyScreenContentBatchShimmerPreview() {
+    AppTheme {
+        FacultyScreenContent(
+            uiState = mockUiState(selectedTab = 0, showBatchShimmer = true),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Teacher List Shimmer")
+@Composable
+fun FacultyScreenContentTeacherShimmerPreview() {
+    AppTheme {
+        FacultyScreenContent(
+            uiState = mockUiState(selectedTab = 1, showTeacherShimmer = true),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Course List Shimmer")
+@Composable
+fun FacultyScreenContentCourseShimmerPreview() {
+    AppTheme {
+        FacultyScreenContent(
+            uiState = mockUiState(selectedTab = 2, showCourseShimmer = true),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Employee List Shimmer")
+@Composable
+fun FacultyScreenContentEmployeeShimmerPreview() {
+    AppTheme {
+        FacultyScreenContent(
+            uiState = mockUiState(selectedTab = 3, showEmployeeShimmer = true),
             onUiEvent = {},
         )
     }

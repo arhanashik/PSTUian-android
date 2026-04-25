@@ -33,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
@@ -53,6 +52,7 @@ import com.workfort.pstuian.ui.common.theme.TextStyle
 import kotlinx.coroutines.delay
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.ui.draw.clip
 import kotlin.math.absoluteValue
 
 
@@ -133,6 +133,8 @@ fun SliderView(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer {
+                        shape = RoundedCornerShape(24.dp)
+                        clip = true
                         // Scale effect for the card
                         val scaleXEffect = lerp(
                             start = 0.9f,

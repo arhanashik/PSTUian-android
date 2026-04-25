@@ -21,7 +21,7 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
     ) {
         _uiState.update {
             FacultyUiState.Content(
-                showLoadingOverlay = false,
+                showOperationLoading = false,
                 title = title,
                 tabs = tabs,
                 selectedTab = selectedTab,
@@ -32,8 +32,8 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
     fun showLoadingOverlay(isLoading: Boolean) {
         _uiState.update { current ->
             when (current) {
-                is FacultyUiState.None -> current.copy(showLoadingOverlay = isLoading)
-                is FacultyUiState.Content -> current.copy(showLoadingOverlay = isLoading)
+                is FacultyUiState.None -> current.copy(showOperationLoading = isLoading)
+                is FacultyUiState.Content -> current.copy(showOperationLoading = isLoading)
             }
         }
     }

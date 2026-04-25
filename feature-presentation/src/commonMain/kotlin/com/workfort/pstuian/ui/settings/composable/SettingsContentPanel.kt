@@ -21,8 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,10 +30,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,7 +73,7 @@ fun SettingsContentPanel(
                         onClickUserType = { onUiEvent(SettingsUiEvent.UserTypeClicked) },
                         currentTheme = uiState.theme,
                         showNotification = uiState.showNotification,
-                        onThemeChange = { onUiEvent(SettingsUiEvent.ChangeThemeClicked(it)) },
+                        onClickTheme = { onUiEvent(SettingsUiEvent.ThemeClicked) },
                         onNotificationChange = { onUiEvent(SettingsUiEvent.ShowNotificationToggled(it)) },
                     )
                     if (uiState.debugPanelData != null) {
@@ -115,10 +109,9 @@ private fun GeneralSettingsView(
     onClickUserType: () -> Unit,
     currentTheme: ThemeMode,
     showNotification: Boolean,
-    onThemeChange: (ThemeMode) -> Unit,
+    onClickTheme: () -> Unit,
     onNotificationChange: (Boolean) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
     val userTypeLabel: String = userType?.localizedLabel() ?: stringResource(Res.string.txt_visitor)
     val rowLabelStyle = settingsCardLabelStyle()
     ElevatedCard(
@@ -166,7 +159,7 @@ private fun GeneralSettingsView(
                 Text(text = "App Theme", style = rowLabelStyle)
                 Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
                     OutlinedButton(
-                        onClick = { expanded = true },
+                        onClick = onClickTheme,
                         modifier = Modifier.height(30.dp),
                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                     ) {
@@ -178,20 +171,6 @@ private fun GeneralSettingsView(
                                 fontSize = 11.sp,
                             ),
                         )
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        ThemeMode.entries.forEach { theme ->
-                            DropdownMenuItem(
-                                text = { Text(theme.name) },
-                                onClick = {
-                                    onThemeChange(theme)
-                                    expanded = false
-                                }
-                            )
-                        }
                     }
                 }
             }

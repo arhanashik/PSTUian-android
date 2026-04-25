@@ -16,15 +16,20 @@ fun AppTheme(
         ThemeMode.System -> isSystemInDarkTheme()
     }
 
+    val colorScheme = if (isDark) {
+        AppColors.DarkColorScheme
+    } else {
+        AppColors.LightColorScheme
+    }
+
     MaterialTheme(
-        colorScheme = if (isDark) {
-            AppColors.DarkColorScheme
-        } else {
-            AppColors.LightColorScheme
-        },
+        colorScheme = colorScheme,
         typography = getTypography(),
         content = content,
     )
 
-    AppThemeSideEffect(isDark)
+    AppThemeSideEffect(
+        isDark = isDark,
+        statusBarColor = colorScheme.primary,
+    )
 }

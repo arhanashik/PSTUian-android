@@ -22,14 +22,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
@@ -151,46 +148,6 @@ private fun BatchMetricCard(
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
-    }
-}
-
-@Composable
-fun BatchListItemSimpleView(
-    batch: Batch,
-    onClickBatch: (batch: Batch) -> Unit,
-) {
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClickBatch(batch) },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(0.75f)
-                    .padding(end = 16.dp)
-            ) {
-                TitleTextSmall(text = batch.name)
-            }
-            VerticalDivider(
-                modifier = Modifier
-                    .weight(0.05f)
-                    .height(24.dp),
-                thickness = 1.dp,
-                color = Color.LightGray,
-            )
-            Text(modifier = Modifier.weight(0.2f), text = batch.session, fontSize = 14.sp)
-        }
     }
 }
 

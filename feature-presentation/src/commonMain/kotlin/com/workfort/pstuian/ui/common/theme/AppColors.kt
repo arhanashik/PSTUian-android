@@ -21,14 +21,15 @@ object AppColors {
     private val LabelDark = Color(0xFF3D3D3D)
     private val LineLight = Color(0xFFD9D9D9)
 
-    // Dark-mode neutrals (tinted slightly toward brand green)
-    private val SurfaceDark = Color(0xFF14211C)        // the "white section" in dark mode
-    private val SurfaceDarkVariant = Color(0xFF1E2D27)
-    private val BackgroundDark = Color(0xFF0B1613)
-    private val OnSurfaceDark = Color(0xFFE6E6E6)
-    private val OnSurfaceVariantDark = Color(0xFFB8BFBB)
-    private val OutlineDark = Color(0xFF4A5550)
-    private val OutlineVariantDark = Color(0xFF2F3A35)
+    // Dark-mode neutrals (no green tint)
+    private val DarkPrimary = Color(0xFF121417)
+    private val SurfaceDark = Color(0xFF2A3037)
+    private val SurfaceDarkVariant = Color(0xFF353C44)
+    private val BackgroundDark = Color(0xFF1B1F24)
+    private val OnSurfaceDark = Color(0xFFF7F9FC)
+    private val OnSurfaceVariantDark = Color(0xFFCDD4DE)
+    private val OutlineDark = Color(0xFFA3ADBA)
+    private val OutlineVariantDark = Color(0xFF3A4149)
 
     // Legacy aliases kept for backward compatibility with older call sites
     val ColorPrimary = BrandGreen
@@ -125,16 +126,16 @@ object AppColors {
     )
 
     val DarkColorScheme = darkColorScheme(
-        primary = BrandGreen,
+        primary = DarkPrimary,
         onPrimary = NeutralWhite,
-        primaryContainer = BrandGreenContainer,
+        primaryContainer = SurfaceDarkVariant,
         onPrimaryContainer = NeutralWhite,
-        secondary = BrandYellow,
-        onSecondary = BrandGreen,
-        secondaryContainer = BrandYellow,
-        onSecondaryContainer = BrandGreen,
-        tertiary = BrandGreenSoft,
-        onTertiary = BrandGreen,
+        secondary = Color(0xFF9AA2AE),
+        onSecondary = DarkPrimary,
+        secondaryContainer = Color(0xFF323840),
+        onSecondaryContainer = Color(0xFFD7DCE3),
+        tertiary = Color(0xFFC3CAD4),
+        onTertiary = DarkPrimary,
         background = BackgroundDark,
         onBackground = OnSurfaceDark,
         surface = SurfaceDark,

@@ -58,6 +58,7 @@ class SettingsViewModel(
             when (event) {
                 is SettingsUiEvent.BackClicked -> _navigation.update { SettingsNavigationState.GoBack }
                 SettingsUiEvent.UserTypeClicked -> openAppUsageRoleSelectionMessage()
+                SettingsUiEvent.ThemeClicked -> Unit
                 is SettingsUiEvent.ShowNotificationToggled -> setShowNotification(event.show)
                 is SettingsUiEvent.ChangeThemeClicked -> onChangeTheme(event.theme)
                 is SettingsUiEvent.RefreshFcmTokenClicked -> onRefreshFcmToken()

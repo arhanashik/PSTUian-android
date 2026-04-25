@@ -42,7 +42,7 @@ internal fun AppBar(
     Surface(
         shadowElevation = 2.dp,
         tonalElevation = 2.dp,
-        color = AppColors.background,
+        color = AppColors.primary,
     ) {
         TopAppBar(
             title = {
@@ -61,7 +61,12 @@ internal fun AppBar(
                 actions()
                 Spacer(modifier = Modifier.width(16.dp))
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = AppColors.background),
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = AppColors.primary,
+                titleContentColor = AppColors.onPrimary,
+                navigationIconContentColor = AppColors.onPrimary,
+                actionIconContentColor = AppColors.onPrimary,
+            ),
             modifier = modifier,
             scrollBehavior = scrollBehavior,
         )
@@ -91,7 +96,7 @@ fun AppBarIconButton(
             .padding(horizontal = 4.dp)
             .size(32.dp)
             .clip(CircleShape)
-            .background(AppColors.primary.copy(alpha = 0.15f))
+            .background(AppColors.onPrimary.copy(alpha = 0.16f))
             .clickable { onClick() },
         contentAlignment = Alignment.Center,
     ) {
@@ -99,7 +104,7 @@ fun AppBarIconButton(
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
-                tint = AppColors.primary,
+                tint = AppColors.onPrimary,
                 modifier = Modifier.size(18.dp),
             )
             badge?.invoke(this)

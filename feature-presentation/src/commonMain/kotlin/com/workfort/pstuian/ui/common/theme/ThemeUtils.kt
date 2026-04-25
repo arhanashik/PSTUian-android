@@ -4,7 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-expect fun AppThemeSideEffect(isDark: Boolean)
+expect fun AppThemeSideEffect(
+    isDark: Boolean,
+    statusBarColor: Color,
+)
 
 /**
  * Sets the system status bar and navigation bar colors for the current screen. The implementation

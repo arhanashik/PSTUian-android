@@ -61,7 +61,7 @@ fun FacultyView(modifier: Modifier, faculty: Faculty) {
                 modifier = Modifier.padding(top = 8.dp),
                 text = faculty.shortTitle,
                 style = TextStyle.label1.copy(
-                    color = AppColors.primary,
+                    color = AppColors.textSecondary,
                     fontWeight = FontWeight.Bold
                 ),
             )

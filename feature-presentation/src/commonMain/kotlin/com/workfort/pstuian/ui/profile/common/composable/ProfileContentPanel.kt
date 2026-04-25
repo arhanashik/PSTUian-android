@@ -18,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
+import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.common.theme.AppColors
@@ -90,10 +92,18 @@ private fun ProfileView(
     val pagerState = rememberPagerState(pageCount = { 2 })
     val academicLabel = stringResource(Res.string.txt_academic)
     val connectLabel = stringResource(Res.string.txt_connect)
+    val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
 
     LaunchedEffect(pagerState.currentPage) {
         onUiEvent(ProfileUiEvent.TabClicked(pagerState.currentPage))
     }
+
+    ApplySystemBarColors(
+        statusBarColor = MaterialTheme.colorScheme.background,
+        statusBarDarkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f,
+        navigationBarColor = MaterialTheme.colorScheme.background,
+        navigationBarDarkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f,
+    )
 
     Column(modifier = Modifier.fillMaxSize()) {
         ProfileTopBar(
@@ -105,8 +115,16 @@ private fun ProfileView(
 
         val headerCardGradient = Brush.verticalGradient(
             colors = listOf(
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.10f),
-                AppColors.card,
+                if (isDarkTheme) {
+                    MaterialTheme.colorScheme.surfaceVariant
+                } else {
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
+                },
+                if (isDarkTheme) {
+                    MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+                } else {
+                    AppColors.card
+                },
             ),
         )
 
@@ -140,7 +158,13 @@ private fun ProfileView(
                 .weight(1f)
                 .padding(horizontal = 16.dp, vertical = 4.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(AppColors.card),
+                .background(
+                    if (isDarkTheme) {
+                        MaterialTheme.colorScheme.surface
+                    } else {
+                        AppColors.card
+                    },
+                ),
         ) {
             HorizontalPager(
                 state = pagerState,

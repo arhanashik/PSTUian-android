@@ -2,12 +2,18 @@ package com.workfort.pstuian.ui.settings.composable
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.NavigationButton
+import com.workfort.pstuian.ui.common.composable.themeModeListSelectionOptions
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.settings.state.DebugPanelData
 import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
@@ -22,6 +28,8 @@ internal fun SettingsScreenContent(
     uiState: SettingsUiState,
     onUiEvent: (SettingsUiEvent) -> Unit,
 ) {
+    var showThemeBottomSheet by remember { mutableStateOf(false) }
+
     AppScaffold(
         topBar = {
             AppBar(
@@ -32,7 +40,30 @@ internal fun SettingsScreenContent(
             )
         },
     ) {
-        SettingsContentPanel(uiState, onUiEvent)
+        SettingsContentPanel(uiState) { event ->
+            if (event is SettingsUiEvent.ThemeClicked) {
+                showThemeBottomSheet = true
+            } else {
+                onUiEvent(event)
+            }
+        }
+    }
+
+    val currentTheme = (uiState as? SettingsUiState.Content)?.theme
+    if (showThemeBottomSheet && currentTheme != null) {
+        ListSelectionBottomSheet(
+            title = "Select App Theme",
+            helperText = "Choose how the app should appear.",
+            primaryButtonLabel = "Apply Theme",
+            options = themeModeListSelectionOptions(),
+            initialSelection = currentTheme,
+            scrollable = false,
+            onDismiss = { showThemeBottomSheet = false },
+            onConfirm = { selectedTheme ->
+                selectedTheme?.let { onUiEvent(SettingsUiEvent.ChangeThemeClicked(it)) }
+                showThemeBottomSheet = false
+            },
+        )
     }
 }
 

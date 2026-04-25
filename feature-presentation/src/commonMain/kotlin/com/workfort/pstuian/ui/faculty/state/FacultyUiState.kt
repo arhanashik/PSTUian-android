@@ -7,16 +7,16 @@ import com.workfort.pstuian.featuredomain.model.User
 sealed interface FacultyUiState {
 
     val title: String
-    val showLoadingOverlay: Boolean
+    val showOperationLoading: Boolean
 
     data class None(
         override val title: String = "",
-        override val showLoadingOverlay: Boolean = false
+        override val showOperationLoading: Boolean = false
     ) : FacultyUiState
 
     data class Content(
         override val title: String,
-        override val showLoadingOverlay: Boolean = false,
+        override val showOperationLoading: Boolean = false,
         val tabs: List<String> = mutableListOf(),
         val selectedTab: Int = 0,
         val batchListState: BatchListState = BatchListState(),

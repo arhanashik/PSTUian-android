@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.Faculty
+import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
@@ -197,3 +198,8 @@ internal fun userTypeListSelectionOptions(): List<ListSelectionOption<UserType>>
         }
     }
 }
+
+internal fun themeModeListSelectionOptions(): List<ListSelectionOption<ThemeMode>> =
+    ThemeMode.entries.map { themeMode ->
+        ListSelectionOption(value = themeMode, label = themeMode.name)
+    }

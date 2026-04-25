@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.DraggableAdaptiveLoader
+import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
@@ -30,26 +32,27 @@ fun SplashContentPanel(
     state: SplashUiState,
     onEvent: (SplashUiEvent) -> Unit,
 ) {
+    ApplySystemBarColors(
+        statusBarColor = MaterialTheme.colorScheme.background,
+        statusBarDarkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f,
+        navigationBarColor = MaterialTheme.colorScheme.background,
+        navigationBarDarkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f,
+    )
+
     AppScaffold {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            when {
-                state.screenState == null || state.screenState is InitialScreenState.Home -> {
-                    DefaultSplashContent(state.statusText)
-                }
-                else -> {
-                    val screenState = state.screenState as InitialScreenState
-                    ErrorContent(
-                        screenState,
-                        state.statusText,
-                        state.descriptionText,
-                        state.actionBtnText,
-                    ) {
-                        val isForceUpdateAction = screenState is InitialScreenState.ForceUpdate
-                        onEvent(SplashUiEvent.ActionBtnClicked(isForceUpdateAction))
-                    }
+        when {
+            state.screenState == null || state.screenState is InitialScreenState.Home -> {
+                DefaultSplashContent(state.statusText)
+            }
+            else -> {
+                val isForceUpdateAction = state.screenState is InitialScreenState.ForceUpdate
+                ErrorContent(
+                    state.screenState,
+                    state.statusText,
+                    state.descriptionText,
+                    state.actionBtnText,
+                ) {
+                    onEvent(SplashUiEvent.ActionBtnClicked(isForceUpdateAction))
                 }
             }
         }
