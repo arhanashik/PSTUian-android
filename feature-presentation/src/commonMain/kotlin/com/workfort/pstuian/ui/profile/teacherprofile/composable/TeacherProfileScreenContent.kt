@@ -9,7 +9,6 @@ import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.profile.common.composable.ProfileContentPanel
-import com.workfort.pstuian.ui.profile.employeeprofile.composable.EmployeeProfileOptionsDropdown
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
 import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileDisplayDataMapper
@@ -23,7 +22,6 @@ internal fun TeacherProfileScreenContent(
         ProfileContentPanel(
             uiState = uiState,
             onUiEvent = onUiEvent,
-            screenTitle = "Profile",
         ) { expanded, onDismiss, isSignedIn, onUiEvent ->
             TeacherProfileOptionsDropdown(expanded, isSignedIn, onDismiss, onUiEvent)
         }

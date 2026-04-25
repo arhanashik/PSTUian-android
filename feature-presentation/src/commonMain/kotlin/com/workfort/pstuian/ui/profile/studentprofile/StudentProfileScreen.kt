@@ -136,7 +136,7 @@ private fun HandleNavigationState(
     LaunchedEffect(key1 = navigation) {
         navigation?.let {
             when (it) {
-                is StudentProfileNavigationState.GoBack -> navigator?.toString()
+                is StudentProfileNavigationState.GoBack -> navigator?.goBack()
                 is StudentProfileNavigationState.ImagePreviewScreen -> {
                     navigator?.navigateTo(AppScreen.ImagePreview(it.encodedImageUrl))
                 }

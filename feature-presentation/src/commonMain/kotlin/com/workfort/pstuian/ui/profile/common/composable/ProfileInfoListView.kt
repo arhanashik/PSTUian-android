@@ -26,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.LabelText
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItem
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItemAction
 
@@ -67,13 +69,18 @@ fun ProfileInfoListItemView(
     ) {
         Column {
             LabelText(text = infoItem.label)
-            Text(text = infoItem.title.ifEmpty { "~" })
+            Text(
+                text = infoItem.title.ifEmpty { "~" },
+                style = TextStyle.body2,
+                color = AppColors.textPrimary,
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
         infoItem.action.getIcon()?.let { icon ->
             Icon(
                 imageVector = icon,
-                contentDescription = "Profile Info Item Action Icon"
+                contentDescription = "Profile Info Item Action Icon",
+                tint = AppColors.primary,
             )
         }
     }

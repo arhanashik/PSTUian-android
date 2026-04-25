@@ -14,9 +14,10 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
@@ -48,62 +49,66 @@ fun StudentProfileOptionsDropdown(
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
         if (isSignedIn) {
             DropdownMenuItem(
-                text = { Text(changePasswordLabel) },
+                text = { Text(changePasswordLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
                 onClick = { onUiEvent(ProfileUiEvent.ChangePasswordClicked) },
             )
             DropdownMenuItem(
-                text = { Text(uploadCvLabel) },
+                text = { Text(uploadCvLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.KeyboardArrowUp, contentDescription = null) },
                 onClick = { onUiEvent(ProfileUiEvent.UploadCvClicked) },
             )
             HorizontalDivider()
             DropdownMenuItem(
-                text = { Text(bloodDonationLabel) },
+                text = { Text(bloodDonationLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
                 onClick = { onUiEvent(ProfileUiEvent.MyBloodDonationListClicked) },
             )
             DropdownMenuItem(
-                text = { Text(checkInLabel) },
+                text = { Text(checkInLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
                 onClick = { onUiEvent(ProfileUiEvent.MyCheckInListClicked) },
             )
             DropdownMenuItem(
-                text = { Text(devicesLabel) },
+                text = { Text(devicesLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.Settings, contentDescription = null) },
                 onClick = { onUiEvent(ProfileUiEvent.MyDeviceListClicked) },
             )
             HorizontalDivider()
             DropdownMenuItem(
-                text = { Text(signOutLabel, color = MaterialTheme.colorScheme.secondary) },
+                text = { Text(signOutLabel, style = TextStyle.body2, color = AppColors.primaryVariant) },
                 leadingIcon = {
                     Icon(
                         Icons.AutoMirrored.Filled.Logout,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
+                        tint = AppColors.primaryVariant,
                     )
                 },
                 onClick = { onUiEvent(ProfileUiEvent.SignOutClicked) },
             )
             DropdownMenuItem(
-                text = { Text(deleteAccountLabel, color = MaterialTheme.colorScheme.error) },
+                text = { Text(deleteAccountLabel, style = TextStyle.body2, color = AppColors.error) },
                 leadingIcon = {
                     Icon(
                         Icons.Filled.Delete,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
+                        tint = AppColors.error,
                     )
                 },
                 onClick = { onUiEvent(ProfileUiEvent.DeleteAccountClicked) },
             )
         } else {
             DropdownMenuItem(
-                text = { Text(stringResource(Res.string.txt_call)) },
+                text = {
+                    Text(stringResource(Res.string.txt_call), style = TextStyle.body2, color = AppColors.textPrimary)
+                },
                 leadingIcon = { Icon(Icons.Filled.Call, contentDescription = null) },
                 onClick = { onUiEvent(ProfileUiEvent.CallClicked) },
             )
             DropdownMenuItem(
-                text = { Text(stringResource(Res.string.txt_email)) },
+                text = {
+                    Text(stringResource(Res.string.txt_email), style = TextStyle.body2, color = AppColors.textPrimary)
+                },
                 leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
                 onClick = { onUiEvent(ProfileUiEvent.EmailClicked) },
             )

@@ -16,12 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,11 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
+import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileHeaderDisplayData
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.txt_edit
 import pstuian.feature_presentation.generated.resources.txt_follow
 import pstuian.feature_presentation.generated.resources.txt_message
 
@@ -77,11 +80,11 @@ internal fun ProfileHeader(
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                TitleTextSmall(
                     text = displayData.name,
-                    style = MaterialTheme.typography.titleLarge,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 2,
+                    color = AppColors.textPrimary,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -101,10 +104,14 @@ internal fun ProfileHeader(
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 0.dp),
                             modifier = Modifier.height(34.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
+                                containerColor = AppColors.primary,
                             ),
                         ) {
-                            Text(followLabel, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text(
+                                text = followLabel,
+                                style = TextStyle.label2,
+                                color = AppColors.onPrimary,
+                            )
                         }
                         OutlinedButton(
                             onClick = { onUiEvent(ProfileUiEvent.EmailClicked) },
@@ -112,7 +119,11 @@ internal fun ProfileHeader(
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 0.dp),
                             modifier = Modifier.height(34.dp),
                         ) {
-                            Text(messageLabel, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text(
+                                text = messageLabel,
+                                style = TextStyle.label2,
+                                color = AppColors.textPrimary,
+                            )
                         }
                     }
                 }
@@ -122,14 +133,11 @@ internal fun ProfileHeader(
         // ── Info rows ───────────────────────────────────
         if (!displayData.infoItem1.isNullOrEmpty()) {
             Spacer(modifier = Modifier.height(18.dp))
-            ProfileInfoRow(icon = Icons.Filled.LocationOn, text = displayData.infoItem1)
+            ProfileInfoRow(icon = Icons.Filled.Book, text = displayData.infoItem1)
         }
         if (!displayData.infoItem2.isNullOrEmpty()) {
-            Spacer(modifier = Modifier.height(7.dp))
-            ProfileInfoRow(
-                icon = Icons.Filled.DateRange,
-                text = displayData.infoItem2,
-            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ProfileInfoRow(icon = Icons.Filled.Info, text = displayData.infoItem2,)
         }
 
         // ── Bio ───────────────────────────────────────────────────────────
@@ -137,8 +145,8 @@ internal fun ProfileHeader(
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = displayData.bio,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = TextStyle.body3,
+                color = AppColors.textSecondary,
             )
         }
     }
@@ -152,7 +160,7 @@ private fun AvatarWithOnlineBadge(
     Box(contentAlignment = Alignment.BottomEnd) {
         Box(
             modifier = Modifier
-                .border(2.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                .border(2.5.dp, AppColors.primary, CircleShape)
                 .padding(3.dp),
         ) {
             LoadAsyncUserImage(
@@ -165,7 +173,7 @@ private fun AvatarWithOnlineBadge(
         Box(
             modifier = Modifier
                 .size(17.dp)
-                .border(2.5.dp, MaterialTheme.colorScheme.background, CircleShape)
+                .border(2.5.dp, AppColors.background, CircleShape)
                 .background(OnlineGreen, CircleShape),
         )
     }
@@ -183,13 +191,13 @@ private fun ProfileInfoRow(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = AppColors.primary,
             modifier = Modifier.size(16.dp),
         )
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            style = TextStyle.body2,
+            color = AppColors.textPrimary,
         )
     }
 }

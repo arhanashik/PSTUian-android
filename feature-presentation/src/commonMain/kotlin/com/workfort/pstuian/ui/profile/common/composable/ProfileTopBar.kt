@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +26,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_go_back
@@ -56,8 +56,9 @@ internal fun ProfileTopBar(
         Text(
             text = title,
             modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.titleMedium,
+            style = TextStyle.title3,
             fontWeight = FontWeight.Bold,
+            color = AppColors.textPrimary,
             textAlign = TextAlign.Center,
         )
 
@@ -83,8 +84,8 @@ private fun TopBarCircleButton(
             .size(48.dp)
             .clip(CircleShape),
         colors = IconButtonDefaults.filledIconButtonColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = AppColors.card,
+            contentColor = AppColors.textPrimary,
         ),
     ) {
         Icon(

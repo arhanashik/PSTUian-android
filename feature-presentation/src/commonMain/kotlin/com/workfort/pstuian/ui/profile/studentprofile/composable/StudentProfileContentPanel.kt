@@ -17,7 +17,6 @@ fun StudentProfileContentPanel(
     ProfileContentPanel(
         uiState = uiState,
         onUiEvent = onUiEvent,
-        screenTitle = title,
     ) { expanded, onDismiss, isSignedIn, onEvent ->
         StudentProfileOptionsDropdown(expanded, isSignedIn, onDismiss, onEvent)
     }

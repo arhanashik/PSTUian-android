@@ -22,7 +22,6 @@ internal fun EmployeeProfileScreenContent(
         ProfileContentPanel(
             uiState = uiState,
             onUiEvent = onUiEvent,
-            screenTitle = "Profile",
         ) { expanded, onDismiss, isSignedIn, onEvent ->
             EmployeeProfileOptionsDropdown(expanded, isSignedIn, onDismiss, onEvent)
         }

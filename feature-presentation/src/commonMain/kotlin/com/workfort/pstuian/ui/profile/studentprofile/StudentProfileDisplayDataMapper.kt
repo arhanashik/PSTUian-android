@@ -13,7 +13,7 @@ class StudentProfileDisplayDataMapper {
             imageUrl = profile.student.imageUrl,
             name = profile.student.name,
             infoItem1 = profile.faculty.title,
-            infoItem2 = "${profile.batch.title} . ${profile.student.session}",
+            infoItem2 = "${profile.batch.title} - ${profile.student.session}",
             bio = profile.student.bio,
         )
     }
@@ -21,7 +21,7 @@ class StudentProfileDisplayDataMapper {
     fun mapAcademicContents(profile: StudentProfile): List<ProfileInfoItem> {
         return listOf(
             ProfileInfoItem("Name", profile.student.name),
-            ProfileInfoItem("Id", profile.student.userId),
+            ProfileInfoItem("Id", profile.student.studentId.toString()),
             ProfileInfoItem("Registration Number", profile.student.reg),
             ProfileInfoItem("Blood Group", profile.student.blood ?: "~"),
             ProfileInfoItem("Faculty", profile.faculty.title),

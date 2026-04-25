@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ToggleSwitch
+import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileHeaderDisplayData
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItem
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItemAction
@@ -36,7 +37,6 @@ import pstuian.feature_presentation.generated.resources.txt_connect
 fun ProfileContentPanel(
     uiState: ProfileUiState,
     onUiEvent: (ProfileUiEvent) -> Unit,
-    screenTitle: String,
     optionsDropdown: @Composable (
         expanded: Boolean,
         onDismiss: () -> Unit,
@@ -49,7 +49,6 @@ fun ProfileContentPanel(
         is ProfileUiState.Loading -> StudentProfileShimmer()
         is ProfileUiState.Content -> {
             ProfileView(
-                screenTitle = screenTitle,
                 headerDisplayData = uiState.headerDisplayData,
                 academicContents = uiState.academicContents,
                 connectContents = uiState.connectContents,
@@ -74,7 +73,6 @@ fun ProfileContentPanel(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ProfileView(
-    screenTitle: String,
     headerDisplayData: ProfileHeaderDisplayData,
     academicContents: List<ProfileInfoItem>,
     connectContents: List<ProfileInfoItem>,
@@ -99,7 +97,7 @@ private fun ProfileView(
 
     Column(modifier = Modifier.fillMaxSize()) {
         ProfileTopBar(
-            title = screenTitle,
+            title = "Profile",
             onNavigationBack = { onUiEvent(ProfileUiEvent.BackClicked) },
         ) { expanded, onDismiss ->
             optionsDropdown(expanded, onDismiss, isSignedIn, onUiEvent)
@@ -108,7 +106,7 @@ private fun ProfileView(
         val headerCardGradient = Brush.verticalGradient(
             colors = listOf(
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.10f),
-                MaterialTheme.colorScheme.surface,
+                AppColors.card,
             ),
         )
 
@@ -142,7 +140,7 @@ private fun ProfileView(
                 .weight(1f)
                 .padding(horizontal = 16.dp, vertical = 4.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(MaterialTheme.colorScheme.surface),
+                .background(AppColors.card),
         ) {
             HorizontalPager(
                 state = pagerState,
