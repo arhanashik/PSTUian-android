@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.profile.studentprofile.composable
+package com.workfort.pstuian.ui.profile.common.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -149,8 +149,6 @@ internal fun StudentProfileShimmer() {
         }
     }
 }
-
-// ── Shimmer primitives ────────────────────────────────────────────────────────
 
 @Composable
 private fun ShimmerCircle(size: Dp) {

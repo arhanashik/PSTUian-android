@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.profile.studentprofile.composable
+package com.workfort.pstuian.ui.profile.common.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,9 +32,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
-import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileUiEvent
+import com.workfort.pstuian.ui.profile.common.displaydata.ProfileHeaderDisplayData
+import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_edit
@@ -45,11 +45,11 @@ import pstuian.feature_presentation.generated.resources.txt_message
 private val OnlineGreen = Color(0xFF3DB56B)
 
 @Composable
-internal fun StudentProfileHeader(
-    profile: StudentProfile,
+internal fun ProfileHeader(
+    displayData: ProfileHeaderDisplayData,
     isSignedIn: Boolean,
     selectedTabIndex: Int,
-    onUiEvent: (StudentProfileUiEvent) -> Unit,
+    onUiEvent: (ProfileUiEvent) -> Unit,
 ) {
     val followLabel = stringResource(Res.string.txt_follow)
     val messageLabel = stringResource(Res.string.txt_message)
@@ -66,9 +66,9 @@ internal fun StudentProfileHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AvatarWithOnlineBadge(
-                imageUrl = profile.student.imageUrl,
-                onClickImage = if (!profile.student.imageUrl.isNullOrEmpty()) {
-                    { onUiEvent(StudentProfileUiEvent.ImageClicked(profile.student.imageUrl.orEmpty())) }
+                imageUrl = displayData.imageUrl,
+                onClickImage = if (!displayData.imageUrl.isNullOrEmpty()) {
+                    { onUiEvent(ProfileUiEvent.ImageClicked(displayData.imageUrl)) }
                 } else {
                     null
                 },
@@ -78,7 +78,7 @@ internal fun StudentProfileHeader(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = profile.student.name,
+                    text = displayData.name,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -87,7 +87,7 @@ internal fun StudentProfileHeader(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (isSignedIn) {
                         OutlinedButton(
-                            onClick = { onUiEvent(StudentProfileUiEvent.EditClicked(selectedTabIndex)) },
+                            onClick = { onUiEvent(ProfileUiEvent.EditClicked(selectedTabIndex)) },
                             shape = CircleShape,
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 0.dp),
                             modifier = Modifier.height(34.dp),
@@ -96,7 +96,7 @@ internal fun StudentProfileHeader(
                         }
                     } else {
                         Button(
-                            onClick = { onUiEvent(StudentProfileUiEvent.FollowClicked) },
+                            onClick = { onUiEvent(ProfileUiEvent.FollowClicked) },
                             shape = CircleShape,
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 0.dp),
                             modifier = Modifier.height(34.dp),
@@ -107,7 +107,7 @@ internal fun StudentProfileHeader(
                             Text(followLabel, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                         }
                         OutlinedButton(
-                            onClick = { onUiEvent(StudentProfileUiEvent.EmailClicked) },
+                            onClick = { onUiEvent(ProfileUiEvent.EmailClicked) },
                             shape = CircleShape,
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 0.dp),
                             modifier = Modifier.height(34.dp),
@@ -119,29 +119,28 @@ internal fun StudentProfileHeader(
             }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
-
-        // ── Faculty and batch info rows ───────────────────────────────────
-        ProfileInfoRow(
-            icon = Icons.Filled.LocationOn,
-            text = profile.faculty.title,
-        )
-        Spacer(modifier = Modifier.height(7.dp))
-        ProfileInfoRow(
-            icon = Icons.Filled.DateRange,
-            text = "${profile.batch.name}  ·  ${profile.student.session}",
-        )
+        // ── Info rows ───────────────────────────────────
+        if (!displayData.infoItem1.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.height(18.dp))
+            ProfileInfoRow(icon = Icons.Filled.LocationOn, text = displayData.infoItem1)
+        }
+        if (!displayData.infoItem2.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.height(7.dp))
+            ProfileInfoRow(
+                icon = Icons.Filled.DateRange,
+                text = displayData.infoItem2,
+            )
+        }
 
         // ── Bio ───────────────────────────────────────────────────────────
-        profile.student.bio?.let { bio ->
+        if (!displayData.bio.isNullOrEmpty()) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = bio,
+                text = displayData.bio,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-
     }
 }
 

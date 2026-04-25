@@ -32,11 +32,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.EmployeeProfile
-import com.workfort.pstuian.featuredomain.model.ProfileInfoItem
-import com.workfort.pstuian.featuredomain.model.ProfileInfoItemAction
+import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItem
+import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItemAction
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
-import com.workfort.pstuian.ui.common.composable.ProfileInfoListView
+import com.workfort.pstuian.ui.profile.common.composable.ProfileInfoListView
 import com.workfort.pstuian.ui.common.composable.TabView
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.profile.employeeprofile.state.EmployeeProfileUiEvent

@@ -39,6 +39,7 @@ import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListUiStateMachine
 import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListViewModel
 import com.workfort.pstuian.ui.mydevicelist.MyDeviceListUiStateMachine
 import com.workfort.pstuian.ui.mydevicelist.MyDeviceListViewModel
+import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileDisplayDataMapper
 import com.workfort.pstuian.ui.settings.SettingsUiStateMachine
 import com.workfort.pstuian.ui.settings.SettingsViewModel
 import com.workfort.pstuian.ui.signin.SignInUiStateMachine
@@ -180,15 +181,17 @@ private val studentsModule = module {
 }
 
 private val studentProfileModule = module {
+    factoryOf(::StudentProfileDisplayDataMapper)
     factoryOf(::StudentProfileUiStateMachine)
     factory { (userId: Int) ->
         StudentProfileViewModel(
             userId = userId,
             studentRepo = get(),
             authRepo = get(),
-            uiStateMachine = get(),
             settingsRepository = get(),
             getStudentProfileUserUseCase = get(),
+            displayDataMapper = get(),
+            uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
     }

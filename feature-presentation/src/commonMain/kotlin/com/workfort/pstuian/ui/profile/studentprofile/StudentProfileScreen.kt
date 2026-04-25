@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowInputDialog
@@ -15,11 +14,9 @@ import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
-import com.workfort.pstuian.ui.profile.studentprofile.composable.StudentProfileContentPanel
+import com.workfort.pstuian.ui.profile.studentprofile.composable.StudentProfileScreenContent
 import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileMessageState
 import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileNavigationState
-import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileUiEvent
-import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileUiState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
@@ -45,16 +42,6 @@ fun StudentProfileScreen(viewModel: StudentProfileViewModel) {
 
     HandleMessageState(message, viewModel::messageHandled)
     HandleNavigationState(navigation, viewModel::navigationHandled)
-}
-
-@Composable
-private fun StudentProfileScreenContent(
-    uiState: StudentProfileUiState,
-    onUiEvent: (StudentProfileUiEvent) -> Unit,
-) {
-    AppScaffold {
-        StudentProfileContentPanel(uiState, onUiEvent)
-    }
 }
 
 @Composable

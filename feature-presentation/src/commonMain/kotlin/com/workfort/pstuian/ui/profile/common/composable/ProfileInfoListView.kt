@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.common.composable
+package com.workfort.pstuian.ui.profile.common.composable
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.ProfileInfoItem
-import com.workfort.pstuian.featuredomain.model.ProfileInfoItemAction
+import com.workfort.pstuian.ui.common.composable.LabelText
+import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItem
+import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItemAction
 
 @Composable
 fun List<ProfileInfoItem>.ProfileInfoListView(
