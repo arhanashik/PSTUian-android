@@ -43,7 +43,7 @@ class FacultyViewModel(
 
     fun onUiEvent(event: FacultyUiEvent) {
         when (event) {
-            is FacultyUiEvent.BackClicked -> onClickBack()
+            is FacultyUiEvent.BackClicked -> _navigation.update { FacultyNavigationState.GoBack }
             is FacultyUiEvent.SelectTab -> uiStateMachine.selectTab(event.index)
             is FacultyUiEvent.BatchClicked -> onClickBatch(event.batch)
             is FacultyUiEvent.TeacherClicked -> onClickTeacher(event.teacher)
@@ -56,8 +56,6 @@ class FacultyViewModel(
     fun onMessageHandled() = _message.update { null }
 
     fun onNavigationConsumed() = _navigation.update { null }
-
-    private fun onClickBack() = _navigation.update { FacultyNavigationState.GoBack }
 
     private fun onClickBatch(batch: Batch) {
         _navigation.update { FacultyNavigationState.GoToStudentsScreen(batch.id) }
@@ -94,8 +92,13 @@ class FacultyViewModel(
                     getCourses(facultyId)
                     getEmployees(facultyId)
                 }
-                .onFailure {
-                    _navigation.update { FacultyNavigationState.GoBack }
+                .onFailure { error ->
+                    _message.update {
+                        FacultyMessageState.ShowError(message = error.message ?: "Failed to load data") {
+                            onMessageHandled()
+                            setInitialContent()
+                        }
+                    }
                 }
         }
     }

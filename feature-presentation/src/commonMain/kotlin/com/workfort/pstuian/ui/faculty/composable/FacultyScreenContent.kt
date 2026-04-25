@@ -1,13 +1,17 @@
 package com.workfort.pstuian.ui.faculty.composable
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.tooling.preview.Preview
+import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.Course
+import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.LoadingOverlay
+import com.workfort.pstuian.ui.common.composable.NavigationButton
+import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
 import com.workfort.pstuian.ui.faculty.state.FacultyUiState
 
@@ -17,15 +21,13 @@ internal fun FacultyScreenContent(
     uiState: FacultyUiState,
     onUiEvent: (FacultyUiEvent) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
     AppScaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
                 title = uiState.title,
-                navigation = { onUiEvent(FacultyUiEvent.BackClicked) },
-                scrollBehavior = scrollBehavior,
+                navigation = {
+                    NavigationButton { onUiEvent(FacultyUiEvent.BackClicked) }
+                },
             )
         },
     ) {
@@ -33,5 +35,164 @@ internal fun FacultyScreenContent(
             is FacultyUiState.None -> Unit
             is FacultyUiState.Content -> FacultyContentPanel(uiState, onUiEvent)
         }
+
+        if (uiState.showLoadingOverlay) {
+            LoadingOverlay()
+        }
+    }
+}
+
+private fun mockBatches() = listOf(
+    Batch(
+        id = 1,
+        name = "14th Batch",
+        title = "Batch 14",
+        session = "2022-23",
+        facultyId = 1,
+        totalStudent = 120,
+        registeredStudent = 102,
+    ),
+    Batch(
+        id = 2,
+        name = "15th Batch",
+        title = "Batch 15",
+        session = "2023-24",
+        facultyId = 1,
+        totalStudent = 130,
+        registeredStudent = 98,
+    ),
+)
+
+private fun mockTeachers() = listOf(
+    User.Teacher(
+        userId = "t-11",
+        name = "Dr. Farhan Ahmed",
+        email = "farhan.ahmed@pstu.ac.bd",
+        facultyId = 1,
+        phone = "+8801711000001",
+        address = "Patuakhali",
+        bio = null,
+        blood = "A+",
+        imageUrl = null,
+        id = 11,
+        designation = "Professor",
+        linkedIn = null,
+        fbLink = null,
+        department = "CSE",
+        description = "Data science researcher",
+    ),
+)
+
+private fun mockCourses() = listOf(
+    Course(
+        id = 101,
+        courseCode = "CSE-311",
+        courseTitle = "Operating Systems",
+        creditHour = "3.0",
+        facultyId = 1,
+        status = 1,
+    ),
+)
+
+private fun mockEmployees() = listOf(
+    User.Employee(
+        userId = "e-7",
+        name = "Mizanur Rahman",
+        email = "mizanur@pstu.ac.bd",
+        facultyId = 1,
+        phone = "+8801711000002",
+        address = "Patuakhali",
+        bio = null,
+        blood = "B+",
+        imageUrl = null,
+        id = 7,
+        designation = "Office Assistant",
+        department = "Admin",
+    ),
+)
+
+private fun mockUiState(
+    selectedTab: Int = 0,
+    showLoadingOverlay: Boolean = false,
+): FacultyUiState.Content {
+    return FacultyUiState.Content(
+        title = "Faculty of CSE",
+        showLoadingOverlay = showLoadingOverlay,
+        tabs = listOf("Batch", "Teacher", "Course", "Employee"),
+        selectedTab = selectedTab,
+        batchListState = FacultyUiState.BatchListState(
+            isLoading = false,
+            batches = mockBatches(),
+            error = null,
+        ),
+        teacherListState = FacultyUiState.TeacherListState(
+            isLoading = false,
+            teachers = mockTeachers(),
+            error = null,
+        ),
+        courseListState = FacultyUiState.CourseListState(
+            isLoading = false,
+            courses = mockCourses(),
+            error = null,
+        ),
+        employeeListState = FacultyUiState.EmployeeListState(
+            isLoading = false,
+            employees = mockEmployees(),
+            error = null,
+        ),
+    )
+}
+
+@Preview(showBackground = true, name = "Light - Batch Tab")
+@Composable
+fun FacultyScreenContentBatchPreview() {
+    AppTheme {
+        FacultyScreenContent(uiState = mockUiState(selectedTab = 0), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Light - Teacher Tab")
+@Composable
+fun FacultyScreenContentTeacherPreview() {
+    AppTheme {
+        FacultyScreenContent(uiState = mockUiState(selectedTab = 1), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Dark - Course Tab")
+@Composable
+fun FacultyScreenContentDarkPreview() {
+    AppTheme(theme = ThemeMode.Dark) {
+        FacultyScreenContent(uiState = mockUiState(selectedTab = 2), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Light - Employee Tab")
+@Composable
+fun FacultyScreenContentEmployeePreview() {
+    AppTheme {
+        FacultyScreenContent(uiState = mockUiState(selectedTab = 3), onUiEvent = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Overlay Loading")
+@Composable
+fun FacultyScreenContentLoadingOverlayPreview() {
+    AppTheme {
+        FacultyScreenContent(
+            uiState = mockUiState(showLoadingOverlay = true),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Initial None")
+@Composable
+fun FacultyScreenContentNonePreview() {
+    AppTheme {
+        FacultyScreenContent(
+            uiState = FacultyUiState.None(showLoadingOverlay = true),
+            onUiEvent = {},
+        )
     }
 }

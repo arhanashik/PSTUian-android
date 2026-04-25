@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.common.theme.bgCircle
@@ -52,6 +53,14 @@ private fun HandleMessageState(
                         onMessageHandled()
                     },
                     onDismiss = { onMessageHandled() },
+                )
+            }
+            is FacultyMessageState.ShowError -> {
+                ShowErrorDialog(
+                    title = it.title,
+                    message = it.message,
+                    onConfirm = it.onRetry,
+                    onDismiss = onMessageHandled,
                 )
             }
         }
