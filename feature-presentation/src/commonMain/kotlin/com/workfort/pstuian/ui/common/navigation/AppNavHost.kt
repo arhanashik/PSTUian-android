@@ -26,7 +26,7 @@ import com.workfort.pstuian.ui.cvupload.CvUploadScreen
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
 import com.workfort.pstuian.ui.donate.DonateScreen
 import com.workfort.pstuian.ui.donors.DonorsScreen
-import com.workfort.pstuian.ui.employeeprofile.EmployeeProfileScreen
+import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileScreen
 import com.workfort.pstuian.ui.faculty.FacultyScreen
 import com.workfort.pstuian.ui.facultypicker.FacultyPickerScreen
 import com.workfort.pstuian.ui.home.HomeScreen
@@ -39,11 +39,11 @@ import com.workfort.pstuian.ui.mydevicelist.MyDeviceListScreen
 import com.workfort.pstuian.ui.settings.SettingsScreen
 import com.workfort.pstuian.ui.signin.SignInScreen
 import com.workfort.pstuian.ui.splash.SplashScreen
-import com.workfort.pstuian.ui.studentprofile.StudentProfileScreen
-import com.workfort.pstuian.ui.studentprofileedit.StudentProfileEditScreen
+import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileScreen
+import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditScreen
 import com.workfort.pstuian.ui.students.StudentsScreen
-import com.workfort.pstuian.ui.teacherprofile.TeacherProfileScreen
-import com.workfort.pstuian.ui.teacherprofileedit.TeacherProfileEditScreen
+import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileScreen
+import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditScreen
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
