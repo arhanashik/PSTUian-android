@@ -46,11 +46,13 @@ import pstuian.feature_presentation.generated.resources.txt_message
 
 // Online presence color — distinct green that works on both light and dark
 private val OnlineGreen = Color(0xFF3DB56B)
+private val OfflineGray = Color(0xFF9E9E9E)
 
 @Composable
 internal fun ProfileHeader(
     displayData: ProfileHeaderDisplayData,
     isSignedIn: Boolean,
+    isOnline: Boolean,
     selectedTabIndex: Int,
     onUiEvent: (ProfileUiEvent) -> Unit,
 ) {
@@ -70,6 +72,7 @@ internal fun ProfileHeader(
         ) {
             AvatarWithOnlineBadge(
                 imageUrl = displayData.imageUrl,
+                isOnline = isOnline,
                 onClickImage = if (!displayData.imageUrl.isNullOrEmpty()) {
                     { onUiEvent(ProfileUiEvent.ImageClicked(displayData.imageUrl)) }
                 } else {
@@ -155,6 +158,7 @@ internal fun ProfileHeader(
 @Composable
 private fun AvatarWithOnlineBadge(
     imageUrl: String?,
+    isOnline: Boolean,
     onClickImage: (() -> Unit)?,
 ) {
     Box(contentAlignment = Alignment.BottomEnd) {
@@ -174,7 +178,7 @@ private fun AvatarWithOnlineBadge(
             modifier = Modifier
                 .size(17.dp)
                 .border(2.5.dp, AppColors.background, CircleShape)
-                .background(OnlineGreen, CircleShape),
+                .background(if (isOnline) OnlineGreen else OfflineGray, CircleShape),
         )
     }
 }

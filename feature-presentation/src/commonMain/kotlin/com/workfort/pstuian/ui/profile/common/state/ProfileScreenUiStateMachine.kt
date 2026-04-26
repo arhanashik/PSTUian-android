@@ -22,6 +22,7 @@ class ProfileScreenUiStateMachine : UiStateMachine<ProfileUiState> {
         academicContents: List<ProfileInfoItem>,
         connectContents: List<ProfileInfoItem>,
         isSignedIn: Boolean,
+        isOnline: Boolean,
         selectedTabIndex: Int = 0,
     ) {
         _uiState.update {
@@ -30,6 +31,7 @@ class ProfileScreenUiStateMachine : UiStateMachine<ProfileUiState> {
                 academicContents = academicContents,
                 connectContents = connectContents,
                 isSignedIn = isSignedIn,
+                isOnline = isOnline,
                 selectedTabIndex = selectedTabIndex,
             )
         }

@@ -7,7 +7,7 @@ import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.StudentAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.StudentConnectInfoInputError
-import com.workfort.pstuian.featuredomain.model.StudentProfile
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
 import com.workfort.pstuian.featuredomain.usecase.GetStudentProfileUserUseCase
@@ -37,8 +37,8 @@ class StudentProfileEditViewModel(
     private val _navigation = MutableStateFlow<StudentProfileEditNavigationState?>(null)
     val navigation: StateFlow<StudentProfileEditNavigationState?> = _navigation
 
-    private var oldProfileCache: StudentProfile? = null
-    private var newProfileCache: StudentProfile? = null
+    private var oldProfileCache: UserProfile.StudentProfile? = null
+    private var newProfileCache: UserProfile.StudentProfile? = null
     private var academicValidationError = StudentAcademicInfoInputError.INITIAL
     private var connectValidationError = StudentConnectInfoInputError.INITIAL
 
@@ -85,7 +85,7 @@ class StudentProfileEditViewModel(
         // TODO show batch picker bottom sheet
     }
 
-    private fun onChangeProfile(profile: StudentProfile) {
+    private fun onChangeProfile(profile: UserProfile.StudentProfile) {
         newProfileCache = profile
         when (mode) {
             ProfileEditMode.ACADEMIC -> academicValidationError = stateMachine.validateAcademic(profile)

@@ -7,7 +7,7 @@ import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
-import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
@@ -39,8 +39,8 @@ class TeacherProfileEditViewModel(
     private val _navigation = MutableStateFlow<TeacherProfileEditNavigationState?>(null)
     val navigation: StateFlow<TeacherProfileEditNavigationState?> = _navigation
 
-    private var oldProfileCache: TeacherProfile? = null
-    private var newProfileCache: TeacherProfile? = null
+    private var oldProfileCache: UserProfile.TeacherProfile? = null
+    private var newProfileCache: UserProfile.TeacherProfile? = null
     private var academicValidationError = TeacherAcademicInfoInputError.INITIAL
     private var connectValidationError = TeacherConnectInfoInputError.INITIAL
 
@@ -107,7 +107,7 @@ class TeacherProfileEditViewModel(
         }
     }
 
-    private fun onChangeProfile(profile: TeacherProfile) {
+    private fun onChangeProfile(profile: UserProfile.TeacherProfile) {
         newProfileCache = profile
         when (mode) {
             ProfileEditMode.ACADEMIC -> academicValidationError = stateMachine.validateAcademic(profile)

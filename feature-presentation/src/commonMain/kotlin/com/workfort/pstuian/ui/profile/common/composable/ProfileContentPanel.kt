@@ -55,6 +55,7 @@ fun ProfileContentPanel(
                 academicContents = uiState.academicContents,
                 connectContents = uiState.connectContents,
                 isSignedIn = uiState.isSignedIn,
+                isOnline = uiState.isOnline,
                 selectedTabIndex = uiState.selectedTabIndex,
                 onUiEvent = onUiEvent,
                 optionsDropdown = optionsDropdown,
@@ -79,6 +80,7 @@ private fun ProfileView(
     academicContents: List<ProfileInfoItem>,
     connectContents: List<ProfileInfoItem>,
     isSignedIn: Boolean,
+    isOnline: Boolean,
     selectedTabIndex: Int,
     onUiEvent: (ProfileUiEvent) -> Unit,
     optionsDropdown: @Composable (
@@ -138,6 +140,7 @@ private fun ProfileView(
             ProfileHeader(
                 displayData = headerDisplayData,
                 isSignedIn = isSignedIn,
+                isOnline = isOnline,
                 selectedTabIndex = selectedTabIndex,
                 onUiEvent = onUiEvent,
             )

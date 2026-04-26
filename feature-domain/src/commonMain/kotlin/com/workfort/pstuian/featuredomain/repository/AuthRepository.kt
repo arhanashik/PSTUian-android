@@ -12,7 +12,7 @@ interface AuthRepository {
     fun isUserEmailVerified(): Boolean
 
     suspend fun observeSignedInAuthUser(): Flow<AuthUser?>
-    suspend fun signIn(email: String, password: String, userType: UserType): DomainResult<User>
+    suspend fun signIn(userType: UserType, email: String, password: String): DomainResult<User>
 
     suspend fun signUpStudent(
         name: String,
@@ -24,6 +24,7 @@ interface AuthRepository {
         email: String,
         password: String,
     ): DomainResult<Unit>
+
     suspend fun signUpTeacher(
         name: String,
         facultyId: Int,
@@ -32,6 +33,13 @@ interface AuthRepository {
         email: String,
         password: String,
     ): DomainResult<Unit>
+
+    /**
+     * Firebase auth sign up is started from this KMM project.
+     * So the users who signed up before, needs to be signed up with Firebase Auth.
+     * But this should be done after confirming signIn in server.
+     */
+    suspend fun creatLegacyUserAuth(userType: UserType, email: String, password: String): DomainResult<Unit>
 
     suspend fun signOut(userType: UserType, fromAllDevice: Boolean = false): DomainResult<Unit>
 

@@ -1,5 +1,6 @@
 package com.workfort.pstuian.data.model
 
+import dev.gitlive.firebase.auth.FirebaseAuthInvalidCredentialsException
 import dev.gitlive.firebase.auth.FirebaseAuthUserCollisionException
 
 class NetworkError(
@@ -36,11 +37,12 @@ object CommonNetworkError {
 
     fun firebaseInternalError(exception: Throwable): NetworkError {
         val code = when (exception) {
-            is FirebaseAuthUserCollisionException -> NetworkErrorCode.FirebaseAuth.UserAlreadyVarified // Email already exists
+            is FirebaseAuthInvalidCredentialsException -> NetworkErrorCode.FirebaseAuth.UserNotFound // Email already exists
+            is FirebaseAuthUserCollisionException -> NetworkErrorCode.FirebaseAuth.UserAlreadyRegistered // Email already exists
             else -> NetworkErrorCode.FirebaseAuth.InternalError
         }
         return NetworkError(
-            code = NetworkErrorCode.FirebaseAuth.InternalError,
+            code = code,
             exception = exception,
         )
     }

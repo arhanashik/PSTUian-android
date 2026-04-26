@@ -13,7 +13,6 @@ import io.ktor.http.parameters
 class AuthApiService(private val client: HttpClient) {
 
     suspend fun signInStudent(
-        userId: String,
         email: String,
         password: String,
         deviceId: String,
@@ -21,7 +20,6 @@ class AuthApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_IN,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.USER_TYPE, NetworkConst.Params.UserType.STUDENT)
                 append(NetworkConst.Params.EMAIL, email)
                 append(NetworkConst.Params.PASSWORD, password)
@@ -31,7 +29,6 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun signInTeacher(
-        userId: String,
         email: String,
         password: String,
         deviceId: String,
@@ -39,7 +36,6 @@ class AuthApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_IN,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.USER_TYPE, NetworkConst.Params.UserType.TEACHER)
                 append(NetworkConst.Params.EMAIL, email)
                 append(NetworkConst.Params.PASSWORD, password)

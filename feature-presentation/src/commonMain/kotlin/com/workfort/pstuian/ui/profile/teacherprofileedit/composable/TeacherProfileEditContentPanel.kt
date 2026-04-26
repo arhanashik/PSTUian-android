@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
-import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.AnimatedListLoaderView
 import com.workfort.pstuian.ui.common.composable.DropDownMenuBox
@@ -96,7 +96,7 @@ fun TeacherProfileEditContentPanel(
 @Composable
 private fun AcademicInfoEditPanelView(
     modifier: Modifier,
-    profile: TeacherProfile,
+    profile: UserProfile.TeacherProfile,
     validationError: TeacherAcademicInfoInputError,
     onUiEvent: (TeacherProfileEditUiEvent) -> Unit,
 ) {
@@ -199,7 +199,7 @@ private fun AcademicInfoEditPanelView(
 @Composable
 private fun ConnectInfoEditPanelView(
     modifier: Modifier,
-    profile: TeacherProfile,
+    profile: UserProfile.TeacherProfile,
     validationError: TeacherConnectInfoInputError,
     onUiEvent: (TeacherProfileEditUiEvent) -> Unit,
 ) {

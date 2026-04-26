@@ -3,7 +3,12 @@ package com.workfort.pstuian.featuredomain.model
 data class DomainError(
     val code: DomainErrorCode,
     val exception: Throwable? = null,
-) : Throwable(exception?.message, exception)
+) : Throwable(exception?.message, exception) {
+
+    // users without valid user id
+    val isLegacyUserAccountError
+        get() = code == DomainErrorCode.Auth.UserIdInvalid
+}
 
 sealed interface DomainErrorCode {
 
@@ -24,6 +29,7 @@ sealed interface DomainErrorCode {
         UserAlreadyVarified,
         UserBlockListed,
         UserAlreadyExist,
+        UserIdInvalid, // legacy user without valid user id
         InvalidAuthToken,
         DeviceNotFound,
         DeviceRegistrationFailed,

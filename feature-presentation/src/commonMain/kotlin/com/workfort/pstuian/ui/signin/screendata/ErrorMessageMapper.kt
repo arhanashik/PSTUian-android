@@ -21,13 +21,15 @@ private fun DomainErrorCode.Auth.mapToMessage(): String? = when (this) {
     DomainErrorCode.Auth.AuthFailed ->
         "Authentication failed. Please check your email and password and try again."
     DomainErrorCode.Auth.ValidationFailed ->
-        "The information you entered could not be validated. Please review and try again."
+        "Credentials could not be validated. Please enter valid credentials and try again."
     DomainErrorCode.Auth.UserAuthNotFound ->
         "No auth account found for this email. Please sign up or use a different email."
     DomainErrorCode.Auth.UserAuthRegistrationFailed ->
         "Could not register auth account. Please try again."
     DomainErrorCode.Auth.UserAuthAlreadyRegistered ->
-        "An auth account with this email already exists. Try signing in instead."
+        "An auth account with this email already exists. Try signing in instead. Or contact support."
+    DomainErrorCode.Auth.UserIdInvalid ->
+        "Legacy User Account. Please contact support."
     DomainErrorCode.Auth.UserNotFound ->
         "Your profile could not be found. Please check email and password and retry."
     DomainErrorCode.Auth.UserRegistrationFailed ->

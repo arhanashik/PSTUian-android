@@ -3,7 +3,7 @@ package com.workfort.pstuian.ui.profile.teacherprofileedit
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
-import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditUiState
 import com.workfort.pstuian.util.isValidEmail
@@ -20,7 +20,7 @@ class TeacherProfileEditUiStateMachine : UiStateMachine<TeacherProfileEditUiStat
     }
 
     fun updateProfileScreenState(
-        profile: TeacherProfile,
+        profile: UserProfile.TeacherProfile,
         academicValidationError: TeacherAcademicInfoInputError,
         connectValidationError: TeacherConnectInfoInputError,
         mode: ProfileEditMode,
@@ -50,13 +50,13 @@ class TeacherProfileEditUiStateMachine : UiStateMachine<TeacherProfileEditUiStat
         }
     }
 
-    fun validateAcademic(profile: TeacherProfile) = TeacherAcademicInfoInputError.INITIAL.copy(
+    fun validateAcademic(profile: UserProfile.TeacherProfile) = TeacherAcademicInfoInputError.INITIAL.copy(
         name = if (profile.teacher.name.isEmpty()) "*Required" else "",
         designation = if (profile.teacher.designation.isEmpty()) "*Required" else "",
         department = if (profile.teacher.department.isEmpty()) "*Required" else "",
     )
 
-    fun validateConnect(profile: TeacherProfile) = TeacherConnectInfoInputError.INITIAL.copy(
+    fun validateConnect(profile: UserProfile.TeacherProfile) = TeacherConnectInfoInputError.INITIAL.copy(
         email = if (profile.teacher.email.isNullOrEmpty()) {
             "*Required"
         } else if (profile.teacher.email?.isValidEmail() == false) {

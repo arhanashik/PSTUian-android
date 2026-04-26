@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 data class TeacherProfile (
     var teacher: User.Teacher,
     var faculty: Faculty,
-    var isSignedIn: Boolean,
+    var isSignedIn: Boolean = false,
+    val isOnline: Boolean = false,
 )

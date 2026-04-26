@@ -14,13 +14,12 @@ import com.workfort.pstuian.data.remote.service.AuthApiService
 class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
 
     override suspend fun signInStudent(
-        userId: String,
         email: String,
         password: String,
         deviceId: String
     ): NetworkResult<Pair<StudentDto, String?>> {
         return runCatching {
-            val response = service.signInStudent(userId, email, password, deviceId)
+            val response = service.signInStudent(email, password, deviceId)
             if (response.isError || response.data == null) {
                 NetworkResult.failure(NetworkError(response.responseCode))
             } else {
@@ -32,13 +31,12 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
     }
 
     override suspend fun signInTeacher(
-        userId: String,
         email: String,
         password: String,
         deviceId: String
     ): NetworkResult<Pair<TeacherDto, String?>> {
         return runCatching {
-            val response = service.signInTeacher(userId, email, password, deviceId)
+            val response = service.signInTeacher(email, password, deviceId)
             if (response.isError || response.data == null) {
                 NetworkResult.failure(NetworkError(response.responseCode))
             } else {

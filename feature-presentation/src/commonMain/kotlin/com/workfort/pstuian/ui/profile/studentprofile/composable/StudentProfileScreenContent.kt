@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.Faculty
-import com.workfort.pstuian.featuredomain.model.StudentProfile
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
@@ -23,7 +23,7 @@ internal fun StudentProfileScreenContent(
     }
 }
 
-private fun mockProfile(withBio: Boolean = true) = StudentProfile(
+private fun mockProfile(withBio: Boolean = true) = UserProfile.StudentProfile(
     student = User.Student(
         userId = "42",
         studentId = 42,
@@ -59,6 +59,7 @@ private fun mockUiState(
         academicContents = mapper.mapAcademicContents(mockProfile),
         connectContents = mapper.mapConnectContents(mockProfile),
         isSignedIn = isSignedIn,
+        isOnline = mockProfile.isOnline,
         selectedTabIndex = selectedTab,
     )
 }

@@ -1,13 +1,13 @@
 package com.workfort.pstuian.ui.profile.employeeprofile
 
-import com.workfort.pstuian.featuredomain.model.EmployeeProfile
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileHeaderDisplayData
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItem
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItemAction
 
 class EmployeeProfileDisplayDataMapper {
 
-    fun mapHeaderData(profile: EmployeeProfile): ProfileHeaderDisplayData {
+    fun mapHeaderData(profile: UserProfile.EmployeeProfile): ProfileHeaderDisplayData {
         return ProfileHeaderDisplayData(
             imageUrl = profile.employee.imageUrl,
             name = profile.employee.name,
@@ -17,7 +17,7 @@ class EmployeeProfileDisplayDataMapper {
         )
     }
 
-    fun mapAcademicContents(profile: EmployeeProfile): List<ProfileInfoItem> {
+    fun mapAcademicContents(profile: UserProfile.EmployeeProfile): List<ProfileInfoItem> {
         return listOf(
             ProfileInfoItem("Name", profile.employee.name),
             ProfileInfoItem("Designation", profile.employee.designation),
@@ -27,7 +27,7 @@ class EmployeeProfileDisplayDataMapper {
         )
     }
 
-    fun mapConnectContents(profile: EmployeeProfile): List<ProfileInfoItem> {
+    fun mapConnectContents(profile: UserProfile.EmployeeProfile): List<ProfileInfoItem> {
         return listOf(
             ProfileInfoItem("Address", profile.employee.address ?: "~"),
             ProfileInfoItem(

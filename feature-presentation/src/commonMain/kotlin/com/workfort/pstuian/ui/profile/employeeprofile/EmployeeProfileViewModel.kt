@@ -3,8 +3,8 @@ package com.workfort.pstuian.ui.profile.employeeprofile
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
@@ -39,7 +39,7 @@ class EmployeeProfileViewModel(
     private val _navigation = MutableStateFlow<EmployeeProfileNavigationState?>(null)
     val navigation: StateFlow<EmployeeProfileNavigationState?> = _navigation.asStateFlow()
 
-    private var profileCache: EmployeeProfile? = null
+    private var profileCache: UserProfile.EmployeeProfile? = null
 
     override fun onUiReady() {
         loadProfile()
@@ -84,6 +84,7 @@ class EmployeeProfileViewModel(
                         academicContents = displayDataMapper.mapAcademicContents(profile),
                         connectContents = displayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
+                        isOnline = profile.isOnline,
                     )
                 }
                 .onFailure {

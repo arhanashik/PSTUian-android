@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.DomainError
 import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
@@ -261,7 +262,7 @@ class SignInViewModel(
     }
 
     private fun signIn(formData: SignInFormData) {
-        val userType = (uiState.value as? SignInUiState.SignInPanel)?.authUserTypeForForms ?: return
+        val userType = settingsRepository.getUserType() ?: return
 
         if (formData.isInvalid()) {
             _message.update {
@@ -271,18 +272,31 @@ class SignInViewModel(
         }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
-            authRepository.signIn(formData.email, formData.password, userType)
+            authRepository.signIn(userType, formData.email, formData.password)
                 .onSuccess { user ->
                     stateMachine.showLoading(false)
                     _message.update { SignInMessageState.Success(message = "Welcome ${user.name}!") }
                     _navigation.update { SignInNavigationState.GoBack }
                 }
                 .onFailure { error ->
-                    stateMachine.showLoading(false)
-                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
-                    _message.update { SignInMessageState.Error(msg) }
+                    if (error.isLegacyUserAccountError) {
+                        // create legacy user's auth account
+                        authRepository.creatLegacyUserAuth(userType, formData.email, formData.password)
+                            .onSuccess {
+                                signIn(formData)
+                            }
+                            .onFailure(::handleSignInFailure)
+                    } else {
+                        handleSignInFailure(error)
+                    }
                 }
         }
+    }
+
+    private fun handleSignInFailure(error: DomainError) {
+        stateMachine.showLoading(false)
+        val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
+        _message.update { SignInMessageState.Error(msg) }
     }
 
     private fun studentSignUp(formData: SignUpFormData.StudentSignUpFormData) {

@@ -54,6 +54,7 @@ class DomainErrorMapper {
             ApiResponseCode.DeviceRegistrationFailed -> DomainErrorCode.Auth.DeviceRegistrationFailed
             ApiResponseCode.DeviceBlockListed -> DomainErrorCode.Auth.DeviceBlockListed
             ApiResponseCode.DeviceAlreadyExist -> DomainErrorCode.Auth.DeviceAlreadyExist
+            ApiResponseCode.UserIdInvalid -> DomainErrorCode.Auth.UserIdInvalid
             ApiResponseCode.UserNotFound -> DomainErrorCode.Auth.UserNotFound
             ApiResponseCode.UserRegistrationFailed -> DomainErrorCode.Auth.UserRegistrationFailed
             ApiResponseCode.UserBlockListed -> DomainErrorCode.Auth.UserBlockListed

@@ -2,10 +2,10 @@ package com.workfort.pstuian.ui.profile.employeeprofile.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.workfort.pstuian.featuredomain.model.EmployeeProfile
 import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.profile.common.composable.ProfileContentPanel
@@ -28,7 +28,7 @@ internal fun EmployeeProfileScreenContent(
     }
 }
 
-private fun mockEmployeeProfile(withBio: Boolean = true) = EmployeeProfile(
+private fun mockEmployeeProfile(withBio: Boolean = true) = UserProfile.EmployeeProfile(
     employee = User.Employee(
         userId = "12",
         name = "Md. Anisur Rahman",
@@ -59,6 +59,7 @@ private fun mockUiState(
         academicContents = mapper.mapAcademicContents(mockProfile),
         connectContents = mapper.mapConnectContents(mockProfile),
         isSignedIn = isSignedIn,
+        isOnline = mockProfile.isOnline,
         selectedTabIndex = selectedTab,
     )
 }

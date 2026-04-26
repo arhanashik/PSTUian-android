@@ -2,7 +2,7 @@ package com.workfort.pstuian.ui.profile.teacherprofileedit.state
 
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
-import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.featuredomain.model.UserProfile
 
 sealed interface TeacherProfileEditUiState {
     data object None : TeacherProfileEditUiState
@@ -15,11 +15,11 @@ sealed interface TeacherProfileEditUiState {
         data object None : PanelState
         data object Loading : PanelState
         data class Academic(
-            val profile: TeacherProfile,
+            val profile: UserProfile.TeacherProfile,
             val validationError: TeacherAcademicInfoInputError,
         ) : PanelState
         data class Connect(
-            val profile: TeacherProfile,
+            val profile: UserProfile.TeacherProfile,
             val validationError: TeacherConnectInfoInputError,
         ) : PanelState
         data class Error(val message: String) : PanelState

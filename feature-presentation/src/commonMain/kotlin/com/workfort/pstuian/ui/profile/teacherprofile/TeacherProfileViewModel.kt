@@ -5,7 +5,7 @@ import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ProfileEditMode
-import com.workfort.pstuian.featuredomain.model.TeacherProfile
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
@@ -41,7 +41,7 @@ class TeacherProfileViewModel(
     private val _navigation = MutableStateFlow<TeacherProfileNavigationState?>(null)
     val navigation: StateFlow<TeacherProfileNavigationState?> = _navigation.asStateFlow()
 
-    private var profileCache: TeacherProfile? = null
+    private var profileCache: UserProfile.TeacherProfile? = null
 
     override fun onUiReady() {
         loadProfile()
@@ -86,6 +86,7 @@ class TeacherProfileViewModel(
                         academicContents = displayDataMapper.mapAcademicContents(profile),
                         connectContents = displayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
+                        isOnline = profile.isOnline,
                     )
                 }
                 .onFailure {

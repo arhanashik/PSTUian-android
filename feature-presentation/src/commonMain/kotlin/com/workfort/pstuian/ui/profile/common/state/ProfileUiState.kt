@@ -11,6 +11,7 @@ sealed interface ProfileUiState {
         val academicContents: List<ProfileInfoItem>,
         val connectContents: List<ProfileInfoItem>,
         val isSignedIn: Boolean,
+        val isOnline: Boolean,
         val selectedTabIndex: Int,
     ) : ProfileUiState
     data class Error(val message: String) : ProfileUiState

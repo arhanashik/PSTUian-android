@@ -8,14 +8,12 @@ import com.workfort.pstuian.data.model.TeacherDto
 interface AuthApiHelper {
 
     suspend fun signInStudent(
-        userId: String,
         email: String,
         password: String,
         deviceId: String
     ): NetworkResult<Pair<StudentDto, String?>> // Dto and Auth Token
 
     suspend fun signInTeacher(
-        userId: String,
         email: String,
         password: String,
         deviceId: String

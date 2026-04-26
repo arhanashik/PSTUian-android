@@ -8,6 +8,7 @@ import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.util.PlatformInfo
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.FirebaseUser
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -46,7 +47,6 @@ class FirebaseAuthDataSource(
     suspend fun signUp(
         email: String,
         password: String,
-        displayName: String,
     ): NetworkResult<Pair<String, AuthUserDto>> {
         try {
             // Create firebase user. Firebase throw errors if account already exists.
@@ -54,12 +54,11 @@ class FirebaseAuthDataSource(
                 ?: return NetworkResult.failure(
                     error = NetworkError(code = NetworkErrorCode.FirebaseAuth.UserRegistrationFailed),
                 )
-
-            firebaseUser.updateProfile(displayName = displayName)
             firebaseUser.sendEmailVerification()
 
             return NetworkResult.success(firebaseUser.toAuthUserDto())
         } catch (exception: Throwable) {
+            Napier.e("testR", exception)
             return NetworkResult.failure(error = CommonNetworkError.firebaseInternalError(exception))
         }
     }

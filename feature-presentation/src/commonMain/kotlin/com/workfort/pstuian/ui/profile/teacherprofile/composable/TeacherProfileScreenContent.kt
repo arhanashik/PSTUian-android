@@ -3,9 +3,9 @@ package com.workfort.pstuian.ui.profile.teacherprofile.composable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.Faculty
-import com.workfort.pstuian.featuredomain.model.TeacherProfile
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.User
+import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.profile.common.composable.ProfileContentPanel
@@ -28,7 +28,7 @@ internal fun TeacherProfileScreenContent(
     }
 }
 
-private fun mockTeacherProfile(withBio: Boolean = true) = TeacherProfile(
+private fun mockTeacherProfile(withBio: Boolean = true) = UserProfile.TeacherProfile(
     teacher = User.Teacher(
         userId = "7",
         name = "Dr. Mahmud Rahman",
@@ -62,6 +62,7 @@ private fun mockUiState(
         academicContents = mapper.mapAcademicContents(mockProfile),
         connectContents = mapper.mapConnectContents(mockProfile),
         isSignedIn = isSignedIn,
+        isOnline = mockProfile.isOnline,
         selectedTabIndex = selectedTab,
     )
 }
