@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetSignedInUserUseCase
@@ -20,6 +21,7 @@ class AppViewModel(
     private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
     private val getSignedInUserUseCase: GetSignedInUserUseCase,
+    private val userPresenceRepository: UserPresenceRepository,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : ViewModel() {
 
@@ -35,11 +37,16 @@ class AppViewModel(
         observeSignedInUser()
     }
 
-    fun observeSignedInUser() {
+    private fun observeSignedInUser() {
         viewModelScope.launch (coroutineDispatcherProvider.io) {
             authRepository.observeSignedInAuthUser().collectLatest {
                 val signInUser = getSignedInUserUseCase()
                 sharedScreenData.setCurrentUser(signInUser)
+
+                // update user status as online
+                signInUser?.userId?.let { userId ->
+                    userPresenceRepository.registerUserPresence(userId)
+                }
             }
         }
     }

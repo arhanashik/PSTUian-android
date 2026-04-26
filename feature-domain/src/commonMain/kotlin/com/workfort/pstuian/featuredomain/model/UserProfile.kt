@@ -10,8 +10,8 @@ sealed interface UserProfile {
     @Serializable
     data class StudentProfile (
         val student: User.Student,
-        val batch: Batch,
         override val faculty: Faculty,
+        val batch: Batch,
         override val isSignedIn: Boolean = false,
         override val isOnline: Boolean = false,
     ) : UserProfile

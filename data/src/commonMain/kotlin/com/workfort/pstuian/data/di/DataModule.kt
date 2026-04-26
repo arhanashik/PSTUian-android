@@ -1,5 +1,6 @@
 package com.workfort.pstuian.data.di
 
+import com.workfort.pstuian.data.infrastructure.repository.UserPresenceRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.AppConfigRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.AuthRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.BloodDonationRepositoryImpl
@@ -31,7 +32,7 @@ import com.workfort.pstuian.data.remote.domain.SliderApiHelper
 import com.workfort.pstuian.data.remote.domain.StudentApiHelper
 import com.workfort.pstuian.data.remote.domain.SupportApiHelper
 import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
-import com.workfort.pstuian.data.remote.firebase.FirebaseActiveUserDataSource
+import com.workfort.pstuian.data.remote.firebase.FirebaseUserPresenceDataSource
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
 import com.workfort.pstuian.data.remote.firestore.FirestoreAppConfigDataSource
 import com.workfort.pstuian.data.remote.infrastructure.AuthApiHelperImpl
@@ -61,6 +62,7 @@ import com.workfort.pstuian.data.remote.service.StudentApiService
 import com.workfort.pstuian.data.remote.service.SupportApiService
 import com.workfort.pstuian.data.remote.service.TeacherApiService
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
+import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
@@ -98,7 +100,7 @@ private val firebaseModule = module {
     // Data Sources
     singleOf(::FirebaseAuthDataSource)
     singleOf(::FirestoreAppConfigDataSource)
-    singleOf(::FirebaseActiveUserDataSource)
+    singleOf(::FirebaseUserPresenceDataSource)
 }
 
 private val networkModule = module {
@@ -155,6 +157,8 @@ private val networkModule = module {
 val repositoryModule = module {
     // app config
     factoryOf(::AppConfigRepositoryImpl) bind AppConfigRepository::class
+
+    singleOf(::UserPresenceRepositoryImpl) bind UserPresenceRepository::class
 
     // auth repository
     singleOf(::AuthRepositoryImpl) bind AuthRepository::class

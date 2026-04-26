@@ -4,6 +4,7 @@ import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
+import com.workfort.pstuian.data.remote.firebase.FirebaseUserPresenceDataSource
 import com.workfort.pstuian.featuredomain.model.AuthUser
 import com.workfort.pstuian.featuredomain.model.DomainError
 import com.workfort.pstuian.featuredomain.model.DomainErrorCode
@@ -17,12 +18,14 @@ import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
+import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class AuthRepositoryImpl(
     private val helper: AuthApiHelper,
     private val firebaseAuthDataSource: FirebaseAuthDataSource,
+    private val userPresenceRepository: UserPresenceRepository,
     private val sharedPrefRepository: SharedPrefRepository,
     private val domainErrorMapper: DomainErrorMapper,
 ) : AuthRepository {
@@ -169,6 +172,7 @@ class AuthRepositoryImpl(
         return helper.signOut(userId, userType.type, deviceId, fromAllDevice)
             .toDomainResult(domainErrorMapper)
             .onSuccess {
+                userPresenceRepository.removeUserPresence(userId)
                 firebaseAuthDataSource.signOut()
                 removeAuthPrefs()
             }
