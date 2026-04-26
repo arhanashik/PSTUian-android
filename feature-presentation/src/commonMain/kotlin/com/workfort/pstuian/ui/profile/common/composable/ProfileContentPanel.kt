@@ -27,6 +27,7 @@ import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileHeaderDisplayData
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItem
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItemAction
+import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayData
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ fun ProfileContentPanel(
                 academicContents = uiState.academicContents,
                 connectContents = uiState.connectContents,
                 isSignedIn = uiState.isSignedIn,
-                isOnline = uiState.isOnline,
+                userPresenceDisplayData = uiState.userPresenceDisplayData,
                 selectedTabIndex = uiState.selectedTabIndex,
                 onUiEvent = onUiEvent,
                 optionsDropdown = optionsDropdown,
@@ -80,7 +81,7 @@ private fun ProfileView(
     academicContents: List<ProfileInfoItem>,
     connectContents: List<ProfileInfoItem>,
     isSignedIn: Boolean,
-    isOnline: Boolean,
+    userPresenceDisplayData: UserPresenceDisplayData,
     selectedTabIndex: Int,
     onUiEvent: (ProfileUiEvent) -> Unit,
     optionsDropdown: @Composable (
@@ -140,7 +141,7 @@ private fun ProfileView(
             ProfileHeader(
                 displayData = headerDisplayData,
                 isSignedIn = isSignedIn,
-                isOnline = isOnline,
+                userPresence = userPresenceDisplayData,
                 selectedTabIndex = selectedTabIndex,
                 onUiEvent = onUiEvent,
             )

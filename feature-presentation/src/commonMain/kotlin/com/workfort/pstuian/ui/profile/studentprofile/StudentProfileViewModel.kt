@@ -10,9 +10,11 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
-import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.featuredomain.usecase.GetStudentProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
+import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayData
 import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
@@ -21,6 +23,7 @@ import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileNaviga
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -28,9 +31,10 @@ class StudentProfileViewModel(
     private val userId: Int,
     private val studentRepo: StudentRepositoryImpl,
     private val authRepo: AuthRepository,
-    private val settingsRepository: SettingsRepository,
+    private val userPresenceRepository: UserPresenceRepository,
     private val getStudentProfileUserUseCase: GetStudentProfileUserUseCase,
-    private val displayDataMapper: StudentProfileDisplayDataMapper,
+    private val studentProfileDisplayDataMapper: StudentProfileDisplayDataMapper,
+    private val userPresenceDisplayDataMapper: UserPresenceDisplayDataMapper,
     private val uiStateMachine: ProfileScreenUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<ProfileUiState>(uiStateMachine) {
@@ -82,17 +86,30 @@ class StudentProfileViewModel(
                 .onSuccess { profile ->
                     profileCache = profile
                     uiStateMachine.showProfile(
-                        headerDisplayData = displayDataMapper.mapHeaderData(profile),
-                        academicContents = displayDataMapper.mapAcademicContents(profile),
-                        connectContents = displayDataMapper.mapConnectContents(profile),
+                        headerDisplayData = studentProfileDisplayDataMapper.mapHeaderData(profile),
+                        academicContents = studentProfileDisplayDataMapper.mapAcademicContents(profile),
+                        connectContents = studentProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
-                        isOnline = profile.isOnline,
                     )
+                    observeUserPresence(profile.student.userId, profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load student profile"
                     uiStateMachine.showProfileError(message)
                 }
+        }
+    }
+
+    private fun observeUserPresence(userId: String, isSignedIn: Boolean) {
+        if (isSignedIn) {
+            uiStateMachine.updateUserPresenceData(UserPresenceDisplayData(isOnline = true))
+            return
+        }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            userPresenceRepository.observeUserPresence(userId).collectLatest {
+                val userPresenceDisplayData = userPresenceDisplayDataMapper.map(it)
+                uiStateMachine.updateUserPresenceData(userPresenceDisplayData)
+            }
         }
     }
 

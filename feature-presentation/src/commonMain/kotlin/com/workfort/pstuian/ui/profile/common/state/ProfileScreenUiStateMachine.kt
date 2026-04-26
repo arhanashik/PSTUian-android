@@ -3,6 +3,7 @@ package com.workfort.pstuian.ui.profile.common.state
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileHeaderDisplayData
 import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItem
+import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,16 +23,19 @@ class ProfileScreenUiStateMachine : UiStateMachine<ProfileUiState> {
         academicContents: List<ProfileInfoItem>,
         connectContents: List<ProfileInfoItem>,
         isSignedIn: Boolean,
-        isOnline: Boolean,
         selectedTabIndex: Int = 0,
     ) {
-        _uiState.update {
+        _uiState.update { current ->
+            val preservedPresence = when (current) {
+                is ProfileUiState.Content -> current.userPresenceDisplayData
+                else -> UserPresenceDisplayData()
+            }
             ProfileUiState.Content(
                 headerDisplayData = headerDisplayData,
                 academicContents = academicContents,
                 connectContents = connectContents,
                 isSignedIn = isSignedIn,
-                isOnline = isOnline,
+                userPresenceDisplayData = preservedPresence,
                 selectedTabIndex = selectedTabIndex,
             )
         }
@@ -54,6 +58,15 @@ class ProfileScreenUiStateMachine : UiStateMachine<ProfileUiState> {
         _uiState.update { current ->
             when (current) {
                 is ProfileUiState.Content -> current.copy(isSignedIn = isSignedIn)
+                else -> current
+            }
+        }
+    }
+
+    fun updateUserPresenceData(displayData: UserPresenceDisplayData) {
+        _uiState.update { current ->
+            when (current) {
+                is ProfileUiState.Content -> current.copy(userPresenceDisplayData = displayData)
                 else -> current
             }
         }

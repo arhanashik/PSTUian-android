@@ -10,9 +10,11 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
-import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.featuredomain.usecase.GetTeacherProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
+import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayData
 import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
@@ -21,6 +23,7 @@ import com.workfort.pstuian.ui.profile.teacherprofile.state.TeacherProfileNaviga
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -28,9 +31,10 @@ class TeacherProfileViewModel(
     private val userId: Int,
     private val teacherRepo: TeacherRepositoryImpl,
     private val authRepo: AuthRepository,
-    private val settingsRepository: SettingsRepository,
+    private val userPresenceRepository: UserPresenceRepository,
     private val getTeacherProfileUserUseCase: GetTeacherProfileUserUseCase,
-    private val displayDataMapper: TeacherProfileDisplayDataMapper,
+    private val teacherProfileDisplayDataMapper: TeacherProfileDisplayDataMapper,
+    private val userPresenceDisplayDataMapper: UserPresenceDisplayDataMapper,
     private val uiStateMachine: ProfileScreenUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<ProfileUiState>(uiStateMachine) {
@@ -82,17 +86,30 @@ class TeacherProfileViewModel(
                 .onSuccess { profile ->
                     profileCache = profile
                     uiStateMachine.showProfile(
-                        headerDisplayData = displayDataMapper.mapHeaderData(profile),
-                        academicContents = displayDataMapper.mapAcademicContents(profile),
-                        connectContents = displayDataMapper.mapConnectContents(profile),
+                        headerDisplayData = teacherProfileDisplayDataMapper.mapHeaderData(profile),
+                        academicContents = teacherProfileDisplayDataMapper.mapAcademicContents(profile),
+                        connectContents = teacherProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
-                        isOnline = profile.isOnline,
                     )
+                    observeUserPresence(profile.teacher.userId, profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load teacher profile"
                     uiStateMachine.showProfileError(message)
                 }
+        }
+    }
+
+    private fun observeUserPresence(userId: String, isSignedIn: Boolean) {
+        if (isSignedIn) {
+            uiStateMachine.updateUserPresenceData(UserPresenceDisplayData(isOnline = true))
+            return
+        }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            userPresenceRepository.observeUserPresence(userId).collectLatest {
+                val userPresenceDisplayData = userPresenceDisplayDataMapper.map(it)
+                uiStateMachine.updateUserPresenceData(userPresenceDisplayData)
+            }
         }
     }
 
@@ -242,11 +259,10 @@ class TeacherProfileViewModel(
     }
 
     fun signOut() {
-        val userType = settingsRepository.getUserType() ?: return
         _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                authRepo.signOut(userType, fromAllDevice = false)
+                authRepo.signOut(UserType.TEACHER, fromAllDevice = false)
                 messageHandled()
                 loadProfile()
             }.onFailure {

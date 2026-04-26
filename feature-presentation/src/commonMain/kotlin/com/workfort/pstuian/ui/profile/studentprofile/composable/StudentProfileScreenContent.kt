@@ -9,9 +9,10 @@ import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
+import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayData
+import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
 import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileDisplayDataMapper
-import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 
 @Composable
 internal fun StudentProfileScreenContent(
@@ -59,7 +60,7 @@ private fun mockUiState(
         academicContents = mapper.mapAcademicContents(mockProfile),
         connectContents = mapper.mapConnectContents(mockProfile),
         isSignedIn = isSignedIn,
-        isOnline = mockProfile.isOnline,
+        userPresenceDisplayData = UserPresenceDisplayData(),
         selectedTabIndex = selectedTab,
     )
 }

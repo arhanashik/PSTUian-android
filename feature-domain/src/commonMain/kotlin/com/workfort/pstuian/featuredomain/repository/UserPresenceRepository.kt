@@ -1,13 +1,16 @@
 package com.workfort.pstuian.featuredomain.repository
 
+import com.workfort.pstuian.featuredomain.model.UserPresence
 import kotlinx.coroutines.flow.Flow
 
 interface UserPresenceRepository {
-    suspend fun registerUserPresence(userId: String)
+    suspend fun observeAndSyncUserPresence(userId: String)
+
+    fun observeUserPresence(userId: String): Flow<UserPresence?>
 
     suspend fun removeUserPresence(userId: String)
 
-    suspend fun isUserOnline(userId: String): Boolean
+    suspend fun getUserPresence(userId: String): UserPresence?
 
-    fun observeActiveUsers(): Flow<List<Pair<String, Long>>>
+    fun observeActiveUsersPresence(): Flow<List<UserPresence>>
 }

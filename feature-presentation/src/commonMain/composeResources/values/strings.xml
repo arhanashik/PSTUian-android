@@ -42,6 +42,8 @@
     <string name="txt_employee_profile">Employee Profile</string>
     <string name="txt_follow">Follow</string>
     <string name="txt_message">Message</string>
+    <string name="lbl_profile_online">Online</string>
+    <string name="lbl_profile_offline">Offline</string>
     <string name="txt_teacher">Teacher</string>
     <string name="hint_name">Name</string>
     <string name="hint_id">Id</string>

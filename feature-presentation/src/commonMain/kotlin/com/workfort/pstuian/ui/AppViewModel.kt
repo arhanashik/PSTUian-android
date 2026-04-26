@@ -45,7 +45,7 @@ class AppViewModel(
 
                 // update user status as online
                 signInUser?.userId?.let { userId ->
-                    userPresenceRepository.registerUserPresence(userId)
+                    userPresenceRepository.observeAndSyncUserPresence(userId)
                 }
             }
         }

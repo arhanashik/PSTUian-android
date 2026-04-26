@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 sealed interface UserProfile {
     val faculty: Faculty
     val isSignedIn: Boolean
-    val isOnline: Boolean
 
     @Serializable
     data class StudentProfile (
@@ -13,7 +12,6 @@ sealed interface UserProfile {
         override val faculty: Faculty,
         val batch: Batch,
         override val isSignedIn: Boolean = false,
-        override val isOnline: Boolean = false,
     ) : UserProfile
 
     @Serializable
@@ -21,7 +19,6 @@ sealed interface UserProfile {
         val teacher: User.Teacher,
         override val faculty: Faculty,
         override val isSignedIn: Boolean = false,
-        override val isOnline: Boolean = false,
     ) : UserProfile
 
     @Serializable
@@ -29,6 +26,5 @@ sealed interface UserProfile {
         val employee: User.Employee,
         override val faculty: Faculty,
         override val isSignedIn: Boolean = false,
-        override val isOnline: Boolean = false,
     ): UserProfile
 }

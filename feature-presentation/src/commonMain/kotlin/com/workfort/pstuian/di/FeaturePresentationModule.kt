@@ -27,9 +27,6 @@ import com.workfort.pstuian.ui.donate.DonateUiStateMachine
 import com.workfort.pstuian.ui.donate.DonateViewModel
 import com.workfort.pstuian.ui.donors.DonorsUiStateMachine
 import com.workfort.pstuian.ui.donors.DonorsViewModel
-import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
-import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileDisplayDataMapper
-import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileViewModel
 import com.workfort.pstuian.ui.faculty.FacultyUiStateMachine
 import com.workfort.pstuian.ui.faculty.FacultyViewModel
 import com.workfort.pstuian.ui.home.HomeUiStateMachine
@@ -40,22 +37,26 @@ import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListUiStateMachine
 import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListViewModel
 import com.workfort.pstuian.ui.mydevicelist.MyDeviceListUiStateMachine
 import com.workfort.pstuian.ui.mydevicelist.MyDeviceListViewModel
+import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
+import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
+import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileDisplayDataMapper
+import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileViewModel
 import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileDisplayDataMapper
+import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileViewModel
+import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditUiStateMachine
+import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditViewModel
+import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileDisplayDataMapper
+import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileViewModel
+import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditUiStateMachine
+import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditViewModel
 import com.workfort.pstuian.ui.settings.SettingsUiStateMachine
 import com.workfort.pstuian.ui.settings.SettingsViewModel
 import com.workfort.pstuian.ui.signin.SignInUiStateMachine
 import com.workfort.pstuian.ui.signin.SignInViewModel
 import com.workfort.pstuian.ui.splash.SplashUiStateMachine
 import com.workfort.pstuian.ui.splash.SplashViewModel
-import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileViewModel
-import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditUiStateMachine
-import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditViewModel
 import com.workfort.pstuian.ui.students.StudentsUiStateMachine
 import com.workfort.pstuian.ui.students.StudentsViewModel
-import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileDisplayDataMapper
-import com.workfort.pstuian.ui.profile.teacherprofile.TeacherProfileViewModel
-import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditUiStateMachine
-import com.workfort.pstuian.ui.profile.teacherprofileedit.TeacherProfileEditViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -184,47 +185,48 @@ private val studentsModule = module {
     }
 }
 
-private val studentProfileModule = module {
+private val profileModule = module {
+    factoryOf(::UserPresenceDisplayDataMapper)
     factoryOf(::StudentProfileDisplayDataMapper)
+    factoryOf(::TeacherProfileDisplayDataMapper)
+    factoryOf(::EmployeeProfileDisplayDataMapper)
+
     factory { (userId: Int) ->
         StudentProfileViewModel(
             userId = userId,
             studentRepo = get(),
             authRepo = get(),
-            settingsRepository = get(),
+            userPresenceRepository = get(),
             getStudentProfileUserUseCase = get(),
-            displayDataMapper = get(),
+            studentProfileDisplayDataMapper = get(),
+            userPresenceDisplayDataMapper = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
     }
-}
 
-private val teacherProfileModule = module {
-    factoryOf(::TeacherProfileDisplayDataMapper)
     factory { (userId: Int) ->
         TeacherProfileViewModel(
             userId = userId,
             teacherRepo = get(),
             authRepo = get(),
-            settingsRepository = get(),
+            userPresenceRepository = get(),
             getTeacherProfileUserUseCase = get(),
-            displayDataMapper = get(),
+            teacherProfileDisplayDataMapper = get(),
+            userPresenceDisplayDataMapper = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
     }
-}
 
-private val employeeProfileModule = module {
-    factoryOf(::EmployeeProfileDisplayDataMapper)
     factory { (userId: Int) ->
         EmployeeProfileViewModel(
             userId = userId,
             authRepo = get(),
-            settingsRepository = get(),
+            userPresenceRepository = get(),
             getEmployeeProfileUserUseCase = get(),
-            displayDataMapper = get(),
+            employeeProfileDisplayDataMapper = get(),
+            userPresenceDisplayDataMapper = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
@@ -320,9 +322,7 @@ val featurePresentationModule = listOf(
     signInModule,
     splashModule,
     studentsModule,
-    studentProfileModule,
-    teacherProfileModule,
-    employeeProfileModule,
+    profileModule,
     deleteAccountModule,
     myBloodDonationListModule,
     myCheckInListModule,

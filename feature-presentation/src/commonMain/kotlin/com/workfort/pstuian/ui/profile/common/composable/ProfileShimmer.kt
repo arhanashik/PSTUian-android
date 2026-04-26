@@ -65,14 +65,14 @@ internal fun StudentProfileShimmer() {
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    ShimmerCircle(size = 72.dp)
+                    ShimmerCircle(size = 82.dp)
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         ShimmerRect(width = 160.dp, height = 22.dp, radius = 6.dp)
                         Spacer(modifier = Modifier.height(10.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            ShimmerRect(width = 80.dp, height = 34.dp, radius = 17.dp)
-                            ShimmerRect(width = 90.dp, height = 34.dp, radius = 17.dp)
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            ShimmerRect(width = 72.dp, height = 28.dp, radius = 14.dp)
+                            ShimmerRect(width = 84.dp, height = 28.dp, radius = 14.dp)
                         }
                     }
                 }
