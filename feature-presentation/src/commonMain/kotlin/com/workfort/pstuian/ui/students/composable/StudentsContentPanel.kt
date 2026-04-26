@@ -52,6 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_blood_group
 import pstuian.feature_presentation.generated.resources.txt_id
+import pstuian.feature_presentation.generated.resources.txt_registration_number
 
 @Composable
 fun StudentsContentPanel(
@@ -288,7 +289,7 @@ private fun StudentListItemView(
                     ) {
                         TitleTextSmall(text = student.name)
                         Text(
-                            text = student.reg,
+                            text = student.email,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -313,6 +314,11 @@ private fun StudentListItemView(
                     modifier = Modifier.weight(1f),
                     label = stringResource(Res.string.txt_id),
                     value = student.studentId.toString(),
+                )
+                StudentMetricCard(
+                    modifier = Modifier.weight(1f),
+                    label = "Reg No",
+                    value = student.reg,
                 )
                 StudentMetricCard(
                     modifier = Modifier.weight(1f),
