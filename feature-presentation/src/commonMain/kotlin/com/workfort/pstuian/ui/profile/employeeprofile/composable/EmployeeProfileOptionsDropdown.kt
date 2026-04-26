@@ -42,12 +42,18 @@ fun EmployeeProfileOptionsDropdown(
             DropdownMenuItem(
                 text = { Text(changePasswordLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.ChangePasswordClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.ChangePasswordClicked)
+                },
             )
             DropdownMenuItem(
                 text = { Text(devicesLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.MyDeviceListClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.MyDeviceListClicked)
+                },
             )
             HorizontalDivider()
             DropdownMenuItem(
@@ -61,7 +67,10 @@ fun EmployeeProfileOptionsDropdown(
                         tint = AppColors.primaryVariant,
                     )
                 },
-                onClick = { onUiEvent(ProfileUiEvent.SignOutClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.SignOutClicked)
+                },
             )
             DropdownMenuItem(
                 text = {
@@ -74,7 +83,10 @@ fun EmployeeProfileOptionsDropdown(
                         tint = AppColors.error,
                     )
                 },
-                onClick = { onUiEvent(ProfileUiEvent.DeleteAccountClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.DeleteAccountClicked)
+                },
             )
         } else {
             DropdownMenuItem(
@@ -82,14 +94,20 @@ fun EmployeeProfileOptionsDropdown(
                     Text(stringResource(Res.string.txt_call), style = TextStyle.body2, color = AppColors.textPrimary)
                 },
                 leadingIcon = { Icon(Icons.Filled.Call, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.CallClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.CallClicked)
+                },
             )
             DropdownMenuItem(
                 text = {
                     Text(stringResource(Res.string.txt_email), style = TextStyle.body2, color = AppColors.textPrimary)
                 },
                 leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.EmailClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.EmailClicked)
+                },
             )
         }
     }

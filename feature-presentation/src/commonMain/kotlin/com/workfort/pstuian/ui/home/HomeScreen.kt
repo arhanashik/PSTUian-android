@@ -141,7 +141,7 @@ private fun HandleNavigationState(
                      navigator?.navigateToFaculty(it.faculty.id)
                 }
                 is HomeNavigationState.ImagePreviewScreen -> {
-                    // TODO navigate to image preview
+                    navigator?.navigateToImagePreview(it.url)
                 }
                 is HomeNavigationState.ContactUsScreen -> {
                     navigator?.navigateToContactUs()

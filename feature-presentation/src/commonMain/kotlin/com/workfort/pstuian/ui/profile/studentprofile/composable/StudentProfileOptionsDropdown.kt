@@ -51,28 +51,43 @@ fun StudentProfileOptionsDropdown(
             DropdownMenuItem(
                 text = { Text(changePasswordLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.ChangePasswordClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.ChangePasswordClicked)
+                },
             )
             DropdownMenuItem(
                 text = { Text(uploadCvLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.KeyboardArrowUp, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.UploadCvClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.UploadCvClicked)
+                },
             )
             HorizontalDivider()
             DropdownMenuItem(
                 text = { Text(bloodDonationLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.MyBloodDonationListClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.MyBloodDonationListClicked)
+                },
             )
             DropdownMenuItem(
                 text = { Text(checkInLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.MyCheckInListClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.MyCheckInListClicked)
+                },
             )
             DropdownMenuItem(
                 text = { Text(devicesLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
                 leadingIcon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.MyDeviceListClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.MyDeviceListClicked)
+                },
             )
             HorizontalDivider()
             DropdownMenuItem(
@@ -84,7 +99,10 @@ fun StudentProfileOptionsDropdown(
                         tint = AppColors.primaryVariant,
                     )
                 },
-                onClick = { onUiEvent(ProfileUiEvent.SignOutClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.SignOutClicked)
+                },
             )
             DropdownMenuItem(
                 text = { Text(deleteAccountLabel, style = TextStyle.body2, color = AppColors.error) },
@@ -95,7 +113,10 @@ fun StudentProfileOptionsDropdown(
                         tint = AppColors.error,
                     )
                 },
-                onClick = { onUiEvent(ProfileUiEvent.DeleteAccountClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.DeleteAccountClicked)
+                },
             )
         } else {
             DropdownMenuItem(
@@ -103,14 +124,20 @@ fun StudentProfileOptionsDropdown(
                     Text(stringResource(Res.string.txt_call), style = TextStyle.body2, color = AppColors.textPrimary)
                 },
                 leadingIcon = { Icon(Icons.Filled.Call, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.CallClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.CallClicked)
+                },
             )
             DropdownMenuItem(
                 text = {
                     Text(stringResource(Res.string.txt_email), style = TextStyle.body2, color = AppColors.textPrimary)
                 },
                 leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
-                onClick = { onUiEvent(ProfileUiEvent.EmailClicked) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.EmailClicked)
+                },
             )
         }
     }

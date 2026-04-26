@@ -138,7 +138,7 @@ private fun HandleNavigationState(
             when (it) {
                 is StudentProfileNavigationState.GoBack -> navigator?.goBack()
                 is StudentProfileNavigationState.ImagePreviewScreen -> {
-                    navigator?.navigateTo(AppScreen.ImagePreview(it.encodedImageUrl))
+                    navigator?.navigateToImagePreview(it.encodedImageUrl)
                 }
                 is StudentProfileNavigationState.ImageUploadScreen -> {
                     navigator?.navigateTo(AppScreen.ImageUpload(it.userId, it.userType))

@@ -1,30 +1,31 @@
 package com.workfort.pstuian.ui.imagepreview
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
+import coil3.request.crossfade
 import coil3.size.Size
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.AnimatedImagePlaceholderView
+import com.workfort.pstuian.ui.common.composable.TopBarCircleButton
+import org.jetbrains.compose.resources.stringResource
+import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.txt_go_back
 
 @Composable
 fun ImagePreviewScreen(
@@ -47,56 +48,53 @@ private fun ImagePreviewScreenComponent(
     onBack: () -> Unit,
     imageUrl: String,
 ) {
+    val request = ImageRequest.Builder(LocalPlatformContext.current)
+        .data(imageUrl)
+        .size(Size.ORIGINAL)
+        .crossfade(true)
+        .build()
+
     Box(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-                .padding(horizontal = 4.dp)
-                .align(Alignment.TopCenter),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close Image Preview",
-                )
-            }
-            IconButton(onClick = {  }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "Menu icon",
-                )
-            }
-        }
-
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalPlatformContext.current)
-                .data(imageUrl)
-                .size(Size.ORIGINAL)
-                .build()
+        SubcomposeAsyncImage(
+            model = request,
+            contentDescription = "Image Preview",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit,
+            alignment = Alignment.Center,
+            loading = {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AnimatedImagePlaceholderView()
+                }
+            },
+            error = {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AnimatedErrorView()
+                }
+            },
         )
 
-        when (painter.state) {
-            is AsyncImagePainter.State.Success -> {
-                Image(
-                    modifier = modifier.fillMaxWidth(),
-                    painter = painter,
-                    contentDescription = "Image Preview",
-                    contentScale = ContentScale.FillWidth,
-                )
-            }
-            is AsyncImagePainter.State.Empty,
-            is AsyncImagePainter.State.Loading -> {
-                AnimatedImagePlaceholderView()
-            }
-            is AsyncImagePainter.State.Error -> {
-                AnimatedErrorView()
-            }
-            else -> {}
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            TopBarCircleButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBackIos,
+                contentDescription = stringResource(Res.string.txt_go_back),
+                onClick = onBack,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.size(48.dp))
         }
     }
 }
