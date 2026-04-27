@@ -60,23 +60,31 @@ class StudentRepositoryImpl(
     override suspend fun changeAcademicInfo(
         userId: String,
         name: String,
+        studentOldId: Int,
         studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int
-    ): DomainResult<Unit> {
+    ): DomainResult<User.Student> {
         return helper.changeAcademicInfo(
             userId = userId,
             name = name,
+            studentOldId = studentOldId,
             studentId = studentId,
             reg = reg,
             blood = blood,
             facultyId = facultyId,
             session = session,
             batchId = batchId,
-        ).toDomainResult(domainErrorMapper)
+        )
+            .toDomainResult(domainErrorMapper)
+            .map { it.toModel() }
+            .onSuccess { student ->
+                cache.removeAll { it.userId == userId }
+                cache.add(student)
+            }
     }
 
     override suspend fun changeConnectInfo(
@@ -88,7 +96,7 @@ class StudentRepositoryImpl(
         cvLink: String,
         linkedIn: String,
         facebook: String
-    ): DomainResult<Unit> {
+    ): DomainResult<User.Student> {
         return helper.changeConnectInfo(
             userId = userId,
             address = address,
@@ -98,6 +106,12 @@ class StudentRepositoryImpl(
             cvLink = cvLink,
             linkedIn = linkedIn,
             fbLink = facebook,
-        ).toDomainResult(domainErrorMapper)
+        )
+            .toDomainResult(domainErrorMapper)
+            .map { it.toModel() }
+            .onSuccess { student ->
+                cache.removeAll { it.userId == userId }
+                cache.add(student)
+            }
     }
 }

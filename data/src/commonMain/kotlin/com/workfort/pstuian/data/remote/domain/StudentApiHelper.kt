@@ -18,13 +18,14 @@ interface StudentApiHelper {
     suspend fun changeAcademicInfo(
         userId: String,
         name: String,
+        studentOldId: Int,
         studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int
-    ): NetworkResult<Unit>
+    ): NetworkResult<StudentDto>
 
     suspend fun changeConnectInfo(
         userId: String,
@@ -35,5 +36,5 @@ interface StudentApiHelper {
         cvLink: String,
         linkedIn: String,
         fbLink: String
-    ): NetworkResult<Unit>
+    ): NetworkResult<StudentDto>
 }

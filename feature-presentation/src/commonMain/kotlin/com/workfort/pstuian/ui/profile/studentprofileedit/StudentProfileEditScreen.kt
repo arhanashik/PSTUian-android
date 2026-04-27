@@ -7,10 +7,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
+import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.batchesToListSelectionOptions
+import com.workfort.pstuian.ui.common.composable.facultiesToListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.profile.studentprofileedit.composable.StudentProfileScreenContent
 import com.workfort.pstuian.ui.profile.studentprofileedit.state.StudentProfileEditMessageState
@@ -18,8 +20,10 @@ import com.workfort.pstuian.ui.profile.studentprofileedit.state.StudentProfileEd
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.btn_select
 import pstuian.feature_presentation.generated.resources.msg_confirm_save_profile
-import pstuian.feature_presentation.generated.resources.msg_profile_fields_required
+import pstuian.feature_presentation.generated.resources.txt_select_batch
+import pstuian.feature_presentation.generated.resources.txt_select_faculty
 
 @Composable
 fun StudentProfileEditScreen(viewModel: StudentProfileEditViewModel) {
@@ -48,6 +52,28 @@ private fun HandleMessageState(
         when (it) {
             is StudentProfileEditMessageState.Loading -> {
                 ShowLoaderDialog(cancelable = it.cancelable)
+            }
+            is StudentProfileEditMessageState.FacultySelection -> {
+                ListSelectionBottomSheet(
+                    title = stringResource(Res.string.txt_select_faculty),
+                    primaryButtonLabel = stringResource(Res.string.btn_select),
+                    options = facultiesToListSelectionOptions(it.faculties),
+                    initialSelection = it.faculties.find { f -> f.id == it.selectedFacultyId },
+                    scrollable = true,
+                    onDismiss = onMessageHandled,
+                    onConfirm = { faculty -> it.onSaveAndContinue(faculty) },
+                )
+            }
+            is StudentProfileEditMessageState.BatchSelection -> {
+                ListSelectionBottomSheet(
+                    title = stringResource(Res.string.txt_select_batch),
+                    primaryButtonLabel = stringResource(Res.string.btn_select),
+                    options = batchesToListSelectionOptions(it.batches),
+                    initialSelection = it.batches.find { b -> b.id == it.selectedBatchId },
+                    scrollable = true,
+                    onDismiss = onMessageHandled,
+                    onConfirm = { batch -> it.onSaveAndContinue(batch) },
+                )
             }
             is StudentProfileEditMessageState.ConfirmSave -> {
                 ShowConfirmationDialog(

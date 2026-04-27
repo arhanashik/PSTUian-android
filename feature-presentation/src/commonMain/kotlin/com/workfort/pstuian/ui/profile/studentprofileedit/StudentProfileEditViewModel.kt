@@ -3,6 +3,7 @@ package com.workfort.pstuian.ui.profile.studentprofileedit
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
+import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.StudentAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.StudentConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.UserProfile
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 class StudentProfileEditViewModel(
     private val userId: Int,
     private val studentRepo: StudentRepository,
-    private val facultyRepo: FacultyRepository,
+    private val facultyRepository: FacultyRepository,
     private val getStudentProfileUserUseCase: GetStudentProfileUserUseCase,
     private val stateMachine: StudentProfileEditUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -54,10 +55,14 @@ class StudentProfileEditViewModel(
                     newProfileCache = event.profile
                     stateMachine.updateProfileContent(event.profile)
                 }
-                is StudentProfileEditUiEvent.FacultySelectionClicked -> onClickFaculty()
-                is StudentProfileEditUiEvent.BatchSelectionClicked -> onClickBatch()
+                is StudentProfileEditUiEvent.FacultySelectionClicked -> newProfileCache?.let {
+                    selectFaculty(selectedFacultyId = it.student.facultyId, needFacultySelection = true)
+                }
+                is StudentProfileEditUiEvent.BatchSelectionClicked -> newProfileCache?.let {
+                    selectFaculty(it.student.facultyId, needFacultySelection = false)
+                }
                 is StudentProfileEditUiEvent.AcademicInfoSaveClicked -> {
-                    if (newProfileCache == null || currentProfileCache == newProfileCache) {
+                    if (currentProfileCache == newProfileCache) {
                         _message.update { StudentProfileEditMessageState.ShowSnackBar("No change") }
                     } else {
                         _message.update { StudentProfileEditMessageState.ConfirmSave(::updateAcademicInfo) }
@@ -74,18 +79,6 @@ class StudentProfileEditViewModel(
         }
     }
 
-    fun onMessageHandled() = _message.update { null }
-
-    fun onNavigationHandled() = _navigation.update { null }
-
-    private fun onClickFaculty() = newProfileCache?.let { profile ->
-        // TODO show faculty picker bottom sheet
-    }
-
-    private fun onClickBatch() = newProfileCache?.let { profile ->
-        // TODO show batch picker bottom sheet
-    }
-
     private fun loadProfile() {
         _message.update { StudentProfileEditMessageState.Loading() }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
@@ -93,12 +86,82 @@ class StudentProfileEditViewModel(
                 .onSuccess { profile ->
                     onMessageHandled()
                     currentProfileCache = profile
+                    newProfileCache = profile
                     stateMachine.updateProfileContent(profile)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load profile"
                     _message.update { StudentProfileEditMessageState.Error(message) }
                 }
+        }
+    }
+
+    fun onMessageHandled() = _message.update { null }
+
+    fun onNavigationHandled() = _navigation.update { null }
+
+    private fun selectFaculty(selectedFacultyId: Int, needFacultySelection: Boolean) {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            stateMachine.showLoading(true)
+            val result = facultyRepository.getFaculties()
+            stateMachine.showLoading(false)
+
+            val faculties = result.getOrNull()
+            if (faculties.isNullOrEmpty()) {
+                val message = result.exceptionOrNull()?.message ?: "Failed to load faculties. Please try again later."
+                _message.update { StudentProfileEditMessageState.Error(message) }
+                return@launchOnMain
+            }
+
+            if (!needFacultySelection) {
+                faculties.firstOrNull { it.id == selectedFacultyId }?.let { selectBatch(it) }
+                return@launchOnMain
+            }
+
+            _message.update {
+                StudentProfileEditMessageState.FacultySelection(
+                    faculties = faculties,
+                    selectedFacultyId = selectedFacultyId,
+                    onSaveAndContinue = { faculty ->
+                        onMessageHandled()
+                        faculty?.let { selectBatch(it) }
+                    },
+                )
+            }
+        }
+    }
+
+    private fun selectBatch(faculty: Faculty) {
+        val profile = newProfileCache ?: return
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            stateMachine.showLoading(true)
+            val result = facultyRepository.getBatches(faculty.id)
+            stateMachine.showLoading(false)
+
+            val batches = result.getOrNull()
+            if (batches.isNullOrEmpty()) {
+                val message = result.exceptionOrNull()?.message ?: "Failed to load batches. Please try again later."
+                _message.update { StudentProfileEditMessageState.Error(message) }
+                return@launchOnMain
+            }
+
+            _message.update {
+                StudentProfileEditMessageState.BatchSelection(
+                    batches = batches,
+                    selectedBatchId = profile.student.batchId,
+                    onSaveAndContinue = { batch ->
+                        onMessageHandled()
+                        batch?.let { batch ->
+                            newProfileCache = profile.copy(
+                                student = profile.student.copy(facultyId = faculty.id, batchId = batch.id),
+                                faculty = faculty,
+                                batch = batch,
+                            )
+                            newProfileCache?.let { stateMachine.updateProfileContent(it) }
+                        }
+                    },
+                )
+            }
         }
     }
 
@@ -118,6 +181,7 @@ class StudentProfileEditViewModel(
             studentRepo.changeAcademicInfo(
                 userId = currentProfile.student.userId,
                 name = newProfile.student.name,
+                studentOldId = currentProfile.student.studentId,
                 studentId = newProfile.student.studentId,
                 reg = newProfile.student.reg,
                 blood = newProfile.student.blood.orEmpty(),

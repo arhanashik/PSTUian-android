@@ -57,18 +57,20 @@ class StudentApiService(private val client: HttpClient) {
     suspend fun changeAcademicInfo(
         userId: String,
         name: String,
+        studentOldId: Int,
         studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int,
-    ): ApiResponse<Unit> {
+    ): ApiResponse<StudentDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Student.UPDATE_ACADEMIC_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.NAME, name)
                 append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.NAME, name)
+                append(NetworkConst.Params.OLD_ID, studentOldId.toString())
                 append(NetworkConst.Params.ID, studentId.toString())
                 append(NetworkConst.Params.REG, reg)
                 append(NetworkConst.Params.BLOOD, blood)
@@ -88,15 +90,15 @@ class StudentApiService(private val client: HttpClient) {
         cvLink: String,
         linkedIn: String,
         fbLink: String,
-    ): ApiResponse<Unit> {
+    ): ApiResponse<StudentDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Student.UPDATE_CONNECT_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, userId)
+                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.ADDRESS, address)
                 append(NetworkConst.Params.PHONE, phone)
                 append(NetworkConst.Params.OLD_EMAIL, oldEmail)
-                append(NetworkConst.Params.NEW_EMAIL, newEmail)
+                append(NetworkConst.Params.EMAIL, newEmail)
                 append(NetworkConst.Params.CV_LINK, cvLink)
                 append(NetworkConst.Params.LINKED_IN, linkedIn)
                 append(NetworkConst.Params.FB_LINK, fbLink)

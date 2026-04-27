@@ -18,13 +18,14 @@ interface StudentRepository {
     suspend fun changeAcademicInfo(
         userId: String,
         name: String,
+        studentOldId: Int,
         studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int,
-    ): DomainResult<Unit>
+    ): DomainResult<User.Student>
 
     suspend fun changeConnectInfo(
         userId: String,
@@ -35,5 +36,5 @@ interface StudentRepository {
         cvLink: String,
         linkedIn: String,
         facebook: String,
-    ): DomainResult<Unit>
+    ): DomainResult<User.Student>
 }

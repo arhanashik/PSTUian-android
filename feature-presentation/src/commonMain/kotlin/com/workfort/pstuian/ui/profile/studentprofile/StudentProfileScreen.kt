@@ -38,6 +38,10 @@ fun StudentProfileScreen(viewModel: StudentProfileViewModel) {
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.onUiReady()
+    }
+
     StudentProfileScreenContent(uiState, viewModel::onUiEvent)
 
     HandleMessageState(message, viewModel::messageHandled)

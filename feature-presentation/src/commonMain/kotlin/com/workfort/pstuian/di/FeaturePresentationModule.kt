@@ -280,7 +280,7 @@ private val studentProfileEditModule = module {
         StudentProfileEditViewModel(
             userId = userId,
             studentRepo = get(),
-            facultyRepo = get(),
+            facultyRepository = get(),
             getStudentProfileUserUseCase = get(),
             stateMachine = get(),
             coroutineDispatcherProvider = get(),

@@ -4,6 +4,7 @@ object NetworkConst {
 
     object Params {
         const val ID = "id"
+        const val OLD_ID = "old_id"
         const val STUDENT_ID = "student_id"
         const val USER_ID = "user_id"
         const val REQUEST_ID = "request_id"

@@ -114,7 +114,7 @@ class SignInViewModel(
                                 faculties = faculties,
                                 selectedFacultyId = currentSignUpFacultyId(),
                                 onSaveAndContinue = { faculty ->
-                                    _message.update { null }
+                                    onMessageHandled()
                                     faculty?.let { applySignUpFaculty(it) }
                                 },
                             )
@@ -152,7 +152,7 @@ class SignInViewModel(
                                 batches = batches,
                                 selectedBatchId = selectedId,
                                 onSaveAndContinue = { batch ->
-                                    _message.update { null }
+                                    onMessageHandled()
                                     batch?.let { applySignUpBatch(it) }
                                 },
                             )

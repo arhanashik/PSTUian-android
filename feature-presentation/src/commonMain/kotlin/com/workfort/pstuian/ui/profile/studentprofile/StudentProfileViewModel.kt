@@ -12,6 +12,7 @@ import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.featuredomain.usecase.GetStudentProfileUserUseCase
+import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
 import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayData
@@ -37,7 +38,10 @@ class StudentProfileViewModel(
     private val userPresenceDisplayDataMapper: UserPresenceDisplayDataMapper,
     private val uiStateMachine: ProfileScreenUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-) : UiStateMachineViewModel<ProfileUiState>(uiStateMachine) {
+) : UiStateMachineViewModel<ProfileUiState>(
+    uiStateMachine = uiStateMachine,
+    initializationMode = InitializationMode.Manual,
+) {
 
     private val _message = MutableStateFlow<StudentProfileMessageState?>(null)
     val message: StateFlow<StudentProfileMessageState?> = _message.asStateFlow()

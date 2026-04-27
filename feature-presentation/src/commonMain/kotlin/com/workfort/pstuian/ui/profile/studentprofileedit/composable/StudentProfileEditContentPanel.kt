@@ -275,9 +275,6 @@ private fun ConnectInfoEditPanel(
             leadingIcon = Icons.Default.LocationOn,
             isError = validationError.address.isNotEmpty(),
             supportingText = validationError.address.takeIf { it.isNotEmpty() },
-            singleLine = false,
-            minLines = 2,
-            maxLines = 2,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
         Spacer(Modifier.height(AuthFormFieldSpacing))
@@ -331,7 +328,7 @@ private fun ConnectInfoEditPanel(
             label = stringResource(Res.string.hint_facebook),
             value = profile.student.fbLink.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(student = profile.student.copy(linkedIn = it))
+                val newProfile = profile.copy(student = profile.student.copy(fbLink = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.facebook.isNotEmpty(),

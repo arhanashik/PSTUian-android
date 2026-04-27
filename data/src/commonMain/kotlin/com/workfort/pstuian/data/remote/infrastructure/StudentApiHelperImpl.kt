@@ -41,23 +41,29 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     override suspend fun changeAcademicInfo(
         userId: String,
         name: String,
+        studentOldId: Int,
         studentId: Int,
         reg: String,
         blood: String,
         facultyId: Int,
         session: String,
         batchId: Int
-    ): NetworkResult<Unit> {
-        return service.changeAcademicInfo(
-            userId = userId,
-            name = name,
-            studentId = studentId,
-            reg = reg,
-            blood = blood,
-            facultyId = facultyId,
-            session = session,
-            batchId = batchId,
-        ).toNetworkResult()
+    ): NetworkResult<StudentDto> {
+        return runCatching {
+            service.changeAcademicInfo(
+                userId = userId,
+                name = name,
+                studentOldId = studentOldId,
+                studentId = studentId,
+                reg = reg,
+                blood = blood,
+                facultyId = facultyId,
+                session = session,
+                batchId = batchId,
+            ).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun changeConnectInfo(
@@ -69,16 +75,20 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         cvLink: String,
         linkedIn: String,
         fbLink: String
-    ): NetworkResult<Unit> {
-        return service.changeConnectInfo(
-            userId = userId,
-            address = address,
-            phone = phone,
-            oldEmail = oldEmail,
-            newEmail = newEmail,
-            cvLink = cvLink,
-            linkedIn = linkedIn,
-            fbLink = fbLink,
-        ).toNetworkResult()
+    ): NetworkResult<StudentDto> {
+        return runCatching {
+            service.changeConnectInfo(
+                userId = userId,
+                address = address,
+                phone = phone,
+                oldEmail = oldEmail,
+                newEmail = newEmail,
+                cvLink = cvLink,
+                linkedIn = linkedIn,
+                fbLink = fbLink,
+            ).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 }
