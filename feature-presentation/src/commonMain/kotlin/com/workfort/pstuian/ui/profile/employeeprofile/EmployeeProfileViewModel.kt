@@ -18,6 +18,7 @@ import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
 import com.workfort.pstuian.ui.profile.employeeprofile.state.EmployeeProfileMessageState
 import com.workfort.pstuian.ui.profile.employeeprofile.state.EmployeeProfileNavigationState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,6 +44,8 @@ class EmployeeProfileViewModel(
     val navigation: StateFlow<EmployeeProfileNavigationState?> = _navigation.asStateFlow()
 
     private var profileCache: UserProfile.EmployeeProfile? = null
+
+    private var userPresenceCollectionJob: Job? = null
 
     override fun onUiReady() {
         loadProfile()
@@ -76,6 +79,16 @@ class EmployeeProfileViewModel(
 
     fun navigationHandled() = _navigation.update { null }
 
+    private fun cancelUserPresenceObservation() {
+        userPresenceCollectionJob?.cancel()
+        userPresenceCollectionJob = null
+    }
+
+    override fun onCleared() {
+        cancelUserPresenceObservation()
+        super.onCleared()
+    }
+
     private fun loadProfile() {
         uiStateMachine.showProfileLoading()
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
@@ -98,11 +111,16 @@ class EmployeeProfileViewModel(
     }
 
     private fun observeUserPresence(userId: String, isSignedIn: Boolean) {
+        cancelUserPresenceObservation()
         if (isSignedIn) {
             uiStateMachine.updateUserPresenceData(UserPresenceDisplayData(isOnline = true))
             return
         }
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+        if (!authRepo.isUserSignedIn()) {
+            uiStateMachine.updateUserPresenceData(userPresenceDisplayDataMapper.map(null))
+            return
+        }
+        userPresenceCollectionJob = viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             userPresenceRepository.observeUserPresence(userId).collectLatest {
                 val userPresenceDisplayData = userPresenceDisplayDataMapper.map(it)
                 uiStateMachine.updateUserPresenceData(userPresenceDisplayData)
@@ -221,6 +239,7 @@ class EmployeeProfileViewModel(
     }
 
     fun signOut() {
+        cancelUserPresenceObservation()
         _message.update { EmployeeProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
