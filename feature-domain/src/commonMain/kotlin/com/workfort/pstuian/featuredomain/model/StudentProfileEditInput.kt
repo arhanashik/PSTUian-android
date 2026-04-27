@@ -22,7 +22,7 @@ data class StudentAcademicInfoInputError(
         )
     }
 
-    fun isNotEmpty(): Boolean = name.isNotEmpty() ||
+    fun hasError(): Boolean = name.isNotEmpty() ||
             id.isNotEmpty() ||
             reg.isNotEmpty() ||
             bloodGroup.isNotEmpty() ||
@@ -51,7 +51,7 @@ data class StudentConnectInfoInputError(
         )
     }
 
-    fun isNotEmpty(): Boolean = address.isNotEmpty() ||
+    fun hasError(): Boolean = address.isNotEmpty() ||
             phone.isNotEmpty() ||
             email.isNotEmpty() ||
             cvLink.isNotEmpty() ||

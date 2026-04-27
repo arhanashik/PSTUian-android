@@ -3,11 +3,11 @@ package com.workfort.pstuian.ui.profile.studentprofileedit.state
 import com.workfort.pstuian.featuredomain.model.UserProfile
 
 sealed interface StudentProfileEditUiEvent {
-    data object LoadProfile : StudentProfileEditUiEvent
-    data class ChangeProfile(val profile: UserProfile.StudentProfile) : StudentProfileEditUiEvent
-    data object ClickBack : StudentProfileEditUiEvent
-    data object ClickSave : StudentProfileEditUiEvent
-    data object ClickFaculty : StudentProfileEditUiEvent
-    data object ClickBatch : StudentProfileEditUiEvent
-    data object Save : StudentProfileEditUiEvent
+    data object BackClicked : StudentProfileEditUiEvent
+    data class TabClicked(val index: Int) : StudentProfileEditUiEvent
+    data class ProfileInfoChanged(val profile: UserProfile.StudentProfile) : StudentProfileEditUiEvent
+    data object FacultySelectionClicked : StudentProfileEditUiEvent
+    data object BatchSelectionClicked : StudentProfileEditUiEvent
+    data object AcademicInfoSaveClicked : StudentProfileEditUiEvent
+    data object ConnectInfoSaveClicked : StudentProfileEditUiEvent
 }

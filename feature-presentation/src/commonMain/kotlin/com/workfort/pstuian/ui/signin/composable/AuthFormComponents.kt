@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,8 +22,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -177,18 +181,27 @@ internal fun AuthUnderlinedField(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester? = null,
     leadingIcon: ImageVector? = null,
+    leadingPrefix: String? = null,
     trailingContent: (@Composable () -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    readOnly: Boolean = false,
+    isError: Boolean = false,
+    supportingText: String? = null,
+    singleLine: Boolean = true,
+    minLines: Int = 1,
+    maxLines: Int = 1,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
 
-    val (underlineColor, iconTint) = if (focused) {
-        MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.tertiary
-    } else {
-        MaterialTheme.colorScheme.outlineVariant to MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+    val (underlineColor, iconTint) = when {
+        isError -> MaterialTheme.colorScheme.error to MaterialTheme.colorScheme.error
+        focused -> MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.outlineVariant to MaterialTheme.colorScheme.onSurfaceVariant.copy(
+            alpha = 0.7f,
+        )
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -197,15 +210,30 @@ internal fun AuthUnderlinedField(
             style = TextStyle.label2.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
         )
         Spacer(modifier = Modifier.height(6.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = if (singleLine) Alignment.CenterVertically else Alignment.Top) {
             if (leadingIcon != null) {
                 Icon(
                     imageVector = leadingIcon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier
+                        .size(20.dp)
+                        .then(
+                            if (singleLine) {
+                                Modifier
+                            } else {
+                                Modifier.padding(top = 8.dp)
+                            },
+                        ),
                 )
                 Spacer(modifier = Modifier.width(12.dp))
+            }
+            if (leadingPrefix != null) {
+                Text(
+                    text = leadingPrefix,
+                    style = TextStyle.body1.copy(color = AppColors.textPrimary),
+                    modifier = Modifier.padding(end = 2.dp),
+                )
             }
             BasicTextField(
                 value = value,
@@ -220,7 +248,10 @@ internal fun AuthUnderlinedField(
                         },
                     ),
                 textStyle = TextStyle.body1.copy(color = AppColors.textPrimary),
-                singleLine = true,
+                readOnly = readOnly,
+                singleLine = singleLine,
+                minLines = if (singleLine) 1 else minLines,
+                maxLines = if (singleLine) 1 else maxLines,
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.tertiary),
                 visualTransformation = visualTransformation,
                 keyboardOptions = keyboardOptions,
@@ -229,16 +260,95 @@ internal fun AuthUnderlinedField(
             )
             if (trailingContent != null) {
                 Spacer(modifier = Modifier.width(8.dp))
-                trailingContent()
+                Box(
+                    modifier = if (singleLine) {
+                        Modifier
+                    } else {
+                        Modifier.padding(top = 6.dp)
+                    },
+                ) {
+                    trailingContent()
+                }
             }
         }
         Spacer(modifier = Modifier.height(6.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(if (focused) 2.dp else 1.dp)
-                .background(underlineColor),
+                .height(
+                    when {
+                        isError -> 2.dp
+                        focused -> 2.dp
+                        else -> 1.dp
+                    },
+                )
+                .background(
+                    if (isError) MaterialTheme.colorScheme.error else underlineColor,
+                ),
         )
+        if (!supportingText.isNullOrBlank()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = supportingText,
+                style = TextStyle.label2.copy(
+                    color = if (isError) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                ),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun AuthUnderlinedExposedDropdown(
+    label: String,
+    value: String,
+    items: Array<String>,
+    onItemSelected: (String) -> Unit,
+    isError: Boolean = false,
+    errorText: String? = null,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+    ) {
+        AuthUnderlinedField(
+            label = label,
+            value = value,
+            onValueChange = { },
+            readOnly = true,
+            isError = isError,
+            supportingText = errorText,
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth(),
+            trailingContent = {
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                )
+            },
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            items.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(item) },
+                    onClick = {
+                        onItemSelected(item)
+                        expanded = false
+                    },
+                )
+            }
+        }
     }
 }
 

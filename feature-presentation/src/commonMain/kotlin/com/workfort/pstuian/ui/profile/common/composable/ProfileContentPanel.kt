@@ -93,8 +93,7 @@ private fun ProfileView(
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
-    val academicLabel = stringResource(Res.string.txt_academic)
-    val connectLabel = stringResource(Res.string.txt_connect)
+    val tabOptions = listOf(stringResource(Res.string.txt_academic), stringResource(Res.string.txt_connect))
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
 
     LaunchedEffect(pagerState.currentPage) {
@@ -148,9 +147,9 @@ private fun ProfileView(
         }
 
         ToggleSwitch(
-            options = listOf(academicLabel, connectLabel),
+            options = tabOptions,
             selectedIndex = selectedTabIndex,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(16.dp),
             onSelectedIndexChange = { index ->
                 scope.launch { pagerState.animateScrollToPage(index) }
             },

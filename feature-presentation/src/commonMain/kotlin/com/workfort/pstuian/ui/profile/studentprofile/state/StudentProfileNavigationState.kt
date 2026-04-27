@@ -1,6 +1,5 @@
 package com.workfort.pstuian.ui.profile.studentprofile.state
 
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
 
 sealed interface StudentProfileNavigationState {
@@ -31,10 +30,7 @@ sealed interface StudentProfileNavigationState {
         val userId: String,
         val userType: UserType,
     ) : StudentProfileNavigationState
-    data class StudentProfileEditScreen(
-        val userId: Int,
-        val action: ProfileEditMode,
-    ) : StudentProfileNavigationState
+    data class StudentProfileEditScreen(val userId: Int) : StudentProfileNavigationState
     data object DeleteAccountScreen : StudentProfileNavigationState
     data class ImagePreviewScreen(val encodedImageUrl: String) : StudentProfileNavigationState
 }

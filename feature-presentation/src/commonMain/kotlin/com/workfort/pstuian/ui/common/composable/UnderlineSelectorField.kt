@@ -21,9 +21,6 @@ import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 
-/**
- * Matches [com.workfort.pstuian.ui.signin.composable.AuthUnderlinedField] spacing (tighter value row than raw Text).
- */
 @Composable
 fun UnderlineSelectorField(
     modifier: Modifier = Modifier,

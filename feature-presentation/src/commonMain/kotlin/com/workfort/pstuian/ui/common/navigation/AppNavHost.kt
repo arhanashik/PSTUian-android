@@ -160,9 +160,7 @@ fun AppNavHost(
                 composable<AppScreen.BloodDonationRequestEdit> {
                     // TODO: Need Screen for BloodDonationRequestEdit
                 }
-                composable<AppScreen.Profile>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.Profile>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.Profile = backStackEntry.toRoute()
                     when (screen.userType) {
                         UserType.STUDENT -> StudentProfileScreen(
@@ -178,47 +176,35 @@ fun AppNavHost(
                         )
                     }
                 }
-                composable<AppScreen.MyBloodDonationList>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.MyBloodDonationList>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.MyBloodDonationList = backStackEntry.toRoute()
                     MyBloodDonationListScreen(
                         viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
                     )
                 }
-                composable<AppScreen.MyCheckInList>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.MyCheckInList>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.MyCheckInList = backStackEntry.toRoute()
                     MyCheckInListScreen(
                         viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
                     )
                 }
-                composable<AppScreen.MyDeviceList>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.MyDeviceList>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.MyDeviceList = backStackEntry.toRoute()
                     MyDeviceListScreen(viewModel = koinViewModel())
                 }
-                composable<AppScreen.StudentProfileEdit>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.StudentProfileEdit>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.StudentProfileEdit = backStackEntry.toRoute()
                     StudentProfileEditScreen(
-                        viewModel = koinViewModel { parametersOf(screen.userId, screen.action) }
+                        viewModel = koinViewModel { parametersOf(screen.userId) }
                     )
                 }
-                composable<AppScreen.TeacherProfileEdit>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.TeacherProfileEdit>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.TeacherProfileEdit = backStackEntry.toRoute()
                     TeacherProfileEditScreen(
                         viewModel = koinViewModel { parametersOf(screen.userId, screen.action) }
                     )
                 }
-                composable<AppScreen.EmployeeProfileEdit>(
-                    typeMap = navTypeMap
-                ) {
+                composable<AppScreen.EmployeeProfileEdit>(typeMap = navTypeMap) {
                     // TODO: Need Screen for EmployeeProfileEdit
                 }
                 composable<AppScreen.DeleteAccount> {
@@ -233,9 +219,7 @@ fun AppNavHost(
                 composable<AppScreen.Donate> {
                     DonateScreen(viewModel = koinViewModel())
                 }
-                composable<AppScreen.ImageUpload>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.ImageUpload>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.ImageUpload = backStackEntry.toRoute()
                     ImageUploadScreen(
                         viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }
@@ -248,9 +232,7 @@ fun AppNavHost(
                         onBack = { navController.popBackStack() }
                     )
                 }
-                composable<AppScreen.DownloadCv>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.DownloadCv>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.DownloadCv = backStackEntry.toRoute()
                     CvDownloadScreen(
                         viewModel = koinViewModel {
@@ -258,9 +240,7 @@ fun AppNavHost(
                         }
                     )
                 }
-                composable<AppScreen.UploadCv>(
-                    typeMap = navTypeMap
-                ) { backStackEntry ->
+                composable<AppScreen.UploadCv>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.UploadCv = backStackEntry.toRoute()
                     CvUploadScreen(
                         viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) }

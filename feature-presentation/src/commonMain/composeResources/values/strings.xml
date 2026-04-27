@@ -143,6 +143,13 @@
     <string name="title_force_refresh_dialog">Refresh required</string>
     <string name="message_force_refresh_dialog">The data between the app and the server must need to be synchronized. Please keep your network connection on and click on refresh button. Sorry for the inconvenience.</string>
     <string name="txt_save_changes">Save Changes</string>
+    <string name="txt_edit_more">Edit more</string>
+    <string name="msg_confirm_save_profile">Are you sure you want to save your changes?</string>
+    <string name="msg_profile_updated_success">Profile updated successfully.</string>
+    <string name="msg_profile_fields_required">Please fill in the required fields and try again.</string>
+    <string name="title_edit_profile">Edit Profile</string>
+    <string name="title_student_profile_edit_academic">Edit academic info</string>
+    <string name="title_student_profile_edit_connect">Edit contact info</string>
     <string name="hint_blood_group">Blood Group</string>
     <string name="hint_address">Address</string>
     <string name="hint_phone">Phone</string>

@@ -46,7 +46,7 @@ class AppNavigator {
     suspend fun navigateToMyBloodDonationList(userId: String, userType: UserType) = navigateTo(AppScreen.MyBloodDonationList(userId, userType))
     suspend fun navigateToMyCheckInList(userId: String, userType: UserType) = navigateTo(AppScreen.MyCheckInList(userId, userType))
     suspend fun navigateToMyDeviceList(userId: String, userType: UserType) = navigateTo(AppScreen.MyDeviceList(userId, userType))
-    suspend fun navigateToStudentProfileEdit(userId: Int, action: ProfileEditMode) = navigateTo(AppScreen.StudentProfileEdit(userId, action))
+    suspend fun navigateToStudentProfileEdit(userId: Int) = navigateTo(AppScreen.StudentProfileEdit(userId))
     suspend fun navigateToTeacherProfileEdit(userId: String, action: ProfileEditMode) = navigateTo(AppScreen.TeacherProfileEdit(userId, action))
     suspend fun navigateToEmployeeProfileEdit(userId: String, action: ProfileEditMode) = navigateTo(AppScreen.EmployeeProfileEdit(userId, action))
     suspend fun navigateToDeleteAccount(userId: String, userType: UserType) = navigateTo(AppScreen.DeleteAccount)

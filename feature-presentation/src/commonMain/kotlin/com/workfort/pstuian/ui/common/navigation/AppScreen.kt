@@ -39,10 +39,7 @@ sealed interface AppScreen {
     @Serializable
     data class MyDeviceList(val userId: String, val userType: UserType) : AppScreen
     @Serializable
-    data class StudentProfileEdit(
-        val userId: Int,
-        val action: ProfileEditMode,
-    ) : AppScreen
+    data class StudentProfileEdit(val userId: Int) : AppScreen
     @Serializable
     data class TeacherProfileEdit(
         val userId: String,

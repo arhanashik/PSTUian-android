@@ -1,12 +1,10 @@
 package com.workfort.pstuian.ui.profile.studentprofileedit
 
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.StudentAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.StudentConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.profile.studentprofileedit.state.StudentProfileEditUiState
-import com.workfort.pstuian.util.isValidEmail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -15,55 +13,54 @@ class StudentProfileEditUiStateMachine : UiStateMachine<StudentProfileEditUiStat
     private val _uiState = MutableStateFlow<StudentProfileEditUiState>(StudentProfileEditUiState.None)
     override val uiState: StateFlow<StudentProfileEditUiState> = _uiState
 
-    fun setInitialContent() {
-        _uiState.update { StudentProfileEditUiState.Content() }
-    }
-
-    fun updateProfileScreenState(
-        profile: UserProfile.StudentProfile,
-        academicValidationError: StudentAcademicInfoInputError,
-        connectValidationError: StudentConnectInfoInputError,
-        mode: ProfileEditMode,
-    ) {
-        val panelState = when (mode) {
-            ProfileEditMode.ACADEMIC -> {
-                StudentProfileEditUiState.PanelState.Academic(
-                    profile, academicValidationError
-                )
-            }
-            ProfileEditMode.CONNECT -> {
-                StudentProfileEditUiState.PanelState.Connect(
-                    profile, connectValidationError
-                )
-            }
-        }
-        updatePanelState(panelState)
-    }
-
-    fun updatePanelState(panelState: StudentProfileEditUiState.PanelState) {
-        _uiState.update {
-            if (it is StudentProfileEditUiState.Content) {
-                it.copy(panelState = panelState)
-            } else {
-                StudentProfileEditUiState.Content(panelState = panelState)
+    fun updateProfileContent(profile: UserProfile.StudentProfile) {
+        _uiState.update { current ->
+            when (current) {
+                is StudentProfileEditUiState.Content -> current.copy(profile = profile, isLoading = false)
+                else -> StudentProfileEditUiState.Content(profile = profile, isLoading = false)
             }
         }
     }
 
-    fun validateAcademic(profile: UserProfile.StudentProfile) = StudentAcademicInfoInputError.INITIAL.copy(
-        name = if (profile.student.name.isEmpty()) "*Required" else "",
-        id = if (profile.student.studentId == 0) "*Required" else "",
-        reg = if (profile.student.reg.isEmpty()) "*Required" else "",
-        session = if (profile.student.session.isEmpty()) "*Required" else "",
-    )
+    fun updateTabIndex(index: Int) {
+        _uiState.update { current ->
+            when (current) {
+                is StudentProfileEditUiState.Content -> current.copy(selectedTabIndex = index)
+                else -> current
+            }
+        }
+    }
 
-    fun validateConnect(profile: UserProfile.StudentProfile) = StudentConnectInfoInputError.INITIAL.copy(
-        email = if (profile.student.email.isEmpty()) {
-            "*Required"
-        } else if (!profile.student.email.isValidEmail()) {
-            "*Invalid email"
-        } else {
-            ""
-        },
-    )
+    fun updateAcademicInfoInputError(academicInfoInputError: StudentAcademicInfoInputError) {
+        _uiState.update { current ->
+            when (current) {
+                is StudentProfileEditUiState.Content -> current.copy(
+                    academicInfoInputError = academicInfoInputError,
+                    isLoading = false,
+                )
+                 else -> current
+            }
+        }
+    }
+
+    fun updateConnectInfoInputError(connectInfoInputError: StudentConnectInfoInputError) {
+        _uiState.update { current ->
+            when (current) {
+                is StudentProfileEditUiState.Content -> current.copy(
+                    connectInfoInputError = connectInfoInputError,
+                    isLoading = false,
+                )
+                else -> current
+            }
+        }
+    }
+
+    fun showLoading(isLoading: Boolean) {
+        _uiState.update { current ->
+            when (current) {
+                is StudentProfileEditUiState.Content -> current.copy(isLoading = isLoading)
+                else -> current
+            }
+        }
+    }
 }

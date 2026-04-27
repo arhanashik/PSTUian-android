@@ -166,9 +166,7 @@ private fun HandleNavigationState(
                     navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, it.userType))
                 }
                 is StudentProfileNavigationState.StudentProfileEditScreen -> {
-                    navigator?.navigateTo(
-                        AppScreen.StudentProfileEdit(it.userId, it.action),
-                    )
+                    navigator?.navigateToStudentProfileEdit(it.userId)
                 }
                 is StudentProfileNavigationState.DeleteAccountScreen -> {
                     navigator?.navigateTo(AppScreen.DeleteAccount)

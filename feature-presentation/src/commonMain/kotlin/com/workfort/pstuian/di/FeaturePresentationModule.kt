@@ -276,10 +276,9 @@ private val settingsModule = module {
 
 private val studentProfileEditModule = module {
     factoryOf(::StudentProfileEditUiStateMachine)
-    factory { (userId: Int, mode: ProfileEditMode) ->
+    factory { (userId: Int) ->
         StudentProfileEditViewModel(
             userId = userId,
-            mode = mode,
             studentRepo = get(),
             facultyRepo = get(),
             getStudentProfileUserUseCase = get(),

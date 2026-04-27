@@ -63,7 +63,7 @@ class StudentProfileViewModel(
             is ProfileUiEvent.RefreshClicked -> onClickRefresh()
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
-            is ProfileUiEvent.EditClicked -> onClickEdit(event.selectedTabIndex)
+            is ProfileUiEvent.EditClicked -> onClickEdit()
             is ProfileUiEvent.MyBloodDonationListClicked -> onClickMyBloodDonationList()
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> onClickDownloadCv(event.url)
@@ -177,22 +177,11 @@ class StudentProfileViewModel(
         }
     }
 
-    private fun onClickEdit(selectedTabIndex: Int) {
+    private fun onClickEdit() {
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.student?.let { student ->
-            when (selectedTabIndex) {
-                0 -> ProfileEditMode.ACADEMIC
-                1 -> ProfileEditMode.CONNECT
-                else -> null
-            }?.let { action ->
-                _navigation.update {
-                    StudentProfileNavigationState.StudentProfileEditScreen(
-                        userId = student.studentId,
-                        action = action,
-                    )
-                }
-            }
+            _navigation.update { StudentProfileNavigationState.StudentProfileEditScreen(student.studentId) }
         }
     }
 
