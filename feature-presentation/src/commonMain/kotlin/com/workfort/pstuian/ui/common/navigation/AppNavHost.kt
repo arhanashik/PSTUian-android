@@ -201,7 +201,7 @@ fun AppNavHost(
                 composable<AppScreen.TeacherProfileEdit>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.TeacherProfileEdit = backStackEntry.toRoute()
                     TeacherProfileEditScreen(
-                        viewModel = koinViewModel { parametersOf(screen.userId, screen.action) }
+                        viewModel = koinViewModel { parametersOf(screen.userId) }
                     )
                 }
                 composable<AppScreen.EmployeeProfileEdit>(typeMap = navTypeMap) {

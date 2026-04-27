@@ -1,6 +1,5 @@
 package com.workfort.pstuian.ui.common.navigation
 
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -47,8 +46,8 @@ class AppNavigator {
     suspend fun navigateToMyCheckInList(userId: String, userType: UserType) = navigateTo(AppScreen.MyCheckInList(userId, userType))
     suspend fun navigateToMyDeviceList(userId: String, userType: UserType) = navigateTo(AppScreen.MyDeviceList(userId, userType))
     suspend fun navigateToStudentProfileEdit(userId: Int) = navigateTo(AppScreen.StudentProfileEdit(userId))
-    suspend fun navigateToTeacherProfileEdit(userId: String, action: ProfileEditMode) = navigateTo(AppScreen.TeacherProfileEdit(userId, action))
-    suspend fun navigateToEmployeeProfileEdit(userId: String, action: ProfileEditMode) = navigateTo(AppScreen.EmployeeProfileEdit(userId, action))
+    suspend fun navigateToTeacherProfileEdit(userId: String) = navigateTo(AppScreen.TeacherProfileEdit(userId))
+    suspend fun navigateToEmployeeProfileEdit(userId: String) = navigateTo(AppScreen.EmployeeProfileEdit(userId))
     suspend fun navigateToDeleteAccount(userId: String, userType: UserType) = navigateTo(AppScreen.DeleteAccount)
     suspend fun navigateToLocationPicker() = navigateTo(AppScreen.LocationPicker)
     suspend fun navigateToDonate() = navigateTo(AppScreen.Donate)

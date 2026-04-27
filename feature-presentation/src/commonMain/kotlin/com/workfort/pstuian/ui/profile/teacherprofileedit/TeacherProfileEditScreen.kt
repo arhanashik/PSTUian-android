@@ -1,46 +1,27 @@
 package com.workfort.pstuian.ui.profile.teacherprofileedit
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
-import com.workfort.pstuian.ui.common.composable.NavigationButton
+import com.workfort.pstuian.ui.common.composable.HandleSnackbar
+import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
-import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.ui.common.composable.facultiesToListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.profile.teacherprofileedit.composable.TeacherProfileEditContentPanel
+import com.workfort.pstuian.ui.profile.teacherprofileedit.composable.TeacherProfileScreenContent
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditMessageState
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditNavigationState
-import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditUiEvent
-import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditUiState
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.txt_edit
-import pstuian.feature_presentation.generated.resources.txt_save_changes
+import pstuian.feature_presentation.generated.resources.btn_select
+import pstuian.feature_presentation.generated.resources.msg_confirm_save_profile
+import pstuian.feature_presentation.generated.resources.txt_select_faculty
 
 @Composable
 fun TeacherProfileEditScreen(viewModel: TeacherProfileEditViewModel) {
@@ -49,77 +30,20 @@ fun TeacherProfileEditScreen(viewModel: TeacherProfileEditViewModel) {
     val navigation by viewModel.navigation.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    ScreenContent(
+    TeacherProfileScreenContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
         onUiEvent = viewModel::onUiEvent,
     )
 
-    HandleMessageState(message, viewModel::onMessageHandled)
+    HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ScreenContent(
-    uiState: TeacherProfileEditUiState,
-    snackbarHostState: SnackbarHostState,
-    onUiEvent: (TeacherProfileEditUiEvent) -> Unit,
-) {
-    var fabButtonExpanded by remember { mutableStateOf(true) }
-
-    LaunchedEffect(key1 = null) {
-        delay(1000)
-        fabButtonExpanded = false
-    }
-
-    AppScaffold(
-        topBar = {
-            AppBar(
-                title = stringResource(Res.string.txt_edit),
-                navigation = {
-                    NavigationButton { onUiEvent(TeacherProfileEditUiEvent.ClickBack) }
-                },
-            )
-        },
-        floatingActionButton = {
-            if (uiState is TeacherProfileEditUiState.Content) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 16.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    ExtendedFloatingActionButton(
-                        expanded = fabButtonExpanded,
-                        text = { Text(text = stringResource(Res.string.txt_save_changes)) },
-                        onClick = {
-                            onUiEvent(TeacherProfileEditUiEvent.ClickSave)
-                        },
-                        icon = { Icon(Icons.Outlined.CheckCircle, "") },
-                        shape = CircleShape,
-                    )
-                }
-            }
-        },
-        snackbarHost = { AppSnackbarHost(snackbarHostState) }
-    ) { innerPadding ->
-        when (uiState) {
-            is TeacherProfileEditUiState.None -> Unit
-            is TeacherProfileEditUiState.Content -> {
-                TeacherProfileEditContentPanel(
-                    modifier = Modifier.padding(innerPadding),
-                    uiState = uiState,
-                    onUiEvent = onUiEvent,
-                )
-            }
-        }
-    }
 }
 
 @Composable
 private fun HandleMessageState(
     message: TeacherProfileEditMessageState?,
+    snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
 ) {
     message?.let {
@@ -127,9 +51,20 @@ private fun HandleMessageState(
             is TeacherProfileEditMessageState.Loading -> {
                 ShowLoaderDialog(cancelable = it.cancelable)
             }
+            is TeacherProfileEditMessageState.FacultySelection -> {
+                ListSelectionBottomSheet(
+                    title = stringResource(Res.string.txt_select_faculty),
+                    primaryButtonLabel = stringResource(Res.string.btn_select),
+                    options = facultiesToListSelectionOptions(it.faculties),
+                    initialSelection = it.faculties.find { f -> f.id == it.selectedFacultyId },
+                    scrollable = true,
+                    onDismiss = onMessageHandled,
+                    onConfirm = { faculty -> it.onSaveAndContinue(faculty) },
+                )
+            }
             is TeacherProfileEditMessageState.ConfirmSave -> {
                 ShowConfirmationDialog(
-                    message = "Are you surely want to save the changes?",
+                    message = stringResource(Res.string.msg_confirm_save_profile),
                     onConfirm = {
                         onMessageHandled()
                         it.onConfirm()
@@ -137,14 +72,8 @@ private fun HandleMessageState(
                     onDismiss = onMessageHandled,
                 )
             }
-            is TeacherProfileEditMessageState.Success -> {
-                ShowSuccessDialog(
-                    message = it.message,
-                    confirmButtonText = "Go Back",
-                    dismissButtonText = "Edit More",
-                    onConfirm = onMessageHandled,
-                    onDismiss = onMessageHandled,
-                )
+            is TeacherProfileEditMessageState.ShowSnackBar -> {
+                HandleSnackbar(it.message, snackbarHostState, onMessageHandled)
             }
             is TeacherProfileEditMessageState.Error -> {
                 ShowErrorDialog(
@@ -162,13 +91,13 @@ private fun HandleNavigationState(
     navigation: TeacherProfileEditNavigationState?,
     onNavigationHandled: () -> Unit,
 ) {
-    val navigator = koinInject<AppNavigator?>()
+    val navigator = koinInject<AppNavigator>()
 
-    LaunchedEffect(key1 = navigation) {
+    LaunchedEffect(navigation) {
         navigation?.let {
             when (it) {
                 is TeacherProfileEditNavigationState.GoBack -> {
-                    navigator?.goBack()
+                    navigator.goBack()
                 }
             }
             onNavigationHandled()

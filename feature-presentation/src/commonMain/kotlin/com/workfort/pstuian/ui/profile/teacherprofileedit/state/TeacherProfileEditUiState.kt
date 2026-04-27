@@ -8,20 +8,10 @@ sealed interface TeacherProfileEditUiState {
     data object None : TeacherProfileEditUiState
 
     data class Content(
-        val panelState: PanelState = PanelState.None,
+        val profile: UserProfile.TeacherProfile,
+        val academicInfoInputError: TeacherAcademicInfoInputError = TeacherAcademicInfoInputError.INITIAL,
+        val connectInfoInputError: TeacherConnectInfoInputError = TeacherConnectInfoInputError.INITIAL,
+        val selectedTabIndex: Int = 0,
+        val isLoading: Boolean = false,
     ) : TeacherProfileEditUiState
-
-    sealed interface PanelState {
-        data object None : PanelState
-        data object Loading : PanelState
-        data class Academic(
-            val profile: UserProfile.TeacherProfile,
-            val validationError: TeacherAcademicInfoInputError,
-        ) : PanelState
-        data class Connect(
-            val profile: UserProfile.TeacherProfile,
-            val validationError: TeacherConnectInfoInputError,
-        ) : PanelState
-        data class Error(val message: String) : PanelState
-    }
 }

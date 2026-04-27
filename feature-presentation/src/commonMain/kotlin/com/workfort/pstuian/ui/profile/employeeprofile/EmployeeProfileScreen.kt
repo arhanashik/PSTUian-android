@@ -152,9 +152,7 @@ private fun HandleNavigationState(
                     navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, it.userType))
                 }
                 is EmployeeProfileNavigationState.EmployeeProfileEditScreen -> {
-                    navigator?.navigateTo(
-                        AppScreen.EmployeeProfileEdit(it.userId, it.action),
-                    )
+                    navigator?.navigateTo(AppScreen.EmployeeProfileEdit(it.userId))
                 }
                 is EmployeeProfileNavigationState.DeleteAccountScreen -> {
                     navigator?.navigateTo(AppScreen.DeleteAccount)

@@ -1,6 +1,5 @@
 package com.workfort.pstuian.di
 
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.AppViewModel
@@ -290,12 +289,11 @@ private val studentProfileEditModule = module {
 
 private val teacherProfileEditModule = module {
     factoryOf(::TeacherProfileEditUiStateMachine)
-    factory { (userId: Int, mode: ProfileEditMode) ->
+    factory { (userId: String) ->
         TeacherProfileEditViewModel(
             userId = userId,
-            mode = mode,
-            teacherRepo = get(),
-            facultyRepo = get(),
+            teacherRepository = get(),
+            facultyRepository = get(),
             getTeacherProfileUserUseCase = get(),
             stateMachine = get(),
             coroutineDispatcherProvider = get(),

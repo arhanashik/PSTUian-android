@@ -1,7 +1,6 @@
 package com.workfort.pstuian.ui.common.navigation
 
 import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
 
 import kotlinx.serialization.Serializable
@@ -41,15 +40,9 @@ sealed interface AppScreen {
     @Serializable
     data class StudentProfileEdit(val userId: Int) : AppScreen
     @Serializable
-    data class TeacherProfileEdit(
-        val userId: String,
-        val action: ProfileEditMode,
-    ) : AppScreen
+    data class TeacherProfileEdit(val userId: String) : AppScreen
     @Serializable
-    data class EmployeeProfileEdit(
-        val userId: String,
-        val action: ProfileEditMode,
-    ) : AppScreen
+    data class EmployeeProfileEdit(val userId: String) : AppScreen
     @Serializable
     data object DeleteAccount : AppScreen
     @Serializable

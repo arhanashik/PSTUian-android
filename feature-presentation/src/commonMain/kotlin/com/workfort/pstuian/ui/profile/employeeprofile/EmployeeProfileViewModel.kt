@@ -3,7 +3,6 @@ package com.workfort.pstuian.ui.profile.employeeprofile
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
@@ -176,16 +175,9 @@ class EmployeeProfileViewModel(
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.employee?.let { employee ->
-            when (selectedTabIndex) {
-                0 -> ProfileEditMode.ACADEMIC
-                1 -> ProfileEditMode.CONNECT
-                else -> null
-            }?.let { mode ->
+            if (selectedTabIndex == 0 || selectedTabIndex == 1) {
                 _navigation.update {
-                    EmployeeProfileNavigationState.EmployeeProfileEditScreen(
-                        userId = employee.userId,
-                        action = mode,
-                    )
+                    EmployeeProfileNavigationState.EmployeeProfileEditScreen(userId = employee.userId)
                 }
             }
         }

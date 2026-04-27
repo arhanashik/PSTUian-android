@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
@@ -176,16 +175,9 @@ class TeacherProfileViewModel(
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.teacher?.let { teacher ->
-            when (selectedTabIndex) {
-                0 -> ProfileEditMode.ACADEMIC
-                1 -> ProfileEditMode.CONNECT
-                else -> null
-            }?.let { action ->
+            if (selectedTabIndex == 0 || selectedTabIndex == 1) {
                 _navigation.update {
-                    TeacherProfileNavigationState.TeacherProfileEditScreen(
-                        userId = teacher.userId,
-                        action = action,
-                    )
+                    TeacherProfileNavigationState.TeacherProfileEditScreen(userId = teacher.userId)
                 }
             }
         }

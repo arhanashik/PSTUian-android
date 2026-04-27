@@ -3,8 +3,6 @@ package com.workfort.pstuian.ui.profile.teacherprofileedit
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.UserProfile
@@ -18,16 +16,16 @@ import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEd
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditNavigationState
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditUiEvent
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditUiState
+import com.workfort.pstuian.util.isValidEmail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TeacherProfileEditViewModel(
-    private val userId: Int,
-    private val mode: ProfileEditMode,
-    private val teacherRepo: TeacherRepository,
-    private val facultyRepo: FacultyRepository,
+    private val userId: String,
+    private val teacherRepository: TeacherRepository,
+    private val facultyRepository: FacultyRepository,
     private val getTeacherProfileUserUseCase: GetTeacherProfileUserUseCase,
     private val stateMachine: TeacherProfileEditUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -39,28 +37,62 @@ class TeacherProfileEditViewModel(
     private val _navigation = MutableStateFlow<TeacherProfileEditNavigationState?>(null)
     val navigation: StateFlow<TeacherProfileEditNavigationState?> = _navigation
 
-    private var oldProfileCache: UserProfile.TeacherProfile? = null
+    private var currentProfileCache: UserProfile.TeacherProfile? = null
     private var newProfileCache: UserProfile.TeacherProfile? = null
-    private var academicValidationError = TeacherAcademicInfoInputError.INITIAL
-    private var connectValidationError = TeacherConnectInfoInputError.INITIAL
 
     override fun onUiReady() {
-        stateMachine.setInitialContent()
-        onUiEvent(TeacherProfileEditUiEvent.LoadProfile)
+        loadProfile()
     }
 
     fun onUiEvent(event: TeacherProfileEditUiEvent) {
         viewModelScope.launch {
             when (event) {
-                is TeacherProfileEditUiEvent.LoadProfile -> loadProfile()
-                is TeacherProfileEditUiEvent.ChangeProfile -> onChangeProfile(event.profile)
-                is TeacherProfileEditUiEvent.ClickBack -> onClickBack()
-                is TeacherProfileEditUiEvent.ClickSave -> onClickSave()
-                is TeacherProfileEditUiEvent.ClickFaculty -> onClickFaculty()
-                is TeacherProfileEditUiEvent.ChangeFaculty -> onChangeFaculty(event.facultyId)
-                is TeacherProfileEditUiEvent.MessageConsumed -> onMessageHandled()
-                is TeacherProfileEditUiEvent.NavigationConsumed -> onNavigationHandled()
+                is TeacherProfileEditUiEvent.BackClicked ->
+                    _navigation.update { TeacherProfileEditNavigationState.GoBack }
+                is TeacherProfileEditUiEvent.TabClicked -> stateMachine.updateTabIndex(event.index)
+                is TeacherProfileEditUiEvent.ProfileInfoChanged -> {
+                    newProfileCache = event.profile
+                    stateMachine.updateProfileContent(event.profile)
+                }
+                is TeacherProfileEditUiEvent.FacultySelectionClicked -> newProfileCache?.let {
+                    selectFaculty(selectedFacultyId = it.teacher.facultyId)
+                }
+                is TeacherProfileEditUiEvent.AcademicInfoSaveClicked -> {
+                    if (currentProfileCache == newProfileCache) {
+                        _message.update { TeacherProfileEditMessageState.ShowSnackBar("No change") }
+                    } else {
+                        _message.update { TeacherProfileEditMessageState.ConfirmSave(::updateAcademicInfo) }
+                    }
+                }
+                is TeacherProfileEditUiEvent.ConnectInfoSaveClicked -> {
+                    if (newProfileCache == null || currentProfileCache == newProfileCache) {
+                        _message.update { TeacherProfileEditMessageState.ShowSnackBar("No change") }
+                    } else {
+                        _message.update { TeacherProfileEditMessageState.ConfirmSave(::updateConnectInfo) }
+                    }
+                }
             }
+        }
+    }
+
+    private fun loadProfile() {
+        _message.update { TeacherProfileEditMessageState.Loading() }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            val id = userId.toIntOrNull() ?: run {
+                _message.update { TeacherProfileEditMessageState.Error("Invalid user id") }
+                return@launchOnMain
+            }
+            getTeacherProfileUserUseCase(id)
+                .onSuccess { profile ->
+                    onMessageHandled()
+                    currentProfileCache = profile
+                    newProfileCache = profile
+                    stateMachine.updateProfileContent(profile)
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load profile"
+                    _message.update { TeacherProfileEditMessageState.Error(message) }
+                }
         }
     }
 
@@ -68,138 +100,123 @@ class TeacherProfileEditViewModel(
 
     fun onNavigationHandled() = _navigation.update { null }
 
-    private fun onClickBack() {
-        _navigation.update { TeacherProfileEditNavigationState.GoBack }
-    }
+    private fun selectFaculty(selectedFacultyId: Int) {
+        val profile = newProfileCache ?: return
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            stateMachine.showLoading(true)
+            val result = facultyRepository.getFaculties()
+            stateMachine.showLoading(false)
 
-    private fun onClickSave() {
-        _message.update {
-            TeacherProfileEditMessageState.ConfirmSave {
-                updateProfile()
+            val faculties = result.getOrNull()
+            if (faculties.isNullOrEmpty()) {
+                val message = result.exceptionOrNull()?.message ?: "Failed to load faculties. Please try again later."
+                _message.update { TeacherProfileEditMessageState.Error(message) }
+                return@launchOnMain
             }
-        }
-    }
 
-    private fun onClickFaculty() = newProfileCache?.let { profile ->
-        // TODO Show faculty picker
-    }
-
-    private fun onChangeFaculty(facultyId: Int) {
-        if (newProfileCache?.faculty?.id == facultyId) return
-        _message.update { TeacherProfileEditMessageState.Loading(cancelable = false) }
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            facultyRepo.getFaculty(facultyId)
-                .onSuccess { faculty ->
-                    newProfileCache?.let {
-                        val newProfile = it.copy(
-                            teacher = it.teacher.copy(facultyId = faculty.id),
-                            faculty = faculty,
-                        )
-                        newProfileCache = newProfile
-                        onMessageHandled()
-                        updateProfileScreenState()
-                    }
-                }
-                .onFailure {
-                    val message = it.message ?: "Failed to load faculty"
-                    _message.update { TeacherProfileEditMessageState.Error(message) }
-                }
-        }
-    }
-
-    private fun onChangeProfile(profile: UserProfile.TeacherProfile) {
-        newProfileCache = profile
-        when (mode) {
-            ProfileEditMode.ACADEMIC -> academicValidationError = stateMachine.validateAcademic(profile)
-            ProfileEditMode.CONNECT -> connectValidationError = stateMachine.validateConnect(profile)
-        }
-        updateProfileScreenState()
-    }
-
-    private fun loadProfile() {
-        stateMachine.updatePanelState(TeacherProfileEditUiState.PanelState.Loading)
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            getTeacherProfileUserUseCase(userId)
-                .onSuccess {
-                    oldProfileCache = it
-                    newProfileCache = it
-                    when (mode) {
-                        ProfileEditMode.ACADEMIC -> {
-                            academicValidationError = newProfileCache?.let { stateMachine.validateAcademic(it) }
-                                ?: TeacherAcademicInfoInputError.INITIAL
-                        }
-                        ProfileEditMode.CONNECT -> {
-                            connectValidationError = newProfileCache?.let { stateMachine.validateConnect(it) }
-                                ?: TeacherConnectInfoInputError.INITIAL
-                        }
-                    }
-                    updateProfileScreenState()
-                }
-                .onFailure {
-                    val message = it.message ?: "Failed to load profile"
-                    stateMachine.updatePanelState(TeacherProfileEditUiState.PanelState.Error(message))
-                }
-        }
-    }
-
-    private fun updateProfile() {
-        if (academicValidationError.isNotEmpty() || connectValidationError.isNotEmpty()) {
             _message.update {
-                TeacherProfileEditMessageState.Error(
-                    "Please insert required fields and try again!"
+                TeacherProfileEditMessageState.FacultySelection(
+                    faculties = faculties,
+                    selectedFacultyId = selectedFacultyId,
+                    onSaveAndContinue = { faculty ->
+                        onMessageHandled()
+                        faculty?.let { f ->
+                            newProfileCache = profile.copy(
+                                teacher = profile.teacher.copy(facultyId = f.id),
+                                faculty = f,
+                            )
+                            newProfileCache?.let { stateMachine.updateProfileContent(it) }
+                        }
+                    },
                 )
             }
-            return
         }
-        _message.update { TeacherProfileEditMessageState.Loading(cancelable = false) }
-        val oldProfile = oldProfileCache ?: return
+    }
+
+    private fun updateAcademicInfo() {
+        val currentProfile = currentProfileCache ?: return
         val newProfile = newProfileCache ?: return
 
+        val validationResult = validateAcademic(newProfile)
+        stateMachine.updateAcademicInfoInputError(validationResult)
+
+        if (validationResult.isNotEmpty()) {
+            return
+        }
+
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            stateMachine.showLoading(isLoading = true)
             runCatching {
-                when (mode) {
-                    ProfileEditMode.ACADEMIC -> {
-                        teacherRepo.changeAcademicInfo(
-                            teacher = oldProfile.teacher,
-                            name = newProfile.teacher.name,
-                            designation = newProfile.teacher.designation,
-                            department = newProfile.teacher.department,
-                            blood = newProfile.teacher.blood.orEmpty(),
-                            facultyId = newProfile.teacher.facultyId,
-                        )
-                    }
-                    ProfileEditMode.CONNECT -> {
-                        teacherRepo.changeConnectInfo(
-                            teacher = oldProfile.teacher,
-                            address = newProfile.teacher.address.orEmpty(),
-                            phone = newProfile.teacher.phone.orEmpty(),
-                            email = newProfile.teacher.email.orEmpty(),
-                            linkedIn = newProfile.teacher.linkedIn.orEmpty(),
-                            fbLink = newProfile.teacher.fbLink.orEmpty(),
-                        )
-                    }
-                }
+                teacherRepository.changeAcademicInfo(
+                    teacher = currentProfile.teacher,
+                    name = newProfile.teacher.name,
+                    designation = newProfile.teacher.designation,
+                    department = newProfile.teacher.department,
+                    blood = newProfile.teacher.blood.orEmpty(),
+                    facultyId = newProfile.teacher.facultyId,
+                )
             }.onSuccess {
-                _message.update {
-                    TeacherProfileEditMessageState.Success(
-                        "Profile updated successfully!"
-                    )
-                }
-                loadProfile()
+                stateMachine.showLoading(isLoading = false)
+                _message.update { TeacherProfileEditMessageState.ShowSnackBar("Updated successfully") }
             }.onFailure {
+                stateMachine.showLoading(isLoading = false)
                 val message = it.message ?: "Failed to update. Please try again."
                 _message.update { TeacherProfileEditMessageState.Error(message) }
             }
         }
     }
 
-    private fun updateProfileScreenState() {
-        val profile = newProfileCache ?: return
-        stateMachine.updateProfileScreenState(
-            profile,
-            academicValidationError,
-            connectValidationError,
-            mode
-        )
+    private fun updateConnectInfo() {
+        val currentProfile = currentProfileCache ?: return
+        val newProfile = newProfileCache
+
+        if (newProfile == null || currentProfile == newProfile) {
+            _message.update { TeacherProfileEditMessageState.ShowSnackBar("No change") }
+            return
+        }
+
+        val validationResult = validateConnect(newProfile)
+        stateMachine.updateConnectInfoInputError(validationResult)
+
+        if (validationResult.isNotEmpty()) {
+            return
+        }
+
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            stateMachine.showLoading(isLoading = true)
+            runCatching {
+                teacherRepository.changeConnectInfo(
+                    teacher = currentProfile.teacher,
+                    address = newProfile.teacher.address.orEmpty(),
+                    phone = newProfile.teacher.phone.orEmpty(),
+                    email = newProfile.teacher.email.orEmpty(),
+                    linkedIn = newProfile.teacher.linkedIn.orEmpty(),
+                    fbLink = newProfile.teacher.fbLink.orEmpty(),
+                )
+            }.onSuccess {
+                stateMachine.showLoading(isLoading = false)
+                _message.update { TeacherProfileEditMessageState.ShowSnackBar("Updated successfully") }
+            }.onFailure {
+                stateMachine.showLoading(isLoading = false)
+                val message = it.message ?: "Failed to update. Please try again."
+                _message.update { TeacherProfileEditMessageState.Error(message) }
+            }
+        }
     }
+
+    fun validateAcademic(profile: UserProfile.TeacherProfile) = TeacherAcademicInfoInputError.INITIAL.copy(
+        name = if (profile.teacher.name.isEmpty()) "*Required" else "",
+        designation = if (profile.teacher.designation.isEmpty()) "*Required" else "",
+        department = if (profile.teacher.department.isEmpty()) "*Required" else "",
+    )
+
+    fun validateConnect(profile: UserProfile.TeacherProfile) = TeacherConnectInfoInputError.INITIAL.copy(
+        email = if (profile.teacher.email.isNullOrEmpty()) {
+            "*Required"
+        } else if (profile.teacher.email?.isValidEmail() == false) {
+            "*Invalid email"
+        } else {
+            ""
+        },
+    )
 }

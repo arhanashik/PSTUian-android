@@ -7,6 +7,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -37,15 +38,20 @@ class FirebaseUserPresenceDataSource(database: FirebaseDatabase) {
     }
 
     fun observeUserPresence(userId: String): Flow<UserPresenceDto?> {
-        return userPresenceRef.child(userId)
-            .valueEvents
-            .map { snapshot -> snapshot.value<UserPresenceDto?>() }
-            .distinctUntilChanged()
+        return try {
+            userPresenceRef.child(userId)
+                .valueEvents
+                .map { snapshot -> snapshot.value<UserPresenceDto?>() }
+                .distinctUntilChanged()
+        } catch (_ : Throwable) {
+            emptyFlow()
+        }
     }
 
     suspend fun removeUserPresence(userId: String) {
-        val userRef = userPresenceRef.child(userId)
-        runCatching { userRef.removeValue() }
+        runCatching {
+            userPresenceRef.child(userId).removeValue()
+        }
     }
 
     suspend fun getUserPresence(userId: String): UserPresenceDto? {
@@ -58,13 +64,17 @@ class FirebaseUserPresenceDataSource(database: FirebaseDatabase) {
     }
 
     fun observeActiveUsersPresence(): Flow<List<Pair<String, UserPresenceDto>>> {
-        return userPresenceRef.valueEvents.map { snapshot ->
-            snapshot.children
-                .mapNotNull { child ->
-                    val userId = child.key
-                    val presence = child.value<UserPresenceDto?>() ?: return@mapNotNull null
-                    userId?.let { it to presence }
-                }
+        return try {
+            userPresenceRef.valueEvents.map { snapshot ->
+                snapshot.children
+                    .mapNotNull { child ->
+                        val userId = child.key
+                        val presence = child.value<UserPresenceDto?>() ?: return@mapNotNull null
+                        userId?.let { it to presence }
+                    }
+            }
+        } catch (_ : Throwable) {
+            emptyFlow()
         }
     }
 }

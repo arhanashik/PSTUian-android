@@ -5,7 +5,6 @@ import androidx.savedstate.SavedState
 import androidx.savedstate.read
 import androidx.savedstate.write
 import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
-import com.workfort.pstuian.featuredomain.model.ProfileEditMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import kotlinx.serialization.json.Json
 import kotlin.reflect.KType
@@ -32,27 +31,6 @@ val UserTypeNavType = object : NavType<UserType>(isNullableAllowed = false) {
     override val name: String = "UserType"
 }
 
-val ProfileEditModeNavType = object : NavType<ProfileEditMode>(isNullableAllowed = false) {
-    override fun put(
-        bundle: SavedState,
-        key: String,
-        value: ProfileEditMode,
-    ) {
-        bundle.write { putString(key, Json.encodeToString(value)) }
-    }
-
-    override fun get(
-        bundle: SavedState,
-        key: String,
-    ): ProfileEditMode? {
-        return bundle.read { Json.decodeFromString<ProfileEditMode?>(getString(key)) }
-    }
-
-    override fun parseValue(value: String): ProfileEditMode = Json.decodeFromString(value)
-    override fun serializeAsValue(value: ProfileEditMode): String = Json.encodeToString(value)
-    override val name: String = "ProfileEditMode"
-}
-
 val FacultySelectionModeNavType = object : NavType<FacultySelectionMode>(isNullableAllowed = false) {
     override fun put(
         bundle: SavedState,
@@ -76,6 +54,5 @@ val FacultySelectionModeNavType = object : NavType<FacultySelectionMode>(isNulla
 
 val navTypeMap: Map<KType, NavType<*>> = mapOf(
     typeOf<UserType>() to UserTypeNavType,
-    typeOf<ProfileEditMode>() to ProfileEditModeNavType,
     typeOf<FacultySelectionMode>() to FacultySelectionModeNavType,
 )

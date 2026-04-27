@@ -1,38 +1,46 @@
 package com.workfort.pstuian.ui.profile.teacherprofileedit.composable
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.TeacherAcademicInfoInputError
 import com.workfort.pstuian.featuredomain.model.TeacherConnectInfoInputError
 import com.workfort.pstuian.featuredomain.model.UserProfile
-import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
-import com.workfort.pstuian.ui.common.composable.AnimatedListLoaderView
-import com.workfort.pstuian.ui.common.composable.DropDownMenuBox
-import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
+import com.workfort.pstuian.ui.common.composable.ActionButton
+import com.workfort.pstuian.ui.common.composable.ToggleSwitch
+import com.workfort.pstuian.ui.common.composable.UnderlineSelectorField
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditUiEvent
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditUiState
+import com.workfort.pstuian.ui.signin.composable.AuthUnderlinedExposedDropdown
+import com.workfort.pstuian.ui.signin.composable.AuthUnderlinedField
+import com.workfort.pstuian.ui.signin.screendata.AuthFormFieldSpacing
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
@@ -47,240 +55,254 @@ import pstuian.feature_presentation.generated.resources.hint_faculty
 import pstuian.feature_presentation.generated.resources.hint_linked_in
 import pstuian.feature_presentation.generated.resources.hint_name
 import pstuian.feature_presentation.generated.resources.hint_phone
+import pstuian.feature_presentation.generated.resources.txt_academic
+import pstuian.feature_presentation.generated.resources.txt_connect
+import pstuian.feature_presentation.generated.resources.txt_save_changes
 
 @Composable
 fun TeacherProfileEditContentPanel(
-    modifier: Modifier = Modifier,
     uiState: TeacherProfileEditUiState.Content,
     onUiEvent: (TeacherProfileEditUiEvent) -> Unit,
 ) {
-    when (val panelState = uiState.panelState) {
-        is TeacherProfileEditUiState.PanelState.None -> Unit
-        is TeacherProfileEditUiState.PanelState.Loading -> {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                AnimatedListLoaderView(modifier = Modifier.fillMaxWidth())
-            }
-        }
-        is TeacherProfileEditUiState.PanelState.Academic -> {
-            AcademicInfoEditPanelView(
-                modifier = modifier,
-                profile = panelState.profile,
-                validationError = panelState.validationError,
-                onUiEvent = onUiEvent,
-            )
-        }
-        is TeacherProfileEditUiState.PanelState.Connect -> {
-            ConnectInfoEditPanelView(
-                modifier = modifier,
-                profile = panelState.profile,
-                validationError = panelState.validationError,
-                onUiEvent = onUiEvent,
-            )
-        }
-        is TeacherProfileEditUiState.PanelState.Error -> {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                AnimatedErrorView(modifier = Modifier.fillMaxWidth())
-            }
-        }
-    }
-}
+    val scope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val tabOptions = listOf(stringResource(Res.string.txt_academic), stringResource(Res.string.txt_connect))
 
-@Composable
-private fun AcademicInfoEditPanelView(
-    modifier: Modifier,
-    profile: UserProfile.TeacherProfile,
-    validationError: TeacherAcademicInfoInputError,
-    onUiEvent: (TeacherProfileEditUiEvent) -> Unit,
-) {
-    var newProfile by remember { mutableStateOf(profile) }
-
-    // this is necessary when coming back from another screen(ex. faculty picker)
-    LaunchedEffect(key1 = profile) {
-        if (profile.faculty != newProfile.faculty) {
-            newProfile = profile
-        }
+    LaunchedEffect(pagerState.currentPage) {
+        onUiEvent(TeacherProfileEditUiEvent.TabClicked(pagerState.currentPage))
     }
 
-    LaunchedEffect(key1 = newProfile) {
-        onUiEvent(TeacherProfileEditUiEvent.ChangeProfile(newProfile))
+    LaunchedEffect(uiState.selectedTabIndex) {
+        if (pagerState.currentPage != uiState.selectedTabIndex) {
+            pagerState.animateScrollToPage(uiState.selectedTabIndex)
+        }
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_name),
-            value = newProfile.teacher.name,
-            isError = validationError.name.isNotEmpty(),
-            supportingText = validationError.name,
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(name = it),
-            )
-        }
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_designation),
-            value = newProfile.teacher.designation,
-            isError = validationError.designation.isNotEmpty(),
-            supportingText = validationError.designation,
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(designation = it),
-            )
-        }
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_department),
-            value = newProfile.teacher.department,
-            isError = validationError.department.isNotEmpty(),
-            supportingText = validationError.department,
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(department = it),
-            )
-        }
-        DropDownMenuBox(
-            anchorView = { modifier, expanded ->
-                OutlinedTextInput(
-                    modifier = modifier,
-                    label = stringResource(Res.string.hint_blood_group),
-                    value = newProfile.teacher.blood.orEmpty(),
-                    readOnly = true,
-                    trailingIcon = {
-                        Icon(
-                            if (expanded) {
-                                Icons.Default.KeyboardArrowUp
-                            } else {
-                                Icons.Default.KeyboardArrowDown
-                            },
-                            contentDescription = "",
-                        )
-                    },
-                    isError = validationError.bloodGroup.isNotEmpty(),
-                    supportingText = validationError.bloodGroup,
-                    onValueChange = { }
-                )
+        ToggleSwitch(
+            options = tabOptions,
+            selectedIndex = uiState.selectedTabIndex,
+            onSelectedIndexChange = { index ->
+                scope.launch { pagerState.animateScrollToPage(index) }
             },
-            items = stringArrayResource(Res.array.blood_group).toTypedArray(),
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(blood = it),
-            )
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth(),
+        ) { page ->
+            when (page) {
+                0 -> AcademicInfoEditPanel(
+                    profile = uiState.profile,
+                    validationError = uiState.academicInfoInputError,
+                    onUiEvent = onUiEvent,
+                )
+                1 -> ConnectInfoEditPanel(
+                    profile = uiState.profile,
+                    validationError = uiState.connectInfoInputError,
+                    onUiEvent = onUiEvent,
+                )
+            }
         }
-        OutlinedTextInput(
-            modifier = Modifier.onFocusChanged {
-                if (it.isFocused) {
-                    onUiEvent(TeacherProfileEditUiEvent.ClickFaculty)
+
+        Spacer(Modifier.height(24.dp))
+
+        ActionButton(
+            label = stringResource(Res.string.txt_save_changes).uppercase(),
+            icon = Icons.AutoMirrored.Filled.ArrowForward,
+            enabled = if (uiState.selectedTabIndex == 0) {
+                !uiState.academicInfoInputError.isNotEmpty()
+            } else {
+                !uiState.connectInfoInputError.isNotEmpty()
+            },
+            onClick = {
+                if (uiState.selectedTabIndex == 0) {
+                    onUiEvent(TeacherProfileEditUiEvent.AcademicInfoSaveClicked)
+                } else {
+                    onUiEvent(TeacherProfileEditUiEvent.ConnectInfoSaveClicked)
                 }
             },
-            label = stringResource(Res.string.hint_faculty),
-            value = newProfile.faculty.shortTitle,
-            readOnly = true,
-            trailingIcon = {
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "")
-            },
-            isError = validationError.faculty.isNotEmpty(),
-            supportingText = validationError.faculty,
-            onValueChange = { },
         )
     }
 }
 
 @Composable
-private fun ConnectInfoEditPanelView(
-    modifier: Modifier,
+private fun AcademicInfoEditPanel(
+    profile: UserProfile.TeacherProfile,
+    validationError: TeacherAcademicInfoInputError,
+    onUiEvent: (TeacherProfileEditUiEvent) -> Unit,
+) {
+    Column {
+        AuthUnderlinedField(
+            label = stringResource(Res.string.hint_name),
+            value = profile.teacher.name,
+            onValueChange = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(name = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
+            },
+            isError = validationError.name.isNotEmpty(),
+            supportingText = validationError.name.takeIf { it.isNotEmpty() },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = stringResource(Res.string.hint_designation),
+            value = profile.teacher.designation,
+            onValueChange = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(designation = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
+            },
+            isError = validationError.designation.isNotEmpty(),
+            supportingText = validationError.designation.takeIf { it.isNotEmpty() },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = stringResource(Res.string.hint_department),
+            value = profile.teacher.department,
+            onValueChange = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(department = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
+            },
+            isError = validationError.department.isNotEmpty(),
+            supportingText = validationError.department.takeIf { it.isNotEmpty() },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedExposedDropdown(
+            label = stringResource(Res.string.hint_blood_group),
+            value = profile.teacher.blood.orEmpty(),
+            items = stringArrayResource(Res.array.blood_group).toTypedArray(),
+            onItemSelected = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(blood = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
+            },
+            isError = validationError.bloodGroup.isNotEmpty(),
+            errorText = validationError.bloodGroup.takeIf { it.isNotEmpty() },
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        UnderlineSelectorField(
+            modifier = Modifier.fillMaxWidth(),
+            label = stringResource(Res.string.hint_faculty),
+            value = profile.faculty.shortTitle,
+            isError = validationError.faculty.isNotEmpty(),
+            supportingText = validationError.faculty.takeIf { it.isNotEmpty() },
+            trailingIcon = {
+                Icon(
+                    Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
+            },
+            onClick = { onUiEvent(TeacherProfileEditUiEvent.FacultySelectionClicked) },
+        )
+    }
+}
+
+@Composable
+private fun ConnectInfoEditPanel(
     profile: UserProfile.TeacherProfile,
     validationError: TeacherConnectInfoInputError,
     onUiEvent: (TeacherProfileEditUiEvent) -> Unit,
 ) {
-    var newProfile by remember { mutableStateOf(profile) }
-
-    LaunchedEffect(key1 = newProfile) {
-        onUiEvent(TeacherProfileEditUiEvent.ChangeProfile(newProfile))
-    }
-
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(top = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        OutlinedTextInput(
+        Spacer(Modifier.height(4.dp))
+        AuthUnderlinedField(
             label = stringResource(Res.string.hint_address),
-            value = newProfile.teacher.address.orEmpty(),
-            trailingIcon = {
-                Icon(Icons.Default.LocationOn, contentDescription = "")
+            value = profile.teacher.address.orEmpty(),
+            onValueChange = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(address = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
+            leadingIcon = Icons.Default.LocationOn,
             isError = validationError.address.isNotEmpty(),
-            supportingText = validationError.address,
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(address = it),
-            )
-        }
-        OutlinedTextInput(
+            supportingText = validationError.address.takeIf { it.isNotEmpty() },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
             label = stringResource(Res.string.hint_phone),
-            value = newProfile.teacher.phone.orEmpty(),
-            inputType = KeyboardType.Phone,
-            trailingIcon = {
-                Icon(Icons.Default.Phone, contentDescription = "")
+            value = profile.teacher.phone.orEmpty(),
+            onValueChange = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(phone = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
+            leadingIcon = Icons.Default.Phone,
             isError = validationError.phone.isNotEmpty(),
-            supportingText = validationError.phone,
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(phone = it),
-            )
-        }
-        OutlinedTextInput(
+            supportingText = validationError.phone.takeIf { it.isNotEmpty() },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Next,
+            ),
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
             label = stringResource(Res.string.hint_email),
-            value = newProfile.teacher.email.orEmpty(),
-            inputType = KeyboardType.Email,
-            trailingIcon = {
-                Icon(Icons.Default.Email, contentDescription = "")
+            value = profile.teacher.email.orEmpty(),
+            onValueChange = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(email = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
+            leadingIcon = Icons.Default.Email,
             isError = validationError.email.isNotEmpty(),
-            supportingText = validationError.email,
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(email = it),
-            )
-        }
-        OutlinedTextInput(
+            supportingText = validationError.email.takeIf { it.isNotEmpty() },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
+            ),
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
             label = stringResource(Res.string.hint_linked_in),
-            value = newProfile.teacher.linkedIn.orEmpty(),
-            trailingIcon = {
-                Icon(Icons.Default.Public, contentDescription = "")
+            value = profile.teacher.linkedIn.orEmpty(),
+            onValueChange = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(linkedIn = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
+            leadingIcon = Icons.Default.Public,
             isError = validationError.linkedIn.isNotEmpty(),
-            supportingText = validationError.linkedIn,
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(linkedIn = it),
-            )
-        }
-        OutlinedTextInput(
+            supportingText = validationError.linkedIn.takeIf { it.isNotEmpty() },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Uri,
+                imeAction = ImeAction.Next,
+            ),
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
             label = stringResource(Res.string.hint_facebook),
-            value = newProfile.teacher.fbLink.orEmpty(),
-            trailingIcon = {
-                Icon(Icons.Default.Public, contentDescription = "")
+            value = profile.teacher.fbLink.orEmpty(),
+            onValueChange = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(fbLink = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
+            leadingIcon = Icons.Default.Public,
             isError = validationError.facebook.isNotEmpty(),
-            supportingText = validationError.facebook,
-        ) {
-            newProfile = newProfile.copy(
-                teacher = newProfile.teacher.copy(fbLink = it),
-            )
-        }
+            supportingText = validationError.facebook.takeIf { it.isNotEmpty() },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Uri,
+                imeAction = ImeAction.Done,
+            ),
+        )
     }
 }
