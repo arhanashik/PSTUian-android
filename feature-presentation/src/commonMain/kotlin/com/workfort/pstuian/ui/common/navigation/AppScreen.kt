@@ -63,8 +63,11 @@ sealed interface AppScreen {
     data class UploadCv(val userId: String, val userType: UserType) : AppScreen
     @Serializable
     object Settings : AppScreen
+
     @Serializable
     data class Faculty(val facultyId: Int) : AppScreen
+    @Serializable
+    data object CheckInList : AppScreen
     @Serializable
     object Donors : AppScreen
     @Serializable

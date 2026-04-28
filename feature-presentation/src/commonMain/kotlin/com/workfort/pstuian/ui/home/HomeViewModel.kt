@@ -21,6 +21,7 @@ import com.workfort.pstuian.ui.home.state.HomeMessageState
 import com.workfort.pstuian.ui.home.state.HomeNavigationState
 import com.workfort.pstuian.ui.home.state.HomeUiEvent
 import com.workfort.pstuian.ui.home.state.HomeUiState
+import com.workfort.pstuian.util.PlatformInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,6 +36,7 @@ class HomeViewModel(
     private val settingsRepository: SettingsRepository,
     private val sharedScreenData: SharedScreenData,
     private val clearCacheUseCase: ClearCacheUseCase,
+    private val platformInfo: PlatformInfo,
     private val uiStateMachine: HomeUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<HomeUiState>(uiStateMachine) {
@@ -79,7 +81,7 @@ class HomeViewModel(
                     Action.RequestBloodDonation -> onClickRequestBloodDonation()
                     Action.CheckIn -> onClickCheckIn()
                     Action.RateApp -> {
-                        _navigation.update { HomeNavigationState.Store }
+                        _navigation.update { HomeNavigationState.Browser(platformInfo.storeUrl) }
                     }
                     Action.ClearData -> onClickClearData()
                     Action.Settings -> onClickSettings()

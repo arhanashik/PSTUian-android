@@ -1,10 +1,10 @@
 package com.workfort.pstuian.ui.checkinlist.state
 
-import com.workfort.pstuian.featuredomain.model.CheckInEntity
+import com.workfort.pstuian.featuredomain.model.CheckIn
 
 sealed interface CheckInListUiEvent {
     data object OnClickBack : CheckInListUiEvent
-    data class OnClickItem(val item: CheckInEntity) : CheckInListUiEvent
+    data class OnClickItem(val item: CheckIn) : CheckInListUiEvent
     data class OnClickCall(val phoneNumber: String) : CheckInListUiEvent
     data object OnClickChangeLocation : CheckInListUiEvent
     data object OnClickCheckIn : CheckInListUiEvent

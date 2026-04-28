@@ -17,5 +17,4 @@ sealed interface HomeNavigationState {
     data object DonateScreen : HomeNavigationState
     data object SettingsScreen : HomeNavigationState
     data class Browser(val url: String) : HomeNavigationState
-    data object Store : HomeNavigationState
 }

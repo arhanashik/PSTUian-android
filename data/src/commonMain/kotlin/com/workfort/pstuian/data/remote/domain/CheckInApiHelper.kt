@@ -1,33 +1,33 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.data.model.CheckInDto
+import com.workfort.pstuian.data.model.NetworkResult
+import com.workfort.pstuian.data.remote.NetworkConst
 
-abstract class CheckInApiHelper : ApiHelper<CheckInDto>()  {
+interface CheckInApiHelper  {
 
-    open suspend fun getAll(
+    suspend fun getAll(
         locationId: Int,
         page: Int,
         limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
-    ): List<CheckInDto> = emptyList()
+    ): NetworkResult<List<CheckInDto>>
 
-    open suspend fun getAll(
+    suspend fun getAll(
         userId: String,
         userType: String,
         page: Int,
         limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
-    ): List<CheckInDto> = emptyList()
+    ): NetworkResult<List<CheckInDto>>
 
-    open suspend fun getMyCheckIn(
-        userId: String,
-        userType: String,
-    ): CheckInDto? = null
+    suspend fun getMyCheckIn(userId: String, userType: String, ): NetworkResult<CheckInDto>
 
-    open suspend fun checkIn(
+    suspend fun checkIn(
         locationId: Int,
         userId: String,
         userType: String,
-    ): CheckInDto? = null
+    ): NetworkResult<CheckInDto>
 
-    open suspend fun updatePrivacy(checkInId: Int, privacy: String, ): CheckInDto? = null
+    suspend fun updatePrivacy(checkInId: Int, privacy: String, ): NetworkResult<CheckInDto>
+
+    suspend fun delete(id: Int): NetworkResult<Unit>
 }

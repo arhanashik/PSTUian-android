@@ -3,9 +3,11 @@ package com.workfort.pstuian.ui.mycheckinlist
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.CheckInEntity
+import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.CheckInRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiEvent
@@ -63,7 +65,7 @@ class MyCheckInListViewModel(
 
     private var page = 0
     private var endOfData: Boolean = false
-    private val itemsCache = arrayListOf<CheckInEntity>()
+    private val itemsCache = arrayListOf<CheckIn>()
 
     private suspend fun loadCheckInList(refresh: Boolean) {
         if (isListLoading() || (refresh.not() && endOfData)) {
@@ -77,31 +79,27 @@ class MyCheckInListViewModel(
         page += 1
         uiStateMachine.updateLoading(true)
 
-        runCatching {
-            checkInRepo.getAll(
-                userId = userId,
-                userType = userType,
-                page = page,
-            )
-        }.onSuccess { list ->
-            if (list.isEmpty()) {
+        checkInRepo.getAll(userId, userType, page)
+            .onSuccess { list ->
+                if (list.isEmpty()) {
+                    endOfData = true
+                } else {
+                    itemsCache.addAll(list)
+                }
+                uiStateMachine.updateData(itemsCache.toList())
+            }
+            .onFailure {
                 endOfData = true
-            } else {
-                itemsCache.addAll(list)
+                if (itemsCache.isEmpty()) {
+                    val message = it.message ?: "Failed to load data"
+                    uiStateMachine.updateError(message)
+                } else {
+                    uiStateMachine.updateLoading(false)
+                }
             }
-            uiStateMachine.updateData(itemsCache.toList())
-        }.onFailure {
-            endOfData = true
-            if (itemsCache.isEmpty()) {
-                val message = it.message ?: "Failed to load data"
-                uiStateMachine.updateError(message)
-            } else {
-                uiStateMachine.updateLoading(false)
-            }
-        }
     }
 
-    private fun onCheckInItemClicked(item: CheckInEntity) {
+    private fun onCheckInItemClicked(item: CheckIn) {
         _messageState.update {
             MyCheckInMessageState.ShowDetails(
                 item = item,
@@ -111,7 +109,7 @@ class MyCheckInListViewModel(
         }
     }
 
-    private fun changePrivacy(item: CheckInEntity, privacy: CheckInPrivacy) {
+    private fun changePrivacy(item: CheckIn, privacy: CheckInPrivacy) {
         uiStateMachine.updateOperationLoading(true)
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
@@ -129,7 +127,7 @@ class MyCheckInListViewModel(
         }
     }
 
-    private fun delete(item: CheckInEntity) {
+    private fun delete(item: CheckIn) {
         uiStateMachine.updateOperationLoading(true)
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {

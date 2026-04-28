@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -44,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.workfort.pstuian.featuredomain.appconstant.Const
-import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.featuredomain.model.CheckInLocation
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.AppBar
@@ -161,10 +160,10 @@ private fun LocationPickerScreenContent(
 }
 
 @Composable
-private fun List<CheckInLocationEntity>.ListView(
+private fun List<CheckInLocation>.ListView(
     modifier: Modifier,
     isLoading: Boolean,
-    onClick: (CheckInLocationEntity) -> Unit,
+    onClick: (CheckInLocation) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -184,8 +183,8 @@ private fun List<CheckInLocationEntity>.ListView(
 
 @Composable
 private fun ListItemView(
-    item: CheckInLocationEntity,
-    onClick: (CheckInLocationEntity) -> Unit,
+    item: CheckInLocation,
+    onClick: (CheckInLocation) -> Unit,
 ) {
     // TODO: MathUtil.prettyCount(item.count) needs KMP implementation or abstraction
     val checkInCountStr = "${item.count} check in"

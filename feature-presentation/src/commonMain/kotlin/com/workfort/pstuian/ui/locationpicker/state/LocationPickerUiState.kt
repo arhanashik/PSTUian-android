@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.locationpicker.state
 
-import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.featuredomain.model.CheckInLocation
 
 data class LocationPickerUiState(
     val locationListState: LocationListState = LocationListState.None,
@@ -10,7 +10,7 @@ data class LocationPickerUiState(
     sealed interface LocationListState {
         data object None : LocationListState
         data class Available(
-            val locations: List<CheckInLocationEntity>,
+            val locations: List<CheckInLocation>,
             val isLoading: Boolean,
         ) : LocationListState
         data class Error(val message: String) : LocationListState

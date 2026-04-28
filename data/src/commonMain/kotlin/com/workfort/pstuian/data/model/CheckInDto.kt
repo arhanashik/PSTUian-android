@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.model
 
-import com.workfort.pstuian.featuredomain.model.CheckInEntity
+import com.workfort.pstuian.featuredomain.model.CheckIn
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -26,7 +26,7 @@ data class CheckInDto(
     val imageUrl: String?,
     val date: String
 ) {
-    fun toEntity() = CheckInEntity(
+    fun toModel() = CheckIn(
         id = id,
         locationId = locationId,
         locationName = locationName,
@@ -43,7 +43,7 @@ data class CheckInDto(
     )
 }
 
-fun CheckInEntity.toDto() = CheckInDto(
+fun CheckIn.toDto() = CheckInDto(
     id = id,
     locationId = locationId,
     locationName = locationName,

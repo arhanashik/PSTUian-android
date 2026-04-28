@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -48,8 +47,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.featuredomain.model.CheckInEntity
-import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.featuredomain.model.CheckIn
+import com.workfort.pstuian.featuredomain.model.CheckInLocation
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
@@ -116,10 +115,10 @@ internal fun CheckInListContentPanel(
 @Composable
 private fun CheckInListView(
     modifier: Modifier,
-    checkInList: List<CheckInEntity>,
+    checkInList: List<CheckIn>,
     listState: LazyGridState,
     isLoading: Boolean,
-    onClickItem: (CheckInEntity) -> Unit,
+    onClickItem: (CheckIn) -> Unit,
     onClickCall: (String) -> Unit,
 ) {
     LazyVerticalGrid(
@@ -145,7 +144,7 @@ private fun CheckInListView(
 
 @Composable
 private fun CheckInListItemView(
-    item: CheckInEntity,
+    item: CheckIn,
     onClickItem: () -> Unit,
     onClickCall: () -> Unit,
 ) {
@@ -198,7 +197,7 @@ private fun CheckInListItemView(
 
 @Composable
 private fun CheckInListHeaderView(
-    checkInLocation: CheckInLocationEntity,
+    checkInLocation: CheckInLocation,
     onClickChangeLocation: () -> Unit,
     onClickCheckIn: () -> Unit,
 ) {

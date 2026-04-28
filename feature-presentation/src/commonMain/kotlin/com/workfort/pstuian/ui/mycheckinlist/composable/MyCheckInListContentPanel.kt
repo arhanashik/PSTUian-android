@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -39,7 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.featuredomain.model.CheckInEntity
+import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
@@ -98,7 +97,7 @@ fun MyCheckInListContentPanel(
 }
 
 @Composable
-private fun List<CheckInEntity>.ListView(
+private fun List<CheckIn>.ListView(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
     onUiEvent: (MyCheckInListUiEvent) -> Unit,
@@ -140,7 +139,7 @@ private fun List<CheckInEntity>.ListView(
 
 @Composable
 private fun ListItemView(
-    item: CheckInEntity,
+    item: CheckIn,
     onClick: () -> Unit,
 ) {
     val dateTimeUtil = DateTimeUtilImpl()
@@ -190,7 +189,7 @@ private fun ListItemView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyCheckInItemBottomSheet(
-    item: CheckInEntity,
+    item: CheckIn,
     onClickChangePrivacy: (CheckInPrivacy) -> Unit,
     onClickDelete: () -> Unit,
     onDismiss: () -> Unit,

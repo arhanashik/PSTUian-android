@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.checkinlist
 
-import com.workfort.pstuian.featuredomain.model.CheckInEntity
-import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.featuredomain.model.CheckIn
+import com.workfort.pstuian.featuredomain.model.CheckInLocation
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,14 +30,14 @@ class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
         CheckInListUiState.Content()
     }
 
-    fun showCheckInListLocation(checkInLocation: CheckInLocationEntity?) = updateUiState {
+    fun showCheckInListLocation(checkInLocation: CheckInLocation?) = updateUiState {
         when (this) {
             is CheckInListUiState.Content -> copy(checkInLocation = checkInLocation)
             else -> CheckInListUiState.Content(checkInLocation = checkInLocation)
         }
     }
 
-    fun showCheckInList(checkInList: List<CheckInEntity>, isLoading: Boolean) = updateUiState {
+    fun showCheckInList(checkInList: List<CheckIn>, isLoading: Boolean) = updateUiState {
         when (this) {
             is CheckInListUiState.Content -> copy(
                 checkInList = checkInList,

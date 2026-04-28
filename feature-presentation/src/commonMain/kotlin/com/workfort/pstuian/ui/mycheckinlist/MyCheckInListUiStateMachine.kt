@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.mycheckinlist
 
-import com.workfort.pstuian.featuredomain.model.CheckInEntity
+import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +20,7 @@ class MyCheckInListUiStateMachine : UiStateMachine<MyCheckInListUiState> {
         _uiState.update { it.copy(isOperationLoading = isLoading) }
     }
 
-    fun updateData(items: List<CheckInEntity>) {
+    fun updateData(items: List<CheckIn>) {
         _uiState.update {
             it.copy(
                 items = items,

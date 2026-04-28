@@ -3,7 +3,7 @@ package com.workfort.pstuian.featuredomain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CheckInEntity(
+data class CheckIn(
     val id: Int,
     val locationId: Int,
     val locationName: String,

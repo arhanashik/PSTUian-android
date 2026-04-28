@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalUriHandler
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
@@ -121,6 +122,7 @@ private fun HandleNavigationState(
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(navigation) {
         navigation?.let {
@@ -153,7 +155,7 @@ private fun HandleNavigationState(
                     navigator?.navigateToBloodDonationRequestCreate()
                 }
                 is HomeNavigationState.CheckInScreen -> {
-                    // TODO navigate to check in
+                    navigator?.navigateToCheckInList()
                 }
                 is HomeNavigationState.DonateScreen -> {
                     navigator?.navigateToDonate()
@@ -162,10 +164,7 @@ private fun HandleNavigationState(
                     navigator?.navigateToSettings()
                 }
                 is HomeNavigationState.Browser -> {
-                    // TODO open browser
-                }
-                is HomeNavigationState.Store -> {
-                    // TODO open store
+                    uriHandler.openUri(it.url)
                 }
             }
             onNavigationHandled()

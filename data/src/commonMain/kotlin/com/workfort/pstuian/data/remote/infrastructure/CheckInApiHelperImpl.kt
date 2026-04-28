@@ -1,22 +1,15 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
+import com.workfort.pstuian.data.mapper.toNetworkResult
+import com.workfort.pstuian.data.model.ApiResponseCode
 import com.workfort.pstuian.data.model.CheckInDto
+import com.workfort.pstuian.data.model.CommonNetworkError
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.CheckInApiHelper
 import com.workfort.pstuian.data.remote.service.CheckInApiService
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 13 Dec, 2021 at 12:18.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
+class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiHelper {
 
-class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiHelper() {
     /**
      * Get all check in by location
      * */
@@ -24,10 +17,11 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         locationId: Int,
         page: Int,
         limit: Int
-    ): List<CheckInDto> {
-        service.getAllByLocation(locationId, page, limit).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return it.data?: throw Exception("No data")
+    ): NetworkResult<List<CheckInDto>> {
+        return runCatching {
+            service.getAllByLocation(locationId, page, limit).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
@@ -39,17 +33,19 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         userType: String,
         page: Int,
         limit: Int
-    ): List<CheckInDto> {
-        service.getAllByUser(userId, userType, page, limit).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return it.data?: throw Exception("No data")
+    ): NetworkResult<List<CheckInDto>> {
+        return runCatching {
+            service.getAllByUser(userId, userType, page, limit).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
-    override suspend fun getMyCheckIn(userId: String, userType: String): CheckInDto {
-        service.get(userId, userType).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return it.data ?: throw Exception("No data")
+    override suspend fun getMyCheckIn(userId: String, userType: String): NetworkResult<CheckInDto> {
+        return runCatching {
+            service.get(userId, userType).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
@@ -57,24 +53,27 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         locationId: Int,
         userId: String,
         userType: String
-    ): CheckInDto {
-        service.checkIn(locationId, userId, userType).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return it.data?: throw Exception("No data")
+    ): NetworkResult<CheckInDto> {
+        return runCatching {
+            service.checkIn(locationId, userId, userType).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
-    override suspend fun updatePrivacy(checkInId: Int, privacy: String): CheckInDto {
-        service.updatePrivacy(checkInId, privacy).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return it.data?: throw Exception("No data")
+    override suspend fun updatePrivacy(checkInId: Int, privacy: String): NetworkResult<CheckInDto> {
+        return runCatching {
+            service.updatePrivacy(checkInId, privacy).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
-    override suspend fun delete(id: Int): Boolean {
-        service.delete(id).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return true
+    override suspend fun delete(id: Int): NetworkResult<Unit> {
+        return runCatching {
+            service.delete(id).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 }

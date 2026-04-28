@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class CheckInLocationEntity (
+data class CheckInLocation (
     val id: Int,
     val name: String,
     val details: String?,
@@ -27,7 +27,7 @@ data class CheckInLocationEntity (
     val userName: String?
 ) {
     override fun equals(other: Any?): Boolean {
-        return other != null && other is CheckInLocationEntity
+        return other != null && other is CheckInLocation
                 && id == other.id
                 && name == other.name
                 && details == other.details

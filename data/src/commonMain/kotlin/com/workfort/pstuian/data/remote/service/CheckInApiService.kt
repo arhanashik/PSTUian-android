@@ -76,7 +76,7 @@ class CheckInApiService(private val client: HttpClient) {
         ).body()
     }
 
-    suspend fun delete(id: Int): ApiResponse<Int> {
+    suspend fun delete(id: Int): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.CheckIn.DELETE,
             formParameters = parameters {

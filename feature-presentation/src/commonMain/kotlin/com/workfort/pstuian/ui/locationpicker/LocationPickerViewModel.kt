@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.locationpicker
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.featuredomain.model.CheckInLocationEntity
+import com.workfort.pstuian.featuredomain.model.CheckInLocation
 import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
@@ -47,7 +47,7 @@ class LocationPickerViewModel(
         stateMachine.updateMessageState(state)
     }
 
-    fun onClickLocation(location: CheckInLocationEntity) {
+    fun onClickLocation(location: CheckInLocation) {
         stateMachine.navigateTo(
             LocationPickerNavigationState.GoBack(
                 selectedLocationId = location.id,
@@ -66,7 +66,7 @@ class LocationPickerViewModel(
 
     private var checkInLocationPage = 0
     private var queryCache: String = ""
-    private val locationListCache = arrayListOf<CheckInLocationEntity>()
+    private val locationListCache = arrayListOf<CheckInLocation>()
     fun search(query: String, refresh: Boolean) {
         if (isLocationListLoading()) {
             return
