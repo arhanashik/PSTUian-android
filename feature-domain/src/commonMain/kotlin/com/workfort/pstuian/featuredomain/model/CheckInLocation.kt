@@ -2,18 +2,6 @@ package com.workfort.pstuian.featuredomain.model
 
 import kotlinx.serialization.Serializable
 
-/**
- *  ****************************************************************************
- *  * Created by : arhan on 14 Dec, 2021 at 21:12.
- *  * Email : ashik.pstu.cse@gmail.com
- *  *
- *  * This class is for:
- *  * 1.
- *  * 2.
- *  * 3.
- *  ****************************************************************************
- */
-
 @Serializable
 data class CheckInLocation (
     val id: Int,

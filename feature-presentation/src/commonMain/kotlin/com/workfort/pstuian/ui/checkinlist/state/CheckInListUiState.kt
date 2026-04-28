@@ -7,9 +7,12 @@ sealed interface CheckInListUiState {
     data object None : CheckInListUiState
     data object Loading : CheckInListUiState
     data class Content(
-        val checkInLocation: CheckInLocation,
+        val checkInLocations: List<CheckInLocation>,
+        val selectedCheckInLocationId: Int,
+        val currentUserId: Int? = null,
         val checkInList: List<CheckIn> = emptyList(),
-        val isLoading: Boolean = false,
+        val isLocationListLoading: Boolean = false,
+        val isCheckInListLoading: Boolean = false,
     ) : CheckInListUiState
     data class Error(val error: String? = null) : CheckInListUiState
 }

@@ -8,8 +8,8 @@ import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.NavigationButton
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_check_in_screen
@@ -35,7 +35,13 @@ internal fun CheckInListScreenContent(
             is CheckInListUiState.Loading -> {
                 CheckInListFullScreenShimmer(modifier = Modifier.fillMaxSize())
             }
-            is CheckInListUiState.Error -> Unit
+            is CheckInListUiState.Error -> {
+                CheckInListCenterAction(
+                    modifier = Modifier.fillMaxSize(),
+                    onClick = { onUiEvent(CheckInListUiEvent.OnClickCheckIn) },
+                    content = { AnimatedErrorView() },
+                )
+            }
             is CheckInListUiState.Content -> {
                 CheckInListContentPanel(
                     modifier = Modifier.fillMaxSize(),

@@ -22,23 +22,49 @@ class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
         CheckInListUiState.Loading
     }
 
-    fun showContentLoading(isLoading: Boolean) = updateUiState {
+    fun showLocationListLoading(isLoading: Boolean) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(isLoading = isLoading)
+            is CheckInListUiState.Content -> copy(isLocationListLoading = isLoading)
             else -> this
         }
     }
 
-    fun showInitialContent(checkInLocation: CheckInLocation) = updateUiState {
+    fun showCheckInListLoading(isLoading: Boolean) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(checkInLocation = checkInLocation)
-            else -> CheckInListUiState.Content(checkInLocation = checkInLocation)
+            is CheckInListUiState.Content -> copy(isCheckInListLoading = isLoading)
+            else -> this
+        }
+    }
+
+    fun showInitialContent(
+        checkInLocations: List<CheckInLocation>,
+        selectedCheckInLocationId: Int,
+        currentUserId: Int?,
+    ) = updateUiState {
+        when (this) {
+            is CheckInListUiState.Content -> copy(
+                checkInLocations = checkInLocations,
+                selectedCheckInLocationId = selectedCheckInLocationId,
+                currentUserId = currentUserId,
+            )
+            else -> CheckInListUiState.Content(
+                checkInLocations = checkInLocations,
+                selectedCheckInLocationId = selectedCheckInLocationId,
+                currentUserId = currentUserId,
+            )
+        }
+    }
+
+    fun updatedSelectedCheckInLocationId(selectedCheckInLocationId: Int) = updateUiState {
+        when (this) {
+            is CheckInListUiState.Content -> copy(selectedCheckInLocationId = selectedCheckInLocationId)
+            else -> this
         }
     }
 
     fun showCheckInList(checkInList: List<CheckIn>) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(checkInList = checkInList, isLoading = false)
+            is CheckInListUiState.Content -> copy(checkInList = checkInList, isCheckInListLoading = false)
             else -> this
         }
     }

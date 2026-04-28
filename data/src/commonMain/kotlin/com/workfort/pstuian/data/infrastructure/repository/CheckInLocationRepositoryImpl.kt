@@ -8,6 +8,7 @@ import com.workfort.pstuian.featuredomain.model.CheckInLocation
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.map
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 
 class CheckInLocationRepositoryImpl(
@@ -15,19 +16,25 @@ class CheckInLocationRepositoryImpl(
     private val domainErrorMapper: DomainErrorMapper,
 ) : CheckInLocationRepository {
 
-    private val cache = mutableListOf<CheckInLocation>()
+    private val checkInLocationsCache = mutableMapOf<Int, List<CheckInLocation>>()
 
-    override suspend fun getAll(page: Int): List<CheckInLocation>{
-        helper.getAll(page, limit = 20).toDomainResult(domainErrorMapper).map { dtos ->
-            val data = dtos.map { it.toModel() }
-            cache.clear()
-            cache.addAll(data)
+    override suspend fun getAll(page: Int, forceRefresh: Boolean) : DomainResult<List<CheckInLocation>> {
+        val cache = checkInLocationsCache[page]
+        if (!forceRefresh && !cache.isNullOrEmpty()) {
+            return DomainResult.success(cache)
         }
 
-        return cache
+        return helper.getAll(page)
+            .toDomainResult(domainErrorMapper)
+            .map { dtos -> dtos.map { it.toModel() } }
+            .onSuccess { checkInLocationsCache[page] = it }
     }
 
     override suspend fun get(id: Int): DomainResult<CheckInLocation> {
+        checkInLocationsCache.values.flatten().firstOrNull { it.id == id }?.let {
+            return DomainResult.success(it)
+        }
+
         return helper.get(id).toDomainResult(domainErrorMapper).map { it.toModel() }
     }
 
