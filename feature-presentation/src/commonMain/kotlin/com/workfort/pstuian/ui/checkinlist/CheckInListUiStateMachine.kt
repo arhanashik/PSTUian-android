@@ -18,42 +18,32 @@ class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
         updater: CheckInListUiState.() -> CheckInListUiState,
     ) = _state.update(updater)
 
-    fun showLoading(message: String = "") = updateUiState {
-        CheckInListUiState.Loading(message)
+    fun showOperationLoading() = updateUiState {
+        CheckInListUiState.Loading
     }
 
-    fun showError(message: String) = updateUiState {
-        CheckInListUiState.Error(message)
+    fun showContentLoading(isLoading: Boolean) = updateUiState {
+        when (this) {
+            is CheckInListUiState.Content -> copy(isLoading = isLoading)
+            else -> this
+        }
     }
 
-    fun setInitialContent() = updateUiState {
-        CheckInListUiState.Content()
-    }
-
-    fun showCheckInListLocation(checkInLocation: CheckInLocation?) = updateUiState {
+    fun showInitialContent(checkInLocation: CheckInLocation) = updateUiState {
         when (this) {
             is CheckInListUiState.Content -> copy(checkInLocation = checkInLocation)
             else -> CheckInListUiState.Content(checkInLocation = checkInLocation)
         }
     }
 
-    fun showCheckInList(checkInList: List<CheckIn>, isLoading: Boolean) = updateUiState {
+    fun showCheckInList(checkInList: List<CheckIn>) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(
-                checkInList = checkInList,
-                isLoading = isLoading,
-            )
-            else -> CheckInListUiState.Content(
-                checkInList = checkInList,
-                isLoading = isLoading,
-            )
+            is CheckInListUiState.Content -> copy(checkInList = checkInList, isLoading = false)
+            else -> this
         }
     }
 
-    fun showOperationLoading(isLoading: Boolean) = updateUiState {
-        when (this) {
-            is CheckInListUiState.Content -> copy(isOperationLoading = isLoading)
-            else -> this
-        }
+    fun showError(message: String) = updateUiState {
+        CheckInListUiState.Error(message)
     }
 }

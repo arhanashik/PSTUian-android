@@ -1,14 +1,11 @@
 package com.workfort.pstuian.data.remote.domain
 
 import com.workfort.pstuian.data.model.CheckInLocationDto
+import com.workfort.pstuian.data.model.NetworkError
+import com.workfort.pstuian.data.model.NetworkErrorCode
+import com.workfort.pstuian.data.model.NetworkResult
 
 abstract class CheckInLocationApiHelper : ApiHelper<CheckInLocationDto>() {
-
-    override suspend fun search(
-        query: String,
-        page: Int,
-        limit: Int
-    ): List<CheckInLocationDto> = emptyList()
 
     open suspend fun insert(
         userId: String,
@@ -17,5 +14,6 @@ abstract class CheckInLocationApiHelper : ApiHelper<CheckInLocationDto>() {
         details: String?,
         imageUrl: String?,
         link: String?,
-    ): CheckInLocationDto? = null
+    ): NetworkResult<CheckInLocationDto> =
+        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
 }

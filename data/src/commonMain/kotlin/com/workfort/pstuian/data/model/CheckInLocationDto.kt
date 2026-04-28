@@ -16,10 +16,10 @@ data class CheckInLocationDto (
     val count: Int,
     @SerialName("user_id")
     val userId: Int,
-    @SerialName("user_name")
-    val userName: String?
+    @SerialName("user_type")
+    val userType: String?,
 ) {
-    fun toEntity() = CheckInLocation(
+    fun toModel() = CheckInLocation(
         id = id,
         name = name,
         details = details,
@@ -28,7 +28,7 @@ data class CheckInLocationDto (
         verified = verified,
         count = count,
         userId = userId,
-        userName = userName
+        userType = userType
     )
 }
 
@@ -41,5 +41,5 @@ fun CheckInLocation.toDto() = CheckInLocationDto(
     verified = verified,
     count = count,
     userId = userId,
-    userName = userName
+    userType = userType
 )

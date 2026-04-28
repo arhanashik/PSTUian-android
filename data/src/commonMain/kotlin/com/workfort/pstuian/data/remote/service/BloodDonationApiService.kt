@@ -68,7 +68,7 @@ class BloodDonationApiService(private val client: HttpClient) {
         ).body()
     }
 
-    suspend fun delete(id: Int): ApiResponse<String> {
+    suspend fun delete(id: Int): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonation.DELETE,
             formParameters = parameters {

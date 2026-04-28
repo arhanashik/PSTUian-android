@@ -24,7 +24,7 @@ data class CheckInLocation (
     val verified: Int,
     val count: Int,
     val userId: Int,
-    val userName: String?
+    val userType: String?
 ) {
     override fun equals(other: Any?): Boolean {
         return other != null && other is CheckInLocation
@@ -36,7 +36,7 @@ data class CheckInLocation (
                 && verified == other.verified
                 && count == other.count
                 && userId == other.userId
-                && userName == other.userName
+                && userType == other.userType
     }
 
     override fun hashCode(): Int {
@@ -48,7 +48,7 @@ data class CheckInLocation (
         result = 31 * result + verified
         result = 31 * result + count
         result = 31 * result + userId
-        result = 31 * result + (userName?.hashCode() ?: 0)
+        result = 31 * result + (userType?.hashCode() ?: 0)
         return result
     }
 }

@@ -30,21 +30,18 @@ internal fun CheckInListScreenContent(
             )
         },
     ) {
-        when (val state = uiState) {
+        when (uiState) {
             is CheckInListUiState.None -> Unit
             is CheckInListUiState.Loading -> {
-                ShowLoaderDialog()
+                CheckInListFullScreenShimmer(modifier = Modifier.fillMaxSize())
             }
             is CheckInListUiState.Error -> Unit
             is CheckInListUiState.Content -> {
                 CheckInListContentPanel(
                     modifier = Modifier.fillMaxSize(),
-                    uiState = state,
+                    uiState = uiState,
                     onUiEvent = onUiEvent,
                 )
-                if (state.isOperationLoading) {
-                    ShowLoaderDialog()
-                }
             }
         }
     }

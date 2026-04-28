@@ -1,21 +1,34 @@
 package com.workfort.pstuian.data.remote.domain
 
+import com.workfort.pstuian.data.model.NetworkError
+import com.workfort.pstuian.data.model.NetworkErrorCode
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.NetworkConst
 
 abstract class ApiHelper<T> {
-    open suspend fun getAll(): NetworkResult<List<T>> = NetworkResult.success(emptyList())
+    open suspend fun getAll(): NetworkResult<List<T>> =
+        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+
     open suspend fun getAll(
         page: Int,
-        limit: Int = NetworkConst.Params.Default.PAGE_SIZE
-    ): NetworkResult<List<T>> = NetworkResult.success(emptyList())
-    open suspend fun get(id: Int): T = throw Exception("Not implemented yet")
-    open suspend fun insert(item: T): Int = 0
-    open suspend fun update(item: T): T = throw Exception("Not implemented yet")
-    open suspend fun delete(id: Int): Boolean = false
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<T>> = NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+
+    open suspend fun get(id: Int): NetworkResult<T> =
+        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+
+    open suspend fun insert(item: T): NetworkResult<T> =
+        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+
+    open suspend fun update(item: T): NetworkResult<T> =
+        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+
+    open suspend fun delete(id: Int): NetworkResult<Unit> =
+        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+
     open suspend fun search(
         query: String,
         page: Int,
-        limit: Int = NetworkConst.Params.Default.PAGE_SIZE
-    ): List<T> = emptyList()
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<T>> = NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
 }

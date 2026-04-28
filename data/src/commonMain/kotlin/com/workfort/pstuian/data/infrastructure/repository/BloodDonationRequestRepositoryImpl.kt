@@ -2,6 +2,7 @@ package com.workfort.pstuian.data.infrastructure.repository
 
 import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.BloodDonationRequestApiHelper
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -25,7 +26,10 @@ class BloodDonationRequestRepositoryImpl(
         return cache
     }
 
-    override suspend fun get(id: Int) = helper.get(id).toEntity()
+    override suspend fun get(id: Int) = when (val result = helper.get(id)) {
+        is NetworkResult.Success -> result.value.toEntity()
+        is NetworkResult.Failure -> throw result.error
+    }
 
     override suspend fun insert(
         userId: String,
@@ -35,14 +39,17 @@ class BloodDonationRequestRepositoryImpl(
         contact: String,
         info: String?,
     ): BloodDonationRequestEntity {
-        return helper.insert(
+        return when (val result = helper.insert(
             userId,
             userType.type,
             bloodGroup,
             beforeDate,
             contact,
             info
-        ).toEntity()
+        )) {
+            is NetworkResult.Success -> result.value.toEntity()
+            is NetworkResult.Failure -> throw result.error
+        }
     }
 
     override suspend fun update(
@@ -51,7 +58,13 @@ class BloodDonationRequestRepositoryImpl(
         beforeDate: String,
         contact: String,
         info: String,
-    ) = helper.update(id, bloodGroup, beforeDate, contact, info).toEntity()
+    ) = when (val result = helper.update(id, bloodGroup, beforeDate, contact, info)) {
+        is NetworkResult.Success -> result.value.toEntity()
+        is NetworkResult.Failure -> throw result.error
+    }
 
-    override suspend fun delete(id: Int) = helper.delete(id)
+    override suspend fun delete(id: Int) = when (helper.delete(id)) {
+        is NetworkResult.Success -> true
+        is NetworkResult.Failure -> false
+    }
 }

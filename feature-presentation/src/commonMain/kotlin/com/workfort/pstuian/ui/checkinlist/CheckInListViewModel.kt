@@ -39,8 +39,8 @@ class CheckInListViewModel(
     val navigation: StateFlow<CheckInListNavigationState?> = _navigation
 
     private var checkInListPage = 1
-    private var endOfCheckInListData = false
-    private val checkInListCache = arrayListOf<CheckIn>()
+    private var hasMoreCheckInListData = true
+    private val checkInListCache = mutableListOf<CheckIn>()
     private var checkInLocationCache: CheckInLocation? = null
 
     private fun getLastCheckInLocationId(): Int {
@@ -51,8 +51,7 @@ class CheckInListViewModel(
     }
 
     override fun onUiReady() {
-        uiStateMachine.setInitialContent()
-        loadCheckInList(refresh = true)
+        loadInitialData()
     }
 
     fun onUiEvent(event: CheckInListUiEvent) {
@@ -110,80 +109,68 @@ class CheckInListViewModel(
         loadCheckInList(refresh = true)
     }
 
-    private fun loadCheckInLocation() {
+    private fun loadInitialData() {
+        uiStateMachine.showOperationLoading()
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                val locationId = getLastCheckInLocationId()
-                checkInLocationCache = checkInLocationRepo.get(locationId)
-                uiStateMachine.showCheckInListLocation(checkInLocationCache)
-            }
-        }
-    }
-
-    private fun isCheckInListLoading(): Boolean {
-        val state = uiState.value
-        return if (state is CheckInListUiState.Content) {
-            state.isLoading
-        } else {
-            false
+            val locationId = getLastCheckInLocationId()
+            checkInLocationRepo.get(locationId)
+                .onSuccess {
+                    checkInLocationCache = it
+                    uiStateMachine.showInitialContent(it)
+                    loadCheckInList(refresh = true)
+                }
+                .onFailure {
+                    val message = it.message ?: "Failed to load check in location data"
+                    uiStateMachine.showError(message)
+                }
         }
     }
 
     private fun loadCheckInList(refresh: Boolean) {
         if (refresh) {
             checkInListPage = 1
+            hasMoreCheckInListData = true
             checkInListCache.clear()
-            endOfCheckInListData = false
-        }
-
-        if (isCheckInListLoading() || endOfCheckInListData) {
+            uiStateMachine.showCheckInList(checkInListCache)
+        } else if (!hasMoreCheckInListData) {
             return
         }
 
-        uiStateMachine.showCheckInList(checkInListCache.toList(), isLoading = true)
-
-        if (checkInLocationCache == null) {
-            loadCheckInLocation()
-        }
-
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            uiStateMachine.showContentLoading(isLoading = true)
             val locationId = getLastCheckInLocationId()
             checkInRepo.getAll(locationId, checkInListPage)
                 .onSuccess { checkInList ->
-                    checkInListPage++
+                    uiStateMachine.showContentLoading(isLoading = true)
                     if (checkInList.isEmpty()) {
-                        endOfCheckInListData = true
+                        hasMoreCheckInListData = false
                     } else {
-                        checkInListCache.addAll(checkInList)
+                        checkInListPage++
                     }
-                    uiStateMachine.showCheckInList(checkInListCache.toList(), isLoading = false)
+                    checkInListCache.addAll(checkInList)
+                    uiStateMachine.showCheckInList(checkInListCache)
                 }
                 .onFailure {
+                    uiStateMachine.showContentLoading(isLoading = true)
                     val message = it.message ?: "Failed to load data"
-                    if (checkInListCache.isEmpty()) {
-                        uiStateMachine.showError(message)
-                    } else {
-                        uiStateMachine.showCheckInList(checkInListCache.toList(), isLoading = false)
-                        _message.update { CheckInListMessageState.Error(message) }
-                    }
+                    _message.update { CheckInListMessageState.Error(message) }
                 }
         }
     }
 
     private fun loadAndConfirmCheckIn(locationId: Int) {
-        uiStateMachine.showOperationLoading(true)
+        // TODO show loading
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                checkInLocationRepo.get(locationId)
-            }.onSuccess {
-                uiStateMachine.showOperationLoading(false)
-                val location = it
-                _message.update { CheckInListMessageState.ConfirmCheckIn(location) }
-            }.onFailure {
-                uiStateMachine.showOperationLoading(false)
-                val message = it.message ?: "Check in failed. Please try again."
-                _message.update { CheckInListMessageState.Error(message) }
-            }
+            checkInLocationRepo.get(locationId)
+                .onSuccess { location ->
+                    // TODO hide loading
+                    _message.update { CheckInListMessageState.ConfirmCheckIn(location) }
+                }
+                .onFailure {
+                    // TODO hide loading
+                    val message = it.message ?: "Check in failed. Please try again."
+                    _message.update { CheckInListMessageState.Error(message) }
+                }
         }
     }
 
@@ -191,23 +178,21 @@ class CheckInListViewModel(
         val userId = sharedScreenData.getCurrentUser()?.userId ?: return
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
-        uiStateMachine.showOperationLoading(true)
+        // TODO show loading
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                checkInRepo.checkIn(userId, userType, locationId)
-            }.onSuccess {
-                uiStateMachine.showOperationLoading(false)
-                _message.update {
-                    CheckInListMessageState.Success("Checked in successfully!")
+            checkInRepo.checkIn(userId, userType, locationId)
+                .onSuccess {
+                    // TODO hide loading
+                    _message.update { CheckInListMessageState.Success("Checked in successfully!") }
+                    checkInLocationCache = null
+                    sharedPrefRepository.putInt(SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID, locationId)
+                    loadInitialData()
                 }
-                checkInLocationCache = null
-                sharedPrefRepository.putInt(SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID, locationId)
-                loadCheckInList(refresh = true)
-            }.onFailure {
-                uiStateMachine.showOperationLoading(false)
-                val message = it.message ?: "Check in failed. Please try again."
-                _message.update { CheckInListMessageState.Error(message) }
-            }
+                .onFailure {
+                    // TODO hide loading
+                    val message = it.message ?: "Check in failed. Please try again."
+                    _message.update { CheckInListMessageState.Error(message) }
+                }
         }
     }
 }

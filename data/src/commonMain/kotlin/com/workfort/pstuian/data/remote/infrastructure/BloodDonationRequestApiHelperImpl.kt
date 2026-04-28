@@ -1,7 +1,9 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
 import com.workfort.pstuian.data.mapper.toNetworkResult
+import com.workfort.pstuian.data.model.ApiResponseCode
 import com.workfort.pstuian.data.model.BloodDonationRequestDto
+import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.BloodDonationRequestApiHelper
 import com.workfort.pstuian.data.remote.service.BloodDonationRequestApiService
@@ -11,14 +13,19 @@ class BloodDonationRequestApiHelperImpl(
 ) : BloodDonationRequestApiHelper() {
 
     override suspend fun getAll(page: Int, limit: Int): NetworkResult<List<BloodDonationRequestDto>> {
-        return service.getAll(page, limit).toNetworkResult()
+        return runCatching {
+            service.getAll(page, limit).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
-    override suspend fun get(id: Int): BloodDonationRequestDto {
-        val response = service.get(id)
-        if(!response.isSuccess) throw Exception(response.message)
-
-        return response.data?: throw Exception("No data")
+    override suspend fun get(id: Int): NetworkResult<BloodDonationRequestDto> {
+        return runCatching {
+            service.get(id).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun insert(
@@ -28,11 +35,12 @@ class BloodDonationRequestApiHelperImpl(
         beforeDate: String,
         contact: String,
         info: String?
-    ): BloodDonationRequestDto {
-        val response = service.insert(userId, userType, bloodGroup, beforeDate, contact, info)
-        if(!response.isSuccess) throw Exception(response.message)
-
-        return response.data?: throw Exception("No data")
+    ): NetworkResult<BloodDonationRequestDto> {
+        return runCatching {
+            service.insert(userId, userType, bloodGroup, beforeDate, contact, info).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun update(
@@ -41,17 +49,19 @@ class BloodDonationRequestApiHelperImpl(
         beforeDate: String,
         contact: String,
         info: String
-    ): BloodDonationRequestDto {
-        val response = service.update(id, bloodGroup, beforeDate, contact, info)
-        if(!response.isSuccess) throw Exception(response.message)
-
-        return response.data?: throw Exception("No data")
+    ): NetworkResult<BloodDonationRequestDto> {
+        return runCatching {
+            service.update(id, bloodGroup, beforeDate, contact, info).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
-    override suspend fun delete(id: Int): Boolean {
-        val response = service.delete(id)
-        if(!response.isSuccess) throw Exception(response.message)
-
-        return true
+    override suspend fun delete(id: Int): NetworkResult<Unit> {
+        return runCatching {
+            service.delete(id).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 }

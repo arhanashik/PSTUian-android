@@ -1,6 +1,9 @@
 package com.workfort.pstuian.data.remote.domain
 
 import com.workfort.pstuian.data.model.BloodDonationDto
+import com.workfort.pstuian.data.model.NetworkError
+import com.workfort.pstuian.data.model.NetworkErrorCode
+import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.NetworkConst
 
 abstract class BloodDonationApiHelper : ApiHelper<BloodDonationDto>()  {
@@ -10,7 +13,7 @@ abstract class BloodDonationApiHelper : ApiHelper<BloodDonationDto>()  {
         userType: String,
         page: Int,
         limit: Int = NetworkConst.Params.Default.PAGE_SIZE
-    ): List<BloodDonationDto> = emptyList()
+    ): NetworkResult<List<BloodDonationDto>> = super.getAll(page, limit)
 
     open suspend fun insert(
         userId: String,
@@ -18,5 +21,6 @@ abstract class BloodDonationApiHelper : ApiHelper<BloodDonationDto>()  {
         requestId: Int?,
         date: Long,
         info: String?,
-    ): BloodDonationDto? = null
+    ): NetworkResult<BloodDonationDto> =
+        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
 }

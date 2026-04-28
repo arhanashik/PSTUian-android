@@ -1,23 +1,30 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
 import com.workfort.pstuian.data.mapper.toNetworkResult
+import com.workfort.pstuian.data.model.ApiResponseCode
 import com.workfort.pstuian.data.model.CheckInLocationDto
+import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.CheckInLocationApiHelper
 import com.workfort.pstuian.data.remote.service.CheckInLocationApiService
 
 class CheckInLocationApiHelperImpl(
-    private val service: CheckInLocationApiService
+    private val service: CheckInLocationApiService,
 ) : CheckInLocationApiHelper() {
 
     override suspend fun getAll(page: Int, limit: Int): NetworkResult<List<CheckInLocationDto>> {
-        return service.getAll(page, limit).toNetworkResult()
+        return runCatching {
+            service.getAll(page, limit).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
-    override suspend fun get(id: Int): CheckInLocationDto {
-        service.get(id).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return it.data?: throw Exception("No data")
+    override suspend fun get(id: Int): NetworkResult<CheckInLocationDto> {
+        return runCatching {
+            service.get(id).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
@@ -25,10 +32,11 @@ class CheckInLocationApiHelperImpl(
         query: String,
         page: Int,
         limit: Int
-    ): List<CheckInLocationDto> {
-        service.search(query, page, limit).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return it.data?: throw Exception("No data")
+    ): NetworkResult<List<CheckInLocationDto>> {
+        return runCatching {
+            service.search(query, page, limit).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
@@ -39,10 +47,11 @@ class CheckInLocationApiHelperImpl(
         details: String?,
         imageUrl: String?,
         link: String?
-    ): CheckInLocationDto {
-        service.insert(userId, userType, name, details, imageUrl, link).also {
-            if(!it.isSuccess) throw Exception(it.message)
-            return it.data?: throw Exception("No data")
+    ): NetworkResult<CheckInLocationDto> {
+        return runCatching {
+            service.insert(userId, userType, name, details, imageUrl, link).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 }

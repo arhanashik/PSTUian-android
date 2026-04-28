@@ -90,7 +90,7 @@ class StudentsViewModel(
             studentListCache.clear()
             currentPage = 1
             hasMoreData = true
-        } else if (hasMoreData.not()) {
+        } else if (!hasMoreData) {
             return
         }
 
