@@ -54,7 +54,6 @@ internal fun ProfileHeader(
     displayData: ProfileHeaderDisplayData,
     isSignedIn: Boolean,
     userPresence: UserPresenceDisplayData,
-    selectedTabIndex: Int,
     onUiEvent: (ProfileUiEvent) -> Unit,
 ) {
     val followLabel = stringResource(Res.string.txt_follow)
@@ -98,7 +97,7 @@ internal fun ProfileHeader(
                 ) {
                     if (isSignedIn) {
                         OutlinedButton(
-                            onClick = { onUiEvent(ProfileUiEvent.EditClicked(selectedTabIndex)) },
+                            onClick = { onUiEvent(ProfileUiEvent.EditClicked) },
                             shape = CircleShape,
                             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp),
                             modifier = Modifier.height(28.dp),

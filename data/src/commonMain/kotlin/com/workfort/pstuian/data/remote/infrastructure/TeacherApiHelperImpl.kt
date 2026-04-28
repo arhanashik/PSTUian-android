@@ -45,31 +45,48 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     }
 
     override suspend fun changeAcademicInfo(
-        id: Int,
+        userId: String,
         name: String,
         designation: String,
         department: String,
         blood: String,
         facultyId: Int
-    ): TeacherDto {
-        val response = service.changeAcademicInfo(id, name, designation, department,
-            blood, facultyId)
-        if(!response.isSuccess) throw Exception(response.message)
-        return response.data?: throw Exception("Empty data")
+    ): NetworkResult<TeacherDto> {
+        return runCatching {
+            service.changeAcademicInfo(
+                userId,
+                name,
+                designation,
+                department,
+                blood,
+                facultyId,
+            ).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun changeConnectInfo(
-        id: Int,
+        userId: String,
         address: String,
         phone: String,
-        email: String,
         oldEmail: String,
+        email: String,
         linkedIn: String,
         fbLink: String
-    ): TeacherDto {
-        val response = service.changeConnectInfo(id, address, phone,
-            email, oldEmail, linkedIn, fbLink)
-        if(!response.isSuccess) throw Exception(response.message)
-        return response.data?: throw Exception("Empty data")
+    ): NetworkResult<TeacherDto> {
+        return runCatching {
+            service.changeConnectInfo(
+                userId,
+                address,
+                phone,
+                oldEmail,
+                email,
+                linkedIn,
+                fbLink,
+            ).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 }

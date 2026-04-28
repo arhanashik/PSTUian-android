@@ -65,7 +65,7 @@ class TeacherProfileViewModel(
             is ProfileUiEvent.RefreshClicked -> onClickRefresh()
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
-            is ProfileUiEvent.EditClicked -> onClickEdit(event.selectedTabIndex)
+                is ProfileUiEvent.EditClicked -> onClickEdit()
             is ProfileUiEvent.MyBloodDonationListClicked -> Unit
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> Unit
@@ -189,14 +189,12 @@ class TeacherProfileViewModel(
         }
     }
 
-    private fun onClickEdit(selectedTabIndex: Int) {
+    private fun onClickEdit() {
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.teacher?.let { teacher ->
-            if (selectedTabIndex == 0 || selectedTabIndex == 1) {
-                _navigation.update {
-                    TeacherProfileNavigationState.TeacherProfileEditScreen(userId = teacher.userId)
-                }
+            _navigation.update {
+                TeacherProfileNavigationState.TeacherProfileEditScreen(userId = teacher.id)
             }
         }
     }

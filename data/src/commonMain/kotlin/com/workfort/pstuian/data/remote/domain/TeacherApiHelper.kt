@@ -18,21 +18,21 @@ interface TeacherApiHelper {
     suspend fun changeBio(id: Int, bio: String): Boolean
 
     suspend fun changeAcademicInfo(
-        id: Int,
+        userId: String,
         name: String,
         designation: String,
         department: String,
         blood: String,
         facultyId: Int
-    ): TeacherDto
+    ): NetworkResult<TeacherDto>
 
     suspend fun changeConnectInfo(
-        id: Int,
+        userId: String,
         address: String,
         phone: String,
-        email: String,
         oldEmail: String,
+        email: String,
         linkedIn: String,
         fbLink: String
-    ): TeacherDto
+    ): NetworkResult<TeacherDto>
 }

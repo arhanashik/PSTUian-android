@@ -13,12 +13,12 @@ class GetTeacherProfileUserUseCase(
     private val teacherRepository: TeacherRepository,
 ) {
 
-    suspend operator fun invoke(userId: Int): DomainResult<UserProfile.TeacherProfile> {
+    suspend operator fun invoke(id: Int): DomainResult<UserProfile.TeacherProfile> {
         val authUser = authRepository.getAuthUser()
 
-        val teacher = teacherRepository.getUser(userId).getOrElse { return DomainResult.failure(it) }
+        val teacher = teacherRepository.getUser(id).getOrElse { return DomainResult.failure(it) }
         val faculty = facultyRepository.getFaculty(teacher.facultyId).getOrElse { return DomainResult.failure(it) }
-        val isSignedIn = teacher.email == authUser?.email
+        val isSignedIn = teacher.userId == authUser?.userId
 
         return DomainResult.success(UserProfile.TeacherProfile(teacher, faculty, isSignedIn))
     }

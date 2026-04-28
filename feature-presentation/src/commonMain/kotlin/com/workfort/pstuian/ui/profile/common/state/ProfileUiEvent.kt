@@ -11,7 +11,7 @@ sealed interface ProfileUiEvent {
     data object RefreshClicked : ProfileUiEvent
     data object ChangeImageClicked : ProfileUiEvent
     data object EditBioClicked : ProfileUiEvent
-    data class EditClicked(val selectedTabIndex: Int) : ProfileUiEvent
+    data object EditClicked : ProfileUiEvent
     data object MyBloodDonationListClicked : ProfileUiEvent
     data object ChangePasswordClicked : ProfileUiEvent
     data class DownloadCvClicked(val url: String) : ProfileUiEvent

@@ -289,7 +289,7 @@ private val studentProfileEditModule = module {
 
 private val teacherProfileEditModule = module {
     factoryOf(::TeacherProfileEditUiStateMachine)
-    factory { (userId: String) ->
+    factory { (userId: Int) ->
         TeacherProfileEditViewModel(
             userId = userId,
             teacherRepository = get(),

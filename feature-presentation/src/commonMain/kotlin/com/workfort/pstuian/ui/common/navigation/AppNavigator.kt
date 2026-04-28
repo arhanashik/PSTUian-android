@@ -46,7 +46,7 @@ class AppNavigator {
     suspend fun navigateToMyCheckInList(userId: String, userType: UserType) = navigateTo(AppScreen.MyCheckInList(userId, userType))
     suspend fun navigateToMyDeviceList(userId: String, userType: UserType) = navigateTo(AppScreen.MyDeviceList(userId, userType))
     suspend fun navigateToStudentProfileEdit(userId: Int) = navigateTo(AppScreen.StudentProfileEdit(userId))
-    suspend fun navigateToTeacherProfileEdit(userId: String) = navigateTo(AppScreen.TeacherProfileEdit(userId))
+    suspend fun navigateToTeacherProfileEdit(userId: Int) = navigateTo(AppScreen.TeacherProfileEdit(userId))
     suspend fun navigateToEmployeeProfileEdit(userId: String) = navigateTo(AppScreen.EmployeeProfileEdit(userId))
     suspend fun navigateToDeleteAccount(userId: String, userType: UserType) = navigateTo(AppScreen.DeleteAccount)
     suspend fun navigateToLocationPicker() = navigateTo(AppScreen.LocationPicker)

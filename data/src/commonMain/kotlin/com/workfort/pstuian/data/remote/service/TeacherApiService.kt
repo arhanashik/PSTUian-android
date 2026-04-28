@@ -64,20 +64,20 @@ class TeacherApiService(private val client: HttpClient) {
     }
 
     suspend fun changeAcademicInfo(
-        id: Int,
+        userId: String,
         name: String,
         designation: String,
-        reg: String,
+        department: String,
         blood: String,
         facultyId: Int,
     ): ApiResponse<TeacherDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_ACADEMIC_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, id.toString())
+                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.NAME, name)
                 append(NetworkConst.Params.DESIGNATION, designation)
-                append(NetworkConst.Params.DEPARTMENT, reg)
+                append(NetworkConst.Params.DEPARTMENT, department)
                 append(NetworkConst.Params.BLOOD, blood)
                 append(NetworkConst.Params.FACULTY_ID, facultyId.toString())
             }
@@ -85,22 +85,22 @@ class TeacherApiService(private val client: HttpClient) {
     }
 
     suspend fun changeConnectInfo(
-        id: Int,
+        userId: String,
         address: String,
         phone: String,
-        email: String,
         oldEmail: String,
+        email: String,
         linkedIn: String,
         fbLink: String,
     ): ApiResponse<TeacherDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_CONNECT_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, id.toString())
+                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.ADDRESS, address)
                 append(NetworkConst.Params.PHONE, phone)
-                append(NetworkConst.Params.EMAIL, email)
                 append(NetworkConst.Params.OLD_EMAIL, oldEmail)
+                append(NetworkConst.Params.EMAIL, email)
                 append(NetworkConst.Params.LINKED_IN, linkedIn)
                 append(NetworkConst.Params.FB_LINK, fbLink)
             }

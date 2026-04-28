@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TeacherProfileEditViewModel(
-    private val userId: String,
+    private val userId: Int,
     private val teacherRepository: TeacherRepository,
     private val facultyRepository: FacultyRepository,
     private val getTeacherProfileUserUseCase: GetTeacherProfileUserUseCase,
@@ -57,20 +57,8 @@ class TeacherProfileEditViewModel(
                 is TeacherProfileEditUiEvent.FacultySelectionClicked -> newProfileCache?.let {
                     selectFaculty(selectedFacultyId = it.teacher.facultyId)
                 }
-                is TeacherProfileEditUiEvent.AcademicInfoSaveClicked -> {
-                    if (currentProfileCache == newProfileCache) {
-                        _message.update { TeacherProfileEditMessageState.ShowSnackBar("No change") }
-                    } else {
-                        _message.update { TeacherProfileEditMessageState.ConfirmSave(::updateAcademicInfo) }
-                    }
-                }
-                is TeacherProfileEditUiEvent.ConnectInfoSaveClicked -> {
-                    if (newProfileCache == null || currentProfileCache == newProfileCache) {
-                        _message.update { TeacherProfileEditMessageState.ShowSnackBar("No change") }
-                    } else {
-                        _message.update { TeacherProfileEditMessageState.ConfirmSave(::updateConnectInfo) }
-                    }
-                }
+                is TeacherProfileEditUiEvent.AcademicInfoSaveClicked -> updateAcademicInfo()
+                is TeacherProfileEditUiEvent.ConnectInfoSaveClicked -> updateConnectInfo()
             }
         }
     }
@@ -78,11 +66,7 @@ class TeacherProfileEditViewModel(
     private fun loadProfile() {
         _message.update { TeacherProfileEditMessageState.Loading() }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            val id = userId.toIntOrNull() ?: run {
-                _message.update { TeacherProfileEditMessageState.Error("Invalid user id") }
-                return@launchOnMain
-            }
-            getTeacherProfileUserUseCase(id)
+            getTeacherProfileUserUseCase(userId)
                 .onSuccess { profile ->
                     onMessageHandled()
                     currentProfileCache = profile
@@ -136,70 +120,74 @@ class TeacherProfileEditViewModel(
     private fun updateAcademicInfo() {
         val currentProfile = currentProfileCache ?: return
         val newProfile = newProfileCache ?: return
-
         val validationResult = validateAcademic(newProfile)
-        stateMachine.updateAcademicInfoInputError(validationResult)
 
-        if (validationResult.isNotEmpty()) {
+        stateMachine.updateAcademicInfoInputError(validationResult)
+        if (validationResult.hasError()) return
+
+        if (currentProfile == newProfile) {
+            _message.update { TeacherProfileEditMessageState.ShowSnackBar("No change") }
             return
         }
 
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            stateMachine.showLoading(isLoading = true)
-            runCatching {
-                teacherRepository.changeAcademicInfo(
-                    teacher = currentProfile.teacher,
-                    name = newProfile.teacher.name,
-                    designation = newProfile.teacher.designation,
-                    department = newProfile.teacher.department,
-                    blood = newProfile.teacher.blood.orEmpty(),
-                    facultyId = newProfile.teacher.facultyId,
-                )
-            }.onSuccess {
-                stateMachine.showLoading(isLoading = false)
-                _message.update { TeacherProfileEditMessageState.ShowSnackBar("Updated successfully") }
-            }.onFailure {
-                stateMachine.showLoading(isLoading = false)
-                val message = it.message ?: "Failed to update. Please try again."
-                _message.update { TeacherProfileEditMessageState.Error(message) }
+        _message.update {
+            TeacherProfileEditMessageState.ConfirmSave {
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    stateMachine.showLoading(isLoading = true)
+                    teacherRepository.changeAcademicInfo(
+                        userId = currentProfile.teacher.userId,
+                        name = newProfile.teacher.name,
+                        designation = newProfile.teacher.designation,
+                        department = newProfile.teacher.department,
+                        blood = newProfile.teacher.blood.orEmpty(),
+                        facultyId = newProfile.teacher.facultyId,
+                    ).onSuccess {
+                        stateMachine.showLoading(isLoading = false)
+                        _message.update { TeacherProfileEditMessageState.ShowSnackBar("Updated successfully") }
+                    }.onFailure {
+                        stateMachine.showLoading(isLoading = false)
+                        val message = it.message ?: "Failed to update. Please try again."
+                        _message.update { TeacherProfileEditMessageState.Error(message) }
+                    }
+                }
             }
         }
     }
 
     private fun updateConnectInfo() {
         val currentProfile = currentProfileCache ?: return
-        val newProfile = newProfileCache
+        val newProfile = newProfileCache ?: return
+        val validationResult = validateConnect(newProfile)
 
-        if (newProfile == null || currentProfile == newProfile) {
+        stateMachine.updateConnectInfoInputError(validationResult)
+        if (validationResult.hasError()) return
+
+        if (currentProfile == newProfile) {
             _message.update { TeacherProfileEditMessageState.ShowSnackBar("No change") }
             return
         }
 
-        val validationResult = validateConnect(newProfile)
-        stateMachine.updateConnectInfoInputError(validationResult)
-
-        if (validationResult.isNotEmpty()) {
-            return
-        }
-
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            stateMachine.showLoading(isLoading = true)
-            runCatching {
-                teacherRepository.changeConnectInfo(
-                    teacher = currentProfile.teacher,
-                    address = newProfile.teacher.address.orEmpty(),
-                    phone = newProfile.teacher.phone.orEmpty(),
-                    email = newProfile.teacher.email.orEmpty(),
-                    linkedIn = newProfile.teacher.linkedIn.orEmpty(),
-                    fbLink = newProfile.teacher.fbLink.orEmpty(),
-                )
-            }.onSuccess {
-                stateMachine.showLoading(isLoading = false)
-                _message.update { TeacherProfileEditMessageState.ShowSnackBar("Updated successfully") }
-            }.onFailure {
-                stateMachine.showLoading(isLoading = false)
-                val message = it.message ?: "Failed to update. Please try again."
-                _message.update { TeacherProfileEditMessageState.Error(message) }
+        _message.update {
+            TeacherProfileEditMessageState.ConfirmSave {
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    stateMachine.showLoading(isLoading = true)
+                    teacherRepository.changeConnectInfo(
+                        userId = currentProfile.teacher.userId,
+                        address = newProfile.teacher.address.orEmpty(),
+                        phone = newProfile.teacher.phone.orEmpty(),
+                        oldEmail = currentProfile.teacher.email,
+                        email = newProfile.teacher.email,
+                        linkedIn = newProfile.teacher.linkedIn.orEmpty(),
+                        fbLink = newProfile.teacher.fbLink.orEmpty(),
+                    ).onSuccess {
+                        stateMachine.showLoading(isLoading = false)
+                        _message.update { TeacherProfileEditMessageState.ShowSnackBar("Updated successfully") }
+                    }.onFailure {
+                        stateMachine.showLoading(isLoading = false)
+                        val message = it.message ?: "Failed to update. Please try again."
+                        _message.update { TeacherProfileEditMessageState.Error(message) }
+                    }
+                }
             }
         }
     }
@@ -211,9 +199,9 @@ class TeacherProfileEditViewModel(
     )
 
     fun validateConnect(profile: UserProfile.TeacherProfile) = TeacherConnectInfoInputError.INITIAL.copy(
-        email = if (profile.teacher.email.isNullOrEmpty()) {
+        email = if (profile.teacher.email.isEmpty()) {
             "*Required"
-        } else if (profile.teacher.email?.isValidEmail() == false) {
+        } else if (!profile.teacher.email.isValidEmail()) {
             "*Invalid email"
         } else {
             ""

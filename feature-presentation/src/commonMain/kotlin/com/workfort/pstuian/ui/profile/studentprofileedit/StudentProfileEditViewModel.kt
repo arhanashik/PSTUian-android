@@ -61,20 +61,8 @@ class StudentProfileEditViewModel(
                 is StudentProfileEditUiEvent.BatchSelectionClicked -> newProfileCache?.let {
                     selectFaculty(it.student.facultyId, needFacultySelection = false)
                 }
-                is StudentProfileEditUiEvent.AcademicInfoSaveClicked -> {
-                    if (currentProfileCache == newProfileCache) {
-                        _message.update { StudentProfileEditMessageState.ShowSnackBar("No change") }
-                    } else {
-                        _message.update { StudentProfileEditMessageState.ConfirmSave(::updateAcademicInfo) }
-                    }
-                }
-                is StudentProfileEditUiEvent.ConnectInfoSaveClicked -> {
-                    if (newProfileCache == null || currentProfileCache == newProfileCache) {
-                        _message.update { StudentProfileEditMessageState.ShowSnackBar("No change") }
-                    } else {
-                        _message.update { StudentProfileEditMessageState.ConfirmSave(::updateConnectInfo) }
-                    }
-                }
+                is StudentProfileEditUiEvent.AcademicInfoSaveClicked -> updateAcademicInfo()
+                is StudentProfileEditUiEvent.ConnectInfoSaveClicked -> updateConnectInfo()
             }
         }
     }
@@ -168,76 +156,83 @@ class StudentProfileEditViewModel(
     private fun updateAcademicInfo() {
         val currentProfile = currentProfileCache ?: return
         val newProfile = newProfileCache ?: return
-
         val validationResult = validateAcademic(newProfile)
-        stateMachine.updateAcademicInfoInputError(validationResult)
 
-        if (validationResult.hasError()) {
+        stateMachine.updateAcademicInfoInputError(validationResult)
+        if (validationResult.hasError()) return
+
+        if (currentProfile == newProfile) {
+            _message.update { StudentProfileEditMessageState.ShowSnackBar("No change") }
             return
         }
 
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            stateMachine.showLoading(isLoading = true)
-            studentRepo.changeAcademicInfo(
-                userId = currentProfile.student.userId,
-                name = newProfile.student.name,
-                studentOldId = currentProfile.student.studentId,
-                studentId = newProfile.student.studentId,
-                reg = newProfile.student.reg,
-                blood = newProfile.student.blood.orEmpty(),
-                facultyId = newProfile.student.facultyId,
-                session = newProfile.student.session,
-                batchId = newProfile.student.batchId,
-            )
-                .onSuccess {
-                    stateMachine.showLoading(isLoading = false)
-                    _message.update { StudentProfileEditMessageState.ShowSnackBar("Updated successfully") }
+        _message.update {
+            StudentProfileEditMessageState.ConfirmSave {
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    stateMachine.showLoading(isLoading = true)
+                    studentRepo.changeAcademicInfo(
+                        userId = currentProfile.student.userId,
+                        name = newProfile.student.name,
+                        studentOldId = currentProfile.student.studentId,
+                        studentId = newProfile.student.studentId,
+                        reg = newProfile.student.reg,
+                        blood = newProfile.student.blood.orEmpty(),
+                        facultyId = newProfile.student.facultyId,
+                        session = newProfile.student.session,
+                        batchId = newProfile.student.batchId,
+                    )
+                        .onSuccess {
+                            stateMachine.showLoading(isLoading = false)
+                            _message.update { StudentProfileEditMessageState.ShowSnackBar("Updated successfully") }
+                        }
+                        .onFailure {
+                            stateMachine.showLoading(isLoading = false)
+                            val message = it.message ?: "Failed to update. Please try again."
+                            _message.update { StudentProfileEditMessageState.Error(message) }
+                        }
                 }
-                .onFailure {
-                    stateMachine.showLoading(isLoading = false)
-                    val message = it.message ?: "Failed to update. Please try again."
-                    _message.update { StudentProfileEditMessageState.Error(message) }
-                }
+            }
         }
     }
 
     private fun updateConnectInfo() {
         val currentProfile = currentProfileCache ?: return
-        val newProfile = newProfileCache
-
-        if (newProfile == null || currentProfile == newProfile) {
-            StudentProfileEditMessageState.ShowSnackBar("No change")
-            return
-        }
-
+        val newProfile = newProfileCache ?: return
         val validationResult = validateConnect(newProfile)
-        stateMachine.updateConnectInfoInputError(validationResult)
 
-        if (validationResult.hasError()) {
+        stateMachine.updateConnectInfoInputError(validationResult)
+        if (validationResult.hasError()) return
+
+        if (currentProfile == newProfile) {
+            _message.update { StudentProfileEditMessageState.ShowSnackBar("No change") }
             return
         }
 
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            stateMachine.showLoading(isLoading = true)
-            studentRepo.changeConnectInfo(
-                userId = currentProfile.student.userId,
-                address = newProfile.student.address.orEmpty(),
-                phone = newProfile.student.phone.orEmpty(),
-                oldEmail = currentProfile.student.email,
-                newEmail = newProfile.student.email,
-                cvLink = newProfile.student.cvLink.orEmpty(),
-                linkedIn = newProfile.student.linkedIn.orEmpty(),
-                facebook = newProfile.student.fbLink.orEmpty(),
-            )
-                .onSuccess {
-                    stateMachine.showLoading(isLoading = false)
-                    _message.update { StudentProfileEditMessageState.ShowSnackBar("Updated successfully") }
+        _message.update {
+            StudentProfileEditMessageState.ConfirmSave {
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    stateMachine.showLoading(isLoading = true)
+                    studentRepo.changeConnectInfo(
+                        userId = currentProfile.student.userId,
+                        address = newProfile.student.address.orEmpty(),
+                        phone = newProfile.student.phone.orEmpty(),
+                        oldEmail = currentProfile.student.email,
+                        newEmail = newProfile.student.email,
+                        cvLink = newProfile.student.cvLink.orEmpty(),
+                        linkedIn = newProfile.student.linkedIn.orEmpty(),
+                        facebook = newProfile.student.fbLink.orEmpty(),
+                    )
+                        .onSuccess {
+                            stateMachine.showLoading(isLoading = false)
+                            _message.update { StudentProfileEditMessageState.ShowSnackBar("Updated successfully") }
+                        }
+                        .onFailure {
+                            stateMachine.showLoading(isLoading = false)
+                            val message = it.message ?: "Failed to update. Please try again."
+                            _message.update { StudentProfileEditMessageState.Error(message) }
+                        }
                 }
-                .onFailure {
-                    stateMachine.showLoading(isLoading = false)
-                    val message = it.message ?: "Failed to update. Please try again."
-                    _message.update { StudentProfileEditMessageState.Error(message) }
-                }
+            }
         }
     }
 

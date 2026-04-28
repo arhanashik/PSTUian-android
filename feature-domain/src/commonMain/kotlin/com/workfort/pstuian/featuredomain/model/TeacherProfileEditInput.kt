@@ -18,7 +18,7 @@ data class TeacherAcademicInfoInputError(
         )
     }
 
-    fun isNotEmpty(): Boolean = name.isNotEmpty() ||
+    fun hasError(): Boolean = name.isNotEmpty() ||
             designation.isNotEmpty() ||
             department.isNotEmpty() ||
             bloodGroup.isNotEmpty() ||
@@ -43,7 +43,7 @@ data class TeacherConnectInfoInputError(
         )
     }
 
-    fun isNotEmpty(): Boolean = address.isNotEmpty() ||
+    fun hasError(): Boolean = address.isNotEmpty() ||
             phone.isNotEmpty() ||
             email.isNotEmpty() ||
             linkedIn.isNotEmpty() ||

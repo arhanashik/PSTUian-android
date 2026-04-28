@@ -16,7 +16,7 @@ class GetEmployeeProfileUserUseCase(
 
         val employee = facultyRepository.getEmployee(userId).getOrElse { return DomainResult.failure(it) }
         val faculty = facultyRepository.getFaculty(employee.facultyId).getOrElse { return DomainResult.failure(it) }
-        val isSignedIn = employee.email == authUser?.email
+        val isSignedIn = employee.userId == authUser?.userId
 
         return DomainResult.success(UserProfile.EmployeeProfile(employee, faculty, isSignedIn))
     }

@@ -5,7 +5,7 @@ import com.workfort.pstuian.featuredomain.model.User
 
 interface TeacherRepository {
 
-    suspend fun getUser(userId: Int): DomainResult<User.Teacher>
+    suspend fun getUser(id: Int): DomainResult<User.Teacher>
 
     suspend fun getUserByEmail(email: String): DomainResult<User.Teacher>
 
@@ -16,20 +16,21 @@ interface TeacherRepository {
     suspend fun changeBio(teacher: User.Teacher, bio: String): Boolean
 
     suspend fun changeAcademicInfo(
-        teacher: User.Teacher,
+        userId: String,
         name: String,
         designation: String,
         department: String,
         blood: String,
         facultyId: Int
-    ): User.Teacher
+    ): DomainResult<User.Teacher>
 
     suspend fun changeConnectInfo(
-        teacher: User.Teacher,
+        userId: String,
         address: String,
         phone: String,
+        oldEmail: String,
         email: String,
         linkedIn: String,
         fbLink: String
-    ): User.Teacher
+    ): DomainResult<User.Teacher>
 }

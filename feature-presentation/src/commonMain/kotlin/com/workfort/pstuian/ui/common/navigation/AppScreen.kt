@@ -40,7 +40,7 @@ sealed interface AppScreen {
     @Serializable
     data class StudentProfileEdit(val userId: Int) : AppScreen
     @Serializable
-    data class TeacherProfileEdit(val userId: String) : AppScreen
+    data class TeacherProfileEdit(val userId: Int) : AppScreen
     @Serializable
     data class EmployeeProfileEdit(val userId: String) : AppScreen
     @Serializable

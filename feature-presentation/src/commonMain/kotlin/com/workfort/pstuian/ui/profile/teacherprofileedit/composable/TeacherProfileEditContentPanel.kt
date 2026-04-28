@@ -117,11 +117,6 @@ fun TeacherProfileEditContentPanel(
         ActionButton(
             label = stringResource(Res.string.txt_save_changes).uppercase(),
             icon = Icons.AutoMirrored.Filled.ArrowForward,
-            enabled = if (uiState.selectedTabIndex == 0) {
-                !uiState.academicInfoInputError.isNotEmpty()
-            } else {
-                !uiState.connectInfoInputError.isNotEmpty()
-            },
             onClick = {
                 if (uiState.selectedTabIndex == 0) {
                     onUiEvent(TeacherProfileEditUiEvent.AcademicInfoSaveClicked)
@@ -185,18 +180,6 @@ private fun AcademicInfoEditPanel(
             ),
         )
         Spacer(Modifier.height(AuthFormFieldSpacing))
-        AuthUnderlinedExposedDropdown(
-            label = stringResource(Res.string.hint_blood_group),
-            value = profile.teacher.blood.orEmpty(),
-            items = stringArrayResource(Res.array.blood_group).toTypedArray(),
-            onItemSelected = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(blood = it))
-                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
-            },
-            isError = validationError.bloodGroup.isNotEmpty(),
-            errorText = validationError.bloodGroup.takeIf { it.isNotEmpty() },
-        )
-        Spacer(Modifier.height(AuthFormFieldSpacing))
         UnderlineSelectorField(
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(Res.string.hint_faculty),
@@ -211,6 +194,18 @@ private fun AcademicInfoEditPanel(
                 )
             },
             onClick = { onUiEvent(TeacherProfileEditUiEvent.FacultySelectionClicked) },
+        )
+        Spacer(Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedExposedDropdown(
+            label = stringResource(Res.string.hint_blood_group),
+            value = profile.teacher.blood.orEmpty(),
+            items = stringArrayResource(Res.array.blood_group).toTypedArray(),
+            onItemSelected = {
+                val newProfile = profile.copy(teacher = profile.teacher.copy(blood = it))
+                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
+            },
+            isError = validationError.bloodGroup.isNotEmpty(),
+            errorText = validationError.bloodGroup.takeIf { it.isNotEmpty() },
         )
     }
 }
@@ -253,22 +248,6 @@ private fun ConnectInfoEditPanel(
             supportingText = validationError.phone.takeIf { it.isNotEmpty() },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Next,
-            ),
-        )
-        Spacer(Modifier.height(AuthFormFieldSpacing))
-        AuthUnderlinedField(
-            label = stringResource(Res.string.hint_email),
-            value = profile.teacher.email.orEmpty(),
-            onValueChange = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(email = it))
-                onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
-            },
-            leadingIcon = Icons.Default.Email,
-            isError = validationError.email.isNotEmpty(),
-            supportingText = validationError.email.takeIf { it.isNotEmpty() },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
             ),
         )

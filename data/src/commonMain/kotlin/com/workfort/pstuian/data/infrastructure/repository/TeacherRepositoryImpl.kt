@@ -6,6 +6,7 @@ import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.map
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
 
 class TeacherRepositoryImpl(
@@ -14,8 +15,8 @@ class TeacherRepositoryImpl(
 ) : TeacherRepository {
     private val cache = mutableSetOf<User.Teacher>()
 
-    override suspend fun getUser(userId: Int): DomainResult<User.Teacher> {
-        return helper.get(userId).toDomainResult(domainErrorMapper).map { it.toModel() }
+    override suspend fun getUser(id: Int): DomainResult<User.Teacher> {
+        return helper.get(id).toDomainResult(domainErrorMapper).map { it.toModel() }
     }
 
     override suspend fun getUserByEmail(email: String): DomainResult<User.Teacher> {
@@ -53,35 +54,52 @@ class TeacherRepositoryImpl(
     }
 
     override suspend fun changeAcademicInfo(
-        teacher: User.Teacher,
+        userId: String,
         name: String,
         designation: String,
         department: String,
         blood: String,
         facultyId: Int
-    ): User.Teacher {
-        helper.changeAcademicInfo(
-            teacher.userId.toInt(), name, designation, department, blood, facultyId
-        ).toModel().let { updated ->
-            cache.add(updated)
-            return updated
-        }
+    ): DomainResult<User.Teacher> {
+        return helper.changeAcademicInfo(
+            userId,
+            name,
+            designation,
+            department,
+            blood,
+            facultyId,
+        )
+            .toDomainResult(domainErrorMapper)
+            .map { it.toModel() }
+            .onSuccess { updatedData ->
+                cache.removeAll { it.userId == userId }
+                cache.add(updatedData)
+            }
     }
 
     override suspend fun changeConnectInfo(
-        teacher: User.Teacher,
+        userId: String,
         address: String,
         phone: String,
+        oldEmail: String,
         email: String,
         linkedIn: String,
         fbLink: String
-    ): User.Teacher {
-        val oldEmail = teacher.email
-        helper.changeConnectInfo(
-            teacher.userId.toInt(), address, phone, email, oldEmail, linkedIn, fbLink
-        ).toModel().let { updated ->
-            cache.add(updated)
-            return updated
-        }
+    ): DomainResult<User.Teacher> {
+        return helper.changeConnectInfo(
+            userId,
+            address,
+            phone,
+            oldEmail,
+            email,
+            linkedIn,
+            fbLink,
+        )
+            .toDomainResult(domainErrorMapper)
+            .map { it.toModel() }
+            .onSuccess { updatedData ->
+                cache.removeAll { it.userId == userId }
+                cache.add(updatedData)
+            }
     }
 }

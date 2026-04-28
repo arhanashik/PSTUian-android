@@ -63,7 +63,7 @@ class EmployeeProfileViewModel(
             is ProfileUiEvent.RefreshClicked -> onClickRefresh()
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
-            is ProfileUiEvent.EditClicked -> onClickEdit(event.selectedTabIndex)
+                is ProfileUiEvent.EditClicked -> onClickEdit()
             is ProfileUiEvent.MyBloodDonationListClicked -> Unit
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> Unit
@@ -189,14 +189,12 @@ class EmployeeProfileViewModel(
         }
     }
 
-    private fun onClickEdit(selectedTabIndex: Int) {
+    private fun onClickEdit() {
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.employee?.let { employee ->
-            if (selectedTabIndex == 0 || selectedTabIndex == 1) {
-                _navigation.update {
-                    EmployeeProfileNavigationState.EmployeeProfileEditScreen(userId = employee.userId)
-                }
+            _navigation.update {
+                EmployeeProfileNavigationState.EmployeeProfileEditScreen(userId = employee.userId)
             }
         }
     }

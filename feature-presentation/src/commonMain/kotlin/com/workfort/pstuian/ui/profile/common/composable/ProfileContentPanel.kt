@@ -141,7 +141,6 @@ private fun ProfileView(
                 displayData = headerDisplayData,
                 isSignedIn = isSignedIn,
                 userPresence = userPresenceDisplayData,
-                selectedTabIndex = selectedTabIndex,
                 onUiEvent = onUiEvent,
             )
         }

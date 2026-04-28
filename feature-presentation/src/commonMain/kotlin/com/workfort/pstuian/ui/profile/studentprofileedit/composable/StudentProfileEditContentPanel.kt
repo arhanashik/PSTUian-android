@@ -112,11 +112,6 @@ fun StudentProfileEditContentPanel(
         ActionButton(
             label = stringResource(Res.string.txt_save_changes).uppercase(),
             icon = Icons.AutoMirrored.Filled.ArrowForward,
-            enabled = if (uiState.selectedTabIndex == 0) {
-                !uiState.academicInfoInputError.hasError()
-            } else {
-                !uiState.connectInfoInputError.hasError()
-            },
             onClick = {
                 if (uiState.selectedTabIndex == 0) {
                     onUiEvent(StudentProfileEditUiEvent.AcademicInfoSaveClicked)
