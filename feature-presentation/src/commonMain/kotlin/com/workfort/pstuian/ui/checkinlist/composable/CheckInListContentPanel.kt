@@ -52,11 +52,14 @@ import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
 import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
 import com.workfort.pstuian.ui.common.composable.OnlineOfflineStatusLabel
+import com.workfort.pstuian.ui.common.composable.StatusPillLabelText
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
+import org.jetbrains.compose.resources.stringResource
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.img_placeholder_profile
+import pstuian.feature_presentation.generated.resources.txt_call
 import androidx.compose.foundation.lazy.grid.items as gridItems
 
 private val ScreenHorizontalPadding = 16.dp
@@ -211,6 +214,7 @@ private fun CheckInListScrollableGrid(
         listState = listState,
         isLoadingMore = isContentLoading && otherCheckIns.isNotEmpty(),
         onClickItem = { onUiEvent(CheckInListUiEvent.OnClickCheckInItem(it)) },
+        onClickCall = { phoneNumber -> onUiEvent(CheckInListUiEvent.OnClickCall(phoneNumber)) },
         onClickCheckInSelf = { onUiEvent(CheckInListUiEvent.OnClickCheckIn) },
     )
 }
@@ -223,6 +227,7 @@ private fun CheckInListView(
     listState: LazyGridState,
     isLoadingMore: Boolean,
     onClickItem: (CheckInDisplayData) -> Unit,
+    onClickCall: (String) -> Unit,
     onClickCheckInSelf: () -> Unit,
 ) {
 
@@ -244,6 +249,7 @@ private fun CheckInListView(
                 CheckInListItemView(
                     item = item,
                     onClickItem = { onClickItem(item) },
+                    onClickCall = onClickCall,
                 )
             }
         }
@@ -253,6 +259,7 @@ private fun CheckInListView(
             CheckInListItemView(
                 item = item,
                 onClickItem = { onClickItem(item) },
+                onClickCall = onClickCall,
             )
         }
 
@@ -337,7 +344,10 @@ private fun CheckInSelfActionCard(
 private fun CheckInListItemView(
     item: CheckInDisplayData,
     onClickItem: () -> Unit,
+    onClickCall: (String) -> Unit,
 ) {
+    val phoneNumber = item.checkIn.phone
+    val canShowCallButton = !phoneNumber.isNullOrBlank()
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -367,9 +377,24 @@ private fun CheckInListItemView(
                 OnlineOfflineStatusLabel(
                     isOnline = item.isOnline,
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 4.dp),
+                        .align(Alignment.TopStart)
+                        .padding(6.dp),
                 )
+
+                if (canShowCallButton) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = 6.dp, bottom = 4.dp)
+                            .clip(RoundedCornerShape(999.dp))
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                            .clickable { onClickCall(phoneNumber) },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        StatusPillLabelText(text = stringResource(Res.string.txt_call))
+                    }
+                }
             }
             Column(
                 modifier = Modifier

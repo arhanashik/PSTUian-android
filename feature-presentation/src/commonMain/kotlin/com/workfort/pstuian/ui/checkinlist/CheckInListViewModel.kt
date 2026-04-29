@@ -64,8 +64,8 @@ class CheckInListViewModel(
         when (event) {
             is CheckInListUiEvent.OnClickBack -> onClickBack()
             is CheckInListUiEvent.OnClickCheckInItem -> onClickItem(event.item)
-            is CheckInListUiEvent.OnClickCall -> onClickCall(event.phoneNumber)
             is CheckInListUiEvent.OnSelectLocation -> onSelectLocation(event.locationId)
+            is CheckInListUiEvent.OnClickCall -> onClickCall(event.phoneNumber)
             is CheckInListUiEvent.OnClickCheckIn -> onClickCheckIn()
             is CheckInListUiEvent.OnLoadMoreLocations -> loadCheckInLocations(refresh = false)
             is CheckInListUiEvent.OnLoadMore -> loadCheckInList(refresh = false)

@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
@@ -35,6 +34,7 @@ fun OnlineOfflineStatusLabel(
     modifier: Modifier = Modifier,
 ) {
     val badgeColor = if (isOnline) MaterialTheme.colorScheme.primary else OfflineStatusLightGray
+    val labelText = stringResource(if (isOnline) Res.string.lbl_profile_online else Res.string.lbl_profile_offline)
     Box(
         modifier = modifier
             .clip(StatusPillShape)
@@ -42,9 +42,21 @@ fun OnlineOfflineStatusLabel(
             .padding(horizontal = 6.dp, vertical = 2.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = stringResource(if (isOnline) Res.string.lbl_profile_online else Res.string.lbl_profile_offline),
-            style = TextStyle.label3.copy(color = AppColors.onPrimary),
-        )
+        StatusPillLabelText(text = labelText)
     }
+}
+
+/**
+ * Shared text styling for status pills (e.g. Online/Offline, Call).
+ */
+@Composable
+fun StatusPillLabelText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        style = TextStyle.label3.copy(color = AppColors.onPrimary),
+    )
 }
