@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Info
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
+import com.workfort.pstuian.ui.common.composable.OnlineOfflineStatusLabel
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
@@ -44,8 +44,6 @@ import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayDat
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.lbl_profile_offline
-import pstuian.feature_presentation.generated.resources.lbl_profile_online
 import pstuian.feature_presentation.generated.resources.txt_follow
 import pstuian.feature_presentation.generated.resources.txt_message
 
@@ -161,9 +159,7 @@ internal fun ProfileHeader(
     }
 }
 
-private val StatusPillShape = RoundedCornerShape(999.dp)
-
-/** Light gray for offline ring + badge (distinct from online primary). */
+/** Light gray for offline ring (distinct from online primary). */
 private val OfflineStatusLightGray = Color(0xFFD6D6D6)
 
 @Composable
@@ -190,23 +186,12 @@ private fun AvatarWithStatusChip(
         ) {
             LoadAsyncUserImage(url = imageUrl, size = 64.dp)
         }
-        Box(
+        OnlineOfflineStatusLabel(
+            isOnline = isOnline,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .zIndex(1f)
-                .clip(StatusPillShape)
-                .background(color = ringBorderColor, shape = StatusPillShape)
-                .padding(horizontal = 6.dp, vertical = 2.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = stringResource(if (isOnline) Res.string.lbl_profile_online else Res.string.lbl_profile_offline),
-                fontSize = 7.sp,
-                lineHeight = 9.sp,
-                fontWeight = FontWeight.Medium,
-                color = AppColors.onPrimary,
-            )
-        }
+                .zIndex(1f),
+        )
     }
 }
 
