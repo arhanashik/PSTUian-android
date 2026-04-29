@@ -71,10 +71,7 @@ import com.workfort.pstuian.ui.common.theme.TextStyle
 import androidx.compose.foundation.lazy.grid.items as gridItems
 import kotlinx.coroutines.delay
 
-private val ScreenHorizontalPadding = 16.dp
 private const val GridColumnCount = 3
-private val SectionTopPadding = 8.dp
-private val ChipRowVerticalPadding = 2.dp
 private val CheckInCardContentPadding = 8.dp
 private val CheckInCardTextPadding = PaddingValues(
     start = CheckInCardContentPadding,
@@ -224,14 +221,14 @@ private fun CheckInLocationListShimmer(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = ScreenHorizontalPadding, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         repeat(4) {
             Box(
                 modifier = Modifier
                     .height(36.dp)
-                    .width(if (it == 0) 96.dp else 80.dp)
+                    .width(80.dp)
                     .clip(CircleShape)
                     .shimmerAnimation(),
             )
@@ -244,7 +241,7 @@ private fun CheckInListGridShimmer(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(GridColumnCount),
-        contentPadding = PaddingValues(ScreenHorizontalPadding),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -351,7 +348,7 @@ private fun CheckInListView(
         modifier = modifier,
         state = listState,
         columns = GridCells.Fixed(GridColumnCount),
-        contentPadding = PaddingValues(ScreenHorizontalPadding),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -590,9 +587,7 @@ private fun CheckInListHeaderView(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = SectionTopPadding),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -602,11 +597,9 @@ private fun CheckInListHeaderView(
         }
 
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = ChipRowVerticalPadding),
+            modifier = Modifier.fillMaxWidth(),
             state = listState,
-            contentPadding = PaddingValues(horizontal = ScreenHorizontalPadding),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(checkInLocations) { location ->
@@ -625,8 +618,8 @@ private fun CheckInListHeaderView(
                 item {
                     Box(
                         modifier = Modifier
-                            .padding(vertical = 4.dp)
-                            .height(30.dp)
+                            .padding(vertical = 8.dp)
+                            .height(32.dp)
                             .width(72.dp)
                             .clip(CircleShape)
                             .shimmerAnimation(),
