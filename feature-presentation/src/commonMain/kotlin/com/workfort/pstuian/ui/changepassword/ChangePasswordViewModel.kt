@@ -5,8 +5,11 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ChangePasswordInput
 import com.workfort.pstuian.featuredomain.model.ChangePasswordInputError
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordScreenPanel
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordMessageState
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordNavigationState
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent
@@ -36,6 +39,9 @@ class ChangePasswordViewModel(
     fun onUiEvent(event: ChangePasswordUiEvent) {
         when (event) {
             is ChangePasswordUiEvent.BackClicked -> onClickBack()
+            is ChangePasswordUiEvent.PanelChanged -> uiStateMachine.setActivePanel(event.panel)
+            is ChangePasswordUiEvent.ResetEmailChanged -> uiStateMachine.updateResetEmail(event.email)
+            is ChangePasswordUiEvent.SendPasswordResetClicked -> sendPasswordResetLink()
             is ChangePasswordUiEvent.InputChanged -> onChangeInput(event.input)
             is ChangePasswordUiEvent.ChangePasswordClicked -> changePassword()
         }
@@ -46,7 +52,12 @@ class ChangePasswordViewModel(
     fun onNavigationHandled() = _navigation.update { null }
 
     private fun onClickBack() {
-        _navigation.update { ChangePasswordNavigationState.GoBack }
+        val content = uiState.value as? ChangePasswordUiState.Content
+        if (content?.activePanel == ChangePasswordScreenPanel.ResetPassword) {
+            uiStateMachine.setActivePanel(ChangePasswordScreenPanel.ChangePassword)
+        } else {
+            _navigation.update { ChangePasswordNavigationState.GoBack }
+        }
     }
 
     private fun onChangeInput(input: ChangePasswordInput) {
@@ -65,22 +76,55 @@ class ChangePasswordViewModel(
 
         uiStateMachine.showLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                authRepo.changePassword(
-                    userType = userType,
-                    oldPassword = input.oldPassword,
-                    newPassword = input.newPassword,
-                )
-            }.onSuccess {
-                uiStateMachine.showLoading(false)
-                _message.update {
-                    ChangePasswordMessageState.Success("Password changed successfully!")
+            authRepo.changePassword(
+                userType = userType,
+                oldPassword = input.oldPassword,
+                newPassword = input.newPassword,
+            )
+                .onSuccess {
+                    uiStateMachine.showLoading(false)
+                    _message.update {
+                        ChangePasswordMessageState.Success("Password changed successfully!")
+                    }
                 }
-            }.onFailure {
-                uiStateMachine.showLoading(false)
-                val message = it.message ?: "Failed to change password. Please try again."
-                _message.update { ChangePasswordMessageState.Error(message) }
+                .onFailure { error ->
+                    uiStateMachine.showLoading(false)
+                    val msg = error.message ?: "Failed to change password. Please try again."
+                    _message.update { ChangePasswordMessageState.Error(msg) }
+                }
+        }
+    }
+
+    private fun sendPasswordResetLink() {
+        val content = uiState.value as? ChangePasswordUiState.Content ?: return
+        val email = content.resetEmail.trim()
+        if (email.isEmpty()) {
+            _message.update {
+                ChangePasswordMessageState.Error("Please enter your email address.")
             }
+            return
+        }
+
+        uiStateMachine.showLoading(true)
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            authRepo.resetPassword(email)
+                .onSuccess {
+                    uiStateMachine.showLoading(false)
+                    uiStateMachine.setActivePanel(ChangePasswordScreenPanel.ChangePassword)
+                    _message.update {
+                        ChangePasswordMessageState.Success(
+                            "Password reset link request has been sent to $email",
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    uiStateMachine.showLoading(false)
+                    _message.update {
+                        ChangePasswordMessageState.Error(
+                            message = error.message ?: "Failed the reset password. Please retry",
+                        )
+                    }
+                }
         }
     }
 

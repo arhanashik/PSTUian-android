@@ -71,19 +71,22 @@ internal fun AuthBottomLink(
     onAction: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onAction),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = prefix,
-            style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-        )
-        Spacer(modifier = Modifier.width(4.dp))
+        if (prefix.isNotEmpty()) {
+            Text(
+                text = prefix,
+                style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+        }
         Text(
             text = action,
             style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.tertiary),
-            modifier = Modifier.clickable(onClick = onAction),
         )
     }
 }

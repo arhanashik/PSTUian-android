@@ -27,6 +27,8 @@ internal fun ForgotPasswordAuthForm(
     onEmailChange: (String) -> Unit,
     onResetPasswordClicked: () -> Unit,
     onSwitchToSignIn: () -> Unit,
+    bottomLinkPrefix: String = "Remember your password?",
+    bottomLinkAction: String = "LOG IN",
 ) {
     val focusManager = LocalFocusManager.current
     val emailFocus = remember { FocusRequester() }
@@ -53,8 +55,8 @@ internal fun ForgotPasswordAuthForm(
             }
             Spacer(modifier = Modifier.height(24.dp))
             AuthBottomLink(
-                prefix = "Remember your password?",
-                action = "LOG IN",
+                prefix = bottomLinkPrefix,
+                action = bottomLinkAction,
                 onAction = onSwitchToSignIn,
             )
         }

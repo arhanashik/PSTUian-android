@@ -2,6 +2,7 @@ package com.workfort.pstuian.ui.changepassword
 
 import com.workfort.pstuian.featuredomain.model.ChangePasswordInput
 import com.workfort.pstuian.featuredomain.model.ChangePasswordInputError
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordScreenPanel
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiState
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,21 @@ class ChangePasswordUiStateMachine : UiStateMachine<ChangePasswordUiState> {
                 input = input,
                 validationError = validationError,
             )
+        }
+    }
+
+    fun setActivePanel(panel: ChangePasswordScreenPanel) =
+        updateUiState {
+            when (this) {
+                is ChangePasswordUiState.None -> this
+                is ChangePasswordUiState.Content -> copy(activePanel = panel)
+            }
+        }
+
+    fun updateResetEmail(email: String) = updateUiState {
+        when (this) {
+            is ChangePasswordUiState.None -> this
+            is ChangePasswordUiState.Content -> copy(resetEmail = email)
         }
     }
 }
