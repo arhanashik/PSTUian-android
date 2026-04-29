@@ -14,9 +14,7 @@ class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
     private val _state = MutableStateFlow<CheckInListUiState>(CheckInListUiState.None)
     override val uiState: StateFlow<CheckInListUiState> = _state.asStateFlow()
 
-    private fun updateUiState(
-        updater: CheckInListUiState.() -> CheckInListUiState,
-    ) = _state.update(updater)
+    private fun updateUiState(updater: CheckInListUiState.() -> CheckInListUiState) = _state.update(updater)
 
     fun showOperationLoading() = updateUiState {
         CheckInListUiState.Loading
@@ -38,23 +36,23 @@ class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
 
     fun showInitialContent(
         checkInLocations: List<CheckInLocation>,
-        selectedCheckInLocationId: Int,
+        selectedLocationId: Int,
     ) = updateUiState {
         when (this) {
             is CheckInListUiState.Content -> copy(
                 checkInLocations = checkInLocations,
-                selectedCheckInLocationId = selectedCheckInLocationId,
+                selectedLocationId = selectedLocationId,
             )
             else -> CheckInListUiState.Content(
                 checkInLocations = checkInLocations,
-                selectedCheckInLocationId = selectedCheckInLocationId,
+                selectedLocationId = selectedLocationId,
             )
         }
     }
 
     fun updatedSelectedCheckInLocationId(selectedCheckInLocationId: Int) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(selectedCheckInLocationId = selectedCheckInLocationId)
+            is CheckInListUiState.Content -> copy(selectedLocationId = selectedCheckInLocationId)
             else -> this
         }
     }

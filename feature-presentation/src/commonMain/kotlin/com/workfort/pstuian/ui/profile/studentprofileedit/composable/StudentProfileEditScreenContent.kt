@@ -32,7 +32,7 @@ internal fun StudentProfileScreenContent(
                 },
             )
         },
-        snackbarHost = { AppSnackbarHost(snackbarHostState) }
+        snackbarHost = { AppSnackbarHost(snackbarHostState) },
     ) {
         when (uiState) {
             is StudentProfileEditUiState.None -> Unit

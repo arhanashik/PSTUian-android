@@ -10,13 +10,10 @@ import com.workfort.pstuian.data.remote.service.CheckInApiService
 
 class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiHelper {
 
-    /**
-     * Get all check in by location
-     * */
     override suspend fun getAll(
         locationId: Int,
         page: Int,
-        limit: Int
+        limit: Int,
     ): NetworkResult<List<CheckInDto>> {
         return runCatching {
             service.getAllByLocation(locationId, page, limit).toNetworkResult()
@@ -29,10 +26,10 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
      * Get all check in by user
      * */
     override suspend fun getAll(
-        userId: String,
+        userId: Int,
         userType: String,
         page: Int,
-        limit: Int
+        limit: Int,
     ): NetworkResult<List<CheckInDto>> {
         return runCatching {
             service.getAllByUser(userId, userType, page, limit).toNetworkResult()
@@ -41,7 +38,7 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         }
     }
 
-    override suspend fun getMyCheckIn(userId: String, userType: String): NetworkResult<CheckInDto> {
+    override suspend fun getCheckIn(userId: Int, userType: String): NetworkResult<CheckInDto> {
         return runCatching {
             service.get(userId, userType).toNetworkResult()
         }.getOrElse {
@@ -51,8 +48,8 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
 
     override suspend fun checkIn(
         locationId: Int,
-        userId: String,
-        userType: String
+        userId: Int,
+        userType: String,
     ): NetworkResult<CheckInDto> {
         return runCatching {
             service.checkIn(locationId, userId, userType).toNetworkResult()

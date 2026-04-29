@@ -254,7 +254,7 @@ private val myBloodDonationListModule = module {
 
 private val myCheckInListModule = module {
     factoryOf(::MyCheckInListUiStateMachine)
-    factory { (userId: String, userType: UserType) ->
+    factory { (userId: Int, userType: UserType) ->
         MyCheckInListViewModel(
             userId = userId,
             userType = userType,

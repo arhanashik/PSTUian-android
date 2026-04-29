@@ -14,8 +14,8 @@ class CheckInApiService(private val client: HttpClient) {
 
     suspend fun getAllByLocation(
         locationId: Int,
-        page: Int = 1,
-        limit: Int = 20,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<CheckInDto>> {
         return client.get(NetworkConst.Remote.Api.CheckIn.GET_ALL) {
             parameter(NetworkConst.Params.LOCATION_ID, locationId)
@@ -25,10 +25,10 @@ class CheckInApiService(private val client: HttpClient) {
     }
 
     suspend fun getAllByUser(
-        userId: String,
+        userId: Int,
         userType: String,
-        page: Int = 1,
-        limit: Int = 20,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<CheckInDto>> {
         return client.get(NetworkConst.Remote.Api.CheckIn.GET_ALL) {
             parameter(NetworkConst.Params.USER_ID, userId)
@@ -39,8 +39,8 @@ class CheckInApiService(private val client: HttpClient) {
     }
 
     suspend fun get(
-        userId: String,
-        userType: String
+        userId: Int,
+        userType: String,
     ): ApiResponse<CheckInDto> {
         return client.get(NetworkConst.Remote.Api.CheckIn.GET) {
             parameter(NetworkConst.Params.USER_ID, userId)
@@ -50,14 +50,14 @@ class CheckInApiService(private val client: HttpClient) {
 
     suspend fun checkIn(
         locationId: Int,
-        userId: String,
-        userType: String
+        userId: Int,
+        userType: String,
     ): ApiResponse<CheckInDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.CheckIn.CHECK_IN,
             formParameters = parameters {
                 append(NetworkConst.Params.LOCATION_ID, locationId.toString())
-                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.USER_ID, userId.toString())
                 append(NetworkConst.Params.USER_TYPE, userType)
             }
         ).body()

@@ -13,17 +13,17 @@ interface CheckInApiHelper  {
     ): NetworkResult<List<CheckInDto>>
 
     suspend fun getAll(
-        userId: String,
+        userId: Int,
         userType: String,
         page: Int,
         limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
     ): NetworkResult<List<CheckInDto>>
 
-    suspend fun getMyCheckIn(userId: String, userType: String, ): NetworkResult<CheckInDto>
+    suspend fun getCheckIn(userId: Int, userType: String, ): NetworkResult<CheckInDto>
 
     suspend fun checkIn(
         locationId: Int,
-        userId: String,
+        userId: Int,
         userType: String,
     ): NetworkResult<CheckInDto>
 

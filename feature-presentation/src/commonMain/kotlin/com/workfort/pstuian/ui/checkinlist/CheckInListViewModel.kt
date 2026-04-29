@@ -32,6 +32,7 @@ class CheckInListViewModel(
     private val uiStateMachine: CheckInListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<CheckInListUiState>(uiStateMachine) {
+
     private val currentUserId = sharedScreenData.getCurrentUser()?.userId ?: 0
 
     private val _message = MutableStateFlow<CheckInListMessageState?>(null)
@@ -40,53 +41,44 @@ class CheckInListViewModel(
     private val _navigation = MutableStateFlow<CheckInListNavigationState?>(null)
     val navigation: StateFlow<CheckInListNavigationState?> = _navigation
 
+    // cache data
     private var checkInLocationsPage = 1
     private var hasMoreCheckInLocationsData = true
     private var checkInLocationsCache = mutableListOf<CheckInLocation>()
     private var isLoadingCheckInLocations = false
 
-    private var checkInListPage = 1
-    private var hasMoreCheckInListData = true
-    private val checkInListCache = mutableListOf<CheckInDisplayData>()
-
-    private fun getLastCheckInLocationId(): Int {
-        return sharedPrefRepository.getInt(
-            key = SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID,
-            defaultValue = NetworkConst.Params.CheckInLocation.MAIN_CAMPUS,
-        )
-    }
+    private var checkInsPage = 1
+    private var hasMoreCheckInsData = true
+    private val checkInsCache = mutableListOf<CheckInDisplayData>()
+    private var isLoadingCheckIns = false
 
     override fun onUiReady() {
-        loadInitialData()
+        uiStateMachine.showOperationLoading()
+        loadCheckInLocations(refresh = true, loadCheckInListAfter = true)
     }
 
     fun onUiEvent(event: CheckInListUiEvent) {
         when (event) {
-            is CheckInListUiEvent.OnClickBack -> onClickBack()
-            is CheckInListUiEvent.OnClickCheckInItem -> onClickItem(event.item)
-            is CheckInListUiEvent.OnSelectLocation -> onSelectLocation(event.locationId)
-            is CheckInListUiEvent.OnClickCall -> onClickCall(event.phoneNumber)
-            is CheckInListUiEvent.OnClickCheckIn -> onClickCheckIn()
+            is CheckInListUiEvent.BackClicked -> _navigation.update { CheckInListNavigationState.GoBack }
+            is CheckInListUiEvent.CheckInItemClicked -> onClickCheckInItem(event.item)
+            is CheckInListUiEvent.LocationSelected -> onSelectLocation(event.locationId)
+            is CheckInListUiEvent.CallClicked -> onClickCall(event.phoneNumber)
+            is CheckInListUiEvent.CheckInClicked -> onClickCheckIn()
             is CheckInListUiEvent.OnLoadMoreLocations -> loadCheckInLocations(refresh = false)
-            is CheckInListUiEvent.OnLoadMore -> loadCheckInList(refresh = false)
+            is CheckInListUiEvent.OnLoadMoreCheckIn -> loadCheckInList(event.locationId, refresh = false)
         }
-    }
-
-    private fun onSelectLocation(locationId: Int) {
-        val selectedLocationId = getLastCheckInLocationId()
-        if (selectedLocationId == locationId) return
-        onChangeLocation(locationId)
     }
 
     fun onMessageHandled() = _message.update { null }
 
     fun onNavigationHandled() = _navigation.update { null }
 
-    private fun onClickBack() {
-        _navigation.update { CheckInListNavigationState.GoBack }
+    private fun onSelectLocation(locationId: Int) {
+        uiStateMachine.updatedSelectedCheckInLocationId(locationId)
+        loadCheckInList(locationId, refresh = true)
     }
 
-    private fun onClickItem(item: CheckInDisplayData) {
+    private fun onClickCheckInItem(item: CheckInDisplayData) {
         val userType = UserType.fromType(item.checkIn.userType) ?: return
         _navigation.update {
             CheckInListNavigationState.ProfileScreen(
@@ -100,49 +92,29 @@ class CheckInListViewModel(
         _message.update { CheckInListMessageState.Call(phoneNumber) }
     }
 
-    private var isLocationPickerForCheckIn = false
     private fun onClickCheckIn() {
-        isLocationPickerForCheckIn = true
-        _navigation.update { CheckInListNavigationState.LocationPickerScreen }
-    }
-
-    fun onChangeLocation(locationId: Int) {
-        if (isLocationPickerForCheckIn) {
-            isLocationPickerForCheckIn = false
-            loadAndConfirmCheckIn(locationId)
-            return
+        _message.update { CheckInListMessageState.Loading() }
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            val selectedLocationId = getOwnCheckInLocationId()
+            onMessageHandled()
+            _message.update {
+                CheckInListMessageState.CheckInLocationSelection(
+                    checkInLocationsCache,
+                    selectedLocationId,
+                ) { location ->
+                    if (selectedLocationId != location.id) {
+                        _message.update {
+                            CheckInListMessageState.ConfirmCheckIn(location) {
+                                checkIn(location.id)
+                            }
+                        }
+                    }
+                }
+            }
         }
-        sharedPrefRepository.putInt(SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID, locationId)
-        uiStateMachine.updatedSelectedCheckInLocationId(locationId)
-        loadCheckInList(refresh = true)
     }
 
-    private fun loadInitialData(refresh: Boolean = true) {
-        val selectedCheckInLocationId = getLastCheckInLocationId()
-
-        if (refresh) {
-            checkInLocationsPage = 1
-            hasMoreCheckInLocationsData = true
-            checkInLocationsCache.clear()
-            checkInListPage = 1
-            hasMoreCheckInListData = true
-            checkInListCache.clear()
-            uiStateMachine.showInitialContent(
-                checkInLocations = emptyList(),
-                selectedCheckInLocationId = selectedCheckInLocationId,
-            )
-        } else if (!hasMoreCheckInLocationsData) {
-            return
-        }
-
-        uiStateMachine.showOperationLoading()
-        loadCheckInLocations(refresh = true, loadCheckInListAfter = true)
-    }
-
-    private fun loadCheckInLocations(
-        refresh: Boolean,
-        loadCheckInListAfter: Boolean = false,
-    ) {
+    private fun loadCheckInLocations(refresh: Boolean, loadCheckInListAfter: Boolean = false) {
         if (isLoadingCheckInLocations) return
         if (refresh) {
             checkInLocationsPage = 1
@@ -163,13 +135,15 @@ class CheckInListViewModel(
                         checkInLocationsPage++
                     }
                     checkInLocationsCache.addAll(locations)
+
+                    val selectedLocationId = getOwnCheckInLocationId()
                     uiStateMachine.showInitialContent(
                         checkInLocations = checkInLocationsCache,
-                        selectedCheckInLocationId = getLastCheckInLocationId(),
+                        selectedLocationId = selectedLocationId,
                     )
                     uiStateMachine.showLocationListLoading(isLoading = false)
                     if (loadCheckInListAfter) {
-                        loadCheckInList(refresh = true)
+                        loadCheckInList(selectedLocationId, refresh = true)
                     }
                 }
                 .onFailure {
@@ -181,33 +155,39 @@ class CheckInListViewModel(
         }
     }
 
-    private fun loadCheckInList(refresh: Boolean) {
+    private suspend fun getOwnCheckInLocationId(): Int {
+        val defaultValue = NetworkConst.Params.CheckInLocation.MAIN_CAMPUS
+        val userType = sharedScreenData.getCurrentUserType() ?: return defaultValue
+        return checkInRepo.get(currentUserId, userType).getOrNull()?.locationId ?: defaultValue
+    }
+
+    private fun loadCheckInList(locationId: Int, refresh: Boolean) {
+        if (isLoadingCheckIns) return
         if (refresh) {
-            checkInListPage = 1
-            hasMoreCheckInListData = true
-            checkInListCache.clear()
+            checkInsPage = 1
+            hasMoreCheckInsData = true
+            checkInsCache.clear()
             uiStateMachine.showCheckInList(currentUserCheckIn = null, otherCheckIns = emptyList())
-        } else if (!hasMoreCheckInListData) {
+        } else if (!hasMoreCheckInsData) {
             return
         }
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            isLoadingCheckIns = true
             uiStateMachine.showCheckInListLoading(isLoading = true)
-            val locationId = getLastCheckInLocationId()
-            checkInRepo.getAll(locationId, checkInListPage)
+            checkInRepo.getAll(locationId, checkInsPage)
                 .onSuccess { checkInList ->
                     if (checkInList.isEmpty()) {
-                        hasMoreCheckInListData = false
+                        hasMoreCheckInsData = false
                     } else {
-                        checkInListPage++
+                        checkInsPage++
                     }
                     val displayDataList = checkInDisplayDataMapper.map(checkInList, currentUserId)
-                    checkInListCache.addAll(displayDataList)
+                    checkInsCache.addAll(displayDataList)
 
-                    val currentUserCheckIn = currentUserId?.let { userId ->
-                        checkInListCache.firstOrNull { it.checkIn.userId == userId }
-                    }
-                    val otherCheckIns = checkInListCache.filter { it.checkIn.userId != currentUserId }
+                    uiStateMachine.showCheckInListLoading(isLoading = false)
+                    val currentUserCheckIn = checkInsCache.firstOrNull { it.checkIn.userId == currentUserId }
+                    val otherCheckIns = checkInsCache.filter { it.checkIn.userId != currentUserId }
                     uiStateMachine.showCheckInList(currentUserCheckIn, otherCheckIns)
                 }
                 .onFailure {
@@ -215,40 +195,24 @@ class CheckInListViewModel(
                     val message = it.message ?: "Failed to load data"
                     _message.update { CheckInListMessageState.Error(message) }
                 }
+            isLoadingCheckIns = false
         }
     }
 
-    private fun loadAndConfirmCheckIn(locationId: Int) {
-        // TODO show loading
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            checkInLocationRepo.get(locationId)
-                .onSuccess { location ->
-                    // TODO hide loading
-                    _message.update { CheckInListMessageState.ConfirmCheckIn(location) }
-                }
-                .onFailure {
-                    // TODO hide loading
-                    val message = it.message ?: "Check in failed. Please try again."
-                    _message.update { CheckInListMessageState.Error(message) }
-                }
-        }
-    }
-
-    fun checkIn(locationId: Int) {
-        val userId = sharedScreenData.getCurrentUser()?.authUserId ?: return
+    private fun checkIn(locationId: Int) {
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
-        // TODO show loading
+        _message.update { CheckInListMessageState.Loading() }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            checkInRepo.checkIn(userId, userType, locationId)
+            checkInRepo.checkIn(locationId, currentUserId, userType)
                 .onSuccess {
-                    // TODO hide loading
-                    _message.update { CheckInListMessageState.Success("Checked in successfully!") }
+                    onMessageHandled()
+                    _message.update { CheckInListMessageState.ShowSnackBar("Checked in successfully!") }
                     sharedPrefRepository.putInt(SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID, locationId)
-                    loadInitialData()
+                    loadCheckInList(locationId, refresh = true)
                 }
                 .onFailure {
-                    // TODO hide loading
+                    onMessageHandled()
                     val message = it.message ?: "Check in failed. Please try again."
                     _message.update { CheckInListMessageState.Error(message) }
                 }

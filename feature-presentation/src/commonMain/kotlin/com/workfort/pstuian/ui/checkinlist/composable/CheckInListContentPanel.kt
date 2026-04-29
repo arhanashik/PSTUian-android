@@ -83,10 +83,10 @@ internal fun CheckInListContentPanel(
     Column(modifier = modifier.fillMaxSize()) {
         CheckInListHeaderView(
             checkInLocations = uiState.checkInLocations,
-            selectedCheckInLocationId = uiState.selectedCheckInLocationId,
+            selectedCheckInLocationId = uiState.selectedLocationId,
             isLoadingMore = uiState.isLocationListLoading && uiState.checkInLocations.isNotEmpty(),
             onClickLocation = { locationId ->
-                onUiEvent(CheckInListUiEvent.OnSelectLocation(locationId))
+                onUiEvent(CheckInListUiEvent.LocationSelected(locationId))
             },
             onLoadMoreLocations = { onUiEvent(CheckInListUiEvent.OnLoadMoreLocations) },
         )
@@ -98,6 +98,7 @@ internal fun CheckInListContentPanel(
             else -> {
                 CheckInListScrollableGrid(
                     modifier = Modifier.fillMaxSize(),
+                    selectedLocationId = uiState.selectedLocationId,
                     currentUserCheckIn = uiState.currentUserCheckIn,
                     otherCheckIns = uiState.otherCheckIns,
                     isContentLoading = uiState.isCheckInListLoading,
@@ -181,6 +182,7 @@ private fun CheckInListItemShimmer() {
 @Composable
 private fun CheckInListScrollableGrid(
     modifier: Modifier,
+    selectedLocationId: Int,
     currentUserCheckIn: CheckInDisplayData?,
     otherCheckIns: List<CheckInDisplayData>,
     isContentLoading: Boolean,
@@ -203,7 +205,7 @@ private fun CheckInListScrollableGrid(
             shouldLoadMore && !isContentLoading && otherCheckIns.isNotEmpty()
         if (canRequestMore && lastLoadMoreRequestedAtSize != otherCheckIns.size) {
             lastLoadMoreRequestedAtSize = otherCheckIns.size
-            onUiEvent(CheckInListUiEvent.OnLoadMore)
+            onUiEvent(CheckInListUiEvent.OnLoadMoreCheckIn(selectedLocationId))
         }
     }
 
@@ -213,9 +215,9 @@ private fun CheckInListScrollableGrid(
         otherCheckIns = otherCheckIns,
         listState = listState,
         isLoadingMore = isContentLoading && otherCheckIns.isNotEmpty(),
-        onClickItem = { onUiEvent(CheckInListUiEvent.OnClickCheckInItem(it)) },
-        onClickCall = { phoneNumber -> onUiEvent(CheckInListUiEvent.OnClickCall(phoneNumber)) },
-        onClickCheckInSelf = { onUiEvent(CheckInListUiEvent.OnClickCheckIn) },
+        onClickItem = { onUiEvent(CheckInListUiEvent.CheckInItemClicked(it)) },
+        onClickCall = { phoneNumber -> onUiEvent(CheckInListUiEvent.CallClicked(phoneNumber)) },
+        onClickCheckInSelf = { onUiEvent(CheckInListUiEvent.CheckInClicked) },
     )
 }
 

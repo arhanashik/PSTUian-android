@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MyCheckInListViewModel(
-    private val userId: String,
+    private val userId: Int,
     private val userType: UserType,
     private val checkInRepo: CheckInRepository,
     private val uiStateMachine: MyCheckInListUiStateMachine,
