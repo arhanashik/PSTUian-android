@@ -6,7 +6,6 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.Slider
-import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
@@ -175,16 +174,12 @@ class HomeViewModel(
 
     private fun onClickUserProfile() {
         val user = sharedScreenData.getCurrentUser()
-        if (user == null) {
+        val userType = sharedScreenData.getCurrentUserType()
+
+        if (user == null || userType == null) {
             _message.update { HomeMessageState.SignInNecessary }
         } else {
-            val (userId, userType) = when (user) {
-                is User.Student -> user.studentId to UserType.STUDENT
-                is User.Teacher -> user.id to UserType.TEACHER
-                is User.Employee -> (user.userId.toIntOrNull() ?: 0) to UserType.EMPLOYEE
-            }
-
-            _navigation.update { HomeNavigationState.GoToProfileScreen(userId, userType) }
+            _navigation.update { HomeNavigationState.GoToProfileScreen(user.id, userType) }
         }
     }
 

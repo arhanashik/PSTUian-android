@@ -35,18 +35,18 @@ internal fun CheckInListScreenContent(
             is CheckInListUiState.Loading -> {
                 CheckInListFullScreenShimmer(modifier = Modifier.fillMaxSize())
             }
-            is CheckInListUiState.Error -> {
-                CheckInListCenterAction(
-                    modifier = Modifier.fillMaxSize(),
-                    onClick = { onUiEvent(CheckInListUiEvent.OnClickCheckIn) },
-                    content = { AnimatedErrorView() },
-                )
-            }
             is CheckInListUiState.Content -> {
                 CheckInListContentPanel(
                     modifier = Modifier.fillMaxSize(),
                     uiState = uiState,
                     onUiEvent = onUiEvent,
+                )
+            }
+            is CheckInListUiState.Error -> {
+                CheckInListCenterAction(
+                    modifier = Modifier.fillMaxSize(),
+                    onClick = { onUiEvent(CheckInListUiEvent.OnClickCheckIn) },
+                    content = { AnimatedErrorView() },
                 )
             }
         }

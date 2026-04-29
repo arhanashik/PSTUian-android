@@ -14,6 +14,7 @@ import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 import com.workfort.pstuian.featuredomain.repository.CheckInRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.model.SharedScreenData
+import com.workfort.pstuian.ui.checkinlist.displaydata.CheckInDisplayData
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListMessageState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListNavigationState
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
@@ -28,10 +29,11 @@ class CheckInListViewModel(
     private val checkInLocationRepo: CheckInLocationRepository,
     private val sharedPrefRepository: SharedPrefRepository,
     private val sharedScreenData: SharedScreenData,
+    private val checkInDisplayDataMapper: CheckInDisplayDataMapper,
     private val uiStateMachine: CheckInListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<CheckInListUiState>(uiStateMachine) {
-    private val currentUserId = sharedScreenData.getCurrentUser()?.userId?.toIntOrNull()
+    private val currentUserId = sharedScreenData.getCurrentUser()?.id ?: 0
 
     private val _message = MutableStateFlow<CheckInListMessageState?>(null)
     val message: StateFlow<CheckInListMessageState?> = _message
@@ -46,7 +48,7 @@ class CheckInListViewModel(
 
     private var checkInListPage = 1
     private var hasMoreCheckInListData = true
-    private val checkInListCache = mutableListOf<CheckIn>()
+    private val checkInListCache = mutableListOf<CheckInDisplayData>()
 
     private fun getLastCheckInLocationId(): Int {
         return sharedPrefRepository.getInt(
@@ -62,7 +64,7 @@ class CheckInListViewModel(
     fun onUiEvent(event: CheckInListUiEvent) {
         when (event) {
             is CheckInListUiEvent.OnClickBack -> onClickBack()
-            is CheckInListUiEvent.OnClickItem -> onClickItem(event.item)
+            is CheckInListUiEvent.OnClickCheckInItem -> onClickItem(event.item)
             is CheckInListUiEvent.OnClickCall -> onClickCall(event.phoneNumber)
             is CheckInListUiEvent.OnSelectLocation -> onSelectLocation(event.locationId)
             is CheckInListUiEvent.OnClickCheckIn -> onClickCheckIn()
@@ -85,11 +87,11 @@ class CheckInListViewModel(
         _navigation.update { CheckInListNavigationState.GoBack }
     }
 
-    private fun onClickItem(item: CheckIn) {
-        val userType = UserType.fromType(item.userType) ?: return
+    private fun onClickItem(item: CheckInDisplayData) {
+        val userType = UserType.fromType(item.checkIn.userType) ?: return
         _navigation.update {
             CheckInListNavigationState.ProfileScreen(
-                userId = item.userId,
+                userId = item.checkIn.userId,
                 userType = userType,
             )
         }
@@ -129,7 +131,6 @@ class CheckInListViewModel(
             uiStateMachine.showInitialContent(
                 checkInLocations = emptyList(),
                 selectedCheckInLocationId = selectedCheckInLocationId,
-                currentUserId = currentUserId,
             )
         } else if (!hasMoreCheckInLocationsData) {
             return
@@ -166,7 +167,6 @@ class CheckInListViewModel(
                     uiStateMachine.showInitialContent(
                         checkInLocations = checkInLocationsCache,
                         selectedCheckInLocationId = getLastCheckInLocationId(),
-                        currentUserId = currentUserId,
                     )
                     uiStateMachine.showLocationListLoading(isLoading = false)
                     if (loadCheckInListAfter) {
@@ -187,7 +187,7 @@ class CheckInListViewModel(
             checkInListPage = 1
             hasMoreCheckInListData = true
             checkInListCache.clear()
-            uiStateMachine.showCheckInList(checkInListCache)
+            uiStateMachine.showCheckInList(currentUserCheckIn = null, otherCheckIns = emptyList())
         } else if (!hasMoreCheckInListData) {
             return
         }
@@ -202,8 +202,14 @@ class CheckInListViewModel(
                     } else {
                         checkInListPage++
                     }
-                    checkInListCache.addAll(checkInList)
-                    uiStateMachine.showCheckInList(checkInListCache)
+                    val displayDataList = checkInDisplayDataMapper.map(checkInList, currentUserId)
+                    checkInListCache.addAll(displayDataList)
+
+                    val currentUserCheckIn = currentUserId?.let { userId ->
+                        checkInListCache.firstOrNull { it.checkIn.userId == userId }
+                    }
+                    val otherCheckIns = checkInListCache.filter { it.checkIn.userId != currentUserId }
+                    uiStateMachine.showCheckInList(currentUserCheckIn, otherCheckIns)
                 }
                 .onFailure {
                     uiStateMachine.showCheckInListLoading(isLoading = false)

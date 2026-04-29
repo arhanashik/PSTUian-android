@@ -173,8 +173,8 @@ class StudentProfileEditViewModel(
                     studentRepo.changeAcademicInfo(
                         userId = currentProfile.student.userId,
                         name = newProfile.student.name,
-                        studentOldId = currentProfile.student.studentId,
-                        studentId = newProfile.student.studentId,
+                        studentOldId = currentProfile.student.id,
+                        studentId = newProfile.student.id,
                         reg = newProfile.student.reg,
                         blood = newProfile.student.blood.orEmpty(),
                         facultyId = newProfile.student.facultyId,
@@ -238,7 +238,7 @@ class StudentProfileEditViewModel(
 
     fun validateAcademic(profile: UserProfile.StudentProfile) = StudentAcademicInfoInputError.INITIAL.copy(
         name = if (profile.student.name.isEmpty()) "*Required" else "",
-        id = if (profile.student.studentId == 0) "*Required" else "",
+        id = if (profile.student.id == 0) "*Required" else "",
         reg = if (profile.student.reg.isEmpty()) "*Required" else "",
         session = if (profile.student.session.isEmpty()) "*Required" else "",
     )

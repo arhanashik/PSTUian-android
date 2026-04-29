@@ -11,6 +11,7 @@ import com.workfort.pstuian.ui.blooddonationrequestlist.BloodDonationRequestList
 import com.workfort.pstuian.ui.blooddonationrequestlist.BloodDonationRequestListViewModel
 import com.workfort.pstuian.ui.changepassword.ChangePasswordUiStateMachine
 import com.workfort.pstuian.ui.changepassword.ChangePasswordViewModel
+import com.workfort.pstuian.ui.checkinlist.CheckInDisplayDataMapper
 import com.workfort.pstuian.ui.checkinlist.CheckInListUiStateMachine
 import com.workfort.pstuian.ui.checkinlist.CheckInListViewModel
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
@@ -91,6 +92,7 @@ private val changePasswordModule = module {
 }
 
 private val checkInListModule = module {
+    factoryOf(::CheckInDisplayDataMapper)
     factoryOf(::CheckInListUiStateMachine)
     factoryOf(::CheckInListViewModel)
 }

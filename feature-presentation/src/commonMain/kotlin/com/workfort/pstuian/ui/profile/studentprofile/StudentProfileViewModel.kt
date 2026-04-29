@@ -202,7 +202,7 @@ class StudentProfileViewModel(
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.student?.let { student ->
-            _navigation.update { StudentProfileNavigationState.StudentProfileEditScreen(student.studentId) }
+            _navigation.update { StudentProfileNavigationState.StudentProfileEditScreen(student.id) }
         }
     }
 

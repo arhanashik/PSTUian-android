@@ -21,7 +21,7 @@ class StudentProfileDisplayDataMapper {
     fun mapAcademicContents(profile: UserProfile.StudentProfile): List<ProfileInfoItem> {
         return listOf(
             ProfileInfoItem("Name", profile.student.name),
-            ProfileInfoItem("Id", profile.student.studentId.toString()),
+            ProfileInfoItem("Id", profile.student.id.toString()),
             ProfileInfoItem("Registration Number", profile.student.reg),
             ProfileInfoItem("Blood Group", profile.student.blood ?: "~"),
             ProfileInfoItem("Faculty", profile.faculty.title),

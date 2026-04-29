@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 sealed interface User {
     val userId: String
+    val id: Int
     val name: String
     val email: String
     val facultyId: Int
@@ -16,6 +17,7 @@ sealed interface User {
     @Serializable
     data class Student(
         override val userId: String,
+        override val id: Int,
         override val name: String,
         override val email: String,
         override val facultyId: Int,
@@ -24,7 +26,6 @@ sealed interface User {
         override val bio: String?,
         override val blood: String?,
         override val imageUrl: String?,
-        val studentId: Int,
         val reg: String,
         val batchId: Int,
         val session: String,
@@ -36,6 +37,7 @@ sealed interface User {
     @Serializable
     data class Teacher(
         override val userId: String,
+        override val id: Int,
         override val name: String,
         override val email: String,
         override val facultyId: Int,
@@ -44,7 +46,6 @@ sealed interface User {
         override val bio: String?,
         override val blood: String?,
         override val imageUrl: String?,
-        val id: Int,
         val designation: String,
         val linkedIn: String?,
         val fbLink: String?,
@@ -55,6 +56,7 @@ sealed interface User {
     @Serializable
     data class Employee(
         override val userId: String,
+        override val id: Int,
         override val name: String,
         override val email: String,
         override val facultyId: Int,
@@ -63,7 +65,6 @@ sealed interface User {
         override val bio: String?,
         override val blood: String?,
         override val imageUrl: String?,
-        val id: Int,
         val designation: String,
         val department: String?,
     ) : User

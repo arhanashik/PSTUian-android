@@ -17,7 +17,7 @@ class StudentRepositoryImpl(
     private val cache = mutableSetOf<User.Student>()
 
     override suspend fun getUser(studentId: Int): DomainResult<User.Student> {
-        cache.firstOrNull { it.studentId == studentId }?.let { cache ->
+        cache.firstOrNull { it.id == studentId }?.let { cache ->
             return DomainResult.success(cache)
         }
         return helper.get(studentId)

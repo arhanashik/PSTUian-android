@@ -8,9 +8,8 @@ import kotlinx.serialization.Serializable
 data class StudentDto(
     @SerialName("user_id")
     val userId: String,
+    val id: Int,
     val name: String,
-    @SerialName("id")
-    val studentId: Int,
     val reg: String,
     @SerialName("faculty_id")
     val facultyId: Int,
@@ -34,6 +33,7 @@ data class StudentDto(
 
     fun toModel() = User.Student(
         userId = userId,
+        id = id,
         name = name,
         email = email,
         facultyId = facultyId,
@@ -42,7 +42,6 @@ data class StudentDto(
         bio = bio,
         blood = blood,
         imageUrl = imageUrl,
-        studentId = studentId,
         reg = reg,
         linkedIn = linkedIn,
         fbLink = fbLink,
@@ -54,6 +53,7 @@ data class StudentDto(
 
 fun User.Student.toDto() = StudentDto(
     userId = userId,
+    id = id,
     name = name,
     email = email,
     facultyId = facultyId,
@@ -62,7 +62,6 @@ fun User.Student.toDto() = StudentDto(
     bio = bio,
     blood = blood,
     imageUrl = imageUrl,
-    studentId = studentId,
     reg = reg,
     linkedIn = linkedIn,
     fbLink = fbLink,

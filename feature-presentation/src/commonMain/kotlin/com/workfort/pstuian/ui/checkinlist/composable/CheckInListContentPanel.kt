@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.checkinlist.composable
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,8 +46,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
+import com.workfort.pstuian.ui.checkinlist.displaydata.CheckInDisplayData
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
 import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
@@ -89,14 +89,14 @@ internal fun CheckInListContentPanel(
         )
 
         when {
-            uiState.checkInList.isEmpty() && uiState.isCheckInListLoading -> {
+            uiState.otherCheckIns.isEmpty() && uiState.isCheckInListLoading -> {
                 CheckInListGridShimmer(modifier = Modifier.fillMaxSize())
             }
             else -> {
                 CheckInListScrollableGrid(
                     modifier = Modifier.fillMaxSize(),
-                    checkInList = uiState.checkInList,
-                    currentUserId = uiState.currentUserId,
+                    currentUserCheckIn = uiState.currentUserCheckIn,
+                    otherCheckIns = uiState.otherCheckIns,
                     isContentLoading = uiState.isCheckInListLoading,
                     onUiEvent = onUiEvent,
                 )
@@ -178,8 +178,8 @@ private fun CheckInListItemShimmer() {
 @Composable
 private fun CheckInListScrollableGrid(
     modifier: Modifier,
-    checkInList: List<CheckIn>,
-    currentUserId: Int?,
+    currentUserCheckIn: CheckInDisplayData?,
+    otherCheckIns: List<CheckInDisplayData>,
     isContentLoading: Boolean,
     onUiEvent: (CheckInListUiEvent) -> Unit,
 ) {
@@ -195,22 +195,22 @@ private fun CheckInListScrollableGrid(
         }
     }
 
-    LaunchedEffect(shouldLoadMore, isContentLoading, checkInList.size) {
+    LaunchedEffect(shouldLoadMore, isContentLoading, otherCheckIns.size) {
         val canRequestMore =
-            shouldLoadMore && !isContentLoading && checkInList.isNotEmpty()
-        if (canRequestMore && lastLoadMoreRequestedAtSize != checkInList.size) {
-            lastLoadMoreRequestedAtSize = checkInList.size
+            shouldLoadMore && !isContentLoading && otherCheckIns.isNotEmpty()
+        if (canRequestMore && lastLoadMoreRequestedAtSize != otherCheckIns.size) {
+            lastLoadMoreRequestedAtSize = otherCheckIns.size
             onUiEvent(CheckInListUiEvent.OnLoadMore)
         }
     }
 
     CheckInListView(
         modifier = modifier,
-        checkInList = checkInList,
-        currentUserId = currentUserId,
+        currentUserCheckIn = currentUserCheckIn,
+        otherCheckIns = otherCheckIns,
         listState = listState,
-        isLoadingMore = isContentLoading && checkInList.isNotEmpty(),
-        onClickItem = { onUiEvent(CheckInListUiEvent.OnClickItem(it)) },
+        isLoadingMore = isContentLoading && otherCheckIns.isNotEmpty(),
+        onClickItem = { onUiEvent(CheckInListUiEvent.OnClickCheckInItem(it)) },
         onClickCheckInSelf = { onUiEvent(CheckInListUiEvent.OnClickCheckIn) },
     )
 }
@@ -218,20 +218,13 @@ private fun CheckInListScrollableGrid(
 @Composable
 private fun CheckInListView(
     modifier: Modifier,
-    checkInList: List<CheckIn>,
-    currentUserId: Int?,
+    currentUserCheckIn: CheckInDisplayData?,
+    otherCheckIns: List<CheckInDisplayData>,
     listState: LazyGridState,
     isLoadingMore: Boolean,
-    onClickItem: (CheckIn) -> Unit,
+    onClickItem: (CheckInDisplayData) -> Unit,
     onClickCheckInSelf: () -> Unit,
 ) {
-    val currentUserCheckIn = currentUserId?.let { userId ->
-        checkInList.firstOrNull { it.userId == userId }
-    }
-    val otherCheckIns = currentUserCheckIn?.let { current ->
-        checkInList.filterNot { it.id == current.id }
-    } ?: checkInList
-    val checkInDisplayDataList = otherCheckIns.map { it.toDisplayData() }
 
     LazyVerticalGrid(
         modifier = modifier,
@@ -241,26 +234,29 @@ private fun CheckInListView(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        currentUserCheckIn?.let { currentUserItem ->
-            gridItems(items = listOf(currentUserItem.toDisplayData())) { displayData ->
-                CheckInListItemView(
-                    item = displayData,
-                    onClickItem = { onClickItem(currentUserItem) },
-                )
-            }
-        } ?: run {
+        // current user check in item
+        if (currentUserCheckIn == null) {
             gridItems(items = listOf(Unit)) {
                 CheckInSelfActionCard(onClick = onClickCheckInSelf)
             }
+        } else {
+            gridItems(listOf(currentUserCheckIn)) { item ->
+                CheckInListItemView(
+                    item = item,
+                    onClickItem = { onClickItem(item) },
+                )
+            }
         }
-        gridItems(checkInDisplayDataList) { item ->
+
+        // other check in items
+        gridItems(otherCheckIns) { item ->
             CheckInListItemView(
                 item = item,
-                onClickItem = {
-                    otherCheckIns.firstOrNull { it.id == item.id }?.let(onClickItem)
-                },
+                onClickItem = { onClickItem(item) },
             )
         }
+
+        // load more items
         if (isLoadingMore) {
             gridItems(List(2) { it }) { _ ->
                 CheckInListItemShimmer()
@@ -364,7 +360,7 @@ private fun CheckInListItemView(
                 LoadAsyncImage(
                     modifier = Modifier
                         .fillMaxSize(),
-                    url = item.imageUrl,
+                    url = item.checkIn.imageUrl,
                     placeholder = Res.drawable.img_placeholder_profile,
                     contentScale = ContentScale.Crop,
                 )
@@ -382,37 +378,18 @@ private fun CheckInListItemView(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = item.name,
+                    text = item.checkIn.name,
                     style = TextStyle.title3.copy(color = AppColors.textPrimary),
                     textAlign = TextAlign.Center,
                 )
                 Text(
-                    text = item.batch,
+                    text = item.checkIn.batch,
                     style = TextStyle.body2.copy(color = AppColors.textSecondary),
                     textAlign = TextAlign.Center,
                 )
             }
         }
     }
-}
-
-private data class CheckInDisplayData(
-    val id: Int,
-    val name: String,
-    val batch: String,
-    val imageUrl: String?,
-    val isOnline: Boolean,
-)
-
-private fun CheckIn.toDisplayData(): CheckInDisplayData {
-    return CheckInDisplayData(
-        id = id,
-        name = name,
-        batch = batch,
-        imageUrl = imageUrl,
-        // TODO replace with real online status value when API supports it.
-        isOnline = false,
-    )
 }
 
 @Composable

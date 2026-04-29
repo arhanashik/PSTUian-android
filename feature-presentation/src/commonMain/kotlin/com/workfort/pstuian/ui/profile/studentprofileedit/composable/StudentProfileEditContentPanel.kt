@@ -152,10 +152,10 @@ private fun AcademicInfoEditPanel(
             AuthUnderlinedField(
                 modifier = Modifier.weight(1f),
                 label = stringResource(Res.string.hint_id),
-                value = profile.student.studentId.toString(),
+                value = profile.student.id.toString(),
                 onValueChange = { raw ->
                     raw.ifEmpty { "0" }.toIntOrNull()?.let { newId ->
-                        val newProfile = profile.copy(student = profile.student.copy(studentId = newId))
+                        val newProfile = profile.copy(student = profile.student.copy(id = newId))
                         onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
                     }
                 },

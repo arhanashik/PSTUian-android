@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,7 +52,6 @@ import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_blood_group
 import pstuian.feature_presentation.generated.resources.txt_id
-import pstuian.feature_presentation.generated.resources.txt_registration_number
 
 @Composable
 fun StudentsContentPanel(
@@ -313,7 +312,7 @@ private fun StudentListItemView(
                 StudentMetricCard(
                     modifier = Modifier.weight(1f),
                     label = stringResource(Res.string.txt_id),
-                    value = student.studentId.toString(),
+                    value = student.id.toString(),
                 )
                 StudentMetricCard(
                     modifier = Modifier.weight(1f),
