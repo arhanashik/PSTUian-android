@@ -1,4 +1,5 @@
-package com.workfort.pstuian.featuredomain.model
+package com.workfort.pstuian.ui.changepassword.screendata
+
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -30,7 +31,7 @@ data class ChangePasswordInputError(
         )
     }
 
-    fun isNotEmpty(): Boolean = oldPassword.isNotEmpty() ||
+    fun hasError(): Boolean = oldPassword.isNotEmpty() ||
             newPassword.isNotEmpty() ||
             confirmPassword.isNotEmpty()
 }

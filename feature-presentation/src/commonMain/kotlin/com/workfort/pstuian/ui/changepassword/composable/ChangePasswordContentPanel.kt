@@ -33,8 +33,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.ChangePasswordInput
-import com.workfort.pstuian.featuredomain.model.ChangePasswordInputError
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInputError
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordScreenPanel
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiState
@@ -56,12 +56,11 @@ import pstuian.feature_presentation.generated.resources.hint_old_password
 
 @Composable
 internal fun ChangePasswordContentPanel(
-    modifier: Modifier = Modifier,
     uiState: ChangePasswordUiState.Content,
     changePasswordHeaderTitle: String,
     onUiEvent: (ChangePasswordUiEvent) -> Unit,
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
         val panel = uiState.activePanel
 
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {

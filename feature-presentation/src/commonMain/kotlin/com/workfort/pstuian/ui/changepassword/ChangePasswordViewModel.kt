@@ -3,8 +3,8 @@ package com.workfort.pstuian.ui.changepassword
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.ChangePasswordInput
-import com.workfort.pstuian.featuredomain.model.ChangePasswordInputError
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInputError
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -70,7 +70,7 @@ class ChangePasswordViewModel(
         val validationError = input.validate()
         uiStateMachine.updateInput(input, validationError)
 
-        if (validationError.isNotEmpty()) return
+        if (validationError.hasError()) return
 
         val userType = settingsRepository.getUserType() ?: return
 

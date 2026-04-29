@@ -6,8 +6,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.tooling.preview.Preview
-import com.workfort.pstuian.featuredomain.model.ChangePasswordInput
-import com.workfort.pstuian.featuredomain.model.ChangePasswordInputError
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInputError
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordScreenPanel
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent

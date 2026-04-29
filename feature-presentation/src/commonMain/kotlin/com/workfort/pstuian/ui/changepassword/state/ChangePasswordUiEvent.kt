@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.changepassword.state
 
-import com.workfort.pstuian.featuredomain.model.ChangePasswordInput
+import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordScreenPanel
 
 sealed class ChangePasswordUiEvent {
