@@ -79,6 +79,7 @@ private val CheckInCardTextPadding = PaddingValues(
     end = CheckInCardContentPadding,
     bottom = CheckInCardContentPadding,
 )
+private val CheckInAvatarOuterSize = 80.dp
 
 private val OfflineStatusLightGray = Color(0xFFD6D6D6)
 
@@ -265,26 +266,28 @@ private fun CheckInListItemShimmer() {
         ) {
             Box(
                 modifier = Modifier
-                    .size(88.dp)
+                    .size(CheckInAvatarOuterSize)
                     .clip(CircleShape)
                     .shimmerAnimation(),
             )
         }
         Column(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(CheckInCardTextPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(10.dp)
+                    .height(11.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .shimmerAnimation(),
             )
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.45f)
-                    .height(8.dp)
+                    .height(9.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .shimmerAnimation(),
             )
