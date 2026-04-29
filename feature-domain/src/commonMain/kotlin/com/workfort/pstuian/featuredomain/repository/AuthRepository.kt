@@ -44,10 +44,12 @@ interface AuthRepository {
     suspend fun signOut(userType: UserType, fromAllDevice: Boolean = false): DomainResult<Unit>
 
     suspend fun changePassword(
+        email: String,
         userType: UserType,
         oldPassword: String,
         newPassword: String,
     ): DomainResult<Unit>
+
     suspend fun resetPassword(email: String): DomainResult<Unit>
     suspend fun sendVerificationEmail(email: String, password: String): DomainResult<Unit>
 

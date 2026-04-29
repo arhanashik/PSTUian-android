@@ -178,27 +178,21 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun changePassword(
+        email: String,
         userType: UserType,
         oldPassword: String,
         newPassword: String,
     ): DomainResult<Unit> {
         // validate device
         val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
-        val authUser = getAuthUser() ?: return DomainResult.failure(invalidAuthUser)
 
-        return helper.changePassword(
-            userType.type,
-            authUser.email,
-            oldPassword,
-            newPassword,
-            deviceId
-        )
+        val result = helper.changePassword(email, userType.type, oldPassword, newPassword, deviceId)
             .toDomainResult(domainErrorMapper)
-            .onSuccess { authToken ->
-                sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
-                DomainResult.success(Unit)
-            }
-            .map { } // No need to return any data
+            .onSuccess { sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, it) }
+
+        return if (result.isFailure) result.map { } else {
+            firebaseAuthDataSource.updatePassword(oldPassword, newPassword).toDomainResult(domainErrorMapper)
+        }
     }
 
     override suspend fun resetPassword(email: String): DomainResult<Unit> {

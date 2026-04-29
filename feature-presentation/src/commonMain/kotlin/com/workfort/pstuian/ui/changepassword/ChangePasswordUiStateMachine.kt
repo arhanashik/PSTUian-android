@@ -15,43 +15,70 @@ class ChangePasswordUiStateMachine : UiStateMachine<ChangePasswordUiState> {
     private val _state = MutableStateFlow<ChangePasswordUiState>(ChangePasswordUiState.None)
     override val uiState: StateFlow<ChangePasswordUiState> = _state.asStateFlow()
 
+    private var changePasswordInputCache: ChangePasswordInput = ChangePasswordInput.INITIAL
+    private var changePasswordInputErrorCache: ChangePasswordInputError = ChangePasswordInputError.INITIAL
+    private var draftResetEmail: String = ""
+    private var emailValidationErrorCache: String = ""
+
     private fun updateUiState(
         updater: ChangePasswordUiState.() -> ChangePasswordUiState,
     ) = _state.update(updater)
 
-    fun showLoading(isLoading: Boolean) = updateUiState {
-        when (this) {
-            is ChangePasswordUiState.None -> this
-            is ChangePasswordUiState.Content -> copy(isOperationLoading = isLoading)
-        }
-    }
-
     fun setInitialContent() = updateUiState {
-        ChangePasswordUiState.Content()
+        ChangePasswordUiState.ChangePassword()
     }
 
-    fun updateInput(input: ChangePasswordInput, validationError: ChangePasswordInputError) = updateUiState {
+    fun updateChangePasswordInput(input: ChangePasswordInput) = updateUiState {
         when (this) {
-            is ChangePasswordUiState.None -> this
-            is ChangePasswordUiState.Content -> copy(
-                input = input,
-                validationError = validationError,
-            )
+            is ChangePasswordUiState.ChangePassword -> copy(input = input)
+            else -> this
         }
     }
 
-    fun setActivePanel(panel: ChangePasswordScreenPanel) =
-        updateUiState {
-            when (this) {
+    fun updateChangePasswordInputError(validationError: ChangePasswordInputError) = updateUiState {
+        when (this) {
+            is ChangePasswordUiState.ChangePassword -> copy(validationError = validationError)
+            else -> this
+        }
+    }
+
+    fun transitionTo(panel: ChangePasswordScreenPanel) = updateUiState {
+        when (panel) {
+            ChangePasswordScreenPanel.ChangePassword -> when (this) {
                 is ChangePasswordUiState.None -> this
-                is ChangePasswordUiState.Content -> copy(activePanel = panel)
+                is ChangePasswordUiState.ChangePassword -> this
+                is ChangePasswordUiState.ResetPassword -> {
+                    draftResetEmail = email
+                    emailValidationErrorCache = validationError
+                    ChangePasswordUiState.ChangePassword(changePasswordInputCache, changePasswordInputErrorCache)
+                }
+            }
+            ChangePasswordScreenPanel.ResetPassword -> when (this) {
+                is ChangePasswordUiState.None -> this
+                is ChangePasswordUiState.ResetPassword -> this
+                is ChangePasswordUiState.ChangePassword -> {
+                    changePasswordInputCache = input
+                    changePasswordInputErrorCache = validationError
+                    ChangePasswordUiState.ResetPassword(
+                        email = draftResetEmail,
+                        validationError = emailValidationErrorCache,
+                    )
+                }
             }
         }
+    }
 
     fun updateResetEmail(email: String) = updateUiState {
         when (this) {
-            is ChangePasswordUiState.None -> this
-            is ChangePasswordUiState.Content -> copy(resetEmail = email)
+            is ChangePasswordUiState.ResetPassword -> copy(email = email)
+            else -> this
+        }
+    }
+
+    fun updateResetEmailValidationError(validationError: String) = updateUiState {
+        when (this) {
+            is ChangePasswordUiState.ResetPassword -> copy(validationError = validationError)
+            else -> this
         }
     }
 }

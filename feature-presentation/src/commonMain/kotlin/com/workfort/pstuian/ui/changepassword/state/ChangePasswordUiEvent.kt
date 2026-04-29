@@ -7,7 +7,7 @@ sealed class ChangePasswordUiEvent {
     data object BackClicked : ChangePasswordUiEvent()
     data class PanelChanged(val panel: ChangePasswordScreenPanel) : ChangePasswordUiEvent()
     data class ResetEmailChanged(val email: String) : ChangePasswordUiEvent()
-    data object SendPasswordResetClicked : ChangePasswordUiEvent()
-    data class InputChanged(val input: ChangePasswordInput) : ChangePasswordUiEvent()
-    data object ChangePasswordClicked : ChangePasswordUiEvent()
+    data class SendPasswordResetClicked(val email: String) : ChangePasswordUiEvent()
+    data class ChangePasswordInputChanged(val input: ChangePasswordInput) : ChangePasswordUiEvent()
+    data class ChangePasswordClicked(val input: ChangePasswordInput) : ChangePasswordUiEvent()
 }

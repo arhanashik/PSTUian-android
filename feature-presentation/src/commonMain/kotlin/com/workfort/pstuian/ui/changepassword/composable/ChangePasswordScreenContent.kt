@@ -3,17 +3,18 @@ package com.workfort.pstuian.ui.changepassword.composable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.tooling.preview.Preview
+import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInputError
-import com.workfort.pstuian.featuredomain.model.ThemeMode
-import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordScreenPanel
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiState
 import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
 import org.jetbrains.compose.resources.stringResource
@@ -24,6 +25,7 @@ import pstuian.feature_presentation.generated.resources.txt_change_password
 @Composable
 internal fun ChangePasswordScreenContent(
     uiState: ChangePasswordUiState,
+    snackbarHostState: SnackbarHostState,
     onUiEvent: (ChangePasswordUiEvent) -> Unit,
 ) {
     val statusBarColor = MaterialTheme.colorScheme.primary
@@ -37,18 +39,25 @@ internal fun ChangePasswordScreenContent(
 
     val changePasswordTitle = stringResource(Res.string.txt_change_password)
 
-    AppScaffold(contentWindowInsets = WindowInsets(0)) {
-        when (val state = uiState) {
+    AppScaffold(
+        contentWindowInsets = WindowInsets(0),
+        snackbarHost = { AppSnackbarHost(snackbarHostState) },
+    ) {
+        when (uiState) {
             is ChangePasswordUiState.None -> Unit
-            is ChangePasswordUiState.Content -> {
+            is ChangePasswordUiState.ChangePassword -> {
                 ChangePasswordContentPanel(
-                    uiState = state,
+                    uiState = uiState,
                     changePasswordHeaderTitle = changePasswordTitle,
                     onUiEvent = onUiEvent,
                 )
-                if (state.isOperationLoading) {
-                    ShowLoaderDialog()
-                }
+            }
+            is ChangePasswordUiState.ResetPassword -> {
+                ChangePasswordContentPanel(
+                    uiState = uiState,
+                    changePasswordHeaderTitle = changePasswordTitle,
+                    onUiEvent = onUiEvent,
+                )
             }
         }
     }
@@ -59,12 +68,11 @@ internal fun ChangePasswordScreenContent(
 private fun ChangePasswordPanelPreview() {
     AppTheme {
         ChangePasswordScreenContent(
-            uiState = ChangePasswordUiState.Content(
-                activePanel = ChangePasswordScreenPanel.ChangePassword,
+            uiState = ChangePasswordUiState.ChangePassword(
                 input = ChangePasswordInput.INITIAL,
                 validationError = ChangePasswordInputError.INITIAL,
-                isOperationLoading = false,
             ),
+            snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
     }
@@ -75,12 +83,11 @@ private fun ChangePasswordPanelPreview() {
 private fun ChangePasswordPanelDarkPreview() {
     AppTheme(theme = ThemeMode.Dark) {
         ChangePasswordScreenContent(
-            uiState = ChangePasswordUiState.Content(
-                activePanel = ChangePasswordScreenPanel.ChangePassword,
+            uiState = ChangePasswordUiState.ChangePassword(
                 input = ChangePasswordInput.INITIAL,
                 validationError = ChangePasswordInputError.INITIAL,
-                isOperationLoading = false,
             ),
+            snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
     }
@@ -91,8 +98,7 @@ private fun ChangePasswordPanelDarkPreview() {
 private fun ChangePasswordWithValidationErrorsPreview() {
     AppTheme {
         ChangePasswordScreenContent(
-            uiState = ChangePasswordUiState.Content(
-                activePanel = ChangePasswordScreenPanel.ChangePassword,
+            uiState = ChangePasswordUiState.ChangePassword(
                 input = ChangePasswordInput(
                     oldPassword = "ab",
                     newPassword = "",
@@ -103,8 +109,8 @@ private fun ChangePasswordWithValidationErrorsPreview() {
                     newPassword = "*Required",
                     confirmPassword = "*Confirm password should be same as new password",
                 ),
-                isOperationLoading = false,
             ),
+            snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
     }
@@ -115,11 +121,11 @@ private fun ChangePasswordWithValidationErrorsPreview() {
 private fun ResetPasswordPanelPreview() {
     AppTheme {
         ChangePasswordScreenContent(
-            uiState = ChangePasswordUiState.Content(
-                activePanel = ChangePasswordScreenPanel.ResetPassword,
-                resetEmail = "student@example.com",
-                isOperationLoading = false,
+            uiState = ChangePasswordUiState.ResetPassword(
+                email = "student@example.com",
+                validationError = "",
             ),
+            snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
     }
@@ -130,11 +136,11 @@ private fun ResetPasswordPanelPreview() {
 private fun ResetPasswordPanelDarkPreview() {
     AppTheme(theme = ThemeMode.Dark) {
         ChangePasswordScreenContent(
-            uiState = ChangePasswordUiState.Content(
-                activePanel = ChangePasswordScreenPanel.ResetPassword,
-                resetEmail = "",
-                isOperationLoading = false,
+            uiState = ChangePasswordUiState.ResetPassword(
+                email = "",
+                validationError = "*Required",
             ),
+            snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
     }

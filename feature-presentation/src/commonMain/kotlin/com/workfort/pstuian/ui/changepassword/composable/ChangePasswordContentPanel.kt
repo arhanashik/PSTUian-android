@@ -56,13 +56,64 @@ import pstuian.feature_presentation.generated.resources.hint_old_password
 
 @Composable
 internal fun ChangePasswordContentPanel(
-    uiState: ChangePasswordUiState.Content,
+    uiState: ChangePasswordUiState,
     changePasswordHeaderTitle: String,
     onUiEvent: (ChangePasswordUiEvent) -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        val panel = uiState.activePanel
+    when (uiState) {
+        is ChangePasswordUiState.None -> Unit
+        is ChangePasswordUiState.ChangePassword ->
+            ChangePasswordAuthScaffold(
+                panel = ChangePasswordScreenPanel.ChangePassword,
+                changePasswordHeaderTitle = changePasswordHeaderTitle,
+                onBackFromChangePanel = { onUiEvent(ChangePasswordUiEvent.BackClicked) },
+                onBackFromResetPanel = {
+                    onUiEvent(ChangePasswordUiEvent.PanelChanged(ChangePasswordScreenPanel.ChangePassword))
+                },
+                formContent = {
+                    ChangePasswordAuthForm(
+                        input = uiState.input,
+                        validationError = uiState.validationError,
+                        onUiEvent = onUiEvent,
+                    )
+                },
+            )
+        is ChangePasswordUiState.ResetPassword ->
+            ChangePasswordAuthScaffold(
+                panel = ChangePasswordScreenPanel.ResetPassword,
+                changePasswordHeaderTitle = changePasswordHeaderTitle,
+                onBackFromChangePanel = { onUiEvent(ChangePasswordUiEvent.BackClicked) },
+                onBackFromResetPanel = {
+                    onUiEvent(ChangePasswordUiEvent.PanelChanged(ChangePasswordScreenPanel.ChangePassword))
+                },
+                formContent = {
+                    ForgotPasswordAuthForm(
+                        email = uiState.email,
+                        validationError = uiState.validationError,
+                        onEmailChange = { onUiEvent(ChangePasswordUiEvent.ResetEmailChanged(it)) },
+                        onResetPasswordClicked = {
+                            onUiEvent(ChangePasswordUiEvent.SendPasswordResetClicked(uiState.email))
+                        },
+                        onSwitchToSignIn = {
+                            onUiEvent(ChangePasswordUiEvent.PanelChanged(ChangePasswordScreenPanel.ChangePassword))
+                        },
+                        bottomLinkPrefix = "Remembered old password?",
+                        bottomLinkAction = "Change",
+                    )
+                },
+            )
+    }
+}
 
+@Composable
+private fun ChangePasswordAuthScaffold(
+    panel: ChangePasswordScreenPanel,
+    changePasswordHeaderTitle: String,
+    onBackFromChangePanel: () -> Unit,
+    onBackFromResetPanel: () -> Unit,
+    formContent: @Composable () -> Unit,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val totalHeight = maxHeight
             val targetGreenHeight = when (panel) {
@@ -83,30 +134,10 @@ internal fun ChangePasswordContentPanel(
                 greenHeight = greenHeight,
                 panel = panel,
                 changePasswordHeaderTitle = changePasswordHeaderTitle,
-                onBackFromChangePanel = { onUiEvent(ChangePasswordUiEvent.BackClicked) },
-                onBackFromResetPanel = {
-                    onUiEvent(ChangePasswordUiEvent.PanelChanged(ChangePasswordScreenPanel.ChangePassword))
-                },
+                onBackFromChangePanel = onBackFromChangePanel,
+                onBackFromResetPanel = onBackFromResetPanel,
             ) {
-                when (panel) {
-                    ChangePasswordScreenPanel.ChangePassword -> ChangePasswordAuthForm(
-                        input = uiState.input,
-                        validationError = uiState.validationError,
-                        onUiEvent = onUiEvent,
-                    )
-                    ChangePasswordScreenPanel.ResetPassword -> ForgotPasswordAuthForm(
-                        email = uiState.resetEmail,
-                        onEmailChange = { onUiEvent(ChangePasswordUiEvent.ResetEmailChanged(it)) },
-                        onResetPasswordClicked = {
-                            onUiEvent(ChangePasswordUiEvent.SendPasswordResetClicked)
-                        },
-                        onSwitchToSignIn = {
-                            onUiEvent(ChangePasswordUiEvent.PanelChanged(ChangePasswordScreenPanel.ChangePassword))
-                        },
-                        bottomLinkPrefix = "Remembered old password?",
-                        bottomLinkAction = "Change",
-                    )
-                }
+                formContent()
             }
         }
     }
@@ -125,7 +156,7 @@ private fun ChangePasswordAuthForm(
     val confirmFocus = remember { FocusRequester() }
 
     LaunchedEffect(newInput) {
-        onUiEvent(ChangePasswordUiEvent.InputChanged(newInput))
+        onUiEvent(ChangePasswordUiEvent.ChangePasswordInputChanged(newInput))
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -173,7 +204,7 @@ private fun ChangePasswordAuthForm(
             )
             Spacer(modifier = Modifier.height(24.dp))
             ActionButton(label = "UPDATE PASSWORD", icon = Icons.AutoMirrored.Filled.ArrowForward) {
-                onUiEvent(ChangePasswordUiEvent.ChangePasswordClicked)
+                onUiEvent(ChangePasswordUiEvent.ChangePasswordClicked(newInput))
             }
             Spacer(modifier = Modifier.height(16.dp))
             AuthBottomLink(

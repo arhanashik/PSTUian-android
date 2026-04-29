@@ -142,8 +142,8 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun changePassword(
-        userType: String,
         email: String,
+        userType: String,
         oldPassword: String,
         newPassword: String,
         deviceId: String,
@@ -151,8 +151,8 @@ class AuthApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.CHANGE_PASSWORD,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.EMAIL, email)
+                append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.OLD_PASSWORD, oldPassword)
                 append(NetworkConst.Params.NEW_PASSWORD, newPassword)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)

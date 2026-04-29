@@ -104,6 +104,7 @@ fun SignInContentPanel(
                     is SignInUiState.ForgotPasswordPanel -> {
                         ForgotPasswordAuthForm(
                             email = uiState.email,
+                            validationError = "",
                             onEmailChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
                             onResetPasswordClicked = { onUiEvent(SignInUiEvent.ForgotPasswordClicked(uiState.email)) },
                             onSwitchToSignIn = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },

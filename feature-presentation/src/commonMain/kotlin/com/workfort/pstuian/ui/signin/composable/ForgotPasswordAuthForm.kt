@@ -24,6 +24,7 @@ import com.workfort.pstuian.ui.common.composable.ActionButton
 @Composable
 internal fun ForgotPasswordAuthForm(
     email: String,
+    validationError: String,
     onEmailChange: (String) -> Unit,
     onResetPasswordClicked: () -> Unit,
     onSwitchToSignIn: () -> Unit,
@@ -42,6 +43,8 @@ internal fun ForgotPasswordAuthForm(
                 focusRequester = emailFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                isError = validationError.isNotEmpty(),
+                supportingText = validationError.takeIf { it.isNotEmpty() },
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(

@@ -133,14 +133,14 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
     }
 
     override suspend fun changePassword(
-        userType: String,
         email: String,
+        userType: String,
         oldPassword: String,
         newPassword: String,
         deviceId: String,
     ): NetworkResult<String> {
         return runCatching {
-            service.changePassword(userType, email, oldPassword, newPassword, deviceId).toNetworkResult()
+            service.changePassword(email, userType, oldPassword, newPassword, deviceId).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

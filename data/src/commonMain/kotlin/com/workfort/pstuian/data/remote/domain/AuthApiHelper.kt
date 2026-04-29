@@ -55,8 +55,8 @@ interface AuthApiHelper {
     ): NetworkResult<Unit>
 
     suspend fun changePassword(
-        userType: String,
         email: String,
+        userType: String,
         oldPassword: String,
         newPassword: String,
         deviceId: String,

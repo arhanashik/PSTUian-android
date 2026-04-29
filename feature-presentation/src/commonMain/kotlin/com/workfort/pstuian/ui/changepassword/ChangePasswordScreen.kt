@@ -1,13 +1,17 @@
 package com.workfort.pstuian.ui.changepassword
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import com.workfort.pstuian.ui.changepassword.composable.ChangePasswordScreenContent
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordMessageState
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordNavigationState
+import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import org.koin.compose.koinInject
@@ -16,13 +20,14 @@ import org.koin.compose.koinInject
 fun ChangePasswordScreen(viewModel: ChangePasswordViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val navigation by viewModel.navigation.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.onUiReady()
     }
 
-    ChangePasswordScreenContent(uiState = uiState, onUiEvent = viewModel::onUiEvent)
+    ChangePasswordScreenContent(uiState = uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
 
     HandleMessageState(message, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
@@ -35,15 +40,18 @@ private fun HandleMessageState(
 ) {
     message?.let {
         when (it) {
+            is ChangePasswordMessageState.Loader -> {
+                ShowLoaderDialog(cancelable = it.cancelable)
+            }
+            is ChangePasswordMessageState.Success -> {
+                ShowSuccessDialog(message = it.message, onDismiss = onMessageHandled, onConfirm = onMessageHandled)
+            }
             is ChangePasswordMessageState.Error -> {
                 ShowErrorDialog(
                     message = it.message,
                     onConfirm = onMessageHandled,
                     onDismiss = onMessageHandled,
                 )
-            }
-            is ChangePasswordMessageState.Success -> {
-                ShowSuccessDialog(message = it.message, onConfirm = onMessageHandled)
             }
         }
     }
