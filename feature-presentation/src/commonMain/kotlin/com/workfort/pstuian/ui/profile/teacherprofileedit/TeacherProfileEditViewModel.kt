@@ -135,7 +135,7 @@ class TeacherProfileEditViewModel(
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     stateMachine.showLoading(isLoading = true)
                     teacherRepository.changeAcademicInfo(
-                        userId = currentProfile.teacher.userId,
+                        authUserId = currentProfile.teacher.authUserId,
                         name = newProfile.teacher.name,
                         designation = newProfile.teacher.designation,
                         department = newProfile.teacher.department,
@@ -172,7 +172,7 @@ class TeacherProfileEditViewModel(
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     stateMachine.showLoading(isLoading = true)
                     teacherRepository.changeConnectInfo(
-                        userId = currentProfile.teacher.userId,
+                        authUserId = currentProfile.teacher.authUserId,
                         address = newProfile.teacher.address.orEmpty(),
                         phone = newProfile.teacher.phone.orEmpty(),
                         oldEmail = currentProfile.teacher.email,

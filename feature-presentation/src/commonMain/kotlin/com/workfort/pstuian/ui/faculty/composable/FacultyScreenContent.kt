@@ -64,7 +64,7 @@ private fun mockBatches() = listOf(
 
 private fun mockTeachers() = listOf(
     User.Teacher(
-        userId = "t-11",
+        authUserId = "t-11",
         name = "Dr. Farhan Ahmed",
         email = "farhan.ahmed@pstu.ac.bd",
         facultyId = 1,
@@ -73,7 +73,7 @@ private fun mockTeachers() = listOf(
         bio = null,
         blood = "A+",
         imageUrl = null,
-        id = 11,
+        userId = 11,
         designation = "Professor",
         linkedIn = null,
         fbLink = null,
@@ -95,7 +95,7 @@ private fun mockCourses() = listOf(
 
 private fun mockEmployees() = listOf(
     User.Employee(
-        userId = "e-7",
+        authUserId = "e-7",
         name = "Mizanur Rahman",
         email = "mizanur@pstu.ac.bd",
         facultyId = 1,
@@ -104,7 +104,7 @@ private fun mockEmployees() = listOf(
         bio = null,
         blood = "B+",
         imageUrl = null,
-        id = 7,
+        userId = 7,
         designation = "Office Assistant",
         department = "Admin",
     ),

@@ -26,8 +26,8 @@ internal fun StudentProfileScreenContent(
 
 private fun mockProfile(withBio: Boolean = true) = UserProfile.StudentProfile(
     student = User.Student(
-        userId = "42",
-        id = 42,
+        authUserId = "42",
+        userId = 42,
         name = "Diana Richards",
         email = "diana.richards@pstu.ac.bd",
         facultyId = 1,

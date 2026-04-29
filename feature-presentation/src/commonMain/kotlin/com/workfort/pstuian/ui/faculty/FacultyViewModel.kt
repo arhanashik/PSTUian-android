@@ -62,11 +62,11 @@ class FacultyViewModel(
     }
 
     private fun onClickTeacher(teacher: User.Teacher) {
-        _navigation.update { FacultyNavigationState.GoToTeacherProfileScreen(teacher.id) }
+        _navigation.update { FacultyNavigationState.GoToTeacherProfileScreen(teacher.userId) }
     }
 
     private fun onClickEmployee(employee: User.Employee) {
-        _navigation.update { FacultyNavigationState.GoToEmployeeProfileScreen(employee.id) }
+        _navigation.update { FacultyNavigationState.GoToEmployeeProfileScreen(employee.userId) }
     }
 
     private fun onClickCall(phoneNumber: String) {

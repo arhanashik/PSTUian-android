@@ -3,8 +3,8 @@ package com.workfort.pstuian.featuredomain.model
 import kotlinx.serialization.Serializable
 
 sealed interface User {
-    val userId: String
-    val id: Int
+    val authUserId: String
+    val userId: Int
     val name: String
     val email: String
     val facultyId: Int
@@ -16,8 +16,8 @@ sealed interface User {
 
     @Serializable
     data class Student(
-        override val userId: String,
-        override val id: Int,
+        override val authUserId: String,
+        override val userId: Int, // studentId
         override val name: String,
         override val email: String,
         override val facultyId: Int,
@@ -36,8 +36,8 @@ sealed interface User {
 
     @Serializable
     data class Teacher(
-        override val userId: String,
-        override val id: Int,
+        override val authUserId: String,
+        override val userId: Int,
         override val name: String,
         override val email: String,
         override val facultyId: Int,
@@ -55,8 +55,8 @@ sealed interface User {
 
     @Serializable
     data class Employee(
-        override val userId: String,
-        override val id: Int,
+        override val authUserId: String,
+        override val userId: Int,
         override val name: String,
         override val email: String,
         override val facultyId: Int,

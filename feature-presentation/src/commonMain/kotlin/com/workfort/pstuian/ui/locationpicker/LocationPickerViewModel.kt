@@ -103,7 +103,7 @@ class LocationPickerViewModel(
     }
 
     fun createNewLocation(name: String) {
-        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userId = sharedScreenData.getCurrentUser()?.authUserId ?: return
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
         viewModelScope.launch {

@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -33,7 +32,7 @@ class CheckInListViewModel(
     private val uiStateMachine: CheckInListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<CheckInListUiState>(uiStateMachine) {
-    private val currentUserId = sharedScreenData.getCurrentUser()?.id ?: 0
+    private val currentUserId = sharedScreenData.getCurrentUser()?.userId ?: 0
 
     private val _message = MutableStateFlow<CheckInListMessageState?>(null)
     val message: StateFlow<CheckInListMessageState?> = _message
@@ -236,7 +235,7 @@ class CheckInListViewModel(
     }
 
     fun checkIn(locationId: Int) {
-        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userId = sharedScreenData.getCurrentUser()?.authUserId ?: return
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
         // TODO show loading

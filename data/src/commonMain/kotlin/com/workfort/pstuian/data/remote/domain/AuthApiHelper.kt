@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.remote.domain
 
-import com.workfort.pstuian.data.model.ConfigDto
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.model.TeacherDto
@@ -41,15 +40,15 @@ interface AuthApiHelper {
         deviceId: String,
     ): NetworkResult<TeacherDto>
 
-    suspend fun updateUserId(
-        userId: String,
+    suspend fun updateAuthUserId(
+        authUserId: String,
         userType: String,
         email: String,
         password: String,
     ): NetworkResult<String>
 
     suspend fun signOut(
-        userId: String,
+        authUserId: String,
         userType: String,
         deviceId: String,
         fromAllDevice: Boolean = false,

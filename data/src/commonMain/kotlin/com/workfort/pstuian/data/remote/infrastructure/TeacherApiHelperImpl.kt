@@ -26,26 +26,26 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
         }
     }
 
-    override suspend fun changeProfileImage(id: Int, imageUrl: String): Boolean {
-        val response = service.changeProfileImage(id, imageUrl)
+    override suspend fun changeProfileImage(authUserId: String, imageUrl: String): Boolean {
+        val response = service.changeProfileImage(authUserId, imageUrl)
         if(!response.isSuccess) throw Exception(response.message)
         return response.isSuccess
     }
 
-    override suspend fun changeName(id: Int, name: String): Boolean {
-        val response = service.changeName(id, name)
+    override suspend fun changeName(authUserId: String, name: String): Boolean {
+        val response = service.changeName(authUserId, name)
         if(!response.isSuccess) throw Exception(response.message)
         return response.isSuccess
     }
 
-    override suspend fun changeBio(id: Int, bio: String): Boolean {
-        val response = service.changeBio(id, bio)
+    override suspend fun changeBio(authUserId: String, bio: String): Boolean {
+        val response = service.changeBio(authUserId, bio)
         if(!response.isSuccess) throw Exception(response.message)
         return response.isSuccess
     }
 
     override suspend fun changeAcademicInfo(
-        userId: String,
+        authUserId: String,
         name: String,
         designation: String,
         department: String,
@@ -54,7 +54,7 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     ): NetworkResult<TeacherDto> {
         return runCatching {
             service.changeAcademicInfo(
-                userId,
+                authUserId,
                 name,
                 designation,
                 department,
@@ -67,7 +67,7 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     }
 
     override suspend fun changeConnectInfo(
-        userId: String,
+        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
@@ -77,7 +77,7 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     ): NetworkResult<TeacherDto> {
         return runCatching {
             service.changeConnectInfo(
-                userId,
+                authUserId,
                 address,
                 phone,
                 oldEmail,

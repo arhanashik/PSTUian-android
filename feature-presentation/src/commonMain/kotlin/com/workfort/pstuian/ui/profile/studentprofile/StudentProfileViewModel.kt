@@ -107,7 +107,7 @@ class StudentProfileViewModel(
                         connectContents = studentProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
                     )
-                    observeUserPresence(profile.student.userId, profile.isSignedIn)
+                    observeUserPresence(profile.student.authUserId, profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load student profile"
@@ -180,7 +180,7 @@ class StudentProfileViewModel(
         profileCache?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.ImageUploadScreen(
-                    userId = student.userId,
+                    userId = student.authUserId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -202,7 +202,7 @@ class StudentProfileViewModel(
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.student?.let { student ->
-            _navigation.update { StudentProfileNavigationState.StudentProfileEditScreen(student.id) }
+            _navigation.update { StudentProfileNavigationState.StudentProfileEditScreen(student.userId) }
         }
     }
 
@@ -212,7 +212,7 @@ class StudentProfileViewModel(
         profileCache?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyBloodDonationListScreen(
-                    userId = student.userId,
+                    userId = student.authUserId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -229,7 +229,7 @@ class StudentProfileViewModel(
         profileCache?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.DownloadCvScreen(
-                    userId = student.userId,
+                    userId = student.authUserId,
                     userType = UserType.STUDENT,
                     url = url,
                 )
@@ -243,7 +243,7 @@ class StudentProfileViewModel(
         profileCache?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.UploadCvScreen(
-                    userId = student.userId,
+                    userId = student.authUserId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -256,7 +256,7 @@ class StudentProfileViewModel(
         profileCache?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyCheckInListScreen(
-                    userId = student.userId,
+                    userId = student.authUserId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -269,7 +269,7 @@ class StudentProfileViewModel(
         profileCache?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyDeviceListScreen(
-                    userId = student.userId,
+                    userId = student.authUserId,
                     userType = UserType.STUDENT,
                 )
             }
@@ -291,7 +291,7 @@ class StudentProfileViewModel(
             _message.update { StudentProfileMessageState.Loading(cancelable = false) }
             viewModelScope.launch {
                 runCatching {
-                    studentRepo.changeProfileImage(cache.student.userId, imageUrl)
+                    studentRepo.changeProfileImage(cache.student.authUserId, imageUrl)
                 }.onSuccess {
                     isChangingPhoto = false
                     _message.update {
@@ -312,7 +312,7 @@ class StudentProfileViewModel(
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                studentRepo.changeBio(student.userId, newBio)
+                studentRepo.changeBio(student.authUserId, newBio)
             }.onSuccess {
                 val message = "Bio updated successfully"
                 _message.update { StudentProfileMessageState.Success(message) }

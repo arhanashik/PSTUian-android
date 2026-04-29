@@ -4,7 +4,6 @@ import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
-import com.workfort.pstuian.data.remote.firebase.FirebaseUserPresenceDataSource
 import com.workfort.pstuian.featuredomain.model.AuthUser
 import com.workfort.pstuian.featuredomain.model.DomainError
 import com.workfort.pstuian.featuredomain.model.DomainErrorCode
@@ -234,7 +233,7 @@ class AuthRepositoryImpl(
 
         if (result.isSuccess) {
             result.getOrNull()?.let { authUser ->
-                helper.updateUserId(authUser.userId, userType, email, password) // update auth user id
+                helper.updateAuthUserId(authUser.userId, userType, email, password) // update auth user id
                 firebaseAuthDataSource.signOut() // user should sign in after email verification
             }
         }

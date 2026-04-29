@@ -9,14 +9,14 @@ interface StudentRepository {
 
     suspend fun getUserByEmail(email: String): DomainResult<User.Student>
 
-    suspend fun changeProfileImage(userId: String, imageUrl: String): DomainResult<Unit>
+    suspend fun changeProfileImage(authUserId: String, imageUrl: String): DomainResult<Unit>
 
-    suspend fun changeName(userId: String, name: String): DomainResult<Unit>
+    suspend fun changeName(authUserId: String, name: String): DomainResult<Unit>
 
-    suspend fun changeBio(userId: String, bio: String): DomainResult<Unit>
+    suspend fun changeBio(authUserId: String, bio: String): DomainResult<Unit>
 
     suspend fun changeAcademicInfo(
-        userId: String,
+        authUserId: String,
         name: String,
         studentOldId: Int,
         studentId: Int,
@@ -28,7 +28,7 @@ interface StudentRepository {
     ): DomainResult<User.Student>
 
     suspend fun changeConnectInfo(
-        userId: String,
+        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,

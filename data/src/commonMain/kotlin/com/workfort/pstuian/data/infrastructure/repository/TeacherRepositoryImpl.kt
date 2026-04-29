@@ -24,8 +24,7 @@ class TeacherRepositoryImpl(
     }
 
     override suspend fun changeProfileImage(teacher: User.Teacher, imageUrl: String): Boolean {
-        val id = teacher.userId.toInt()
-        val isChanged = helper.changeProfileImage(id, imageUrl)
+        val isChanged = helper.changeProfileImage(teacher.authUserId, imageUrl)
         if (isChanged) {
             val updated = teacher.copy(imageUrl = imageUrl)
             cache.add(updated)
@@ -34,8 +33,7 @@ class TeacherRepositoryImpl(
     }
 
     override suspend fun changeName(teacher: User.Teacher, name: String): Boolean {
-        val id = teacher.userId.toInt()
-        val isChanged = helper.changeName(id, name)
+        val isChanged = helper.changeName(teacher.authUserId, name)
         if (isChanged) {
             val updated = teacher.copy(name = name)
             cache.add(updated)
@@ -44,8 +42,7 @@ class TeacherRepositoryImpl(
     }
 
     override suspend fun changeBio(teacher: User.Teacher, bio: String): Boolean {
-        val id = teacher.userId.toInt()
-        val isChanged = helper.changeBio(id, bio)
+        val isChanged = helper.changeBio(teacher.authUserId, bio)
         if (isChanged) {
             val updated = teacher.copy(bio = bio)
             cache.add(updated)
@@ -54,7 +51,7 @@ class TeacherRepositoryImpl(
     }
 
     override suspend fun changeAcademicInfo(
-        userId: String,
+        authUserId: String,
         name: String,
         designation: String,
         department: String,
@@ -62,7 +59,7 @@ class TeacherRepositoryImpl(
         facultyId: Int
     ): DomainResult<User.Teacher> {
         return helper.changeAcademicInfo(
-            userId,
+            authUserId,
             name,
             designation,
             department,
@@ -72,13 +69,13 @@ class TeacherRepositoryImpl(
             .toDomainResult(domainErrorMapper)
             .map { it.toModel() }
             .onSuccess { updatedData ->
-                cache.removeAll { it.userId == userId }
+                cache.removeAll { it.authUserId == authUserId }
                 cache.add(updatedData)
             }
     }
 
     override suspend fun changeConnectInfo(
-        userId: String,
+        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
@@ -87,7 +84,7 @@ class TeacherRepositoryImpl(
         fbLink: String
     ): DomainResult<User.Teacher> {
         return helper.changeConnectInfo(
-            userId,
+            authUserId,
             address,
             phone,
             oldEmail,
@@ -98,7 +95,7 @@ class TeacherRepositoryImpl(
             .toDomainResult(domainErrorMapper)
             .map { it.toModel() }
             .onSuccess { updatedData ->
-                cache.removeAll { it.userId == userId }
+                cache.removeAll { it.authUserId == authUserId }
                 cache.add(updatedData)
             }
     }

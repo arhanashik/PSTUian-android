@@ -16,7 +16,7 @@ interface TeacherRepository {
     suspend fun changeBio(teacher: User.Teacher, bio: String): Boolean
 
     suspend fun changeAcademicInfo(
-        userId: String,
+        authUserId: String,
         name: String,
         designation: String,
         department: String,
@@ -25,7 +25,7 @@ interface TeacherRepository {
     ): DomainResult<User.Teacher>
 
     suspend fun changeConnectInfo(
-        userId: String,
+        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,

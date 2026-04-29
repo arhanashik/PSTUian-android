@@ -103,7 +103,7 @@ class TeacherProfileViewModel(
                         connectContents = teacherProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
                     )
-                    observeUserPresence(profile.teacher.userId, profile.isSignedIn)
+                    observeUserPresence(profile.teacher.authUserId, profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load teacher profile"
@@ -172,7 +172,7 @@ class TeacherProfileViewModel(
         profileCache?.teacher?.let { teacher ->
             _navigation.update {
                 TeacherProfileNavigationState.ImageUploadScreen(
-                    userId = teacher.userId,
+                    userId = teacher.authUserId,
                     userType = UserType.TEACHER,
                 )
             }
@@ -194,7 +194,7 @@ class TeacherProfileViewModel(
 
         profileCache?.teacher?.let { teacher ->
             _navigation.update {
-                TeacherProfileNavigationState.TeacherProfileEditScreen(userId = teacher.id)
+                TeacherProfileNavigationState.TeacherProfileEditScreen(userId = teacher.userId)
             }
         }
     }
@@ -211,7 +211,7 @@ class TeacherProfileViewModel(
         profileCache?.teacher?.let { teacher ->
             _navigation.update {
                 TeacherProfileNavigationState.MyDeviceListScreen(
-                    userId = teacher.userId,
+                    userId = teacher.authUserId,
                     userType = UserType.TEACHER,
                 )
             }

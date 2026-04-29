@@ -94,16 +94,16 @@ class AuthApiService(private val client: HttpClient) {
         ).body()
     }
 
-    suspend fun updateUserId(
-        userId: String,
+    suspend fun updateAuthUserId(
+        authUserId: String,
         userType: String,
         email: String,
         password: String,
     ): ApiResponse<String> {
         return client.submitForm(
-            url = NetworkConst.Remote.Api.Auth.UPDATE_USER_ID,
+            url = NetworkConst.Remote.Api.Auth.UPDATE_AUTH_USER_ID,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.EMAIL, email)
                 append(NetworkConst.Params.PASSWORD, password)
@@ -112,14 +112,14 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun signOut(
-        userId: String,
+        authUserId: String,
         userType: String,
         deviceId: String,
     ): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_OUT,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
             }
@@ -127,14 +127,14 @@ class AuthApiService(private val client: HttpClient) {
     }
 
     suspend fun signOutFromAllDevice(
-        userId: String,
+        authUserId: String,
         userType: String,
         deviceId: String,
     ): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_OUT_FROM_ALL_DEVICE,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, userId)
+                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
             }

@@ -25,46 +25,46 @@ class TeacherApiService(private val client: HttpClient) {
     }
 
     suspend fun changeProfileImage(
-        id: Int,
+        authUserId: String,
         imageUrl: String,
     ): ApiResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.CHANGE_PROFILE_IMAGE,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, id.toString())
+                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.IMAGE_URL, imageUrl)
             }
         ).body()
     }
 
     suspend fun changeName(
-        id: Int,
+        authUserId: String,
         name: String
     ): ApiResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_NAME,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, id.toString())
+                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.NAME, name)
             }
         ).body()
     }
 
     suspend fun changeBio(
-        id: Int,
+        authUserId: String,
         bio: String
     ): ApiResponse<String> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_BIO,
             formParameters = parameters {
-                append(NetworkConst.Params.ID, id.toString())
+                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.BIO, bio)
             }
         ).body()
     }
 
     suspend fun changeAcademicInfo(
-        userId: String,
+        authUserId: String,
         name: String,
         designation: String,
         department: String,
@@ -74,7 +74,7 @@ class TeacherApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_ACADEMIC_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.NAME, name)
                 append(NetworkConst.Params.DESIGNATION, designation)
                 append(NetworkConst.Params.DEPARTMENT, department)
@@ -85,7 +85,7 @@ class TeacherApiService(private val client: HttpClient) {
     }
 
     suspend fun changeConnectInfo(
-        userId: String,
+        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
@@ -96,7 +96,7 @@ class TeacherApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_CONNECT_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.ADDRESS, address)
                 append(NetworkConst.Params.PHONE, phone)
                 append(NetworkConst.Params.OLD_EMAIL, oldEmail)

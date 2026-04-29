@@ -54,8 +54,8 @@ internal fun StudentsScreenContent(
 
 private fun mockStudents() = listOf(
     User.Student(
-        userId = "st-1",
-        id = 1201,
+        authUserId = "st-1",
+        userId = 1201,
         name = "Nafis Rahman",
         email = "nafis.rahman@pstu.ac.bd",
         facultyId = 1,
@@ -72,8 +72,8 @@ private fun mockStudents() = listOf(
         cvLink = null,
     ),
     User.Student(
-        userId = "st-2",
-        id = 1202,
+        authUserId = "st-2",
+        userId = 1202,
         name = "Sadia Islam",
         email = "sadia.islam@pstu.ac.bd",
         facultyId = 1,

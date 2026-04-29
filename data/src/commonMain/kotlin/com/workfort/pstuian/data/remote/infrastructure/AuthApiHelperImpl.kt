@@ -99,30 +99,30 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         }
     }
 
-    override suspend fun updateUserId(
-        userId: String,
+    override suspend fun updateAuthUserId(
+        authUserId: String,
         userType: String,
         email: String,
         password: String
     ): NetworkResult<String> {
         return runCatching {
-            service.updateUserId(userId, userType, email, password).toNetworkResult()
+            service.updateAuthUserId(authUserId, userType, email, password).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
     override suspend fun signOut(
-        userId: String,
+        authUserId: String,
         userType: String,
         deviceId: String,
         fromAllDevice: Boolean,
     ): NetworkResult<Unit> {
         return runCatching {
             val response = if (fromAllDevice) {
-                service.signOutFromAllDevice(userId, userType, deviceId)
+                service.signOutFromAllDevice(authUserId, userType, deviceId)
             } else {
-                service.signOut(userId, userType, deviceId)
+                service.signOut(authUserId, userType, deviceId)
             }
 
             return if (response.isSuccess) NetworkResult.success(Unit)

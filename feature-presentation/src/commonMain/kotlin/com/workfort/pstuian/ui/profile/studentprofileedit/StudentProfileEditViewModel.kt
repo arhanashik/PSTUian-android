@@ -171,10 +171,10 @@ class StudentProfileEditViewModel(
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     stateMachine.showLoading(isLoading = true)
                     studentRepo.changeAcademicInfo(
-                        userId = currentProfile.student.userId,
+                        authUserId = currentProfile.student.authUserId,
                         name = newProfile.student.name,
-                        studentOldId = currentProfile.student.id,
-                        studentId = newProfile.student.id,
+                        studentOldId = currentProfile.student.userId,
+                        studentId = newProfile.student.userId,
                         reg = newProfile.student.reg,
                         blood = newProfile.student.blood.orEmpty(),
                         facultyId = newProfile.student.facultyId,
@@ -213,7 +213,7 @@ class StudentProfileEditViewModel(
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     stateMachine.showLoading(isLoading = true)
                     studentRepo.changeConnectInfo(
-                        userId = currentProfile.student.userId,
+                        authUserId = currentProfile.student.authUserId,
                         address = newProfile.student.address.orEmpty(),
                         phone = newProfile.student.phone.orEmpty(),
                         oldEmail = currentProfile.student.email,
@@ -238,7 +238,7 @@ class StudentProfileEditViewModel(
 
     fun validateAcademic(profile: UserProfile.StudentProfile) = StudentAcademicInfoInputError.INITIAL.copy(
         name = if (profile.student.name.isEmpty()) "*Required" else "",
-        id = if (profile.student.id == 0) "*Required" else "",
+        id = if (profile.student.userId == 0) "*Required" else "",
         reg = if (profile.student.reg.isEmpty()) "*Required" else "",
         session = if (profile.student.session.isEmpty()) "*Required" else "",
     )

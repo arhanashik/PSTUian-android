@@ -125,7 +125,7 @@ class FacultyRepositoryImpl(
     }
 
     override suspend fun getEmployee(id: Int): DomainResult<User.Employee> {
-        employeesCache.values.flatten().firstOrNull { it.id == id }?.let { batch ->
+        employeesCache.values.flatten().firstOrNull { it.userId == id }?.let { batch ->
             return DomainResult.success(batch)
         }
 

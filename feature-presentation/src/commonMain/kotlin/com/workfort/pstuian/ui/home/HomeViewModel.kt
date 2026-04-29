@@ -46,10 +46,11 @@ class HomeViewModel(
     private val _navigation = MutableStateFlow<HomeNavigationState?>(null)
     val navigation: StateFlow<HomeNavigationState?> = _navigation.asStateFlow()
 
-    private fun isSignedInUser(): Boolean = authRepository.isUserSignedIn()
+    private val isSignedInUser: Boolean
+        get() = authRepository.isUserSignedIn()
 
     override fun onUiReady() {
-        uiStateMachine.setInitialContent(isSignedInUser())
+        uiStateMachine.setInitialContent(isSignedInUser)
         observeSignedInUser()
         loadSliders()
         loadFaculties()
@@ -179,7 +180,7 @@ class HomeViewModel(
         if (user == null || userType == null) {
             _message.update { HomeMessageState.SignInNecessary }
         } else {
-            _navigation.update { HomeNavigationState.GoToProfileScreen(user.id, userType) }
+            _navigation.update { HomeNavigationState.GoToProfileScreen(user.userId, userType) }
         }
     }
 
@@ -198,7 +199,7 @@ class HomeViewModel(
     }
 
     private fun onClickFaculty(faculty: Faculty) {
-        if (isSignedInUser()) {
+        if (isSignedInUser) {
             _navigation.update { HomeNavigationState.FacultyScreen(faculty) }
         } else {
             _message.update { HomeMessageState.SignInNecessary }
@@ -214,7 +215,7 @@ class HomeViewModel(
     }
 
     private fun onClickRequestBloodDonation() {
-        if (isSignedInUser()) {
+        if (isSignedInUser) {
             _navigation.update { HomeNavigationState.BloodDonationRequestScreen }
         } else {
             _message.update { HomeMessageState.SignInNecessary }
@@ -222,7 +223,7 @@ class HomeViewModel(
     }
 
     private fun onClickCheckIn() {
-        if (isSignedInUser()) {
+        if (isSignedInUser) {
             _navigation.update { HomeNavigationState.CheckInScreen }
         } else {
             _message.update { HomeMessageState.SignInNecessary }

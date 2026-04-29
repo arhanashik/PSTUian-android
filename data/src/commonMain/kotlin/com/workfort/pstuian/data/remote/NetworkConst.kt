@@ -7,6 +7,7 @@ object NetworkConst {
         const val OLD_ID = "old_id"
         const val STUDENT_ID = "student_id"
         const val USER_ID = "user_id"
+        const val AUTH_USER_ID = "auth_user_id"
         const val REQUEST_ID = "request_id"
         const val LOCATION_ID = "location_id"
 
@@ -120,7 +121,7 @@ object NetworkConst {
                 const val SIGN_IN = "${AUTH_API_PATH}signIn"
                 const val SIGN_UP_STUDENT = "${AUTH_API_PATH}signUpStudent"
                 const val SIGN_UP_TEACHER = "${AUTH_API_PATH}signUpTeacher"
-                const val UPDATE_USER_ID = "${AUTH_API_PATH}updateUserId"
+                const val UPDATE_AUTH_USER_ID = "${AUTH_API_PATH}updateAuthUserId"
                 const val SIGN_OUT = "${AUTH_API_PATH}signOut"
                 const val SIGN_OUT_FROM_ALL_DEVICE = "${AUTH_API_PATH}signOutFromAllDevice"
                 const val CHANGE_PASSWORD = "${AUTH_API_PATH}changePassword"

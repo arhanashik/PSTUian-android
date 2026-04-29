@@ -77,7 +77,7 @@ class MyDeviceListViewModel(
     }
 
     private fun loadDeviceList(isRefresh: Boolean) {
-        val userId = screenData.getCurrentUser()?.userId ?: return
+        val userId = screenData.getCurrentUser()?.authUserId ?: return
         val userType = screenData.getCurrentUserType() ?: return
 
         val currentState = stateMachine.uiState.value

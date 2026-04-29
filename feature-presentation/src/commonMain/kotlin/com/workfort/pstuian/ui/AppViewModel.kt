@@ -44,7 +44,7 @@ class AppViewModel(
                 sharedScreenData.setCurrentUser(signInUser)
 
                 // update user status as online
-                signInUser?.userId?.let { userId ->
+                signInUser?.authUserId?.let { userId ->
                     userPresenceRepository.observeAndSyncUserPresence(userId)
                 }
             }

@@ -45,7 +45,7 @@ class NotificationViewModel(
     private val notificationsCache = ArrayList<NotificationEntity>()
 
     private fun getAll(isRefresh: Boolean = true) {
-        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userId = sharedScreenData.getCurrentUser()?.authUserId ?: return
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
         if (isRefresh) {

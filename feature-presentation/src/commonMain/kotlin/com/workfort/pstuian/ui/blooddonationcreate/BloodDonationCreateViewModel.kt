@@ -72,7 +72,7 @@ class BloodDonationCreateViewModel(
     private fun onSendClicked() {
         val input = uiState.value as? BloodDonationCreateUiState.Content ?: return
         val requestId = input.requestId
-        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userId = sharedScreenData.getCurrentUser()?.authUserId ?: return
         val userType = sharedScreenData.getCurrentUserType() ?: return
         val date = input.date ?: return
         val info = input.info

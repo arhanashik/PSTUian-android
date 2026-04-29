@@ -18,7 +18,7 @@ class GetTeacherProfileUserUseCase(
 
         val teacher = teacherRepository.getUser(id).getOrElse { return DomainResult.failure(it) }
         val faculty = facultyRepository.getFaculty(teacher.facultyId).getOrElse { return DomainResult.failure(it) }
-        val isSignedIn = teacher.userId == authUser?.userId
+        val isSignedIn = teacher.authUserId == authUser?.userId
 
         return DomainResult.success(UserProfile.TeacherProfile(teacher, faculty, isSignedIn))
     }

@@ -19,7 +19,7 @@ class GetStudentProfileUserUseCase(
         val student = studentRepository.getUser(studentId).getOrElse { return DomainResult.failure(it) }
         val faculty = facultyRepository.getFaculty(student.facultyId).getOrElse { return DomainResult.failure(it) }
         val batch = facultyRepository.getBatch(student.batchId).getOrElse { return DomainResult.failure(it) }
-        val isSignedIn = student.userId == authUser?.userId
+        val isSignedIn = student.authUserId == authUser?.userId
 
         return DomainResult.success(
             UserProfile.StudentProfile(student, faculty, batch, isSignedIn),

@@ -26,20 +26,20 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         }
     }
 
-    override suspend fun changeProfileImage(userId: String, imageUrl: String): NetworkResult<Unit> {
-        return service.changeProfileImage(userId, imageUrl).toNetworkResult()
+    override suspend fun changeProfileImage(authUserId: String, imageUrl: String): NetworkResult<Unit> {
+        return service.changeProfileImage(authUserId, imageUrl).toNetworkResult()
     }
 
-    override suspend fun changeName(userId: String, name: String): NetworkResult<Unit> {
-        return service.changeName(userId, name).toNetworkResult()
+    override suspend fun changeName(authUserId: String, name: String): NetworkResult<Unit> {
+        return service.changeName(authUserId, name).toNetworkResult()
     }
 
-    override suspend fun changeBio(userId: String, bio: String): NetworkResult<Unit> {
-        return service.changeBio(userId, bio).toNetworkResult()
+    override suspend fun changeBio(authUserId: String, bio: String): NetworkResult<Unit> {
+        return service.changeBio(authUserId, bio).toNetworkResult()
     }
 
     override suspend fun changeAcademicInfo(
-        userId: String,
+        authUserId: String,
         name: String,
         studentOldId: Int,
         studentId: Int,
@@ -51,7 +51,7 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     ): NetworkResult<StudentDto> {
         return runCatching {
             service.changeAcademicInfo(
-                userId = userId,
+                authUserId = authUserId,
                 name = name,
                 studentOldId = studentOldId,
                 studentId = studentId,
@@ -67,7 +67,7 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     }
 
     override suspend fun changeConnectInfo(
-        userId: String,
+        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
@@ -78,7 +78,7 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     ): NetworkResult<StudentDto> {
         return runCatching {
             service.changeConnectInfo(
-                userId = userId,
+                authUserId = authUserId,
                 address = address,
                 phone = phone,
                 oldEmail = oldEmail,

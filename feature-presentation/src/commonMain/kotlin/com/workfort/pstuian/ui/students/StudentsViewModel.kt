@@ -59,7 +59,7 @@ class StudentsViewModel(
     fun onNavigationHandled() = _navigation.update { null }
 
     private fun onClickStudent(student: User.Student) {
-        _navigation.update { StudentsNavigationState.GoToStudentProfile(student.id) }
+        _navigation.update { StudentsNavigationState.GoToStudentProfile(student.userId) }
     }
 
     private fun onClickCall(phoneNumber: String) {

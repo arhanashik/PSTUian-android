@@ -9,30 +9,30 @@ interface TeacherApiHelper {
     suspend fun getByEmail(email: String): NetworkResult<TeacherDto>
 
     suspend fun changeProfileImage(
-        id: Int,
+        authUserId: String,
         imageUrl: String,
     ): Boolean
 
-    suspend fun changeName(id: Int, name: String): Boolean
+    suspend fun changeName(authUserId: String, name: String): Boolean
 
-    suspend fun changeBio(id: Int, bio: String): Boolean
+    suspend fun changeBio(authUserId: String, bio: String): Boolean
 
     suspend fun changeAcademicInfo(
-        userId: String,
+        authUserId: String,
         name: String,
         designation: String,
         department: String,
         blood: String,
-        facultyId: Int
+        facultyId: Int,
     ): NetworkResult<TeacherDto>
 
     suspend fun changeConnectInfo(
-        userId: String,
+        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
         email: String,
         linkedIn: String,
-        fbLink: String
+        fbLink: String,
     ): NetworkResult<TeacherDto>
 }

@@ -312,7 +312,7 @@ private fun StudentListItemView(
                 StudentMetricCard(
                     modifier = Modifier.weight(1f),
                     label = stringResource(Res.string.txt_id),
-                    value = student.id.toString(),
+                    value = student.userId.toString(),
                 )
                 StudentMetricCard(
                     modifier = Modifier.weight(1f),

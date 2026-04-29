@@ -27,8 +27,8 @@ data class TeacherDto(
     var imageUrl: String?,
 ) {
     fun toModel() = User.Teacher(
-        userId = userId,
-        id = id,
+        authUserId = userId,
+        userId = id,
         name = name,
         designation = designation,
         bio = bio,
@@ -45,8 +45,8 @@ data class TeacherDto(
 }
 
 fun User.Teacher.toDto() = TeacherDto(
-    userId = userId,
-    id = id,
+    userId = authUserId,
+    id = userId,
     name = name,
     designation = designation,
     bio = bio,

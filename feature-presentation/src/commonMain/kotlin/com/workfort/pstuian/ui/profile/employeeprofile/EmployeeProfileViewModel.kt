@@ -101,7 +101,7 @@ class EmployeeProfileViewModel(
                         connectContents = employeeProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
                     )
-                    observeUserPresence(profile.employee.userId, profile.isSignedIn)
+                    observeUserPresence(profile.employee.authUserId, profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load employee profile"
@@ -172,7 +172,7 @@ class EmployeeProfileViewModel(
         profileCache?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.ImageUploadScreen(
-                    userId = employee.userId,
+                    userId = employee.authUserId,
                     userType = UserType.EMPLOYEE,
                 )
             }
@@ -194,7 +194,7 @@ class EmployeeProfileViewModel(
 
         profileCache?.employee?.let { employee ->
             _navigation.update {
-                EmployeeProfileNavigationState.EmployeeProfileEditScreen(userId = employee.userId)
+                EmployeeProfileNavigationState.EmployeeProfileEditScreen(userId = employee.authUserId)
             }
         }
     }
@@ -211,7 +211,7 @@ class EmployeeProfileViewModel(
         profileCache?.employee?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.MyDeviceListScreen(
-                    userId = employee.userId,
+                    userId = employee.authUserId,
                     userType = UserType.EMPLOYEE,
                 )
             }
