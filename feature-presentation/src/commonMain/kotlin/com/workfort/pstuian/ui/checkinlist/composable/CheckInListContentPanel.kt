@@ -1,13 +1,17 @@
 package com.workfort.pstuian.ui.checkinlist.composable
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,28 +46,135 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
 import com.workfort.pstuian.ui.checkinlist.displaydata.CheckInDisplayData
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
-import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
+import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
 import com.workfort.pstuian.ui.common.composable.OnlineOfflineStatusLabel
-import com.workfort.pstuian.ui.common.composable.StatusPillLabelText
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
-import org.jetbrains.compose.resources.stringResource
-import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.img_placeholder_profile
-import pstuian.feature_presentation.generated.resources.txt_call
 import androidx.compose.foundation.lazy.grid.items as gridItems
+import kotlinx.coroutines.delay
 
 private val ScreenHorizontalPadding = 16.dp
+private const val GridColumnCount = 3
 private val SectionTopPadding = 8.dp
 private val ChipRowVerticalPadding = 2.dp
+private val CheckInCardContentPadding = 8.dp
+private val CheckInCardTextPadding = PaddingValues(
+    start = CheckInCardContentPadding,
+    top = 0.dp,
+    end = CheckInCardContentPadding,
+    bottom = CheckInCardContentPadding,
+)
+
+private val OfflineStatusLightGray = Color(0xFFD6D6D6)
+
+private const val CheckInNameMarqueeMillis = 2400
+private const val CheckInNameMarqueePauseMillis = 400
+
+@Composable
+private fun CheckInNameSingleLineMaybeMarquee(
+    name: String,
+    modifier: Modifier = Modifier,
+) {
+    val textStyle = TextStyle.label3.copy(
+        fontWeight = FontWeight.SemiBold,
+        color = AppColors.textPrimary,
+    )
+    val density = LocalDensity.current
+    val textMeasurer = rememberTextMeasurer()
+    val textLayout = textMeasurer.measure(
+        text = AnnotatedString(name),
+        style = textStyle,
+        overflow = TextOverflow.Clip,
+        softWrap = false,
+        maxLines = 1,
+        constraints = Constraints(maxWidth = Constraints.Infinity),
+    )
+    val textHeightDp = with(density) { textLayout.size.height.toDp() }
+    val textWidthPx = textLayout.size.width.toFloat()
+    val anim = remember { Animatable(0f) }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(textHeightDp),
+    ) {
+        val maxWidthPx = with(density) { maxWidth.toPx() }
+        val overflowPx = if (maxWidthPx < 0.5f) {
+            0f
+        } else {
+            (textWidthPx - maxWidthPx).coerceAtLeast(0f)
+        }
+
+        LaunchedEffect(name, maxWidthPx, overflowPx) {
+            if (overflowPx <= 0f) {
+                anim.snapTo(0f)
+                return@LaunchedEffect
+            }
+            while (true) {
+                anim.snapTo(0f)
+                anim.animateTo(
+                    targetValue = overflowPx,
+                    animationSpec = tween(
+                        durationMillis = CheckInNameMarqueeMillis,
+                        easing = LinearEasing,
+                    ),
+                )
+                anim.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(
+                        durationMillis = CheckInNameMarqueeMillis,
+                        easing = LinearEasing,
+                    ),
+                )
+                delay(CheckInNameMarqueePauseMillis.toLong())
+            }
+        }
+
+        if (overflowPx <= 0f) {
+            Text(
+                text = name,
+                style = textStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clipToBounds(),
+            ) {
+                Text(
+                    text = name,
+                    style = textStyle,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Clip,
+                    modifier = Modifier.graphicsLayer { translationX = -anim.value },
+                )
+            }
+        }
+    }
+}
 
 @Composable
 internal fun CheckInListFullScreenShimmer(modifier: Modifier = Modifier) {
@@ -132,7 +243,7 @@ private fun CheckInLocationListShimmer(modifier: Modifier = Modifier) {
 private fun CheckInListGridShimmer(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         modifier = modifier,
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(GridColumnCount),
         contentPadding = PaddingValues(ScreenHorizontalPadding),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -152,10 +263,16 @@ private fun CheckInListItemShimmer() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(12.dp))
-                .shimmerAnimation(),
-        )
+                .padding(CheckInCardContentPadding),
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(88.dp)
+                    .clip(CircleShape)
+                    .shimmerAnimation(),
+            )
+        }
         Column(
             modifier = Modifier.padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -163,14 +280,14 @@ private fun CheckInListItemShimmer() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(14.dp)
+                    .height(10.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .shimmerAnimation(),
             )
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.45f)
-                    .height(12.dp)
+                    .height(8.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .shimmerAnimation(),
             )
@@ -215,7 +332,6 @@ private fun CheckInListScrollableGrid(
         listState = listState,
         isLoadingMore = isContentLoading && otherCheckIns.isNotEmpty(),
         onClickItem = { onUiEvent(CheckInListUiEvent.CheckInItemClicked(it)) },
-        onClickCall = { phoneNumber -> onUiEvent(CheckInListUiEvent.CallClicked(phoneNumber)) },
         onClickCheckInSelf = { onUiEvent(CheckInListUiEvent.CheckInClicked(selectedLocationId)) },
     )
 }
@@ -228,14 +344,13 @@ private fun CheckInListView(
     listState: LazyGridState,
     isLoadingMore: Boolean,
     onClickItem: (CheckInDisplayData) -> Unit,
-    onClickCall: (String) -> Unit,
     onClickCheckInSelf: () -> Unit,
 ) {
 
     LazyVerticalGrid(
         modifier = modifier,
         state = listState,
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(GridColumnCount),
         contentPadding = PaddingValues(ScreenHorizontalPadding),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -250,7 +365,6 @@ private fun CheckInListView(
                 CheckInListItemView(
                     item = item,
                     onClickItem = { onClickItem(item) },
-                    onClickCall = onClickCall,
                 )
             }
         }
@@ -260,13 +374,12 @@ private fun CheckInListView(
             CheckInListItemView(
                 item = item,
                 onClickItem = { onClickItem(item) },
-                onClickCall = onClickCall,
             )
         }
 
         // load more items
         if (isLoadingMore) {
-            gridItems(List(2) { it }) { _ ->
+            gridItems(List(GridColumnCount) { it }) { _ ->
                 CheckInListItemShimmer()
             }
         }
@@ -295,46 +408,68 @@ private fun CheckInSelfActionCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
-                contentAlignment = Alignment.Center,
+                    .padding(CheckInCardContentPadding),
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)),
-                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.align(Alignment.Center),
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(72.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer),
-                        contentAlignment = Alignment.Center,
+                            .border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = CircleShape,
+                            )
+                            .background(color = MaterialTheme.colorScheme.surface, shape = CircleShape)
+                            .padding(4.dp),
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Check In Here Icon",
-                            tint = AppColors.onPrimary,
-                            modifier = Modifier.size(40.dp),
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Check In Here Icon",
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.size(34.dp),
+                            )
+                        }
                     }
                 }
             }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(CheckInCardTextPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = "Check In Here",
-                    style = TextStyle.title3.copy(color = AppColors.textPrimary),
+                    style = TextStyle.label3.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = AppColors.textPrimary,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
                     text = "Tap to check in",
-                    style = TextStyle.body2.copy(color = AppColors.textSecondary),
+                    style = TextStyle.label3.copy(
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 9.sp,
+                        lineHeight = 12.sp,
+                        color = AppColors.textSecondary,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -345,10 +480,7 @@ private fun CheckInSelfActionCard(
 private fun CheckInListItemView(
     item: CheckInDisplayData,
     onClickItem: () -> Unit,
-    onClickCall: (String) -> Unit,
 ) {
-    val phoneNumber = item.checkIn.phone
-    val canShowCallButton = !phoneNumber.isNullOrBlank()
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -366,52 +498,55 @@ private fun CheckInListItemView(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
+                    .padding(CheckInCardContentPadding),
             ) {
-                LoadAsyncImage(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    url = item.checkIn.imageUrl,
-                    placeholder = Res.drawable.img_placeholder_profile,
-                    contentScale = ContentScale.Crop,
-                )
+                val ringBorderColor = if (item.isOnline) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    OfflineStatusLightGray
+                }
+                Box(
+                    modifier = Modifier.align(Alignment.Center),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .border(width = 2.dp, color = ringBorderColor, shape = CircleShape)
+                            .background(color = MaterialTheme.colorScheme.surface, shape = CircleShape)
+                            .padding(4.dp),
+                    ) {
+                        LoadAsyncUserImage(url = item.checkIn.imageUrl, size = 64.dp)
+                    }
+                }
                 OnlineOfflineStatusLabel(
                     isOnline = item.isOnline,
                     modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(6.dp),
+                        .align(Alignment.BottomCenter)
+                        .zIndex(1f),
                 )
-
-                if (canShowCallButton) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 6.dp, bottom = 4.dp)
-                            .clip(RoundedCornerShape(999.dp))
-                            .background(MaterialTheme.colorScheme.primary)
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
-                            .clickable { onClickCall(phoneNumber) },
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        StatusPillLabelText(text = stringResource(Res.string.txt_call))
-                    }
-                }
             }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(CheckInCardTextPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    text = item.checkIn.name,
-                    style = TextStyle.title3.copy(color = AppColors.textPrimary),
-                    textAlign = TextAlign.Center,
+                CheckInNameSingleLineMaybeMarquee(
+                    name = item.checkIn.name,
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
                     text = item.checkIn.batch,
-                    style = TextStyle.body2.copy(color = AppColors.textSecondary),
+                    style = TextStyle.label3.copy(
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 9.sp,
+                        lineHeight = 12.sp,
+                        color = AppColors.textSecondary,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }

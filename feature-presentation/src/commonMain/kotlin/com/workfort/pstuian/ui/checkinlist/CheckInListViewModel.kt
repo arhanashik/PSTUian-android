@@ -97,11 +97,9 @@ class CheckInListViewModel(
                 checkInLocationsCache,
                 selectedLocationId,
             ) { location ->
-                if (selectedLocationId != location.id) {
-                    _message.update {
-                        CheckInListMessageState.ConfirmCheckIn(location) {
-                            checkIn(location.id)
-                        }
+                _message.update {
+                    CheckInListMessageState.ConfirmCheckIn(location) {
+                        checkIn(location.id)
                     }
                 }
             }
