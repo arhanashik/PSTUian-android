@@ -1,9 +1,12 @@
 package com.workfort.pstuian.ui.checkinlist.composable
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
@@ -47,11 +50,13 @@ internal fun CheckInListScreenContent(
                 )
             }
             is CheckInListUiState.Error -> {
-                CheckInListCenterAction(
+                Column(
                     modifier = Modifier.fillMaxSize(),
-                    onClick = { onUiEvent(CheckInListUiEvent.CheckInClicked) },
-                    content = { AnimatedErrorView() },
-                )
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    AnimatedErrorView()
+                }
             }
         }
     }

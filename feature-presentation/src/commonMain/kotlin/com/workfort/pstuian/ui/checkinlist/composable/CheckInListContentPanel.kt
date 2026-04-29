@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
@@ -54,9 +53,9 @@ import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
 import com.workfort.pstuian.ui.common.composable.OnlineOfflineStatusLabel
 import com.workfort.pstuian.ui.common.composable.StatusPillLabelText
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
-import org.jetbrains.compose.resources.stringResource
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
+import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.img_placeholder_profile
 import pstuian.feature_presentation.generated.resources.txt_call
@@ -217,7 +216,7 @@ private fun CheckInListScrollableGrid(
         isLoadingMore = isContentLoading && otherCheckIns.isNotEmpty(),
         onClickItem = { onUiEvent(CheckInListUiEvent.CheckInItemClicked(it)) },
         onClickCall = { phoneNumber -> onUiEvent(CheckInListUiEvent.CallClicked(phoneNumber)) },
-        onClickCheckInSelf = { onUiEvent(CheckInListUiEvent.CheckInClicked) },
+        onClickCheckInSelf = { onUiEvent(CheckInListUiEvent.CheckInClicked(selectedLocationId)) },
     )
 }
 
@@ -315,7 +314,7 @@ private fun CheckInSelfActionCard(
                         Icon(
                             imageVector = Icons.Default.LocationOn,
                             contentDescription = "Check In Here Icon",
-                            tint = AppColors.primary,
+                            tint = AppColors.onPrimary,
                             modifier = Modifier.size(40.dp),
                         )
                     }
@@ -499,29 +498,6 @@ private fun CheckInListHeaderView(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-internal fun CheckInListCenterAction(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = ScreenHorizontalPadding),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        content()
-        Button(
-            modifier = Modifier.padding(top = 12.dp),
-            onClick = onClick,
-        ) {
-            Text(text = "Check In")
         }
     }
 }

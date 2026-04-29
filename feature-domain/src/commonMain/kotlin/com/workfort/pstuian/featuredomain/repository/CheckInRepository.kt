@@ -26,4 +26,6 @@ interface CheckInRepository {
     suspend fun updatePrivacy(checkInId: Int, privacy: String): DomainResult<CheckIn>
 
     suspend fun delete(checkInId: Int) : DomainResult<Unit>
+
+    fun clearCache()
 }

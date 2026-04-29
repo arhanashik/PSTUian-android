@@ -80,4 +80,9 @@ class CheckInRepositoryImpl(
     override suspend fun delete(checkInId: Int): DomainResult<Unit> {
         return helper.delete(checkInId).toDomainResult(domainErrorMapper)
     }
+
+    override fun clearCache() {
+        checkInsCache.clear()
+        checkInsForUserCache.clear()
+    }
 }

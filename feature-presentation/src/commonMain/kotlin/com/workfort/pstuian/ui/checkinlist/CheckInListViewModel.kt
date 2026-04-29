@@ -5,7 +5,6 @@ import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
-import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
@@ -63,7 +62,7 @@ class CheckInListViewModel(
             is CheckInListUiEvent.CheckInItemClicked -> onClickCheckInItem(event.item)
             is CheckInListUiEvent.LocationSelected -> onSelectLocation(event.locationId)
             is CheckInListUiEvent.CallClicked -> onClickCall(event.phoneNumber)
-            is CheckInListUiEvent.CheckInClicked -> onClickCheckIn()
+            is CheckInListUiEvent.CheckInClicked -> onClickCheckIn(event.selectedLocationId)
             is CheckInListUiEvent.OnLoadMoreLocations -> loadCheckInLocations(refresh = false)
             is CheckInListUiEvent.OnLoadMoreCheckIn -> loadCheckInList(event.locationId, refresh = false)
         }
@@ -92,21 +91,16 @@ class CheckInListViewModel(
         _message.update { CheckInListMessageState.Call(phoneNumber) }
     }
 
-    private fun onClickCheckIn() {
-        _message.update { CheckInListMessageState.Loading() }
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            val selectedLocationId = getOwnCheckInLocationId()
-            onMessageHandled()
-            _message.update {
-                CheckInListMessageState.CheckInLocationSelection(
-                    checkInLocationsCache,
-                    selectedLocationId,
-                ) { location ->
-                    if (selectedLocationId != location.id) {
-                        _message.update {
-                            CheckInListMessageState.ConfirmCheckIn(location) {
-                                checkIn(location.id)
-                            }
+    private fun onClickCheckIn(selectedLocationId: Int) {
+        _message.update {
+            CheckInListMessageState.CheckInLocationSelection(
+                checkInLocationsCache,
+                selectedLocationId,
+            ) { location ->
+                if (selectedLocationId != location.id) {
+                    _message.update {
+                        CheckInListMessageState.ConfirmCheckIn(location) {
+                            checkIn(location.id)
                         }
                     }
                 }
@@ -208,7 +202,7 @@ class CheckInListViewModel(
                 .onSuccess {
                     onMessageHandled()
                     _message.update { CheckInListMessageState.ShowSnackBar("Checked in successfully!") }
-                    sharedPrefRepository.putInt(SharedPrefKey.LAST_SHOWN_CHECK_IN_LOCATION_ID, locationId)
+                    checkInRepo.clearCache()
                     loadCheckInList(locationId, refresh = true)
                 }
                 .onFailure {

@@ -7,7 +7,7 @@ sealed interface CheckInListUiEvent {
     data class CheckInItemClicked(val item: CheckInDisplayData) : CheckInListUiEvent
     data class LocationSelected(val locationId: Int) : CheckInListUiEvent
     data class CallClicked(val phoneNumber: String) : CheckInListUiEvent
-    data object CheckInClicked : CheckInListUiEvent
+    data class CheckInClicked(val selectedLocationId: Int) : CheckInListUiEvent
     data object OnLoadMoreLocations : CheckInListUiEvent
     data class OnLoadMoreCheckIn(val locationId: Int) : CheckInListUiEvent
 }
