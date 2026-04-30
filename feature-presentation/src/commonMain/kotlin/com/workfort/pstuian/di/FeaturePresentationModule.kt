@@ -1,6 +1,7 @@
 package com.workfort.pstuian.di
 
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.model.AppLaunchDeepLinkController
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.AppViewModel
 import com.workfort.pstuian.ui.blooddonationcreate.BloodDonationCreateUiStateMachine
@@ -15,6 +16,7 @@ import com.workfort.pstuian.ui.checkinlist.CheckInDisplayDataMapper
 import com.workfort.pstuian.ui.checkinlist.CheckInListUiStateMachine
 import com.workfort.pstuian.ui.checkinlist.CheckInListViewModel
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
+import com.workfort.pstuian.ui.common.navigation.DeepLinkNavigator
 import com.workfort.pstuian.ui.contactus.ContactUsUiStateMachine
 import com.workfort.pstuian.ui.contactus.ContactUsViewModel
 import com.workfort.pstuian.ui.cvdownload.CvDownloadUiStateMachine
@@ -57,6 +59,7 @@ import com.workfort.pstuian.ui.splash.SplashUiStateMachine
 import com.workfort.pstuian.ui.splash.SplashViewModel
 import com.workfort.pstuian.ui.students.StudentsUiStateMachine
 import com.workfort.pstuian.ui.students.StudentsViewModel
+import com.workfort.pstuian.util.deeplink.ResetPasswordParams
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -65,6 +68,8 @@ private val appCommonModule = module {
     singleOf(::AppViewModel)
     singleOf(::SharedScreenData)
     singleOf(::AppNavigator)
+    singleOf(::DeepLinkNavigator)
+    singleOf(::AppLaunchDeepLinkController)
 }
 
 private val profileScreenStateModule = module {
@@ -88,7 +93,16 @@ private val bloodDonationRequestListModule = module {
 
 private val changePasswordModule = module {
     factoryOf(::ChangePasswordUiStateMachine)
-    factoryOf(::ChangePasswordViewModel)
+    factory { (resetPasswordParams: ResetPasswordParams?) ->
+        ChangePasswordViewModel(
+            authRepository = get(),
+            settingsRepository = get(),
+            screenData = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+            resetPasswordParams = resetPasswordParams,
+        )
+    }
 }
 
 private val checkInListModule = module {

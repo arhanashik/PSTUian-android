@@ -146,7 +146,7 @@ private fun HandleNavigationState(
                     navigator?.navigateTo(AppScreen.ImageUpload(it.userId, it.userType))
                 }
                 is EmployeeProfileNavigationState.ChangePasswordScreen -> {
-                    navigator?.navigateTo(AppScreen.ChangePassword)
+                    navigator?.navigateTo(AppScreen.ChangePassword())
                 }
                 is EmployeeProfileNavigationState.MyDeviceListScreen -> {
                     navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, it.userType))

@@ -51,6 +51,8 @@ interface AuthRepository {
     ): DomainResult<Unit>
 
     suspend fun resetPassword(email: String): DomainResult<Unit>
+
+    suspend fun confirmPasswordReset(oobCode: String, newPassword: String): DomainResult<Unit>
     suspend fun sendVerificationEmail(email: String, password: String): DomainResult<Unit>
 
     suspend fun deleteAccount(userType: UserType, password: String): DomainResult<Unit>

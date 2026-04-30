@@ -8,7 +8,11 @@ import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetSignedInUserUseCase
+import com.workfort.pstuian.model.AppLaunchDeepLinkController
 import com.workfort.pstuian.model.SharedScreenData
+import com.workfort.pstuian.ui.common.navigation.AppNavigator
+import com.workfort.pstuian.ui.common.navigation.DeepLinkNavigator
+import com.workfort.pstuian.util.deeplink.DeepLinkAction
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -23,6 +27,9 @@ class AppViewModel(
     private val getSignedInUserUseCase: GetSignedInUserUseCase,
     private val userPresenceRepository: UserPresenceRepository,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+    private val appLaunchDeepLinkController: AppLaunchDeepLinkController,
+    private val appNavigator: AppNavigator,
+    private val deepLinkNavigator: DeepLinkNavigator,
 ) : ViewModel() {
 
     val appTheme: StateFlow<ThemeMode>
@@ -35,6 +42,19 @@ class AppViewModel(
 
     init {
         observeSignedInUser()
+    }
+
+    fun onLaunchDeepLink(savedInstanceRestored: Boolean, deepLinkAction: DeepLinkAction?) {
+        if (savedInstanceRestored) return
+        if (deepLinkAction == null) return
+        appLaunchDeepLinkController.setPendingDeepLink(deepLinkAction)
+    }
+
+    fun onNewIntentDeepLink(deepLinkAction: DeepLinkAction?) {
+        if (deepLinkAction == null) return
+        viewModelScope.launch {
+            deepLinkNavigator.navigate(deepLinkAction, appNavigator)
+        }
     }
 
     private fun observeSignedInUser() {

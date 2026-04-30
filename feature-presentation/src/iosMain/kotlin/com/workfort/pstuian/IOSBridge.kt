@@ -13,6 +13,7 @@ import com.workfort.pstuian.ui.common.navigation.AppNavHost
 import com.workfort.pstuian.util.IOSPlatformInfo
 import com.workfort.pstuian.util.PlatformInfo
 import com.workfort.pstuian.util.PushNotificationProvider
+import com.workfort.pstuian.util.deeplink.DeepLinkParser
 import com.workfort.pstuian.util.di.utilModule
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -26,6 +27,7 @@ class IOSBridge : KoinComponent {
 
     private val appViewModel: AppViewModel by inject()
     private val sharedPrefRepository: SharedPrefRepository by inject()
+    private val deepLinkParser: DeepLinkParser by inject()
 
     fun initializeKoin() {
         val iosModule = module {
@@ -45,6 +47,10 @@ class IOSBridge : KoinComponent {
 
     fun updateFcmToken(token: String?) {
         sharedPrefRepository.putString(SharedPrefKey.FCM_TOKEN, token)
+    }
+
+    fun handleDeepLink(url: String?) {
+        appViewModel.onNewIntentDeepLink(deepLinkParser.parse(url))
     }
 
     fun mainViewController(): UIViewController = ComposeUIViewController(

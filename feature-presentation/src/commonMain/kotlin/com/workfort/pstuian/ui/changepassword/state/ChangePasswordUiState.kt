@@ -11,8 +11,16 @@ sealed interface ChangePasswordUiState {
         val validationError: ChangePasswordInputError = ChangePasswordInputError.INITIAL,
     ) : ChangePasswordUiState
 
-    data class ResetPassword(
+    data class SendResetPasswordLink(
         val email: String = "",
         val validationError: String = "",
+    ) : ChangePasswordUiState
+
+    data class ResetPassword(
+        val oobCode: String,
+        val newPassword: String = "",
+        val confirmPassword: String = "",
+        val newPasswordError: String = "",
+        val confirmPasswordError: String = "",
     ) : ChangePasswordUiState
 }

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -23,7 +24,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-//                implementation(libs.kotlin.stdlib)
                 implementation(kotlin("stdlib"))
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)

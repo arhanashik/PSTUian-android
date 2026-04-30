@@ -1,6 +1,7 @@
 package com.workfort.pstuian.ui.common.navigation
 
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.util.deeplink.ResetPasswordParams
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -34,7 +35,7 @@ class AppNavigator {
 
     // Convenience methods for every screen
     suspend fun navigateToSignIn() = navigateTo(AppScreen.SignIn)
-    suspend fun navigateToChangePassword() = navigateTo(AppScreen.ChangePassword)
+    suspend fun navigateToChangePassword(resetPasswordParams: ResetPasswordParams? = null) = navigateTo(AppScreen.ChangePassword(resetPasswordParams))
     suspend fun navigateToContactUs() = navigateTo(AppScreen.ContactUs)
     suspend fun navigateToHome() = navigateTo(AppScreen.Home)
     suspend fun navigateToStudents(batchId: Int) = navigateTo(AppScreen.Students(batchId))

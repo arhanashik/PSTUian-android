@@ -44,6 +44,7 @@ import com.workfort.pstuian.ui.settings.SettingsScreen
 import com.workfort.pstuian.ui.signin.SignInScreen
 import com.workfort.pstuian.ui.splash.SplashScreen
 import com.workfort.pstuian.ui.students.StudentsScreen
+import io.github.aakira.napier.Napier
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -63,27 +64,42 @@ fun AppNavHost(
                 navigator.events.collect { event ->
                     when (event) {
                         is NavEvent.Navigate -> {
-                            navController.navigate(event.screen)
+                            safeNavigate(navController) {
+                                when (val screen = event.screen) {
+                                    is AppScreen.ChangePassword -> {
+                                        while (popBackStack<AppScreen.ChangePassword>(inclusive = true)) {
+                                        }
+                                        navigate(screen)
+                                    }
+                                    else -> navigate(screen)
+                                }
+                            }
                         }
 
                         is NavEvent.ResetTo -> {
-                            navController.navigate(event.screen) {
-                                popUpTo(event.screen) { inclusive = false }
+                            safeNavigate(navController) {
+                                navigate(event.screen) {
+                                    popUpTo(event.screen) { inclusive = false }
+                                }
                             }
                         }
 
                         is NavEvent.ReplaceWith -> {
-                            val currentDestination = navController.currentDestination
-                            navController.navigate(event.screen) {
-                                if (currentDestination != null) {
-                                    popUpTo(currentDestination.id) { inclusive = true }
+                            safeNavigate(navController) {
+                                val currentDestination = navController.currentDestination
+                                navigate(event.screen) {
+                                    if (currentDestination != null) {
+                                        popUpTo(currentDestination.id) { inclusive = true }
+                                    }
                                 }
                             }
                         }
 
                         is NavEvent.ResetAll -> {
-                            navController.navigate(event.screen) {
-                                popUpTo(0) { inclusive = true }
+                            safeNavigate(navController) {
+                                navigate(event.screen) {
+                                    popUpTo(0) { inclusive = true }
+                                }
                             }
                         }
 
@@ -95,8 +111,10 @@ fun AppNavHost(
                             // Splash is removed from the stack when leaving it (resetAll in SplashScreen),
                             // so popBackStack to Splash would not find a destination. Clear the graph and
                             // land on splash like a fresh launch.
-                            navController.navigate(AppScreen.Splash) {
-                                popUpTo(0) { inclusive = true }
+                            safeNavigate(navController) {
+                                navigate(AppScreen.Splash) {
+                                    popUpTo(0) { inclusive = true }
+                                }
                             }
                         }
                     }
@@ -139,8 +157,11 @@ fun AppNavHost(
                 composable<AppScreen.SignIn> {
                     SignInScreen(viewModel = koinViewModel())
                 }
-                composable<AppScreen.ChangePassword> {
-                    ChangePasswordScreen(viewModel = koinViewModel())
+                composable<AppScreen.ChangePassword>(typeMap = navTypeMap) { backStackEntry ->
+                    val screen: AppScreen.ChangePassword = backStackEntry.toRoute()
+                    ChangePasswordScreen(
+                        viewModel = koinViewModel { parametersOf(screen.resetPasswordParams) },
+                    )
                 }
                 composable<AppScreen.ContactUs> {
                     ContactUsScreen(viewModel = koinViewModel())
@@ -265,5 +286,16 @@ fun AppNavHost(
                 }
             }
         }
+    }
+}
+
+private fun safeNavigate(
+    navController: NavHostController,
+    block: NavHostController.() -> Unit,
+) {
+    try {
+        navController.block()
+    } catch (e: Exception) {
+        Napier.w("Navigation skipped: ${e.message}", e)
     }
 }

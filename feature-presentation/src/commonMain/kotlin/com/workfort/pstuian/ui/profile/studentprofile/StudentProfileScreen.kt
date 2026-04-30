@@ -148,7 +148,7 @@ private fun HandleNavigationState(
                     navigator?.navigateTo(AppScreen.ImageUpload(it.userId, it.userType))
                 }
                 is StudentProfileNavigationState.ChangePasswordScreen -> {
-                    navigator?.navigateTo(AppScreen.ChangePassword)
+                    navigator?.navigateTo(AppScreen.ChangePassword())
                 }
                 is StudentProfileNavigationState.DownloadCvScreen -> {
                     navigator?.navigateTo(

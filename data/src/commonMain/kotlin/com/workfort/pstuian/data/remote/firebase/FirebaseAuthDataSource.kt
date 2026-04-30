@@ -6,6 +6,8 @@ import com.workfort.pstuian.data.model.NetworkError
 import com.workfort.pstuian.data.model.NetworkErrorCode
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.util.PlatformInfo
+import dev.gitlive.firebase.auth.ActionCodeSettings
+import dev.gitlive.firebase.auth.AndroidPackageName
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.FirebaseUser
 import io.github.aakira.napier.Napier
@@ -107,6 +109,37 @@ class FirebaseAuthDataSource(
     suspend fun resetPassword(email: String): NetworkResult<Unit> {
         return try {
             auth.sendPasswordResetEmail(email)
+            NetworkResult.success(Unit)
+        } catch (exception: Throwable) {
+            return NetworkResult.failure(error = CommonNetworkError.firebaseInternalError(exception))
+        }
+    }
+
+    suspend fun confirmPasswordReset(oobCode: String, newPassword: String): NetworkResult<Unit> {
+        return try {
+            auth.confirmPasswordReset(oobCode, newPassword)
+            NetworkResult.success(Unit)
+        } catch (exception: Throwable) {
+            NetworkResult.failure(error = CommonNetworkError.firebaseInternalError(exception))
+        }
+    }
+
+    suspend fun sendPasswordResetEmail(email: String): NetworkResult<Unit> {
+        val settings = ActionCodeSettings(
+            url = "https://yourapp.page.link/reset",
+            androidPackageName = AndroidPackageName(
+                packageName = "com.workfort.pstuian",
+                installIfNotAvailable = true,
+                minimumVersion = "",
+            ),
+            dynamicLinkDomain = "",
+            canHandleCodeInApp = true,
+            iOSBundleId = "com.workfort.pstuian",
+            linkDomain = "1",
+        )
+
+        return try {
+            auth.sendPasswordResetEmail(email = email, actionCodeSettings = settings)
             NetworkResult.success(Unit)
         } catch (exception: Throwable) {
             return NetworkResult.failure(error = CommonNetworkError.firebaseInternalError(exception))

@@ -1,8 +1,7 @@
 package com.workfort.pstuian.ui.common.navigation
 
-import com.workfort.pstuian.featuredomain.model.FacultySelectionMode
 import com.workfort.pstuian.featuredomain.model.UserType
-
+import com.workfort.pstuian.util.deeplink.ResetPasswordParams
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,8 +10,11 @@ sealed interface AppScreen {
     object Splash : AppScreen
     @Serializable
     object SignIn : AppScreen
+    /** Change password, send reset email, or complete OOB reset; [resetPasswordParams] from deep link. */
     @Serializable
-    object ChangePassword : AppScreen
+    data class ChangePassword(
+        val resetPasswordParams: ResetPasswordParams? = null,
+    ) : AppScreen
     @Serializable
     object ContactUs : AppScreen
     @Serializable

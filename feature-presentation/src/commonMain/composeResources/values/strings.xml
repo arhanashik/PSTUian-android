@@ -74,6 +74,7 @@
     <string name="txt_linked_in">LinkedIn</string>
     <string name="txt_facebook">Facebook</string>
     <string name="txt_change_password">Change Password</string>
+    <string name="txt_password_reset">Password reset</string>
     <string name="txt_devices">Devices</string>
     <string name="txt_signed_in_devices">Signed In Devices</string>
     <string name="txt_account">Account</string>

@@ -7,8 +7,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.userTypeListSelectionOptions
+import com.workfort.pstuian.model.AppLaunchDeepLinkController
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
+import com.workfort.pstuian.ui.common.navigation.DeepLinkNavigator
 import com.workfort.pstuian.ui.splash.composable.SplashContentPanel
 import com.workfort.pstuian.ui.splash.state.SplashMessageState
 import com.workfort.pstuian.ui.splash.state.SplashNavigationState
@@ -62,12 +64,17 @@ private fun HandleNavigationState(
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
+    val deepLinkNavigator = koinInject<DeepLinkNavigator>()
+    val launchDeepLinkController = koinInject<AppLaunchDeepLinkController>()
 
     LaunchedEffect(navigationState) {
         navigationState?.let {
             when (it) {
                 is SplashNavigationState.HomeScreen -> {
                     navigator?.resetAll(AppScreen.Home)
+                    launchDeepLinkController.consumePendingDeepLink()?.let { action ->
+                        deepLinkNavigator.navigate(action, navigator)
+                    }
                 }
             }
             onNavigationHandled()

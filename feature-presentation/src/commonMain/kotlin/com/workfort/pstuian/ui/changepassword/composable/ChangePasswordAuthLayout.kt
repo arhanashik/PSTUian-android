@@ -1,7 +1,5 @@
 package com.workfort.pstuian.ui.changepassword.composable
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -24,21 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordScreenPanel
 import com.workfort.pstuian.ui.signin.composable.CompactAuthHeader
-import com.workfort.pstuian.ui.signin.composable.ForgotPasswordHeaderContent
 import com.workfort.pstuian.ui.signin.screendata.SectionCornerRadius
 
-/**
- * Same structure as sign-in auth: green header (crossfading) and white form section with shared scroll.
- */
 @Composable
 internal fun ChangePasswordAuthForeground(
     greenHeight: Dp,
-    panel: ChangePasswordScreenPanel,
     changePasswordHeaderTitle: String,
-    onBackFromChangePanel: () -> Unit,
-    onBackFromResetPanel: () -> Unit,
+    onBack: () -> Unit,
     formContent: @Composable () -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -77,22 +68,10 @@ internal fun ChangePasswordAuthForeground(
                             .fillMaxSize()
                             .statusBarsPadding(),
                     ) {
-                        Crossfade(
-                            targetState = panel,
-                            animationSpec = tween(durationMillis = 300),
-                            modifier = Modifier.fillMaxSize(),
-                            label = "changePasswordHeader",
-                        ) { currentPanel ->
-                            when (currentPanel) {
-                                ChangePasswordScreenPanel.ChangePassword ->
-                                    CompactAuthHeader(
-                                        title = changePasswordHeaderTitle,
-                                        onBack = onBackFromChangePanel,
-                                    )
-                                ChangePasswordScreenPanel.ResetPassword ->
-                                    ForgotPasswordHeaderContent(onBack = onBackFromResetPanel)
-                            }
-                        }
+                        CompactAuthHeader(
+                            title = changePasswordHeaderTitle,
+                            onBack = onBack,
+                        )
                     }
                 }
             }
