@@ -2,6 +2,8 @@ package com.workfort.pstuian.ui.changepassword
 
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInputError
+import com.workfort.pstuian.ui.changepassword.screendata.ResetPasswordInput
+import com.workfort.pstuian.ui.changepassword.screendata.ResetPasswordInputError
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiState
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,23 +16,43 @@ class ChangePasswordUiStateMachine : UiStateMachine<ChangePasswordUiState> {
     private val _state = MutableStateFlow<ChangePasswordUiState>(ChangePasswordUiState.None)
     override val uiState: StateFlow<ChangePasswordUiState> = _state.asStateFlow()
 
+    // Cache panel inputs/errors so toggling panels preserves user-typed values.
+    private var changePasswordInputCache: ChangePasswordInput = ChangePasswordInput.INITIAL
+    private var changePasswordErrorCache: ChangePasswordInputError = ChangePasswordInputError.INITIAL
+    private var sendResetEmailCache: String = ""
+    private var sendResetEmailErrorCache: String = ""
+    private var resetPasswordInputCache: ResetPasswordInput = ResetPasswordInput.INITIAL
+    private var resetPasswordErrorCache: ResetPasswordInputError = ResetPasswordInputError.INITIAL
+
     private fun updateUiState(
         updater: ChangePasswordUiState.() -> ChangePasswordUiState,
     ) = _state.update(updater)
 
-    fun transitionToResetPasswordForm(oobCode: String) = updateUiState {
-        ChangePasswordUiState.ResetPassword(oobCode = oobCode)
+    fun transitToResetPasswordForm() = updateUiState {
+        ChangePasswordUiState.ResetPassword(
+            input = resetPasswordInputCache,
+            validationError = resetPasswordErrorCache,
+        )
     }
 
-    fun transitionToSendResetPasswordLink(prefilledEmail: String?) = updateUiState {
-        ChangePasswordUiState.SendResetPasswordLink(email = prefilledEmail.orEmpty())
+    fun transitToSendResetPasswordLink(prefilledEmail: String?) = updateUiState {
+        val email = sendResetEmailCache.ifBlank { prefilledEmail.orEmpty() }
+        sendResetEmailCache = email
+        ChangePasswordUiState.SendResetPasswordLink(
+            email = email,
+            validationError = sendResetEmailErrorCache,
+        )
     }
 
-    fun transitionToChangePasswordForm() = updateUiState {
-        ChangePasswordUiState.ChangePassword()
+    fun transitToChangePasswordForm() = updateUiState {
+        ChangePasswordUiState.ChangePassword(
+            input = changePasswordInputCache,
+            validationError = changePasswordErrorCache,
+        )
     }
 
     fun updateChangePasswordInput(input: ChangePasswordInput) = updateUiState {
+        changePasswordInputCache = input
         when (this) {
             is ChangePasswordUiState.ChangePassword -> copy(input = input)
             else -> this
@@ -38,6 +60,7 @@ class ChangePasswordUiStateMachine : UiStateMachine<ChangePasswordUiState> {
     }
 
     fun updateChangePasswordInputError(validationError: ChangePasswordInputError) = updateUiState {
+        changePasswordErrorCache = validationError
         when (this) {
             is ChangePasswordUiState.ChangePassword -> copy(validationError = validationError)
             else -> this
@@ -45,39 +68,34 @@ class ChangePasswordUiStateMachine : UiStateMachine<ChangePasswordUiState> {
     }
 
     fun updateSendLinkEmail(email: String) = updateUiState {
+        sendResetEmailCache = email
         when (this) {
-            is ChangePasswordUiState.SendResetPasswordLink -> copy(email = email, validationError = "")
+            is ChangePasswordUiState.SendResetPasswordLink -> copy(email = email)
             else -> this
         }
     }
 
     fun setSendLinkValidationError(error: String) = updateUiState {
+        sendResetEmailErrorCache = error
         when (this) {
             is ChangePasswordUiState.SendResetPasswordLink -> copy(validationError = error)
             else -> this
         }
     }
 
-    fun updateOobNewPassword(value: String) = updateUiState {
+    fun updateResetPasswordInput(resetPasswordInput: ResetPasswordInput) = updateUiState {
+        resetPasswordInputCache = resetPasswordInput
         when (this) {
-            is ChangePasswordUiState.ResetPassword ->
-                copy(newPassword = value, newPasswordError = "", confirmPasswordError = "")
+            is ChangePasswordUiState.ResetPassword -> copy(input = resetPasswordInputCache)
             else -> this
         }
     }
 
-    fun updateOobConfirmPassword(value: String) = updateUiState {
+    fun setResetPasswordInputError(validationError: ResetPasswordInputError) = updateUiState {
+        resetPasswordErrorCache = validationError
         when (this) {
             is ChangePasswordUiState.ResetPassword ->
-                copy(confirmPassword = value, confirmPasswordError = "", newPasswordError = "")
-            else -> this
-        }
-    }
-
-    fun setOobPasswordFieldErrors(newPasswordError: String, confirmPasswordError: String) = updateUiState {
-        when (this) {
-            is ChangePasswordUiState.ResetPassword ->
-                copy(newPasswordError = newPasswordError, confirmPasswordError = confirmPasswordError)
+                copy(validationError = validationError)
             else -> this
         }
     }

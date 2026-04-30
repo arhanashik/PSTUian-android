@@ -126,15 +126,15 @@ class FirebaseAuthDataSource(
 
     suspend fun sendPasswordResetEmail(email: String): NetworkResult<Unit> {
         val settings = ActionCodeSettings(
-            url = "https://yourapp.page.link/reset",
+            url = "https://dev.pstuian.com/auth?action=resetPassword",
             androidPackageName = AndroidPackageName(
-                packageName = "com.workfort.pstuian",
+                packageName = "com.workfort.pstuian.debug",
                 installIfNotAvailable = true,
                 minimumVersion = "",
             ),
             dynamicLinkDomain = "",
             canHandleCodeInApp = true,
-            iOSBundleId = "com.workfort.pstuian",
+            iOSBundleId = "com.workfort.pstuian.debug",
             linkDomain = "1",
         )
 

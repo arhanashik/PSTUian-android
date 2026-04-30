@@ -33,6 +33,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInputError
+import com.workfort.pstuian.ui.changepassword.screendata.ResetPasswordInput
+import com.workfort.pstuian.ui.changepassword.screendata.ResetPasswordInputError
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiState
 import com.workfort.pstuian.ui.common.composable.ActionButton
@@ -82,7 +84,9 @@ internal fun ChangePasswordContentPanel(
                         email = uiState.email,
                         validationError = uiState.validationError,
                         onEmailChange = { onUiEvent(ChangePasswordUiEvent.SendResetLinkEmailChanged(it)) },
-                        onResetPasswordClicked = { onUiEvent(ChangePasswordUiEvent.SendPasswordResetLinkClicked) },
+                        onResetPasswordClicked = {
+                            onUiEvent(ChangePasswordUiEvent.SendPasswordResetLinkClicked(uiState.email))
+                        },
                         onSwitchToSignIn = { onUiEvent(ChangePasswordUiEvent.SwitchToChangePasswordPanel) },
                         bottomLinkPrefix = stringResource(Res.string.hint_remembered_password),
                         bottomLinkAction = stringResource(Res.string.txt_change),
@@ -95,10 +99,8 @@ internal fun ChangePasswordContentPanel(
                 onBack = { onUiEvent(ChangePasswordUiEvent.BackClicked) },
                 formContent = {
                     ChangePasswordOobNewPasswordForm(
-                        newPassword = uiState.newPassword,
-                        confirmPassword = uiState.confirmPassword,
-                        newPasswordError = uiState.newPasswordError,
-                        confirmPasswordError = uiState.confirmPasswordError,
+                        input = uiState.input,
+                        validationError = uiState.validationError,
                         onUiEvent = onUiEvent,
                     )
                 },
@@ -198,25 +200,23 @@ private fun ChangePasswordAuthForm(
                 supportingText = validationError.confirmPassword.takeIf { it.isNotEmpty() },
             )
             Spacer(modifier = Modifier.height(24.dp))
+            ActionButton(label = "UPDATE PASSWORD", icon = Icons.AutoMirrored.Filled.ArrowForward) {
+                onUiEvent(ChangePasswordUiEvent.ChangePasswordClicked(newInput))
+            }
+            Spacer(modifier = Modifier.height(24.dp))
             AuthBottomLink(
                 prefix = stringResource(Res.string.txt_forgot_password),
                 action = "Reset",
                 onAction = { onUiEvent(ChangePasswordUiEvent.OpenSendResetPasswordLinkPanel) },
             )
-            Spacer(modifier = Modifier.height(24.dp))
-            ActionButton(label = "UPDATE PASSWORD", icon = Icons.AutoMirrored.Filled.ArrowForward) {
-                onUiEvent(ChangePasswordUiEvent.ChangePasswordClicked(newInput))
-            }
         }
     }
 }
 
 @Composable
 private fun ChangePasswordOobNewPasswordForm(
-    newPassword: String,
-    confirmPassword: String,
-    newPasswordError: String,
-    confirmPasswordError: String,
+    input: ResetPasswordInput,
+    validationError: ResetPasswordInputError,
     onUiEvent: (ChangePasswordUiEvent) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
@@ -227,34 +227,40 @@ private fun ChangePasswordOobNewPasswordForm(
         AuthFormPanelLayout {
             ChangePasswordPasswordField(
                 label = stringResource(Res.string.hint_new_password),
-                value = newPassword,
-                onValueChange = { onUiEvent(ChangePasswordUiEvent.OobNewPasswordChanged(it)) },
+                value = input.newPassword,
+                onValueChange = {
+                    val newInput = input.copy(newPassword = it)
+                    onUiEvent(ChangePasswordUiEvent.ResetPasswordInputChanged(newInput))
+                },
                 focusRequester = newFocus,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next,
                 ),
                 keyboardActions = KeyboardActions(onNext = { confirmFocus.requestFocus() }),
-                isError = newPasswordError.isNotEmpty(),
-                supportingText = newPasswordError.takeIf { it.isNotEmpty() },
+                isError = validationError.newPassword.isNotEmpty(),
+                supportingText = validationError.newPassword.takeIf { it.isNotEmpty() },
             )
             Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
             ChangePasswordPasswordField(
                 label = stringResource(Res.string.hint_confirm_password),
-                value = confirmPassword,
-                onValueChange = { onUiEvent(ChangePasswordUiEvent.OobConfirmPasswordChanged(it)) },
+                value = input.confirmPassword,
+                onValueChange = {
+                    val newInput = input.copy(confirmPassword = it)
+                    onUiEvent(ChangePasswordUiEvent.ResetPasswordInputChanged(newInput))
+                },
                 focusRequester = confirmFocus,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done,
                 ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                isError = confirmPasswordError.isNotEmpty(),
-                supportingText = confirmPasswordError.takeIf { it.isNotEmpty() },
+                isError = validationError.confirmPassword.isNotEmpty(),
+                supportingText = validationError.confirmPassword.takeIf { it.isNotEmpty() },
             )
             Spacer(modifier = Modifier.height(24.dp))
             ActionButton(label = "SET PASSWORD", icon = Icons.AutoMirrored.Filled.ArrowForward) {
-                onUiEvent(ChangePasswordUiEvent.OobSubmitNewPasswordClicked)
+                onUiEvent(ChangePasswordUiEvent.ResetPasswordClicked(input))
             }
         }
     }

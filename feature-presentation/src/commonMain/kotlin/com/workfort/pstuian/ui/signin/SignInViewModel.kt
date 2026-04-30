@@ -220,7 +220,7 @@ class SignInViewModel(
     private fun sendPasswordResetLink(email: String) {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
-            authRepository.resetPassword(email)
+            authRepository.sendResetPasswordLink(email)
                 .onSuccess {
                     stateMachine.showLoading(false)
                     _message.update {

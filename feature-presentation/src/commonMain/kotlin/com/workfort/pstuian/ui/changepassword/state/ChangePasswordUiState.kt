@@ -2,6 +2,8 @@ package com.workfort.pstuian.ui.changepassword.state
 
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInputError
+import com.workfort.pstuian.ui.changepassword.screendata.ResetPasswordInput
+import com.workfort.pstuian.ui.changepassword.screendata.ResetPasswordInputError
 
 sealed interface ChangePasswordUiState {
     object None : ChangePasswordUiState
@@ -17,10 +19,7 @@ sealed interface ChangePasswordUiState {
     ) : ChangePasswordUiState
 
     data class ResetPassword(
-        val oobCode: String,
-        val newPassword: String = "",
-        val confirmPassword: String = "",
-        val newPasswordError: String = "",
-        val confirmPasswordError: String = "",
+        val input: ResetPasswordInput = ResetPasswordInput.INITIAL,
+        val validationError: ResetPasswordInputError = ResetPasswordInputError.INITIAL,
     ) : ChangePasswordUiState
 }

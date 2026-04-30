@@ -195,11 +195,11 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun resetPassword(email: String): DomainResult<Unit> {
-        return firebaseAuthDataSource.resetPassword(email).toDomainResult(domainErrorMapper)
+    override suspend fun sendResetPasswordLink(email: String): DomainResult<Unit> {
+        return firebaseAuthDataSource.sendPasswordResetEmail(email).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun confirmPasswordReset(oobCode: String, newPassword: String): DomainResult<Unit> {
+    override suspend fun resetPasswordReset(oobCode: String, newPassword: String): DomainResult<Unit> {
         return firebaseAuthDataSource.confirmPasswordReset(oobCode, newPassword).toDomainResult(domainErrorMapper)
     }
 

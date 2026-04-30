@@ -8,14 +8,16 @@ import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.model.SharedScreenData
-import com.workfort.pstuian.util.deeplink.ResetPasswordParams
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInput
 import com.workfort.pstuian.ui.changepassword.screendata.ChangePasswordInputError
+import com.workfort.pstuian.ui.changepassword.screendata.ResetPasswordInput
+import com.workfort.pstuian.ui.changepassword.screendata.ResetPasswordInputError
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordMessageState
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordNavigationState
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiEvent
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordUiState
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.util.deeplink.ResetPasswordParams
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -35,15 +37,16 @@ class ChangePasswordViewModel(
     private val _navigation = MutableStateFlow<ChangePasswordNavigationState?>(null)
     val navigation: StateFlow<ChangePasswordNavigationState?> = _navigation
 
+    val prefilledEmail = screenData.getCurrentUser()?.email?.trim().orEmpty()
+
     override fun onUiReady() {
-        val prefilled = screenData.getCurrentUser()?.email?.trim().orEmpty()
         val oobCode = resetPasswordParams?.oobCode?.trim().takeUnless { it.isNullOrEmpty() }
         when {
-            oobCode != null -> uiStateMachine.transitionToResetPasswordForm(oobCode = oobCode)
+            oobCode != null -> uiStateMachine.transitToResetPasswordForm()
             resetPasswordParams == null || !resetPasswordParams.hasAnyValue() ->
-                uiStateMachine.transitionToChangePasswordForm()
+                uiStateMachine.transitToChangePasswordForm()
             else ->
-                uiStateMachine.transitionToSendResetPasswordLink(prefilledEmail = prefilled)
+                uiStateMachine.transitToSendResetPasswordLink(prefilledEmail = prefilledEmail)
         }
     }
 
@@ -53,13 +56,12 @@ class ChangePasswordViewModel(
             is ChangePasswordUiEvent.ChangePasswordInputChanged -> uiStateMachine.updateChangePasswordInput(event.input)
             is ChangePasswordUiEvent.ChangePasswordClicked -> onClickChangePassword(event.input)
             is ChangePasswordUiEvent.OpenSendResetPasswordLinkPanel ->
-                uiStateMachine.transitionToSendResetPasswordLink(screenData.getCurrentUser()?.email?.trim())
-            is ChangePasswordUiEvent.SwitchToChangePasswordPanel -> uiStateMachine.transitionToChangePasswordForm()
+                uiStateMachine.transitToSendResetPasswordLink(prefilledEmail)
+            is ChangePasswordUiEvent.SwitchToChangePasswordPanel -> uiStateMachine.transitToChangePasswordForm()
             is ChangePasswordUiEvent.SendResetLinkEmailChanged -> uiStateMachine.updateSendLinkEmail(event.email)
-            is ChangePasswordUiEvent.SendPasswordResetLinkClicked -> onSendResetLink()
-            is ChangePasswordUiEvent.OobNewPasswordChanged -> uiStateMachine.updateOobNewPassword(event.value)
-            is ChangePasswordUiEvent.OobConfirmPasswordChanged -> uiStateMachine.updateOobConfirmPassword(event.value)
-            is ChangePasswordUiEvent.OobSubmitNewPasswordClicked -> onSubmitOobNewPassword()
+            is ChangePasswordUiEvent.SendPasswordResetLinkClicked -> onClickSendResetLink(event.email)
+            is ChangePasswordUiEvent.ResetPasswordInputChanged -> uiStateMachine.updateResetPasswordInput(event.input)
+            is ChangePasswordUiEvent.ResetPasswordClicked -> onClickResetPassword(event.input)
         }
     }
 
@@ -74,7 +76,7 @@ class ChangePasswordViewModel(
     private fun onBack() {
         when (uiState.value) {
             is ChangePasswordUiState.SendResetPasswordLink ->
-                uiStateMachine.transitionToChangePasswordForm()
+                uiStateMachine.transitToChangePasswordForm()
             else ->
                 _navigation.update { ChangePasswordNavigationState.GoBack }
         }
@@ -109,16 +111,21 @@ class ChangePasswordViewModel(
         }
     }
 
-    private fun onSendResetLink() {
-        val state = uiState.value as? ChangePasswordUiState.SendResetPasswordLink ?: return
-        val email = state.email.trim()
-        if (email.isEmpty()) {
+    private fun onClickSendResetLink(emailInput: String) {
+        val email = emailInput.trim()
+        if (emailInput.trim().isEmpty()) {
             uiStateMachine.setSendLinkValidationError("*Required")
             return
         }
+
+        if (email != screenData.getCurrentUser()?.email) {
+            _message.update { ChangePasswordMessageState.Error("Please enter the valid email for your account") }
+            return
+        }
+
         _message.update { ChangePasswordMessageState.Loader() }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            authRepository.resetPassword(email)
+            authRepository.sendResetPasswordLink(email)
                 .onSuccess {
                     onMessageHandled()
                     _message.update {
@@ -137,27 +144,17 @@ class ChangePasswordViewModel(
         }
     }
 
-    private fun onSubmitOobNewPassword() {
-        val state = uiState.value as? ChangePasswordUiState.ResetPassword ?: return
-        var newErr = ""
-        var confirmErr = ""
-        when {
-            state.newPassword.isEmpty() -> newErr = "*Required"
-            state.newPassword.length < 6 -> newErr = "*Too short"
-        }
-        when {
-            state.confirmPassword.isEmpty() -> confirmErr = "*Required"
-            state.confirmPassword.length < 6 -> confirmErr = "*Too short"
-            state.newPassword.isNotEmpty() && state.newPassword != state.confirmPassword ->
-                confirmErr = "*Confirm password should match new password"
-        }
-        if (newErr.isNotEmpty() || confirmErr.isNotEmpty()) {
-            uiStateMachine.setOobPasswordFieldErrors(newErr, confirmErr)
-            return
-        }
+    private fun onClickResetPassword(input: ResetPasswordInput) {
+        val validationError = input.validate()
+        uiStateMachine.setResetPasswordInputError(validationError)
+
+        if (validationError.hasError()) return
+
+        val oobCode = resetPasswordParams?.oobCode ?: return
+
         _message.update { ChangePasswordMessageState.Loader() }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            authRepository.confirmPasswordReset(state.oobCode, state.newPassword)
+            authRepository.resetPasswordReset(oobCode, input.newPassword)
                 .onSuccess {
                     onMessageHandled()
                     _message.update {
@@ -170,7 +167,7 @@ class ChangePasswordViewModel(
                 .onFailure { error ->
                     onMessageHandled()
                     _message.update {
-                        ChangePasswordMessageState.Error(error.message ?: "Could not reset password. Please retry.")
+                        ChangePasswordMessageState.Error(error.message ?: "Could not reset password. Please retry")
                     }
                 }
         }
@@ -184,6 +181,25 @@ class ChangePasswordViewModel(
         } else {
             ""
         },
+        newPassword = if (newPassword.isEmpty()) {
+            "*Required"
+        } else if (newPassword.length < 6) {
+            "*Too short"
+        } else {
+            ""
+        },
+        confirmPassword = if (confirmPassword.isEmpty()) {
+            "*Required"
+        } else if (confirmPassword.length < 6) {
+            "*Too short"
+        } else if (newPassword.isNotEmpty() && newPassword != confirmPassword) {
+            "*Confirm password should be same as new password"
+        } else {
+            ""
+        },
+    )
+
+    private fun ResetPasswordInput.validate() = ResetPasswordInputError(
         newPassword = if (newPassword.isEmpty()) {
             "*Required"
         } else if (newPassword.length < 6) {
