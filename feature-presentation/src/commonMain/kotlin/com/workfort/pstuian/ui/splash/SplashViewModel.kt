@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
+import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetInitialScreenUseCase
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
@@ -22,6 +23,7 @@ class SplashViewModel(
     private val appConfigRepository: AppConfigRepository,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val getInitialScreenUseCase: GetInitialScreenUseCase,
+    private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
     private val stateMachine: SplashUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -73,7 +75,7 @@ class SplashViewModel(
         }
     }
 
-    private fun handleInitialScreen(screenState: InitialScreenState, errorMessage: String? = null) {
+    private suspend fun handleInitialScreen(screenState: InitialScreenState, errorMessage: String? = null) {
         when (screenState) {
             is InitialScreenState.MissingDeviceInfo -> {
                 stateMachine.updateScreenState(
@@ -116,6 +118,7 @@ class SplashViewModel(
                 )
             }
             is InitialScreenState.Home -> {
+                authRepository.syncAuthTokenToPreferences(forceRefresh = true)
                 stateMachine.updateScreenState(
                     screenState,
                     statusText = "All Done",

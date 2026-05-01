@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.remote.service
 
-import com.workfort.pstuian.data.model.ApiAuthResponse
 import com.workfort.pstuian.data.model.ApiResponse
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.model.TeacherDto
@@ -14,15 +13,13 @@ class AuthApiService(private val client: HttpClient) {
 
     suspend fun signInStudent(
         email: String,
-        password: String,
         deviceId: String,
-    ): ApiAuthResponse<StudentDto> {
+    ): ApiResponse<StudentDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_IN,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_TYPE, NetworkConst.Params.UserType.STUDENT)
                 append(NetworkConst.Params.EMAIL, email)
-                append(NetworkConst.Params.PASSWORD, password)
+                append(NetworkConst.Params.USER_TYPE, NetworkConst.Params.UserType.STUDENT)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
             }
         ).body()
@@ -30,15 +27,13 @@ class AuthApiService(private val client: HttpClient) {
 
     suspend fun signInTeacher(
         email: String,
-        password: String,
         deviceId: String,
-    ): ApiAuthResponse<TeacherDto> {
+    ): ApiResponse<TeacherDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Auth.SIGN_IN,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_TYPE, NetworkConst.Params.UserType.TEACHER)
                 append(NetworkConst.Params.EMAIL, email)
-                append(NetworkConst.Params.PASSWORD, password)
+                append(NetworkConst.Params.USER_TYPE, NetworkConst.Params.UserType.TEACHER)
                 append(NetworkConst.Params.DEVICE_ID, deviceId)
             }
         ).body()

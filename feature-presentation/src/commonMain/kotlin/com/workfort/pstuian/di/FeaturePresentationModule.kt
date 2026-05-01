@@ -181,6 +181,7 @@ private val splashModule = module {
             appConfigRepository = get(),
             registerDeviceUseCase = get(),
             getInitialScreenUseCase = get(),
+            authRepository = get(),
             settingsRepository = get(),
             stateMachine = get(),
             coroutineDispatcherProvider = get(),

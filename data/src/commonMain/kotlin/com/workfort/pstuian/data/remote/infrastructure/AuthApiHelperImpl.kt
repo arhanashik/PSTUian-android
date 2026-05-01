@@ -15,16 +15,10 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
 
     override suspend fun signInStudent(
         email: String,
-        password: String,
         deviceId: String
-    ): NetworkResult<Pair<StudentDto, String?>> {
+    ): NetworkResult<StudentDto> {
         return runCatching {
-            val response = service.signInStudent(email, password, deviceId)
-            if (response.isError || response.data == null) {
-                NetworkResult.failure(NetworkError(response.responseCode))
-            } else {
-                NetworkResult.Success(response.data to response.authToken)
-            }
+            service.signInStudent(email, deviceId).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
@@ -32,16 +26,10 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
 
     override suspend fun signInTeacher(
         email: String,
-        password: String,
         deviceId: String
-    ): NetworkResult<Pair<TeacherDto, String?>> {
+    ): NetworkResult<TeacherDto> {
         return runCatching {
-            val response = service.signInTeacher(email, password, deviceId)
-            if (response.isError || response.data == null) {
-                NetworkResult.failure(NetworkError(response.responseCode))
-            } else {
-                NetworkResult.Success(response.data to response.authToken)
-            }
+            service.signInTeacher(email, deviceId).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

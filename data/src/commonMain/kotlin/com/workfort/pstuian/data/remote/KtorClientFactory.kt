@@ -42,7 +42,7 @@ object KtorClientFactory {
                 val baseUrl = if (isDebug) {
                     NetworkConst.Remote.DEV_API_SERVER
                 } else {
-                    NetworkConst.Remote.LIVE_API_SERVER
+                    NetworkConst.Remote.PROD_API_SERVER
                 }
                 url(baseUrl)
                 contentType(ContentType.Application.Json)

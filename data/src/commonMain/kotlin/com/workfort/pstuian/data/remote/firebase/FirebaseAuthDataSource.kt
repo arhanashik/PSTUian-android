@@ -126,7 +126,8 @@ class FirebaseAuthDataSource(
 
     suspend fun sendPasswordResetEmail(email: String): NetworkResult<Unit> {
         val settings = ActionCodeSettings(
-            url = "https://dev.pstuian.com/auth?action=resetPassword",
+            url = "https://auth-dev.pstuian.com/auth?action=resetPassword",
+            linkDomain = "auth-dev.pstuian.com",
             androidPackageName = AndroidPackageName(
                 packageName = "com.workfort.pstuian.debug",
                 installIfNotAvailable = true,
@@ -135,7 +136,6 @@ class FirebaseAuthDataSource(
             dynamicLinkDomain = "",
             canHandleCodeInApp = true,
             iOSBundleId = "com.workfort.pstuian.debug",
-            linkDomain = "1",
         )
 
         return try {
@@ -176,6 +176,8 @@ class FirebaseAuthDataSource(
     fun isUserLoggedIn(): Boolean = auth.currentUser != null
 
     fun isUserEmailVerified(): Boolean = auth.currentUser?.isEmailVerified ?: false
+
+    suspend fun getAuthToken(forceRefresh: Boolean = false): String? = auth.currentUser?.getIdToken(forceRefresh)
 
     suspend fun updateDisplayName(userId: String, displayName: String): NetworkResult<Unit> {
         return try {

@@ -8,15 +8,13 @@ interface AuthApiHelper {
 
     suspend fun signInStudent(
         email: String,
-        password: String,
         deviceId: String
-    ): NetworkResult<Pair<StudentDto, String?>> // Dto and Auth Token
+    ): NetworkResult<StudentDto>
 
     suspend fun signInTeacher(
         email: String,
-        password: String,
         deviceId: String
-    ): NetworkResult<Pair<TeacherDto, String?>> // Dto and Auth Token
+    ): NetworkResult<TeacherDto>
 
     suspend fun signUpStudent(
         name: String,

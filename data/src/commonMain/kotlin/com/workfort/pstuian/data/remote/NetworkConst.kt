@@ -84,9 +84,9 @@ object NetworkConst {
         private const val LOCAL_SERVER = "http://192.168.0.18:8888/PSTUian-web/"
         const val DEV_SERVER = "https://dev.pstuian.com/"
         const val LIVE_SERVER = "https://pstuian.com/"
-        private const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/mobile/v1/"
-        const val DEV_API_SERVER = "https://api-dev.pstuian.com/mobile/v2/"
-        const val LIVE_API_SERVER = "https://api.pstuian.com/mobile/v2/"
+        private const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/v1/"
+        const val DEV_API_SERVER = "https://api-dev.pstuian.com/v2/"
+        const val PROD_API_SERVER = "https://api.pstuian.com/v2/"
 
         private const val CONFIG_API_PATH = "config.php?call="
         private const val DEVICE_API_PATH = "device.php?call="

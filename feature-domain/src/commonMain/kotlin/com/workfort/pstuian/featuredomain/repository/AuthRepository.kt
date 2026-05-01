@@ -11,6 +11,12 @@ interface AuthRepository {
     fun isUserSignedIn(): Boolean
     fun isUserEmailVerified(): Boolean
 
+    /**
+     * Persists the current provider auth token (e.g. Firebase ID token) for API clients.
+     * When [forceRefresh] is true, the provider returns a fresh token when applicable.
+     */
+    suspend fun syncAuthTokenToPreferences(forceRefresh: Boolean = false)
+
     suspend fun observeSignedInAuthUser(): Flow<AuthUser?>
     suspend fun signIn(userType: UserType, email: String, password: String): DomainResult<User>
 

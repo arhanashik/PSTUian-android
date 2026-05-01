@@ -4,10 +4,19 @@ class DeepLinkParser {
 
     fun parse(url: String?): DeepLinkAction? {
         val parsed = parseUrl(url ?: return null) ?: return null
-        if (!parsed.scheme.equals("pstuian", ignoreCase = true)) return null
-        return when (parsed.host.lowercase()) {
+        val target = resolveTarget(parsed) ?: return null
+        return when (target.lowercase()) {
             "auth" -> parseAuthDeepLink(parsed)
             "profile" -> parseProfileDeepLink(parsed)
+            else -> null
+        }
+    }
+
+    private fun resolveTarget(uri: ParsedUrl): String? {
+        return when {
+            uri.scheme.equals("pstuian", ignoreCase = true) -> uri.host
+            uri.scheme.isWebScheme() && uri.host.isSupportedWebHost() ->
+                uri.path.substringBefore('/')
             else -> null
         }
     }
@@ -85,3 +94,9 @@ private data class ParsedUrl(
 
 private fun Map<String, String>.firstCaseInsensitiveValue(key: String): String? =
     entries.firstOrNull { it.key.equals(key, ignoreCase = true) }?.value
+
+private fun String.isWebScheme(): Boolean =
+    equals("https", ignoreCase = true)
+
+private fun String.isSupportedWebHost(): Boolean =
+    equals("dev.pstuian.com", ignoreCase = true) || equals("pstuian.com", ignoreCase = true)

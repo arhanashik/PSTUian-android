@@ -282,9 +282,7 @@ class SignInViewModel(
                     if (error.isLegacyUserAccountError) {
                         // create legacy user's auth account
                         authRepository.creatLegacyUserAuth(userType, formData.email, formData.password)
-                            .onSuccess {
-                                signIn(formData)
-                            }
+                            .onSuccess { signIn(formData) }
                             .onFailure(::handleSignInFailure)
                     } else {
                         handleSignInFailure(error)

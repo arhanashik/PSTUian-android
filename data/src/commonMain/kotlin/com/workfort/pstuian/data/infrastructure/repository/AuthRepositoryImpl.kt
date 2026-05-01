@@ -47,6 +47,11 @@ class AuthRepositoryImpl(
         return firebaseAuthDataSource.isUserEmailVerified()
     }
 
+    override suspend fun syncAuthTokenToPreferences(forceRefresh: Boolean) {
+        val token = firebaseAuthDataSource.getAuthToken(forceRefresh)
+        sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, token)
+    }
+
     override suspend fun observeSignedInAuthUser(): Flow<AuthUser?> {
         return firebaseAuthDataSource.observeCurrentUser().map { result ->
             result?.let { (id, dto) -> dto.toAuthUser(id) }
@@ -58,22 +63,12 @@ class AuthRepositoryImpl(
         val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
 
         // sign in
-        val signInResult = when(userType) {
+        val signInApiResult = when(userType) {
             UserType.STUDENT -> {
-                helper.signInStudent(email, password, deviceId)
-                    .toDomainResult(domainErrorMapper)
-                    .map { (dto, authToken) ->
-                        sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
-                        dto.toModel()
-                    }
+                helper.signInStudent(email, deviceId).toDomainResult(domainErrorMapper).map { it.toModel() }
             }
             UserType.TEACHER -> {
-                helper.signInTeacher(email, password, deviceId)
-                    .toDomainResult(domainErrorMapper)
-                    .map { (dto, authToken) ->
-                        sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, authToken)
-                        dto.toModel()
-                    }
+                helper.signInTeacher(email, deviceId).toDomainResult(domainErrorMapper).map { it.toModel() }
             }
             else -> {
                 DomainResult.failure(
@@ -82,7 +77,7 @@ class AuthRepositoryImpl(
             }
         }
 
-        if (signInResult.isSuccess) {
+        if (signInApiResult.isSuccess) {
             // validate auth user
             firebaseAuthDataSource.signIn(email, password)
                 .toDomainResult(domainErrorMapper)
@@ -90,9 +85,10 @@ class AuthRepositoryImpl(
                 .getOrElse { error ->
                     return DomainResult.failure(error)
                 }
+            syncAuthTokenToPreferences(forceRefresh = true)
         }
 
-        return signInResult
+        return signInApiResult
     }
 
     override suspend fun signUpStudent(
@@ -186,13 +182,14 @@ class AuthRepositoryImpl(
         // validate device
         val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
 
-        val result = helper.changePassword(email, userType.type, oldPassword, newPassword, deviceId)
+        val apiResult = helper.changePassword(email, userType.type, oldPassword, newPassword, deviceId)
             .toDomainResult(domainErrorMapper)
-            .onSuccess { sharedPrefRepository.putString(SharedPrefKey.AUTH_TOKEN, it) }
 
-        return if (result.isFailure) result.map { } else {
-            firebaseAuthDataSource.updatePassword(oldPassword, newPassword).toDomainResult(domainErrorMapper)
-        }
+        if (apiResult.isFailure) return apiResult.map { }
+
+        return firebaseAuthDataSource.updatePassword(oldPassword, newPassword)
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { syncAuthTokenToPreferences(forceRefresh = true) }
     }
 
     override suspend fun sendResetPasswordLink(email: String): DomainResult<Unit> {
@@ -229,11 +226,9 @@ class AuthRepositoryImpl(
             .toDomainResult(domainErrorMapper)
             .map { (id, dto) -> dto.toAuthUser(id) }
 
-        if (result.isSuccess) {
-            result.getOrNull()?.let { authUser ->
-                helper.updateAuthUserId(authUser.userId, userType, email, password) // update auth user id
-                firebaseAuthDataSource.signOut() // user should sign in after email verification
-            }
+        result.getOrNull()?.let { authUser ->
+            helper.updateAuthUserId(authUser.userId, userType, email, password) // update auth user id
+            firebaseAuthDataSource.signOut() // user should sign in after email verification
         }
 
         return result
