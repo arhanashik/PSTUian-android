@@ -1,7 +1,7 @@
 package com.workfort.pstuian.ui.mycheckinlist.composable
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,12 +20,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
@@ -34,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,18 +44,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
 import com.workfort.pstuian.ui.common.composable.ActionButton
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
-import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
 import com.workfort.pstuian.ui.common.composable.OutlinedActionButton
 import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
@@ -72,8 +79,11 @@ import pstuian.feature_presentation.generated.resources.txt_dismiss
 import pstuian.feature_presentation.generated.resources.txt_only_me
 import pstuian.feature_presentation.generated.resources.txt_public
 
+/** Fixed square slot for list thumbnails (same size every row; vertically centered in the card). */
+private val MyCheckInLocationListThumbnailSlotSize = 96.dp
+
 @Composable
-fun MyCheckInListContentPanel(
+internal fun MyCheckInListContentPanel(
     uiState: MyCheckInListUiState.Content,
     onUiEvent: (MyCheckInListUiEvent) -> Unit,
 ) {
@@ -91,7 +101,7 @@ fun MyCheckInListContentPanel(
     Column(modifier = Modifier.fillMaxSize()) {
         when {
             uiState.checkIns.isEmpty() && uiState.isContentLoading -> {
-                MyCheckInListShimmer(modifier = Modifier.fillMaxSize())
+                MyCheckInListShimmer()
             }
             uiState.checkIns.isEmpty() -> {
                 Column(
@@ -114,10 +124,10 @@ fun MyCheckInListContentPanel(
 }
 
 @Composable
-private fun MyCheckInListShimmer(modifier: Modifier = Modifier) {
+private fun MyCheckInListShimmer() {
     LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(6) {
@@ -138,20 +148,19 @@ private fun MyCheckInListItemShimmer() {
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Box(
                 modifier = Modifier
-                    .size(width = 72.dp, height = 76.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .size(MyCheckInLocationListThumbnailSlotSize)
+                    .clip(RectangleShape)
                     .shimmerAnimation(),
             )
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp, top = 10.dp, end = 14.dp, bottom = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Box(
@@ -221,7 +230,7 @@ private fun CheckInListView(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(checkIns) { item ->
@@ -241,29 +250,65 @@ private fun CheckInListView(
 }
 
 @Composable
+private fun MyCheckInLocationThumbnailPlaceholderIcon() {
+    Icon(
+        imageVector = Icons.Default.LocationOn,
+        contentDescription = null,
+        modifier = Modifier.size(22.dp),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.62f),
+    )
+}
+
+@Composable
 private fun MyCheckInLocationThumbnail(
     imageUrl: String,
     modifier: Modifier = Modifier,
 ) {
-    val shape = RoundedCornerShape(16.dp)
     Box(
         modifier = modifier
-            .size(width = 72.dp, height = 76.dp)
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f))
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                shape = shape,
-            ),
+            .clip(RectangleShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow),
         contentAlignment = Alignment.Center,
     ) {
-        LoadAsyncImage(
-            modifier = Modifier.fillMaxSize(),
-            url = imageUrl,
-            placeholder = Icons.Default.LocationOn,
-            contentScale = ContentScale.Crop,
-        )
+        if (imageUrl.isBlank()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                MyCheckInLocationThumbnailPlaceholderIcon()
+            }
+        } else {
+            val platformContext = LocalPlatformContext.current
+            val request = remember(imageUrl, platformContext) {
+                ImageRequest.Builder(platformContext)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .build()
+            }
+            val painter = rememberAsyncImagePainter(
+                model = request,
+                contentScale = ContentScale.Crop,
+            )
+            val state by painter.state.collectAsState()
+            when (state) {
+                is AsyncImagePainter.State.Success -> {
+                    Image(
+                        painter = painter,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+                else -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        MyCheckInLocationThumbnailPlaceholderIcon()
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -292,15 +337,17 @@ private fun ListItemView(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            MyCheckInLocationThumbnail(imageUrl = item.locationImageUrl.orEmpty())
+            MyCheckInLocationThumbnail(
+                imageUrl = item.locationImageUrl.orEmpty(),
+                modifier = Modifier.size(MyCheckInLocationListThumbnailSlotSize),
+            )
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp, top = 10.dp, end = 14.dp, bottom = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
@@ -391,7 +438,10 @@ fun MyCheckInItemBottomSheet(
                 .padding(top = 8.dp, bottom = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            MyCheckInLocationThumbnail(imageUrl = item.locationImageUrl.orEmpty())
+            MyCheckInLocationThumbnail(
+                imageUrl = item.locationImageUrl.orEmpty(),
+                modifier = Modifier.size(96.dp),
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
