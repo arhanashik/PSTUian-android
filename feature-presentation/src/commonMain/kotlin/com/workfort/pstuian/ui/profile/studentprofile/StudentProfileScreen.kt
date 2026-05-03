@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowInputDialog
@@ -146,29 +147,29 @@ private fun HandleNavigationState(
                     navigator?.navigateToImagePreview(it.encodedImageUrl)
                 }
                 is StudentProfileNavigationState.ImageUploadScreen -> {
-                    navigator?.navigateTo(AppScreen.ImageUpload(it.userId, it.userType))
+                    navigator?.navigateTo(AppScreen.ImageUpload(it.userId, UserType.STUDENT))
                 }
                 is StudentProfileNavigationState.ChangePasswordScreen -> {
                     navigator?.navigateTo(AppScreen.ChangePassword())
                 }
                 is StudentProfileNavigationState.DownloadCvScreen -> {
                     navigator?.navigateTo(
-                        AppScreen.DownloadCv(it.userId, it.userType, it.url),
+                        AppScreen.DownloadCv(it.userId, UserType.STUDENT, it.url),
                     )
                 }
                 is StudentProfileNavigationState.UploadCvScreen -> {
-                    navigator?.navigateTo(AppScreen.UploadCv(it.userId, it.userType))
+                    navigator?.navigateTo(AppScreen.UploadCv(it.userId, UserType.STUDENT))
                 }
                 is StudentProfileNavigationState.MyBloodDonationListScreen -> {
                     navigator?.navigateTo(
-                        AppScreen.MyBloodDonationList(it.userId, it.userType),
+                        AppScreen.MyBloodDonationList(it.userId, UserType.STUDENT),
                     )
                 }
                 is StudentProfileNavigationState.MyCheckInListScreen -> {
-                    navigator?.navigateToMyCheckInList(it.userId, it.userType)
+                    navigator?.navigateToMyCheckInList(it.userId, UserType.STUDENT)
                 }
                 is StudentProfileNavigationState.MyDeviceListScreen -> {
-                    navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, it.userType))
+                    navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, UserType.STUDENT))
                 }
                 is StudentProfileNavigationState.StudentProfileEditScreen -> {
                     navigator?.navigateToStudentProfileEdit(it.userId)

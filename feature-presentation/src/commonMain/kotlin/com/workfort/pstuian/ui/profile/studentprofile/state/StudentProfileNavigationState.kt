@@ -5,32 +5,13 @@ import com.workfort.pstuian.featuredomain.model.UserType
 sealed interface StudentProfileNavigationState {
     data object GoBack : StudentProfileNavigationState
     data object ResetToHome : StudentProfileNavigationState
-    data class ImageUploadScreen(
-        val userId: String,
-        val userType: UserType,
-    ) : StudentProfileNavigationState
+    data class ImageUploadScreen(val userId: Int) : StudentProfileNavigationState
     data object ChangePasswordScreen : StudentProfileNavigationState
-    data class DownloadCvScreen(
-        val userId: String,
-        val userType: UserType,
-        val url: String,
-    ) : StudentProfileNavigationState
-    data class UploadCvScreen(
-        val userId: String,
-        val userType: UserType,
-    ) : StudentProfileNavigationState
-    data class MyBloodDonationListScreen(
-        val userId: String,
-        val userType: UserType,
-    ) : StudentProfileNavigationState
-    data class MyCheckInListScreen(
-        val userId: Int,
-        val userType: UserType,
-    ) : StudentProfileNavigationState
-    data class MyDeviceListScreen(
-        val userId: String,
-        val userType: UserType,
-    ) : StudentProfileNavigationState
+    data class DownloadCvScreen(val userId: Int, val url: String) : StudentProfileNavigationState
+    data class UploadCvScreen(val userId: Int) : StudentProfileNavigationState
+    data class MyBloodDonationListScreen(val userId: Int) : StudentProfileNavigationState
+    data class MyCheckInListScreen(val userId: Int) : StudentProfileNavigationState
+    data class MyDeviceListScreen(val userId: Int) : StudentProfileNavigationState
     data class StudentProfileEditScreen(val userId: Int) : StudentProfileNavigationState
     data object DeleteAccountScreen : StudentProfileNavigationState
     data class ImagePreviewScreen(val encodedImageUrl: String) : StudentProfileNavigationState

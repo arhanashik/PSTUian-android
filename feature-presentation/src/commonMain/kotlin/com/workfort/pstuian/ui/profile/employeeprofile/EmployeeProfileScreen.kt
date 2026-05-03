@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowInputDialog
@@ -144,13 +145,13 @@ private fun HandleNavigationState(
                     navigator?.navigateToImagePreview(it.encodedImageUrl)
                 }
                 is EmployeeProfileNavigationState.ImageUploadScreen -> {
-                    navigator?.navigateTo(AppScreen.ImageUpload(it.userId, it.userType))
+                    navigator?.navigateTo(AppScreen.ImageUpload(it.userId, UserType.EMPLOYEE))
                 }
                 is EmployeeProfileNavigationState.ChangePasswordScreen -> {
                     navigator?.navigateTo(AppScreen.ChangePassword())
                 }
                 is EmployeeProfileNavigationState.MyDeviceListScreen -> {
-                    navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, it.userType))
+                    navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, UserType.EMPLOYEE))
                 }
                 is EmployeeProfileNavigationState.EmployeeProfileEditScreen -> {
                     navigator?.navigateTo(AppScreen.EmployeeProfileEdit(it.userId))

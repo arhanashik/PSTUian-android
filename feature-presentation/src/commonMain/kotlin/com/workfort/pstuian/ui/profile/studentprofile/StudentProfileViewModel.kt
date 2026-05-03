@@ -5,7 +5,6 @@ import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
-import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -179,10 +178,7 @@ class StudentProfileViewModel(
 
         profileCache?.student?.let { student ->
             _navigation.update {
-                StudentProfileNavigationState.ImageUploadScreen(
-                    userId = student.authUserId,
-                    userType = UserType.STUDENT,
-                )
+                StudentProfileNavigationState.ImageUploadScreen(userId = student.userId)
             }
         }
     }
@@ -211,10 +207,7 @@ class StudentProfileViewModel(
 
         profileCache?.student?.let { student ->
             _navigation.update {
-                StudentProfileNavigationState.MyBloodDonationListScreen(
-                    userId = student.authUserId,
-                    userType = UserType.STUDENT,
-                )
+                StudentProfileNavigationState.MyBloodDonationListScreen(userId = student.userId)
             }
         }
     }
@@ -228,11 +221,7 @@ class StudentProfileViewModel(
     private fun onClickDownloadCv(url: String) {
         profileCache?.student?.let { student ->
             _navigation.update {
-                StudentProfileNavigationState.DownloadCvScreen(
-                    userId = student.authUserId,
-                    userType = UserType.STUDENT,
-                    url = url,
-                )
+                StudentProfileNavigationState.DownloadCvScreen(userId = student.userId, url = url)
             }
         }
     }
@@ -242,10 +231,7 @@ class StudentProfileViewModel(
 
         profileCache?.student?.let { student ->
             _navigation.update {
-                StudentProfileNavigationState.UploadCvScreen(
-                    userId = student.authUserId,
-                    userType = UserType.STUDENT,
-                )
+                StudentProfileNavigationState.UploadCvScreen(userId = student.userId)
             }
         }
     }
@@ -255,10 +241,7 @@ class StudentProfileViewModel(
 
         profileCache?.student?.let { student ->
             _navigation.update {
-                StudentProfileNavigationState.MyCheckInListScreen(
-                    userId = student.userId,
-                    userType = UserType.STUDENT,
-                )
+                StudentProfileNavigationState.MyCheckInListScreen(userId = student.userId)
             }
         }
     }
@@ -268,10 +251,7 @@ class StudentProfileViewModel(
 
         profileCache?.student?.let { student ->
             _navigation.update {
-                StudentProfileNavigationState.MyDeviceListScreen(
-                    userId = student.authUserId,
-                    userType = UserType.STUDENT,
-                )
+                StudentProfileNavigationState.MyDeviceListScreen(userId = student.userId)
             }
         }
     }

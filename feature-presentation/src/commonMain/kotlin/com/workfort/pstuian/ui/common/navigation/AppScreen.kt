@@ -34,17 +34,17 @@ sealed interface AppScreen {
     @Serializable
     data class Profile(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
-    data class MyBloodDonationList(val userId: String, val userType: UserType) : AppScreen
+    data class MyBloodDonationList(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
     data class MyCheckInList(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
-    data class MyDeviceList(val userId: String, val userType: UserType) : AppScreen
+    data class MyDeviceList(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
     data class StudentProfileEdit(val userId: Int) : AppScreen
     @Serializable
     data class TeacherProfileEdit(val userId: Int) : AppScreen
     @Serializable
-    data class EmployeeProfileEdit(val userId: String) : AppScreen
+    data class EmployeeProfileEdit(val userId: Int) : AppScreen
     @Serializable
     data object DeleteAccount : AppScreen
     @Serializable
@@ -52,17 +52,17 @@ sealed interface AppScreen {
     @Serializable
     object Donate : AppScreen
     @Serializable
-    data class ImageUpload(val userId: String, val userType: UserType) : AppScreen
+    data class ImageUpload(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
     data class ImagePreview(val encodedImageUrl: String) : AppScreen
     @Serializable
     data class DownloadCv(
-        val userId: String,
+        val userId: Int,
         val userType: UserType,
         val url: String,
     ) : AppScreen
     @Serializable
-    data class UploadCv(val userId: String, val userType: UserType) : AppScreen
+    data class UploadCv(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
     object Settings : AppScreen
 

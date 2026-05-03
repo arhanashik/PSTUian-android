@@ -1,14 +1,12 @@
 package com.workfort.pstuian.ui.profile.employeeprofile.state
 
-import com.workfort.pstuian.featuredomain.model.UserType
-
 sealed interface EmployeeProfileNavigationState {
     data object GoBack : EmployeeProfileNavigationState
     data object ResetToHome : EmployeeProfileNavigationState
     data class ImagePreviewScreen(val encodedImageUrl: String) : EmployeeProfileNavigationState
-    data class ImageUploadScreen(val userId: String, val userType: UserType) : EmployeeProfileNavigationState
+    data class ImageUploadScreen(val userId: Int) : EmployeeProfileNavigationState
     data object ChangePasswordScreen : EmployeeProfileNavigationState
-    data class MyDeviceListScreen(val userId: String, val userType: UserType) : EmployeeProfileNavigationState
-    data class EmployeeProfileEditScreen(val userId: String) : EmployeeProfileNavigationState
+    data class MyDeviceListScreen(val userId: Int) : EmployeeProfileNavigationState
+    data class EmployeeProfileEditScreen(val userId: Int) : EmployeeProfileNavigationState
     data object DeleteAccountScreen : EmployeeProfileNavigationState
 }

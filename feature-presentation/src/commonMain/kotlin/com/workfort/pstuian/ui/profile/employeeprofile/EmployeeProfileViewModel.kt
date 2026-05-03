@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
-import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -171,10 +170,7 @@ class EmployeeProfileViewModel(
 
         profileCache?.employee?.let { employee ->
             _navigation.update {
-                EmployeeProfileNavigationState.ImageUploadScreen(
-                    userId = employee.authUserId,
-                    userType = UserType.EMPLOYEE,
-                )
+                EmployeeProfileNavigationState.ImageUploadScreen(userId = employee.userId)
             }
         }
     }
@@ -194,7 +190,7 @@ class EmployeeProfileViewModel(
 
         profileCache?.employee?.let { employee ->
             _navigation.update {
-                EmployeeProfileNavigationState.EmployeeProfileEditScreen(userId = employee.authUserId)
+                EmployeeProfileNavigationState.EmployeeProfileEditScreen(userId = employee.userId)
             }
         }
     }
@@ -210,10 +206,7 @@ class EmployeeProfileViewModel(
 
         profileCache?.employee?.let { employee ->
             _navigation.update {
-                EmployeeProfileNavigationState.MyDeviceListScreen(
-                    userId = employee.authUserId,
-                    userType = UserType.EMPLOYEE,
-                )
+                EmployeeProfileNavigationState.MyDeviceListScreen(userId = employee.userId)
             }
         }
     }

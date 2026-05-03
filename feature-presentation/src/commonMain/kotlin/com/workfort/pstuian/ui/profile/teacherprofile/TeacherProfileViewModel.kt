@@ -5,7 +5,6 @@ import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
-import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -70,7 +69,7 @@ class TeacherProfileViewModel(
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> Unit
             is ProfileUiEvent.UploadCvClicked -> Unit
-            is ProfileUiEvent.MyCheckInListClicked -> Unit
+            is ProfileUiEvent.MyCheckInListClicked -> onClickMyCheckInList()
             is ProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
             is ProfileUiEvent.ChangeProfileImage -> changeProfileImage(event.imageUrl)
@@ -171,10 +170,7 @@ class TeacherProfileViewModel(
 
         profileCache?.teacher?.let { teacher ->
             _navigation.update {
-                TeacherProfileNavigationState.ImageUploadScreen(
-                    userId = teacher.authUserId,
-                    userType = UserType.TEACHER,
-                )
+                TeacherProfileNavigationState.ImageUploadScreen(userId = teacher.userId)
             }
         }
     }
@@ -205,15 +201,22 @@ class TeacherProfileViewModel(
         _navigation.update { TeacherProfileNavigationState.ChangePasswordScreen }
     }
 
+    private fun onClickMyCheckInList() {
+        if (profileCache?.isSignedIn != true) return
+
+        profileCache?.teacher?.let { student ->
+            _navigation.update {
+                TeacherProfileNavigationState.MyCheckInListScreen(userId = student.userId)
+            }
+        }
+    }
+
     private fun onClickMyDeviceList() {
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.teacher?.let { teacher ->
             _navigation.update {
-                TeacherProfileNavigationState.MyDeviceListScreen(
-                    userId = teacher.authUserId,
-                    userType = UserType.TEACHER,
-                )
+                TeacherProfileNavigationState.MyDeviceListScreen(userId = teacher.userId)
             }
         }
     }

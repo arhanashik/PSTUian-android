@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
@@ -22,6 +23,7 @@ import pstuian.feature_presentation.generated.resources.txt_call
 import pstuian.feature_presentation.generated.resources.txt_change_password
 import pstuian.feature_presentation.generated.resources.txt_delete_account
 import pstuian.feature_presentation.generated.resources.txt_email
+import pstuian.feature_presentation.generated.resources.txt_my_check_in_list
 import pstuian.feature_presentation.generated.resources.txt_sign_out
 import pstuian.feature_presentation.generated.resources.txt_signed_in_devices
 
@@ -33,6 +35,7 @@ fun TeacherProfileOptionsDropdown(
     onUiEvent: (ProfileUiEvent) -> Unit,
 ) {
     val changePasswordLabel = stringResource(Res.string.txt_change_password)
+    val checkInLabel = stringResource(Res.string.txt_my_check_in_list)
     val devicesLabel = stringResource(Res.string.txt_signed_in_devices)
     val signOutLabel = stringResource(Res.string.txt_sign_out)
     val deleteAccountLabel = stringResource(Res.string.txt_delete_account)
@@ -45,6 +48,14 @@ fun TeacherProfileOptionsDropdown(
                 onClick = {
                     onDismiss()
                     onUiEvent(ProfileUiEvent.ChangePasswordClicked)
+                },
+            )
+            DropdownMenuItem(
+                text = { Text(checkInLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
+                leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
+                onClick = {
+                    onDismiss()
+                    onUiEvent(ProfileUiEvent.MyCheckInListClicked)
                 },
             )
             DropdownMenuItem(
