@@ -80,6 +80,7 @@ fun MyCheckInListContentPanel(
     if (uiState.error != null) {
         Column(
             modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AnimatedErrorView()

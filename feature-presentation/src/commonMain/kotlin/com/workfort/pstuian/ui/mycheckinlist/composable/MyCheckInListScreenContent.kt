@@ -1,13 +1,8 @@
 package com.workfort.pstuian.ui.mycheckinlist.composable
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
@@ -32,17 +27,13 @@ internal fun MyCheckInListScreenContent(
     snackbarHostState: SnackbarHostState,
     onUiEvent: (MyCheckInListUiEvent) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
     AppScaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
                 title = stringResource(Res.string.txt_my_check_in_list),
                 navigation = {
                     NavigationButton { onUiEvent(MyCheckInListUiEvent.BackClicked) }
                 },
-                scrollBehavior = scrollBehavior,
             )
         },
         snackbarHost = { AppSnackbarHost(snackbarHostState) },
