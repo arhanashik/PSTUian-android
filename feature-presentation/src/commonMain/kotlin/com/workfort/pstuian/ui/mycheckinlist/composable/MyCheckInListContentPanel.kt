@@ -2,6 +2,7 @@ package com.workfort.pstuian.ui.mycheckinlist.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,11 +46,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
@@ -81,6 +85,8 @@ import pstuian.feature_presentation.generated.resources.txt_public
 
 /** Fixed square slot for list thumbnails (same size every row; vertically centered in the card). */
 private val MyCheckInLocationListThumbnailSlotSize = 96.dp
+
+private val MyCheckInBottomSheetThumbnailShape = RoundedCornerShape(20.dp)
 
 @Composable
 internal fun MyCheckInListContentPanel(
@@ -127,7 +133,7 @@ internal fun MyCheckInListContentPanel(
 private fun MyCheckInListShimmer() {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(6) {
@@ -230,7 +236,7 @@ private fun CheckInListView(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
-        contentPadding = PaddingValues(horizontal = 16.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(checkIns) { item ->
@@ -263,11 +269,27 @@ private fun MyCheckInLocationThumbnailPlaceholderIcon() {
 private fun MyCheckInLocationThumbnail(
     imageUrl: String,
     modifier: Modifier = Modifier,
+    containerShape: Shape = RectangleShape,
+    borderWidth: Dp = 0.dp,
+    borderColor: Color = Color.Transparent,
 ) {
+    val withBackground = modifier
+        .clip(containerShape)
+        .background(
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            shape = containerShape,
+        )
+    val withBorder = if (borderWidth > 0.dp) {
+        withBackground.border(
+            width = borderWidth,
+            color = borderColor,
+            shape = containerShape,
+        )
+    } else {
+        withBackground
+    }
     Box(
-        modifier = modifier
-            .clip(RectangleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerLow),
+        modifier = withBorder,
         contentAlignment = Alignment.Center,
     ) {
         if (imageUrl.isBlank()) {
@@ -295,7 +317,9 @@ private fun MyCheckInLocationThumbnail(
                     Image(
                         painter = painter,
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(containerShape),
                         contentScale = ContentScale.Crop,
                     )
                 }
@@ -441,6 +465,9 @@ fun MyCheckInItemBottomSheet(
             MyCheckInLocationThumbnail(
                 imageUrl = item.locationImageUrl.orEmpty(),
                 modifier = Modifier.size(96.dp),
+                containerShape = MyCheckInBottomSheetThumbnailShape,
+                borderWidth = 1.dp,
+                borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
             )
 
             Spacer(modifier = Modifier.height(12.dp))
