@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.di
 
-import com.workfort.pstuian.data.infrastructure.repository.UserPresenceRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.AppConfigRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.AuthRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.BloodDonationRepositoryImpl
@@ -17,8 +16,10 @@ import com.workfort.pstuian.data.infrastructure.repository.SliderRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SupportRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
+import com.workfort.pstuian.data.infrastructure.repository.UserPresenceRepositoryImpl
 import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.remote.KtorClientFactory
+import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.domain.BloodDonationApiHelper
 import com.workfort.pstuian.data.remote.domain.BloodDonationRequestApiHelper
@@ -32,8 +33,8 @@ import com.workfort.pstuian.data.remote.domain.SliderApiHelper
 import com.workfort.pstuian.data.remote.domain.StudentApiHelper
 import com.workfort.pstuian.data.remote.domain.SupportApiHelper
 import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
-import com.workfort.pstuian.data.remote.firebase.FirebaseUserPresenceDataSource
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
+import com.workfort.pstuian.data.remote.firebase.FirebaseUserPresenceDataSource
 import com.workfort.pstuian.data.remote.firestore.FirestoreAppConfigDataSource
 import com.workfort.pstuian.data.remote.infrastructure.AuthApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.BloodDonationApiHelperImpl
@@ -61,8 +62,8 @@ import com.workfort.pstuian.data.remote.service.SliderApiService
 import com.workfort.pstuian.data.remote.service.StudentApiService
 import com.workfort.pstuian.data.remote.service.SupportApiService
 import com.workfort.pstuian.data.remote.service.TeacherApiService
+import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
-import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
@@ -79,6 +80,8 @@ import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
 import com.workfort.pstuian.featuredomain.repository.SupportRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
+import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
+import com.workfort.pstuian.util.PlatformInfo
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.database
@@ -107,6 +110,19 @@ private val networkModule = module {
     single {
         KtorClientFactory.create(
             platformInfo = get(),
+            baseUrlProvider = {
+                val platformInfo = get<PlatformInfo>()
+                val settingsRepository = get<SettingsRepository>()
+                if (!platformInfo.isDebug) {
+                    NetworkConst.Remote.PROD_API_SERVER
+                } else {
+                    when (settingsRepository.getDebugApiEnvironment()) {
+                        DebugApiEnvironment.LOCAL -> NetworkConst.Remote.LOCAL_API_SERVER
+                        DebugApiEnvironment.DEV -> NetworkConst.Remote.DEV_API_SERVER
+                        DebugApiEnvironment.PROD -> NetworkConst.Remote.PROD_API_SERVER
+                    }
+                }
+            },
             authTokenProvider = {
                 get<SharedPrefRepository>().getString(SharedPrefKey.AUTH_TOKEN)
             },

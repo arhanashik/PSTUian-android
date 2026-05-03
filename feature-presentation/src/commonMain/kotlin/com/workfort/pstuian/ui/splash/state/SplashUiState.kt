@@ -6,5 +6,5 @@ data class SplashUiState(
     val screenState: InitialScreenState? = null,
     val statusText: String = "",
     val descriptionText: String? = null,
-    val actionBtnText: String? = null,
+    val showContinueAnyway: Boolean = false,
 )

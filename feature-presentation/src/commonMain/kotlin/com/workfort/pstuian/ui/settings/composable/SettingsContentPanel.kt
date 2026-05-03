@@ -80,6 +80,9 @@ fun SettingsContentPanel(
                     if (uiState.debugPanelData != null) {
                         DebugSettingsView(
                             debugPanelData = uiState.debugPanelData,
+                            onDebugApiServerClicked = {
+                                onUiEvent(SettingsUiEvent.DebugApiServerClicked)
+                            },
                             onRefreshFcmToken = { onUiEvent(SettingsUiEvent.RefreshFcmTokenClicked) },
                             onClearCache = { onUiEvent(SettingsUiEvent.ClearCacheClicked) },
                             onForceSignOut = { onUiEvent(SettingsUiEvent.ForceSignOutClicked) },
@@ -211,6 +214,7 @@ private fun GeneralSettingsView(
 @Composable
 private fun DebugSettingsView(
     debugPanelData: DebugPanelData,
+    onDebugApiServerClicked: () -> Unit,
     onRefreshFcmToken: () -> Unit,
     onClearCache: () -> Unit,
     onForceSignOut: () -> Unit,
@@ -225,6 +229,34 @@ private fun DebugSettingsView(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(modifier = Modifier.padding(vertical = 8.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = "API server",
+                    style = rowLabelStyle,
+                )
+                Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
+                    OutlinedButton(
+                        onClick = onDebugApiServerClicked,
+                        modifier = Modifier.height(30.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                    ) {
+                        Text(
+                            text = debugPanelData.debugApiEnvironment.displayLabel,
+                            style = TextStyle.label2.copy(
+                                color = AppColors.textSecondary,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 11.sp,
+                            ),
+                        )
+                    }
+                }
+            }
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
             ) {

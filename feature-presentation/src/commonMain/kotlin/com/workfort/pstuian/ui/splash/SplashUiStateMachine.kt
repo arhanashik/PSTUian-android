@@ -16,14 +16,14 @@ class SplashUiStateMachine : UiStateMachine<SplashUiState> {
         screenState: InitialScreenState?,
         statusText: String,
         descriptionText: String?,
-        actionBtnText: String?,
+        showContinueAnyway: Boolean = false,
     ) {
         _uiState.update {
             it.copy(
                 screenState = screenState,
                 statusText = statusText,
                 descriptionText = descriptionText,
-                actionBtnText = actionBtnText,
+                showContinueAnyway = showContinueAnyway,
             )
         }
     }

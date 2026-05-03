@@ -7,12 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.NavigationButton
+import com.workfort.pstuian.ui.common.composable.debugApiEnvironmentListSelectionOptions
 import com.workfort.pstuian.ui.common.composable.themeModeListSelectionOptions
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.settings.state.DebugPanelData
@@ -29,6 +31,7 @@ internal fun SettingsScreenContent(
     onUiEvent: (SettingsUiEvent) -> Unit,
 ) {
     var showThemeBottomSheet by remember { mutableStateOf(false) }
+    var showApiServerBottomSheet by remember { mutableStateOf(false) }
 
     AppScaffold(
         topBar = {
@@ -41,15 +44,16 @@ internal fun SettingsScreenContent(
         },
     ) {
         SettingsContentPanel(uiState) { event ->
-            if (event is SettingsUiEvent.ThemeClicked) {
-                showThemeBottomSheet = true
-            } else {
-                onUiEvent(event)
+            when (event) {
+                SettingsUiEvent.ThemeClicked -> showThemeBottomSheet = true
+                SettingsUiEvent.DebugApiServerClicked -> showApiServerBottomSheet = true
+                else -> onUiEvent(event)
             }
         }
     }
 
-    val currentTheme = (uiState as? SettingsUiState.Content)?.theme
+    val contentState = uiState as? SettingsUiState.Content
+    val currentTheme = contentState?.theme
     if (showThemeBottomSheet && currentTheme != null) {
         ListSelectionBottomSheet(
             title = "Select App Theme",
@@ -62,6 +66,22 @@ internal fun SettingsScreenContent(
             onConfirm = { selectedTheme ->
                 selectedTheme?.let { onUiEvent(SettingsUiEvent.ChangeThemeClicked(it)) }
                 showThemeBottomSheet = false
+            },
+        )
+    }
+    val currentDebugEnv = contentState?.debugPanelData?.debugApiEnvironment
+    if (showApiServerBottomSheet && currentDebugEnv != null) {
+        ListSelectionBottomSheet(
+            title = "Select API server",
+            helperText = "Choose which backend the app uses in debug builds.",
+            primaryButtonLabel = "Apply",
+            options = debugApiEnvironmentListSelectionOptions(),
+            initialSelection = currentDebugEnv,
+            scrollable = false,
+            onDismiss = { showApiServerBottomSheet = false },
+            onConfirm = { selected ->
+                selected?.let { onUiEvent(SettingsUiEvent.DebugApiEnvironmentSelected(it)) }
+                showApiServerBottomSheet = false
             },
         )
     }
@@ -98,5 +118,6 @@ private val mockUiSate = SettingsUiState.Content(
     deviceId = "mock-device-id",
     debugPanelData = DebugPanelData(
         fcmToken = "mock_fcm_token",
+        debugApiEnvironment = DebugApiEnvironment.LOCAL,
     ),
 )

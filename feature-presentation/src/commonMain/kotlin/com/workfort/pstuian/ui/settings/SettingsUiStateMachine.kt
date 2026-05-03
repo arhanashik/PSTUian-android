@@ -1,5 +1,6 @@
 package com.workfort.pstuian.ui.settings
 
+import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
@@ -60,5 +61,9 @@ class SettingsUiStateMachine : UiStateMachine<SettingsUiState> {
 
     fun setUserType(userType: UserType?) = updateContent {
         copy(userType = userType)
+    }
+
+    fun setDebugApiEnvironment(environment: DebugApiEnvironment) = updateContent {
+        copy(debugPanelData = debugPanelData?.copy(debugApiEnvironment = environment))
     }
 }

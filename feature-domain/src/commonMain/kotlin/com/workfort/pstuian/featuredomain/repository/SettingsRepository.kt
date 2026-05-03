@@ -1,5 +1,6 @@
 package com.workfort.pstuian.featuredomain.repository
 
+import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
 import kotlinx.coroutines.flow.Flow
@@ -15,4 +16,7 @@ interface SettingsRepository {
     fun clearSharedPrefs()
     fun getUserType(): UserType?
     fun setUserType(userType: UserType?)
+
+    fun getDebugApiEnvironment(): DebugApiEnvironment
+    fun setDebugApiEnvironment(environment: DebugApiEnvironment)
 }

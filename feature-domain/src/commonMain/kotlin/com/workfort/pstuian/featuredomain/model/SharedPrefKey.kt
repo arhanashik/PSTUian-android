@@ -15,6 +15,7 @@ data class SharedPrefKey(
         val FCM_TOKEN = create("fcm_token", false)
         val DEVICE_ID = create("device_id", false)
         val SIGN_IN_EMAIL = create("sign_in_email", false)
+        val DEBUG_API_ENVIRONMENT = create("debug_api_environment", false)
 
         // clear on sign out keys
         val AUTH_TOKEN = create("auth_token", true)

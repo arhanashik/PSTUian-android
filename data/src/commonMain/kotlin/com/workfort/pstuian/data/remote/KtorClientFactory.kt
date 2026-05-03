@@ -15,8 +15,13 @@ import kotlinx.serialization.json.Json
 
 object KtorClientFactory {
 
-    fun create(platformInfo: PlatformInfo, authTokenProvider: () -> String?): HttpClient {
+    fun create(
+        platformInfo: PlatformInfo,
+        baseUrlProvider: () -> String,
+        authTokenProvider: () -> String?,
+    ): HttpClient {
         val isDebug = platformInfo.isDebug
+        val userAgent = "PSTUian/${platformInfo.appVersionName} (${platformInfo.platform}; ${platformInfo.model})"
         return HttpClient {
             install(ContentNegotiation) {
                 val json = Json {
@@ -39,20 +44,10 @@ object KtorClientFactory {
             }
 
             defaultRequest {
-                val baseUrl = if (isDebug) {
-                    NetworkConst.Remote.LOCAL_API_SERVER
-                } else {
-                    NetworkConst.Remote.PROD_API_SERVER
-                }
-                url(baseUrl)
+                url(urlString = baseUrlProvider())
                 contentType(ContentType.Application.Json)
-                
-                // Unify User-Agent format across platforms
-                header("User-Agent", "PSTUian/${platformInfo.appVersionName} (${platformInfo.platform}; ${platformInfo.model})")
-
-                authTokenProvider()?.let { token ->
-                    header("x-auth-token", token)
-                }
+                header("User-Agent", userAgent)
+                header("x-auth-token", authTokenProvider())
                 header("Cache-Control", "no-cache")
             }
         }

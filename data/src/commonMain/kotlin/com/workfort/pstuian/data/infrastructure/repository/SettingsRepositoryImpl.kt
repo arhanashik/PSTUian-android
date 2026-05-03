@@ -1,5 +1,6 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
+import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -56,5 +57,14 @@ class SettingsRepositoryImpl(
 
     override fun setUserType(userType: UserType?) {
         sharedPrefRepository.putString(SharedPrefKey.SELECTED_USER_TYPE, userType?.type)
+    }
+
+    override fun getDebugApiEnvironment(): DebugApiEnvironment =
+        DebugApiEnvironment.fromStorageValue(
+            sharedPrefRepository.getString(SharedPrefKey.DEBUG_API_ENVIRONMENT),
+        )
+
+    override fun setDebugApiEnvironment(environment: DebugApiEnvironment) {
+        sharedPrefRepository.putString(SharedPrefKey.DEBUG_API_ENVIRONMENT, environment.storageValue)
     }
 }

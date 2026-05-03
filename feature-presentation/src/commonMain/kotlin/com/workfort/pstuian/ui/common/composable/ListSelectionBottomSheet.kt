@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.Batch
+import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
 import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -202,4 +203,9 @@ internal fun userTypeListSelectionOptions(): List<ListSelectionOption<UserType>>
 internal fun themeModeListSelectionOptions(): List<ListSelectionOption<ThemeMode>> =
     ThemeMode.entries.map { themeMode ->
         ListSelectionOption(value = themeMode, label = themeMode.name)
+    }
+
+internal fun debugApiEnvironmentListSelectionOptions(): List<ListSelectionOption<DebugApiEnvironment>> =
+    DebugApiEnvironment.entries.map { env ->
+        ListSelectionOption(value = env, label = env.displayLabel)
     }

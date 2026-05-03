@@ -30,7 +30,7 @@ fun SplashScreen(viewModel: SplashViewModel) {
 
     SplashContentPanel(uiState, viewModel::onUiEvent)
 
-    HandleMessageState(message, viewModel::onMessageHandled)
+    HandleMessageState(message = message)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
@@ -38,7 +38,6 @@ fun SplashScreen(viewModel: SplashViewModel) {
 @Composable
 private fun HandleMessageState(
     message: SplashMessageState?,
-    onMessageHandled: () -> Unit,
 ) {
     message?.let {
         when (it) {

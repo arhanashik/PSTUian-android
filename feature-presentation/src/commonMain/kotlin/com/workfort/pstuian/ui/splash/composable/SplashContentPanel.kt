@@ -19,8 +19,10 @@ import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.DraggableAdaptiveLoader
+import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
 import com.workfort.pstuian.ui.common.theme.AppTheme
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
 import org.jetbrains.compose.resources.stringResource
@@ -47,13 +49,15 @@ fun SplashContentPanel(
             else -> {
                 val isForceUpdateAction = state.screenState is InitialScreenState.ForceUpdate
                 ErrorContent(
-                    state.screenState,
-                    state.statusText,
-                    state.descriptionText,
-                    state.actionBtnText,
-                ) {
-                    onEvent(SplashUiEvent.ActionBtnClicked(isForceUpdateAction))
-                }
+                    screenState = state.screenState,
+                    statusText = state.statusText,
+                    descriptionText = state.descriptionText,
+                    showContinueAnyway = state.showContinueAnyway,
+                    onClickAction = {
+                        onEvent(SplashUiEvent.ActionBtnClicked(isForceUpdateAction))
+                    },
+                    onContinueAnywayClick = { onEvent(SplashUiEvent.ContinueAnywayClicked) },
+                )
             }
         }
     }
@@ -72,11 +76,7 @@ private fun DefaultSplashContent(loadingText: String) {
         ) {
             Text(
                 text = stringResource(Res.string.app_name),
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 2.sp
-                ),
-                color = MaterialTheme.colorScheme.primary
+                style = TextStyle.title1.copy(color = AppColors.textPrimary),
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -108,9 +108,9 @@ private fun SplashContentPanelErrorPreview() {
         SplashContentPanel(
             state = SplashUiState(
                 screenState = InitialScreenState.MissingConfig,
-                statusText = "Error",
-                descriptionText = "Something went wrong. Please try again later.",
-                actionBtnText = "Retry"
+                statusText = "Missing config",
+                descriptionText = "Client and server out of sync",
+                showContinueAnyway = true,
             ),
             onEvent = {}
         )
@@ -126,7 +126,6 @@ private fun SplashContentPanelMaintenancePreview() {
                 screenState = InitialScreenState.Maintenance(600000.0),
                 statusText = "Maintenance Mode",
                 descriptionText = "The server is currently under maintenance. Please check back later.",
-                actionBtnText = "OK"
             ),
             onEvent = {}
         )

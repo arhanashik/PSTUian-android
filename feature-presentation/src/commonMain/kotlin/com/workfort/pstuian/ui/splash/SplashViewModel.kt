@@ -14,6 +14,7 @@ import com.workfort.pstuian.ui.splash.state.SplashMessageState
 import com.workfort.pstuian.ui.splash.state.SplashNavigationState
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
+import com.workfort.pstuian.util.PlatformInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +26,7 @@ class SplashViewModel(
     private val getInitialScreenUseCase: GetInitialScreenUseCase,
     private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
+    private val platformInfo: PlatformInfo,
     private val stateMachine: SplashUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SplashUiState>(stateMachine) {
@@ -48,6 +50,10 @@ class SplashViewModel(
                     refreshConfig()
                 }
             }
+            SplashUiEvent.ContinueAnywayClicked -> {
+                if (!uiState.value.showContinueAnyway) return
+                _navigation.update { SplashNavigationState.HomeScreen }
+            }
         }
     }
 
@@ -56,11 +62,10 @@ class SplashViewModel(
     fun onNavigationHandled() = _navigation.update { null }
 
     private fun refreshConfig() {
-        stateMachine.updateScreenState(
+        applyScreenState(
             screenState = null,
             statusText = "Checking config...",
             descriptionText = null,
-            actionBtnText = null,
         )
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
@@ -75,55 +80,66 @@ class SplashViewModel(
         }
     }
 
+    private fun applyScreenState(
+        screenState: InitialScreenState?,
+        statusText: String,
+        descriptionText: String?,
+    ) {
+        val showContinueAnyway =
+            platformInfo.isDebug &&
+                screenState != null &&
+                screenState !is InitialScreenState.Home
+        stateMachine.updateScreenState(
+            screenState = screenState,
+            statusText = statusText,
+            descriptionText = descriptionText,
+            showContinueAnyway = showContinueAnyway,
+        )
+    }
+
     private suspend fun handleInitialScreen(screenState: InitialScreenState, errorMessage: String? = null) {
         when (screenState) {
             is InitialScreenState.MissingDeviceInfo -> {
-                stateMachine.updateScreenState(
+                applyScreenState(
                     screenState,
                     statusText = "Device Not Recognized",
                     descriptionText = errorMessage ?: "Device is not recognized by server",
-                    actionBtnText = "Retry",
                 )
             }
             is InitialScreenState.DeviceBlocklisted -> {
-                stateMachine.updateScreenState(
+                applyScreenState(
                     screenState,
                     statusText = "Access Denied",
                     descriptionText = "Please contact support",
-                    actionBtnText = null,
                 )
             }
             is InitialScreenState.MissingConfig -> {
-                stateMachine.updateScreenState(
+                applyScreenState(
                     screenState,
                     statusText = "Missing config",
                     descriptionText = "Client and server out of sync",
-                    actionBtnText = "Refresh",
                 )
             }
             is InitialScreenState.ForceUpdate -> {
-                stateMachine.updateScreenState(
+                applyScreenState(
                     screenState,
                     statusText = "Update Required",
                     descriptionText = "A new version is available to update!",
-                    actionBtnText = "Update",
                 )
             }
             is InitialScreenState.Maintenance -> {
-                stateMachine.updateScreenState(
+                applyScreenState(
                     screenState,
                     statusText = "Under Maintenance",
                     descriptionText = null,
-                    actionBtnText = "Refresh",
                 )
             }
             is InitialScreenState.Home -> {
                 authRepository.syncAuthTokenToPreferences()
-                stateMachine.updateScreenState(
+                applyScreenState(
                     screenState,
                     statusText = "All Done",
                     descriptionText = null,
-                    actionBtnText = null,
                 )
                 checkUserTypeAndNavigateToHome()
             }

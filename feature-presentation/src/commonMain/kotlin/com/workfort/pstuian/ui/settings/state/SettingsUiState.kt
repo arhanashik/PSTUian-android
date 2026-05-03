@@ -1,6 +1,7 @@
 package com.workfort.pstuian.ui.settings.state
 
 import androidx.compose.runtime.Immutable
+import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
 
@@ -22,4 +23,5 @@ sealed interface SettingsUiState {
 
 data class DebugPanelData(
     val fcmToken: String,
+    val debugApiEnvironment: DebugApiEnvironment,
 )

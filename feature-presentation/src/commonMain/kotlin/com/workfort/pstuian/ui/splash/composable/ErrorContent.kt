@@ -7,20 +7,22 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
@@ -33,9 +35,11 @@ internal fun ErrorContent(
     screenState: InitialScreenState,
     statusText: String,
     descriptionText: String?,
-    actionBtnText: String?,
+    showContinueAnyway: Boolean = false,
     onClickAction: () -> Unit,
+    onContinueAnywayClick: () -> Unit = {},
 ) {
+    val actionBtnText = splashErrorPrimaryActionLabel(screenState)
     AnimatedVisibility(
         visible = true,
         enter = fadeIn() + scaleIn(),
@@ -68,21 +72,30 @@ internal fun ErrorContent(
                     )
                 }
 
-                if (actionBtnText != null) {
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Button(onClick = onClickAction) {
-                        Text(text = actionBtnText)
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (actionBtnText != null) {
+                        Button(onClick = onClickAction) {
+                            Text(text = actionBtnText)
+                        }
+                    }
+                    if (showContinueAnyway) {
+                        Spacer(modifier = Modifier.width(12.dp))
+                        OutlinedButton(onClick = onContinueAnywayClick) {
+                            Text(text = "Continue Anyway")
+                        }
                     }
                 }
             }
 
             Text(
                 text = stringResource(Res.string.app_name),
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 2.sp
-                ),
-                color = MaterialTheme.colorScheme.primary,
+                style = TextStyle.title1.copy(color = AppColors.textPrimary),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 48.dp)
@@ -90,3 +103,13 @@ internal fun ErrorContent(
         }
     }
 }
+
+private fun splashErrorPrimaryActionLabel(screenState: InitialScreenState): String? =
+    when (screenState) {
+        is InitialScreenState.MissingDeviceInfo -> "Retry"
+        is InitialScreenState.MissingConfig -> "Refresh"
+        is InitialScreenState.Maintenance -> "Refresh"
+        is InitialScreenState.ForceUpdate -> "Update"
+        is InitialScreenState.DeviceBlocklisted -> null
+        is InitialScreenState.Home -> null
+    }

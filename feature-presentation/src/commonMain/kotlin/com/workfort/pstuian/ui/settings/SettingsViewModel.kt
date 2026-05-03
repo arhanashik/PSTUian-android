@@ -41,6 +41,7 @@ class SettingsViewModel(
         val debugPanelData = if (platformInfo.isDebug) {
             DebugPanelData(
                 fcmToken = settingsRepository.getFcmToken() ?: "N/A",
+                debugApiEnvironment = settingsRepository.getDebugApiEnvironment(),
             )
         } else null
 
@@ -66,6 +67,11 @@ class SettingsViewModel(
                 is SettingsUiEvent.RefreshFcmTokenClicked -> onRefreshFcmToken()
                 is SettingsUiEvent.ClearCacheClicked -> onClearCache()
                 is SettingsUiEvent.ForceSignOutClicked -> onForceSignOut()
+                SettingsUiEvent.DebugApiServerClicked -> Unit
+                is SettingsUiEvent.DebugApiEnvironmentSelected -> {
+                    settingsRepository.setDebugApiEnvironment(event.environment)
+                    stateMachine.setDebugApiEnvironment(event.environment)
+                }
             }
         }
     }
