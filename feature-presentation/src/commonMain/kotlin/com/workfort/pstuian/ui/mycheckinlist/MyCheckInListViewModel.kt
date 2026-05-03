@@ -79,7 +79,7 @@ class MyCheckInListViewModel(
         page += 1
         uiStateMachine.updateLoading(true)
 
-        checkInRepo.getAll(userId, userType, page)
+        checkInRepo.getHistory(userId, userType, page)
             .onSuccess { list ->
                 if (list.isEmpty()) {
                     endOfData = true

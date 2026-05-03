@@ -12,7 +12,7 @@ interface CheckInApiHelper  {
         limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
     ): NetworkResult<List<CheckInDto>>
 
-    suspend fun getAll(
+    suspend fun getHistory(
         userId: Int,
         userType: String,
         page: Int,
@@ -25,7 +25,7 @@ interface CheckInApiHelper  {
         locationId: Int,
         userId: Int,
         userType: String,
-    ): NetworkResult<CheckInDto>
+    ): NetworkResult<Unit>
 
     suspend fun updatePrivacy(checkInId: Int, privacy: String, ): NetworkResult<CheckInDto>
 

@@ -24,13 +24,13 @@ class CheckInApiService(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getAllByUser(
+    suspend fun getHistory(
         userId: Int,
         userType: String,
         page: Int,
         limit: Int,
     ): ApiResponse<List<CheckInDto>> {
-        return client.get(NetworkConst.Remote.Api.CheckIn.GET_ALL) {
+        return client.get(NetworkConst.Remote.Api.CheckIn.GET_HISTORY) {
             parameter(NetworkConst.Params.USER_ID, userId)
             parameter(NetworkConst.Params.USER_TYPE, userType)
             parameter(NetworkConst.Params.PAGE, page)
@@ -52,7 +52,7 @@ class CheckInApiService(private val client: HttpClient) {
         locationId: Int,
         userId: Int,
         userType: String,
-    ): ApiResponse<CheckInDto> {
+    ): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.CheckIn.CHECK_IN,
             formParameters = parameters {

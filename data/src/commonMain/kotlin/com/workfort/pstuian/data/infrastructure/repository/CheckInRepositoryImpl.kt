@@ -18,12 +18,16 @@ class CheckInRepositoryImpl(
     private val checkInsCache = mutableMapOf<String, List<CheckIn>>()
     private val checkInsForUserCache = mutableMapOf<String, List<CheckIn>>()
 
-    override suspend fun getAll(locationId: Int, page: Int, forceRefresh: Boolean): DomainResult<List<CheckIn>> {
+    override suspend fun getAll(
+        locationId: Int,
+        page: Int,
+        forceRefresh: Boolean,
+    ): DomainResult<List<CheckIn>> {
+        if (forceRefresh) checkInsCache.clear()
+
         val key = "$locationId-$page"
         val cache = checkInsCache[key]
-        if (!forceRefresh && !cache.isNullOrEmpty()) {
-            return DomainResult.success(cache)
-        }
+        if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getAll(locationId = locationId, page = page)
             .toDomainResult(domainErrorMapper)
@@ -31,19 +35,19 @@ class CheckInRepositoryImpl(
             .onSuccess { checkInsCache[key] = it }
     }
 
-    override suspend fun getAll(
+    override suspend fun getHistory(
         userId: Int,
         userType: UserType,
         page: Int,
         forceRefresh: Boolean,
     ): DomainResult<List<CheckIn>> {
+        if (forceRefresh) checkInsForUserCache.clear()
+
         val key = "$userId-$userType-$page"
         val cache = checkInsForUserCache[key]
-        if (!forceRefresh && !cache.isNullOrEmpty()) {
-            return DomainResult.success(cache)
-        }
+        if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
-        return helper.getAll(userId = userId, userType = userType.type, page = page)
+        return helper.getHistory(userId = userId, userType = userType.type, page = page)
             .toDomainResult(domainErrorMapper)
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { checkInsForUserCache[key] = it }
@@ -65,12 +69,12 @@ class CheckInRepositoryImpl(
         locationId: Int,
         userId: Int,
         userType: UserType,
-    ): DomainResult<CheckIn> {
+    ): DomainResult<Unit> {
         return helper.checkIn(
             locationId,
             userId,
             userType.type,
-        ).toDomainResult(domainErrorMapper).map { it.toModel() }
+        ).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun updatePrivacy(checkInId: Int, privacy: String): DomainResult<CheckIn> {

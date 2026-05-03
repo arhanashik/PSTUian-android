@@ -10,7 +10,6 @@ import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 import com.workfort.pstuian.featuredomain.repository.CheckInRepository
-import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.checkinlist.displaydata.CheckInDisplayData
 import com.workfort.pstuian.ui.checkinlist.state.CheckInListMessageState
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.update
 class CheckInListViewModel(
     private val checkInRepo: CheckInRepository,
     private val checkInLocationRepo: CheckInLocationRepository,
-    private val sharedPrefRepository: SharedPrefRepository,
     private val sharedScreenData: SharedScreenData,
     private val checkInDisplayDataMapper: CheckInDisplayDataMapper,
     private val uiStateMachine: CheckInListUiStateMachine,
@@ -53,7 +51,7 @@ class CheckInListViewModel(
 
     override fun onUiReady() {
         uiStateMachine.showOperationLoading()
-        loadCheckInLocations(refresh = true, loadCheckInListAfter = true)
+        loadCheckInLocations(forceRefresh = false, loadCheckInListAfter = true)
     }
 
     fun onUiEvent(event: CheckInListUiEvent) {
@@ -63,8 +61,8 @@ class CheckInListViewModel(
             is CheckInListUiEvent.LocationSelected -> onSelectLocation(event.locationId)
             is CheckInListUiEvent.CallClicked -> onClickCall(event.phoneNumber)
             is CheckInListUiEvent.CheckInClicked -> onClickCheckIn(event.selectedLocationId)
-            is CheckInListUiEvent.OnLoadMoreLocations -> loadCheckInLocations(refresh = false)
-            is CheckInListUiEvent.OnLoadMoreCheckIn -> loadCheckInList(event.locationId, refresh = false)
+            is CheckInListUiEvent.OnLoadMoreLocations -> loadCheckInLocations(forceRefresh = false)
+            is CheckInListUiEvent.OnLoadMoreCheckIn -> loadCheckInList(event.locationId, forceRefresh = false)
         }
     }
 
@@ -74,7 +72,7 @@ class CheckInListViewModel(
 
     private fun onSelectLocation(locationId: Int) {
         uiStateMachine.updatedSelectedCheckInLocationId(locationId)
-        loadCheckInList(locationId, refresh = true)
+        loadCheckInList(locationId, forceRefresh = true)
     }
 
     private fun onClickCheckInItem(item: CheckInDisplayData) {
@@ -98,17 +96,15 @@ class CheckInListViewModel(
                 selectedLocationId,
             ) { location ->
                 _message.update {
-                    CheckInListMessageState.ConfirmCheckIn(location) {
-                        checkIn(location.id)
-                    }
+                    CheckInListMessageState.ConfirmCheckIn(location) { checkIn(location.id) }
                 }
             }
         }
     }
 
-    private fun loadCheckInLocations(refresh: Boolean, loadCheckInListAfter: Boolean = false) {
+    private fun loadCheckInLocations(forceRefresh: Boolean, loadCheckInListAfter: Boolean = false) {
         if (isLoadingCheckInLocations) return
-        if (refresh) {
+        if (forceRefresh) {
             checkInLocationsPage = 1
             hasMoreCheckInLocationsData = true
             checkInLocationsCache.clear()
@@ -119,7 +115,7 @@ class CheckInListViewModel(
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             isLoadingCheckInLocations = true
             uiStateMachine.showLocationListLoading(isLoading = true)
-            checkInLocationRepo.getAll(checkInLocationsPage, refresh)
+            checkInLocationRepo.getAll(checkInLocationsPage, forceRefresh)
                 .onSuccess { locations ->
                     if (locations.isEmpty()) {
                         hasMoreCheckInLocationsData = false
@@ -135,7 +131,7 @@ class CheckInListViewModel(
                     )
                     uiStateMachine.showLocationListLoading(isLoading = false)
                     if (loadCheckInListAfter) {
-                        loadCheckInList(selectedLocationId, refresh = true)
+                        loadCheckInList(selectedLocationId, forceRefresh = true)
                     }
                 }
                 .onFailure {
@@ -153,9 +149,9 @@ class CheckInListViewModel(
         return checkInRepo.get(currentUserId, userType).getOrNull()?.locationId ?: defaultValue
     }
 
-    private fun loadCheckInList(locationId: Int, refresh: Boolean) {
+    private fun loadCheckInList(locationId: Int, forceRefresh: Boolean) {
         if (isLoadingCheckIns) return
-        if (refresh) {
+        if (forceRefresh) {
             checkInsPage = 1
             hasMoreCheckInsData = true
             checkInsCache.clear()
@@ -167,7 +163,7 @@ class CheckInListViewModel(
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             isLoadingCheckIns = true
             uiStateMachine.showCheckInListLoading(isLoading = true)
-            checkInRepo.getAll(locationId, checkInsPage)
+            checkInRepo.getAll(locationId, checkInsPage, forceRefresh)
                 .onSuccess { checkInList ->
                     if (checkInList.isEmpty()) {
                         hasMoreCheckInsData = false
@@ -200,8 +196,7 @@ class CheckInListViewModel(
                 .onSuccess {
                     onMessageHandled()
                     _message.update { CheckInListMessageState.ShowSnackBar("Checked in successfully!") }
-                    checkInRepo.clearCache()
-                    loadCheckInList(locationId, refresh = true)
+                    loadCheckInList(locationId, forceRefresh = true)
                 }
                 .onFailure {
                     onMessageHandled()

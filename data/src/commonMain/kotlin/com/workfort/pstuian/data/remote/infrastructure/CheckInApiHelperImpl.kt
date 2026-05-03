@@ -22,17 +22,14 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         }
     }
 
-    /**
-     * Get all check in by user
-     * */
-    override suspend fun getAll(
+    override suspend fun getHistory(
         userId: Int,
         userType: String,
         page: Int,
         limit: Int,
     ): NetworkResult<List<CheckInDto>> {
         return runCatching {
-            service.getAllByUser(userId, userType, page, limit).toNetworkResult()
+            service.getHistory(userId, userType, page, limit).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
@@ -50,7 +47,7 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         locationId: Int,
         userId: Int,
         userType: String,
-    ): NetworkResult<CheckInDto> {
+    ): NetworkResult<Unit> {
         return runCatching {
             service.checkIn(locationId, userId, userType).toNetworkResult()
         }.getOrElse {

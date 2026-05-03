@@ -192,6 +192,7 @@ object NetworkConst {
 
             object CheckIn {
                 const val GET_ALL = "${CHECK_IN_API_PATH}getAll"
+                const val GET_HISTORY = "${CHECK_IN_API_PATH}getHistory"
                 const val GET = "${CHECK_IN_API_PATH}get"
                 const val CHECK_IN = "${CHECK_IN_API_PATH}checkIn"
                 const val PRIVACY = "${CHECK_IN_API_PATH}privacy"

@@ -6,9 +6,13 @@ import com.workfort.pstuian.featuredomain.model.UserType
 
 interface CheckInRepository {
 
-    suspend fun getAll(locationId: Int, page: Int, forceRefresh: Boolean = false) : DomainResult<List<CheckIn>>
-
     suspend fun getAll(
+        locationId: Int,
+        page: Int,
+        forceRefresh: Boolean = false,
+    ) : DomainResult<List<CheckIn>>
+
+    suspend fun getHistory(
         userId: Int,
         userType: UserType,
         page: Int,
@@ -21,7 +25,7 @@ interface CheckInRepository {
         locationId: Int,
         userId: Int,
         userType: UserType,
-    ): DomainResult<CheckIn>
+    ): DomainResult<Unit>
 
     suspend fun updatePrivacy(checkInId: Int, privacy: String): DomainResult<CheckIn>
 
