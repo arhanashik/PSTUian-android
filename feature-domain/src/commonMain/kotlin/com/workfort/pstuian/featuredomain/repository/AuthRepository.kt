@@ -47,7 +47,7 @@ interface AuthRepository {
      */
     suspend fun creatLegacyUserAuth(userType: UserType, email: String, password: String): DomainResult<Unit>
 
-    suspend fun signOut(userType: UserType, fromAllDevice: Boolean = false): DomainResult<Unit>
+    suspend fun signOut(fromAllDevice: Boolean = false): DomainResult<Unit>
 
     suspend fun changePassword(
         email: String,

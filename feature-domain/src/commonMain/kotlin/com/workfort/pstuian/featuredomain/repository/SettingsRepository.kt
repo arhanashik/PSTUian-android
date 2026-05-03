@@ -13,7 +13,6 @@ interface SettingsRepository {
     fun observeTheme(): Flow<ThemeMode>
     fun getFcmToken(): String?
     fun setFcmToken(fcmToken: String)
-    fun clearSharedPrefs()
     fun getUserType(): UserType?
     fun setUserType(userType: UserType?)
 

@@ -13,5 +13,4 @@ sealed interface HomeUiEvent {
     data class FacultyClicked(val faculty: Faculty) : HomeUiEvent
     data class ActionItemClicked(val actionItem: ActionItem) : HomeUiEvent
     data object RequestNotificationPermissionClicked : HomeUiEvent
-    data object ClearDataClicked : HomeUiEvent
 }

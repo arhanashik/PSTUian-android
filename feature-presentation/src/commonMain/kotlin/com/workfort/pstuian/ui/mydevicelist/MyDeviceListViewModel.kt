@@ -107,13 +107,11 @@ class MyDeviceListViewModel(
     }
 
     private fun signOutFromAllDevices() {
-        val userType = settingsRepository.getUserType() ?: return
-
         _message.update { MyDeviceListMessageState.Loading(cancelable = false) }
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
-                authRepository.signOut(userType, fromAllDevice = true)
+                authRepository.signOut(fromAllDevice = true)
             }.onSuccess {
                 _message.update { null }
                 _navigation.update { MyDeviceListNavigationState.GoBack }

@@ -143,15 +143,13 @@ class AuthRepositoryImpl(
 //        return authSignIn(userType, email, password).map { } // for debug process if account already exists
     }
 
-    override suspend fun signOut(userType: UserType, fromAllDevice: Boolean): DomainResult<Unit> {
+    override suspend fun signOut(fromAllDevice: Boolean): DomainResult<Unit> {
         val userId = getAuthUser()?.userId ?: return DomainResult.failure(invalidAuthUser)
 
         userPresenceRepository.removeUserPresence(userId)
         return firebaseAuthDataSource.signOut()
             .toDomainResult(domainErrorMapper)
-            .onSuccess {
-                removeAuthPrefs()
-            }
+            .onSuccess { removeAuthPrefs() }
     }
 
     override suspend fun changePassword(

@@ -19,9 +19,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.btn_save_and_continue
-import pstuian.feature_presentation.generated.resources.data_clear_message
 import pstuian.feature_presentation.generated.resources.helper_app_usage_role_sheet
-import pstuian.feature_presentation.generated.resources.label_are_you_sure
 import pstuian.feature_presentation.generated.resources.msg_request_notification_permission
 import pstuian.feature_presentation.generated.resources.msg_sign_in_required
 import pstuian.feature_presentation.generated.resources.title_select_app_usage_role
@@ -70,17 +68,6 @@ private fun HandleMessageState(
                     confirmButtonText = stringResource(Res.string.txt_allow),
                     onConfirm = {
                         // TODO request permission
-                        onMessageHandled()
-                    },
-                    onDismiss = onMessageHandled,
-                )
-            }
-            is HomeMessageState.ClearAllData -> {
-                ShowConfirmationDialog(
-                    title = stringResource(Res.string.label_are_you_sure),
-                    message = stringResource(Res.string.data_clear_message),
-                    onConfirm = {
-                        onUiEvent(HomeUiEvent.ClearDataClicked)
                         onMessageHandled()
                     },
                     onDismiss = onMessageHandled,

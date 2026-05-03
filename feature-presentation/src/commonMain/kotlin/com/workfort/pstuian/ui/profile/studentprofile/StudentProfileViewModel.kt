@@ -328,7 +328,7 @@ class StudentProfileViewModel(
         cancelUserPresenceObservation()
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            authRepo.signOut(UserType.STUDENT)
+            authRepo.signOut()
                 .onSuccess {
                     messageHandled()
                     _navigation.update { StudentProfileNavigationState.ResetToHome }

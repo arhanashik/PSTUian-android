@@ -11,15 +11,23 @@ sealed interface SettingsUiState {
     data object None: SettingsUiState
 
     data class Content(
-        val userType: UserType?,
-        val theme: ThemeMode,
-        val showNotification: Boolean,
+        val generalPanelData: GeneralPanelData,
+        val appPreferencePanelData: AppPreferencePanelData,
+        val debugPanelData: DebugPanelData?,
         val appVersionName: String,
         val appVersionCode: Int,
         val deviceId: String,
-        val debugPanelData: DebugPanelData?,
     ): SettingsUiState
 }
+
+data class GeneralPanelData(
+    val userType: UserType?,
+)
+
+data class AppPreferencePanelData(
+    val theme: ThemeMode,
+    val showNotification: Boolean,
+)
 
 data class DebugPanelData(
     val fcmToken: String,

@@ -8,6 +8,8 @@ import androidx.compose.runtime.getValue
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
+import com.workfort.pstuian.ui.common.composable.debugApiEnvironmentListSelectionOptions
+import com.workfort.pstuian.ui.common.composable.themeModeListSelectionOptions
 import com.workfort.pstuian.ui.common.composable.userTypeListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.settings.composable.SettingsScreenContent
@@ -16,9 +18,15 @@ import com.workfort.pstuian.ui.settings.state.SettingsNavigationState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.btn_apply
+import pstuian.feature_presentation.generated.resources.btn_apply_theme
 import pstuian.feature_presentation.generated.resources.btn_save_and_continue
 import pstuian.feature_presentation.generated.resources.helper_app_usage_role_sheet
+import pstuian.feature_presentation.generated.resources.helper_select_app_theme
+import pstuian.feature_presentation.generated.resources.helper_select_debug_api_server
+import pstuian.feature_presentation.generated.resources.title_select_app_theme
 import pstuian.feature_presentation.generated.resources.title_select_app_usage_role
+import pstuian.feature_presentation.generated.resources.title_select_debug_api_server
 import pstuian.feature_presentation.generated.resources.txt_retry
 
 @Composable
@@ -66,6 +74,30 @@ private fun HandleMessageState(
                     scrollable = false,
                     onDismiss = onMessageHandled,
                     onConfirm = { userType -> it.onSaveAndContinue(userType) },
+                )
+            }
+            is SettingsMessageState.ThemeSelection -> {
+                ListSelectionBottomSheet(
+                    title = stringResource(Res.string.title_select_app_theme),
+                    helperText = stringResource(Res.string.helper_select_app_theme),
+                    primaryButtonLabel = stringResource(Res.string.btn_apply_theme),
+                    options = themeModeListSelectionOptions(),
+                    initialSelection = it.selectedTheme,
+                    scrollable = false,
+                    onDismiss = onMessageHandled,
+                    onConfirm = { theme -> it.onApply(theme) },
+                )
+            }
+            is SettingsMessageState.DebugApiEnvironmentSelection -> {
+                ListSelectionBottomSheet(
+                    title = stringResource(Res.string.title_select_debug_api_server),
+                    helperText = stringResource(Res.string.helper_select_debug_api_server),
+                    primaryButtonLabel = stringResource(Res.string.btn_apply),
+                    options = debugApiEnvironmentListSelectionOptions(),
+                    initialSelection = it.selectedEnvironment,
+                    scrollable = false,
+                    onDismiss = onMessageHandled,
+                    onConfirm = { environment -> it.onApply(environment) },
                 )
             }
         }

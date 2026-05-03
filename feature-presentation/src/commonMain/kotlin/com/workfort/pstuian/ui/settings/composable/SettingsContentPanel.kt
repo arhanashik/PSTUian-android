@@ -1,48 +1,27 @@
 package com.workfort.pstuian.ui.settings.composable
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.workfort.pstuian.featuredomain.model.ThemeMode
-import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.localizedLabel
 import com.workfort.pstuian.ui.common.theme.AppColors
-import com.workfort.pstuian.ui.common.theme.TextStyle
+import com.workfort.pstuian.ui.settings.state.AppPreferencePanelData
 import com.workfort.pstuian.ui.settings.state.DebugPanelData
+import com.workfort.pstuian.ui.settings.state.GeneralPanelData
 import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
 import com.workfort.pstuian.ui.settings.state.SettingsUiState
 import org.jetbrains.compose.resources.stringResource
@@ -70,10 +49,11 @@ fun SettingsContentPanel(
                 is SettingsUiState.None -> Unit
                 is SettingsUiState.Content -> {
                     GeneralSettingsView(
-                        userType = uiState.userType,
+                        generalPanelData = uiState.generalPanelData,
                         onClickUserType = { onUiEvent(SettingsUiEvent.UserTypeClicked) },
-                        currentTheme = uiState.theme,
-                        showNotification = uiState.showNotification,
+                    )
+                    AppPreferencesView(
+                        appPreferencePanelData = uiState.appPreferencePanelData,
                         onClickTheme = { onUiEvent(SettingsUiEvent.ThemeClicked) },
                         onNotificationChange = { onUiEvent(SettingsUiEvent.ShowNotificationToggled(it)) },
                     )
@@ -102,109 +82,65 @@ fun SettingsContentPanel(
 }
 
 @Composable
-private fun settingsCardLabelStyle() = TextStyle.title3.copy(
-    fontSize = 15.sp,
-    fontWeight = FontWeight.SemiBold,
-    color = AppColors.textPrimary,
-)
-
-@Composable
 private fun GeneralSettingsView(
-    userType: UserType?,
+    generalPanelData: GeneralPanelData,
     onClickUserType: () -> Unit,
-    currentTheme: ThemeMode,
-    showNotification: Boolean,
-    onClickTheme: () -> Unit,
-    onNotificationChange: (Boolean) -> Unit,
 ) {
-    val userTypeLabel: String = userType?.localizedLabel() ?: stringResource(Res.string.txt_visitor)
-    val rowLabelStyle = settingsCardLabelStyle()
+    val userTypeLabel: String = generalPanelData.userType?.localizedLabel() ?: stringResource(Res.string.txt_visitor)
     ElevatedCard(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Column(modifier = Modifier.padding(vertical = 8.dp)) {
-            // User Type
-            Row(
+        Column(modifier = Modifier.fillMaxWidth()) {
+            SettingsCardHeader(title = "General")
+            HorizontalDivider(color = AppColors.background)
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .padding(16.dp),
             ) {
-                Text(
-                    text = stringResource(Res.string.label_user_type_row),
-                    style = rowLabelStyle,
-                )
-                Text(
-                    text = userTypeLabel,
-                    style = TextStyle.label1.copy(
-                        color = AppColors.textPrimary,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 13.sp,
-                    ),
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(AppColors.BrandYellow.copy(alpha = 0.42f))
-                        .clickable(onClick = onClickUserType)
-                        .padding(horizontal = 10.dp, vertical = 5.dp),
+                SettingsContentRowWithActionLabel(
+                    label = stringResource(Res.string.label_user_type_row),
+                    actionLabel = userTypeLabel,
+                    onClickAction = onClickUserType,
                 )
             }
+        }
+    }
+}
 
-            // App Theme
-            Row(
+@Composable
+private fun AppPreferencesView(
+    appPreferencePanelData: AppPreferencePanelData,
+    onClickTheme: () -> Unit,
+    onNotificationChange: (Boolean) -> Unit,
+) {
+    ElevatedCard(
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            SettingsCardHeader(title = "App Preference")
+            HorizontalDivider(color = AppColors.background)
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .padding(16.dp),
             ) {
-                Text(text = "App Theme", style = rowLabelStyle)
-                Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-                    OutlinedButton(
-                        onClick = onClickTheme,
-                        modifier = Modifier.height(30.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                    ) {
-                        Text(
-                            text = currentTheme.name,
-                            style = TextStyle.label2.copy(
-                                color = AppColors.textSecondary,
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 11.sp,
-                            ),
-                        )
-                    }
-                }
-            }
-
-            // Show Notification
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(text = "Show Notification", style = rowLabelStyle)
-                Switch(
-                    checked = showNotification,
-                    onCheckedChange = { onNotificationChange(it) },
-                    thumbContent = {
-                        if (showNotification) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        uncheckedBorderColor = Color.LightGray,
-                    ),
+                SettingsContentRowWithActionLabel(
+                    label = "App Theme",
+                    actionLabel = appPreferencePanelData.theme.name,
+                    onClickAction = onClickTheme,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                SettingsContentRowWithSwitch(
+                    label = "Show Notification",
+                    isChecked = appPreferencePanelData.showNotification,
+                    onCheckedChange = onNotificationChange,
                 )
             }
         }
@@ -219,7 +155,6 @@ private fun DebugSettingsView(
     onClearCache: () -> Unit,
     onForceSignOut: () -> Unit,
 ) {
-    val rowLabelStyle = settingsCardLabelStyle()
     ElevatedCard(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth(),
@@ -228,136 +163,38 @@ private fun DebugSettingsView(
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Column(modifier = Modifier.padding(vertical = 8.dp)) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = "API server",
-                    style = rowLabelStyle,
-                )
-                Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-                    OutlinedButton(
-                        onClick = onDebugApiServerClicked,
-                        modifier = Modifier.height(30.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                    ) {
-                        Text(
-                            text = debugPanelData.debugApiEnvironment.displayLabel,
-                            style = TextStyle.label2.copy(
-                                color = AppColors.textSecondary,
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 11.sp,
-                            ),
-                        )
-                    }
-                }
-            }
+        Column(modifier = Modifier.fillMaxWidth()) {
+            SettingsCardHeader(title = "Debug Panel")
+            HorizontalDivider(color = AppColors.background)
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = "FCM Token",
-                        style = rowLabelStyle,
-                    )
-                    IconButton(onClick = onRefreshFcmToken) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh",
-                            tint = AppColors.textSecondary,
-                        )
-                    }
-                }
-                Text(
-                    text = debugPanelData.fcmToken,
-                    style = TextStyle.body2.copy(color = AppColors.textSecondary),
-                )
-            }
-            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .padding(16.dp),
             ) {
-                Text(
-                    text = "Clear Cache",
-                    style = rowLabelStyle,
+                SettingsContentRowWithActionLabel(
+                    label = "API server",
+                    actionLabel = debugPanelData.debugApiEnvironment.displayLabel,
+                    onClickAction = onDebugApiServerClicked,
                 )
-                OutlinedButton(
-                    onClick = onClearCache,
-                    modifier = Modifier.height(30.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                ) {
-                    Text(
-                        text = "Clear",
-                        style = TextStyle.label2.copy(
-                            color = AppColors.error,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 11.sp,
-                        ),
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = "Force Sign Out",
-                    style = rowLabelStyle,
+                Spacer(modifier = Modifier.height(8.dp))
+                SettingsContentRowWithIconButton(
+                    label = "FCM Token",
+                    actionLabel = debugPanelData.fcmToken,
+                    onClickAction = onRefreshFcmToken,
                 )
-                OutlinedButton(
-                    onClick = onForceSignOut,
-                    modifier = Modifier.height(30.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                ) {
-                    Text(
-                        text = stringResource(Res.string.txt_sign_out),
-                        style = TextStyle.label2.copy(
-                            color = AppColors.textSecondary,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 11.sp,
-                        ),
-                    )
-                }
+                Spacer(modifier = Modifier.height(8.dp))
+                SettingsContentRowWithActionButton(
+                    label = "Force Sign Out",
+                    actionLabel =stringResource(Res.string.txt_sign_out),
+                    onClickAction = onForceSignOut,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                SettingsContentRowWithActionButton(
+                    label = "Clear Cache",
+                    actionLabel = "Clear",
+                    onClickAction = onClearCache,
+                )
             }
         }
-    }
-}
-
-@Composable
-private fun SettingsFooter(
-    appVersionName: String,
-    appVersionCode: Int,
-    deviceId: String,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = "$appVersionName ($appVersionCode)",
-            style = TextStyle.label3.copy(color = AppColors.textSecondary),
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = deviceId,
-            style = TextStyle.label3.copy(color = AppColors.textSecondary),
-        )
     }
 }

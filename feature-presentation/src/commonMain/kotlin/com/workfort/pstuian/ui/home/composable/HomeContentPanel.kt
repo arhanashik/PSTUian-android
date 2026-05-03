@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -109,23 +110,29 @@ fun HomeContentPanel(
             style = TextStyle.title3.copy(color = AppColors.textPrimary),
         )
 
-        FlowRow(
+        val informationRowSpacing = 16.dp
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            maxItemsInEachRow = 2,
-            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            informationItems.forEachIndexed { index, item ->
-                InformationCornerView(
-                    item = item,
-                    isLeftItem = index % 2 == 0,
-                    onClick = { onUiEvent(HomeUiEvent.ActionItemClicked(item)) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.48f)
-                        .height(84.dp)
-                        .padding(vertical = 8.dp),
-                )
+            val informationItemWidth = (maxWidth - informationRowSpacing) / 2
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                maxItemsInEachRow = 2,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                informationItems.forEachIndexed { index, item ->
+                    InformationCornerView(
+                        item = item,
+                        isLeftItem = index % 2 == 0,
+                        onClick = { onUiEvent(HomeUiEvent.ActionItemClicked(item)) },
+                        modifier = Modifier
+                            .width(informationItemWidth)
+                            .height(84.dp)
+                            .padding(vertical = 8.dp),
+                    )
+                }
             }
         }
 
@@ -140,22 +147,28 @@ fun HomeContentPanel(
             style = TextStyle.title3.copy(color = AppColors.textPrimary),
         )
 
-        FlowRow(
+        val optionsRowSpacing = 16.dp
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            maxItemsInEachRow = 3,
-            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            optionsItems.forEach { item ->
-                OptionView(
-                    item = item,
-                    onClick = { onUiEvent(HomeUiEvent.ActionItemClicked(item)) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.3f)
-                        .height(84.dp)
-                        .padding(vertical = 8.dp),
-                )
+            val optionsItemWidth = (maxWidth - optionsRowSpacing * 2) / 3
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                maxItemsInEachRow = 3,
+                horizontalArrangement = Arrangement.spacedBy(optionsRowSpacing),
+            ) {
+                optionsItems.forEach { item ->
+                    OptionView(
+                        item = item,
+                        onClick = { onUiEvent(HomeUiEvent.ActionItemClicked(item)) },
+                        modifier = Modifier
+                            .width(optionsItemWidth)
+                            .height(84.dp)
+                            .padding(vertical = 8.dp),
+                    )
+                }
             }
         }
 
@@ -238,19 +251,23 @@ private fun FacultyViewWrapper(
             }
         }
         is HomeUiState.FacultyState.Available -> {
-            FlowRow(
-                modifier = modifier,
-                maxItemsInEachRow = 3,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                state.faculties.forEach { item ->
-                    FacultyView(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(vertical = 8.dp),
-                        faculty = item,
-                        onClick = { onUiEvent(HomeUiEvent.FacultyClicked(item)) },
-                    )
+            val facultyRowSpacing = 16.dp
+            BoxWithConstraints(modifier = modifier) {
+                val itemWidth = (maxWidth - facultyRowSpacing * 2) / 3
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    maxItemsInEachRow = 3,
+                    horizontalArrangement = Arrangement.spacedBy(facultyRowSpacing),
+                ) {
+                    state.faculties.forEach { item ->
+                        FacultyView(
+                            modifier = Modifier
+                                .width(itemWidth)
+                                .padding(vertical = 8.dp),
+                            faculty = item,
+                            onClick = { onUiEvent(HomeUiEvent.FacultyClicked(item)) },
+                        )
+                    }
                 }
             }
         }

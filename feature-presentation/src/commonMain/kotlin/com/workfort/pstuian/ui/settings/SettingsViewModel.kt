@@ -8,8 +8,11 @@ import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.featuredomain.usecase.ClearCacheUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
+import com.workfort.pstuian.ui.settings.state.AppPreferencePanelData
 import com.workfort.pstuian.ui.settings.state.DebugPanelData
+import com.workfort.pstuian.ui.settings.state.GeneralPanelData
 import com.workfort.pstuian.ui.settings.state.SettingsMessageState
 import com.workfort.pstuian.ui.settings.state.SettingsNavigationState
 import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
@@ -27,6 +30,7 @@ class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val platformInfo: PlatformInfo,
     private val pushNotificationProvider: PushNotificationProvider,
+    private val clearCache: ClearCacheUseCase,
     private val stateMachine: SettingsUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SettingsUiState>(stateMachine) {
@@ -46,13 +50,17 @@ class SettingsViewModel(
         } else null
 
         stateMachine.showInitialState(
-            userType = settingsRepository.getUserType(),
-            theme = settingsRepository.getTheme(),
-            showNotification = settingsRepository.shouldShowNotification(),
+            generalPanelData = GeneralPanelData(
+                userType = settingsRepository.getUserType(),
+            ),
+            appPreferencePanelData = AppPreferencePanelData(
+                theme = settingsRepository.getTheme(),
+                showNotification = settingsRepository.shouldShowNotification(),
+            ),
+            debugPanelData = debugPanelData,
             appVersionName = platformInfo.appVersionName,
             appVersionCode = platformInfo.appVersionCode,
             deviceId = platformInfo.deviceId,
-            debugPanelData = debugPanelData,
         )
     }
 
@@ -61,17 +69,12 @@ class SettingsViewModel(
             when (event) {
                 is SettingsUiEvent.BackClicked -> _navigation.update { SettingsNavigationState.GoBack }
                 SettingsUiEvent.UserTypeClicked -> openAppUsageRoleSelectionMessage()
-                SettingsUiEvent.ThemeClicked -> Unit
+                SettingsUiEvent.ThemeClicked -> openThemeSelectionMessage()
                 is SettingsUiEvent.ShowNotificationToggled -> setShowNotification(event.show)
-                is SettingsUiEvent.ChangeThemeClicked -> onChangeTheme(event.theme)
                 is SettingsUiEvent.RefreshFcmTokenClicked -> onRefreshFcmToken()
                 is SettingsUiEvent.ClearCacheClicked -> onClearCache()
                 is SettingsUiEvent.ForceSignOutClicked -> onForceSignOut()
-                SettingsUiEvent.DebugApiServerClicked -> Unit
-                is SettingsUiEvent.DebugApiEnvironmentSelected -> {
-                    settingsRepository.setDebugApiEnvironment(event.environment)
-                    stateMachine.setDebugApiEnvironment(event.environment)
-                }
+                SettingsUiEvent.DebugApiServerClicked -> openDebugApiEnvironmentSelectionMessage()
             }
         }
     }
@@ -85,6 +88,29 @@ class SettingsViewModel(
             SettingsMessageState.UserTypeSelection(selectedUserType = settingsRepository.getUserType()) { userType ->
                 settingsRepository.setUserType(userType)
                 stateMachine.setUserType(userType)
+                onMessageHandled()
+            }
+        }
+    }
+
+    private fun openThemeSelectionMessage() {
+        _message.update {
+            SettingsMessageState.ThemeSelection(selectedTheme = settingsRepository.getTheme()) { theme ->
+                theme?.let { onChangeTheme(it) }
+                onMessageHandled()
+            }
+        }
+    }
+
+    private fun openDebugApiEnvironmentSelectionMessage() {
+        _message.update {
+            SettingsMessageState.DebugApiEnvironmentSelection(
+                selectedEnvironment = settingsRepository.getDebugApiEnvironment(),
+            ) { environment ->
+                environment?.let {
+                    settingsRepository.setDebugApiEnvironment(it)
+                    stateMachine.setDebugApiEnvironment(it)
+                }
                 onMessageHandled()
             }
         }
@@ -109,7 +135,6 @@ class SettingsViewModel(
     }
 
     private fun onClearCache() {
-        val userType = settingsRepository.getUserType() ?: return
         _message.update {
             SettingsMessageState.ConfirmAction(
                 title = "Clear Data",
@@ -117,8 +142,8 @@ class SettingsViewModel(
             ) {
                 onMessageHandled()
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-                    authRepository.signOut(userType, fromAllDevice = false)
-                    settingsRepository.clearSharedPrefs()
+                    clearCache()
+                    authRepository.signOut()
                     _navigation.update { SettingsNavigationState.ResetToRoot }
                 }
             }
@@ -126,15 +151,14 @@ class SettingsViewModel(
     }
 
     private fun onForceSignOut() {
-        val userType = settingsRepository.getUserType() ?: return
         _message.update {
             SettingsMessageState.ConfirmAction(
-                title = "Force sign out",
+                title = "Force Sign Out",
                 message = "Are you sure you want to force sign out?",
             ) {
                 onMessageHandled()
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-                    authRepository.signOut(userType, fromAllDevice = false)
+                    authRepository.signOut()
                         .onSuccess { _navigation.update { SettingsNavigationState.ResetToRoot } }
                         .onFailure { err ->
                             _message.update {

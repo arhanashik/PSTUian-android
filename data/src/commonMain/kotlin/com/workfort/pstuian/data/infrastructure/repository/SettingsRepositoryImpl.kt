@@ -46,10 +46,6 @@ class SettingsRepositoryImpl(
         sharedPrefRepository.putString(SharedPrefKey.FCM_TOKEN, fcmToken)
     }
 
-    override fun clearSharedPrefs() {
-        sharedPrefRepository.clear()
-    }
-
     override fun getUserType(): UserType? {
         val type = sharedPrefRepository.getString(SharedPrefKey.SELECTED_USER_TYPE) ?: return null
         return UserType.fromType(type)

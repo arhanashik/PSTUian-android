@@ -31,7 +31,6 @@ sealed interface Action {
     data object RequestBloodDonation: Action
     data object CheckIn: Action
     data object RateApp: Action
-    data object ClearData: Action
     data object Settings: Action
     data object Donate: Action
 }
@@ -85,11 +84,6 @@ val optionsItems = listOf(
         Res.string.txt_rate_app,
         Icons.Default.Star,
         action = Action.RateApp,
-    ),
-    ActionItem(
-        Res.string.label_clear_data,
-        Icons.Outlined.Delete,
-        action = Action.ClearData,
     ),
     ActionItem(
         Res.string.txt_donate,

@@ -13,7 +13,6 @@ import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
-import com.workfort.pstuian.featuredomain.usecase.ClearCacheUseCase
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.home.state.HomeMessageState
@@ -34,7 +33,6 @@ class HomeViewModel(
     private val facultyRepo: FacultyRepository,
     private val settingsRepository: SettingsRepository,
     private val sharedScreenData: SharedScreenData,
-    private val clearCacheUseCase: ClearCacheUseCase,
     private val platformInfo: PlatformInfo,
     private val uiStateMachine: HomeUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -83,13 +81,11 @@ class HomeViewModel(
                     Action.RateApp -> {
                         _navigation.update { HomeNavigationState.Browser(platformInfo.storeUrl) }
                     }
-                    Action.ClearData -> onClickClearData()
                     Action.Settings -> onClickSettings()
                     Action.Donate -> onClickDonate()
                 }
             }
             is HomeUiEvent.RequestNotificationPermissionClicked -> showNotificationPermissionConfirmation()
-            is HomeUiEvent.ClearDataClicked -> clearAllData()
         }
     }
 
@@ -236,22 +232,5 @@ class HomeViewModel(
 
     private fun onClickDonate() {
         _navigation.update { HomeNavigationState.DonateScreen }
-    }
-
-    private fun onClickClearData() {
-        _message.update { HomeMessageState.ClearAllData }
-    }
-
-    fun clearAllData() {
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                clearCacheUseCase()
-            }.onSuccess {
-                _navigation.update { HomeNavigationState.SplashScreen }
-            }.onFailure {
-                val error = it.message ?: "Failed to clear data"
-                _message.update { HomeMessageState.ClearAllDataFailed(error) }
-            }
-        }
     }
 }
