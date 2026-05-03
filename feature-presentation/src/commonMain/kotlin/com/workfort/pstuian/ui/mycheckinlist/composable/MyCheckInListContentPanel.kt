@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,20 +42,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
+import com.workfort.pstuian.ui.common.composable.ActionButton
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
-import com.workfort.pstuian.ui.common.composable.DotView
 import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
-import com.workfort.pstuian.ui.common.composable.MaterialButtonToggleGroup
-import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.OutlinedActionButton
+import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
@@ -354,93 +355,121 @@ fun MyCheckInItemBottomSheet(
     onClickDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val detailsDialogSheetState = rememberModalBottomSheetState()
+    val detailsDialogSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
 
     val dateTimeUtil = DateTimeUtilImpl()
     val date = dateTimeUtil.getTimeAgo(item.date)
     val checkInCountStr = "${MathUtil.prettyCount(item.count)} check in"
-    val privacyItems = listOf(
+    val privacyOptions = listOf(
         stringResource(Res.string.txt_public),
         stringResource(Res.string.txt_only_me),
     )
-    val privacyIndex = when(CheckInPrivacy.create(item.privacy)) {
-        null, CheckInPrivacy.PUBLIC -> 0
+    val committedPrivacyIndex = when (CheckInPrivacy.create(item.privacy)) {
         CheckInPrivacy.ONLY_ME -> 1
+        else -> 0
     }
-    val (selectedPrivacyIndex, onChangePrivacyIndex) = remember { mutableIntStateOf(privacyIndex) }
+    var selectedPrivacyIndex by remember(item.id, item.privacy) {
+        mutableIntStateOf(committedPrivacyIndex)
+    }
+
+    fun hideThen(run: () -> Unit) {
+        scope.launch { detailsDialogSheetState.hide() }.invokeOnCompletion {
+            run()
+        }
+    }
+
     ModalBottomSheet(
-        onDismissRequest = {
-            onDismiss()
-        },
+        onDismissRequest = onDismiss,
         sheetState = detailsDialogSheetState,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(top = 8.dp, bottom = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            LoadAsyncImage(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                url = item.locationImageUrl,
-                placeholder = Icons.Default.LocationOn,
-                contentScale = ContentScale.Crop,
+            MyCheckInLocationThumbnail(imageUrl = item.locationImageUrl.orEmpty())
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = item.locationName,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = TextStyle.title3.copy(
+                    color = AppColors.textPrimary,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
-            TitleTextSmall(modifier = Modifier.padding(top = 8.dp), text = item.name)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(text = date)
-                DotView(modifier = Modifier.padding(horizontal = 8.dp), color = Color.Gray)
-                Text(text = checkInCountStr)
-            }
-            MaterialButtonToggleGroup(
-                items = privacyItems,
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = "$date · $checkInCountStr",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = TextStyle.label2.copy(color = AppColors.textSecondary),
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            ToggleSwitch(
+                modifier = Modifier.fillMaxWidth(),
+                options = privacyOptions,
                 selectedIndex = selectedPrivacyIndex,
-            ) {
-                onChangePrivacyIndex(it)
-            }
-            HorizontalDivider(
-                modifier = Modifier.padding(top = 16.dp),
-                color = Color.LightGray.copy(alpha = 0.5f),
+                onSelectedIndexChange = { selectedPrivacyIndex = it },
+                height = 44.dp,
+                cornerRadius = 22.dp,
             )
-            TextButton(
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 20.dp),
+                color = AppColors.divider,
+            )
+
+            val privacyDirty = committedPrivacyIndex != selectedPrivacyIndex
+            ActionButton(
+                label = stringResource(Res.string.txt_change_privacy),
+                icon = null,
+                enabled = privacyDirty,
                 onClick = {
-                    scope.launch { detailsDialogSheetState.hide() }.invokeOnCompletion {
+                    hideThen {
                         val privacy = when (selectedPrivacyIndex) {
-                            0 -> CheckInPrivacy.PUBLIC
                             1 -> CheckInPrivacy.ONLY_ME
                             else -> CheckInPrivacy.PUBLIC
                         }
                         onClickChangePrivacy(privacy)
                     }
                 },
-                enabled = privacyIndex != selectedPrivacyIndex,
-            ) {
-                Text(text = stringResource(Res.string.txt_change_privacy))
-            }
-            HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
-            TextButton(
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedActionButton(
+                label = stringResource(Res.string.txt_delete),
+                icon = Icons.Default.Delete,
+                borderColor = AppColors.error,
+                contentColor = AppColors.error,
                 onClick = {
-                    scope.launch { detailsDialogSheetState.hide() }.invokeOnCompletion {
-                        onClickDelete()
-                    }
-                }
-            ) {
-                Text(text = stringResource(Res.string.txt_delete))
-            }
-            HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
+                    hideThen(onClickDelete)
+                },
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             TextButton(
-                onClick = {
-                    scope.launch { detailsDialogSheetState.hide() }.invokeOnCompletion {
-                        onDismiss()
-                    }
-                }
+                onClick = { hideThen(onDismiss) },
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(text = stringResource(Res.string.txt_dismiss))
+                Text(
+                    text = stringResource(Res.string.txt_dismiss),
+                    style = TextStyle.label1.copy(color = AppColors.textSecondary),
+                )
             }
-            Spacer(modifier = Modifier.padding(bottom = 16.dp))
         }
     }
 }

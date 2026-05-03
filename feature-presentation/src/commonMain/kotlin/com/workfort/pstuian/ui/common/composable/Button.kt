@@ -155,3 +155,49 @@ internal fun ActionButton(
         }
     }
 }
+
+/** Same footprint as [ActionButton] (`fillMaxWidth`, 48.dp height), outlined with customizable accent/border. */
+@Composable
+internal fun OutlinedActionButton(
+    label: String,
+    icon: ImageVector? = null,
+    enabled: Boolean = true,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.primary,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        border = BorderStroke(1.dp, borderColor),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = contentColor,
+        ),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = contentColor,
+                    modifier = Modifier.size(20.dp),
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+            Text(
+                text = label,
+                style = TextStyle.label1.copy(
+                    color = contentColor,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                ),
+            )
+        }
+    }
+}
