@@ -12,7 +12,7 @@ import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.settings.state.AppPreferencePanelData
 import com.workfort.pstuian.ui.settings.state.DebugPanelData
-import com.workfort.pstuian.ui.settings.state.GeneralPanelData
+import com.workfort.pstuian.ui.settings.state.AccountPreferencesData
 import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
 import com.workfort.pstuian.ui.settings.state.SettingsUiState
 import org.jetbrains.compose.resources.stringResource
@@ -62,7 +62,7 @@ fun SettingsScreenContentDarkPreview() {
 }
 
 private val mockUiSate = SettingsUiState.Content(
-    generalPanelData = GeneralPanelData(userType = UserType.STUDENT),
+    accountPreferencesData = AccountPreferencesData(userType = UserType.STUDENT),
     appPreferencePanelData = AppPreferencePanelData(
         theme = ThemeMode.System,
         showNotification = true,

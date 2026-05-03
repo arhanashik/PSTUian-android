@@ -6,7 +6,7 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.settings.state.AppPreferencePanelData
 import com.workfort.pstuian.ui.settings.state.DebugPanelData
-import com.workfort.pstuian.ui.settings.state.GeneralPanelData
+import com.workfort.pstuian.ui.settings.state.AccountPreferencesData
 import com.workfort.pstuian.ui.settings.state.SettingsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,16 +30,16 @@ class SettingsUiStateMachine : UiStateMachine<SettingsUiState> {
     }
 
     fun showInitialState(
-        generalPanelData: GeneralPanelData,
         appPreferencePanelData: AppPreferencePanelData,
+        accountPreferencesData: AccountPreferencesData,
         debugPanelData: DebugPanelData?,
         appVersionName: String,
         appVersionCode: Int,
         deviceId: String,
     ) = updateUiState {
         SettingsUiState.Content(
-            generalPanelData = generalPanelData,
             appPreferencePanelData = appPreferencePanelData,
+            accountPreferencesData = accountPreferencesData,
             appVersionName = appVersionName,
             appVersionCode = appVersionCode,
             deviceId = deviceId,
@@ -60,7 +60,7 @@ class SettingsUiStateMachine : UiStateMachine<SettingsUiState> {
     }
 
     fun setUserType(userType: UserType?) = updateContent {
-        copy(generalPanelData = generalPanelData.copy(userType = userType))
+        copy(accountPreferencesData = accountPreferencesData.copy(userType = userType))
     }
 
     fun setDebugApiEnvironment(environment: DebugApiEnvironment) = updateContent {

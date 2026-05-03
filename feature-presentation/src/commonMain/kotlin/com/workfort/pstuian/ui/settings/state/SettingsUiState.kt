@@ -11,8 +11,8 @@ sealed interface SettingsUiState {
     data object None: SettingsUiState
 
     data class Content(
-        val generalPanelData: GeneralPanelData,
         val appPreferencePanelData: AppPreferencePanelData,
+        val accountPreferencesData: AccountPreferencesData,
         val debugPanelData: DebugPanelData?,
         val appVersionName: String,
         val appVersionCode: Int,
@@ -20,7 +20,7 @@ sealed interface SettingsUiState {
     ): SettingsUiState
 }
 
-data class GeneralPanelData(
+data class AccountPreferencesData(
     val userType: UserType?,
 )
 

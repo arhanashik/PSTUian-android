@@ -12,7 +12,7 @@ import com.workfort.pstuian.featuredomain.usecase.ClearCacheUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.settings.state.AppPreferencePanelData
 import com.workfort.pstuian.ui.settings.state.DebugPanelData
-import com.workfort.pstuian.ui.settings.state.GeneralPanelData
+import com.workfort.pstuian.ui.settings.state.AccountPreferencesData
 import com.workfort.pstuian.ui.settings.state.SettingsMessageState
 import com.workfort.pstuian.ui.settings.state.SettingsNavigationState
 import com.workfort.pstuian.ui.settings.state.SettingsUiEvent
@@ -50,12 +50,12 @@ class SettingsViewModel(
         } else null
 
         stateMachine.showInitialState(
-            generalPanelData = GeneralPanelData(
-                userType = settingsRepository.getUserType(),
-            ),
             appPreferencePanelData = AppPreferencePanelData(
                 theme = settingsRepository.getTheme(),
                 showNotification = settingsRepository.shouldShowNotification(),
+            ),
+            accountPreferencesData = AccountPreferencesData(
+                userType = settingsRepository.getUserType(),
             ),
             debugPanelData = debugPanelData,
             appVersionName = platformInfo.appVersionName,
@@ -143,7 +143,6 @@ class SettingsViewModel(
                 onMessageHandled()
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     clearCache()
-                    authRepository.signOut()
                     _navigation.update { SettingsNavigationState.ResetToRoot }
                 }
             }

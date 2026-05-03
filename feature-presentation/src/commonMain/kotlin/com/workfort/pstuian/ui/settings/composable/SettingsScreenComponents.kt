@@ -5,9 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,8 +17,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -34,6 +38,31 @@ import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 
+
+@Composable
+internal fun SettingsPanel(
+    title: String,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    ElevatedCard(
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            SettingsCardHeader(title = title)
+            HorizontalDivider(color = AppColors.background)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            ) {
+                content()
+            }
+        }
+    }
+}
 
 @Composable
 internal fun SettingsCardHeader(title: String) {
@@ -70,7 +99,7 @@ internal fun SettingsContentRowWithActionLabel(
                 .clip(RoundedCornerShape(8.dp))
                 .background(AppColors.BrandYellow.copy(alpha = 0.42f))
                 .clickable(onClick = onClickAction)
-                .padding(horizontal = 10.dp, vertical = 5.dp),
+                .padding(horizontal = 12.dp, vertical = 5.dp),
         )
     }
 }
@@ -91,7 +120,7 @@ internal fun SettingsContentRowWithActionButton(
             OutlinedButton(
                 onClick = onClickAction,
                 modifier = Modifier.height(30.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
             ) {
                 Text(text = actionLabel, style = settingsCardActionLabelStyle())
             }
@@ -154,30 +183,6 @@ internal fun SettingsContentRowWithIconButton(
             }
         }
         Text(text = actionLabel, style = settingsCardActionLabelStyle())
-    }
-}
-
-@Composable
-internal fun SettingsFooter(
-    appVersionName: String,
-    appVersionCode: Int,
-    deviceId: String,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = "$appVersionName ($appVersionCode)",
-            style = TextStyle.label3.copy(color = AppColors.textSecondary),
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = deviceId,
-            style = TextStyle.label3.copy(color = AppColors.textSecondary),
-        )
     }
 }
 
