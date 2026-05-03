@@ -36,7 +36,7 @@ sealed interface AppScreen {
     @Serializable
     data class MyBloodDonationList(val userId: String, val userType: UserType) : AppScreen
     @Serializable
-    data class MyCheckInList(val userId: String, val userType: UserType) : AppScreen
+    data class MyCheckInList(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
     data class MyDeviceList(val userId: String, val userType: UserType) : AppScreen
     @Serializable

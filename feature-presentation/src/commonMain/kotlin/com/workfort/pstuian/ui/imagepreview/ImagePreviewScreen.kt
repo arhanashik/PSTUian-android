@@ -29,9 +29,9 @@ import pstuian.feature_presentation.generated.resources.txt_go_back
 
 @Composable
 fun ImagePreviewScreen(
-    modifier: Modifier = Modifier,
-    onBack: () -> Unit,
     imageUrl: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold { innerPadding ->
         ImagePreviewScreenComponent(

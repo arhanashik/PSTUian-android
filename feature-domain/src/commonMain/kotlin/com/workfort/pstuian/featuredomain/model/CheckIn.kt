@@ -16,5 +16,5 @@ data class CheckIn(
     val batch: String,
     val phone: String?,
     val imageUrl: String?,
-    val date: String
+    val date: String,
 )

@@ -17,7 +17,6 @@ import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInNavigationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class MyCheckInListViewModel(
     private val userId: Int,
@@ -33,21 +32,21 @@ class MyCheckInListViewModel(
     private val _navigationState = MutableStateFlow<MyCheckInNavigationState?>(null)
     val navigation = _navigationState.asStateFlow()
 
+    private var page = 1
+    private var hasMoreData: Boolean = true
+    private val checkInsCache = mutableListOf<CheckIn>()
+
     override fun onUiReady() {
-        onUiEvent(MyCheckInListUiEvent.LoadMoreData(refresh = true))
+        loadCheckInList(forceRefresh = false)
     }
 
     fun onUiEvent(event: MyCheckInListUiEvent) {
-        viewModelScope.launch {
-            when (event) {
-                is MyCheckInListUiEvent.LoadMoreData -> loadCheckInList(event.refresh)
-                is MyCheckInListUiEvent.BackClicked -> {
-                    _navigationState.update { MyCheckInNavigationState.GoBack }
-                }
-                is MyCheckInListUiEvent.ItemClicked -> onCheckInItemClicked(event.item)
-                is MyCheckInListUiEvent.ChangePrivacy -> changePrivacy(event.item, event.privacy)
-                is MyCheckInListUiEvent.Delete -> delete(event.item)
-            }
+        when (event) {
+            is MyCheckInListUiEvent.BackClicked -> _navigationState.update { MyCheckInNavigationState.GoBack }
+            is MyCheckInListUiEvent.LoadMore -> loadCheckInList(forceRefresh = false)
+            is MyCheckInListUiEvent.ItemClicked -> onCheckInItemClicked(event.item)
+            is MyCheckInListUiEvent.ChangePrivacy -> changePrivacy(event.item, event.privacy)
+            is MyCheckInListUiEvent.Delete -> delete(event.item)
         }
     }
 
@@ -59,44 +58,35 @@ class MyCheckInListViewModel(
         _navigationState.update { null }
     }
 
-    private fun isListLoading(): Boolean {
-        return uiStateMachine.uiState.value.isLoading
-    }
-
-    private var page = 0
-    private var endOfData: Boolean = false
-    private val itemsCache = arrayListOf<CheckIn>()
-
-    private suspend fun loadCheckInList(refresh: Boolean) {
-        if (isListLoading() || (refresh.not() && endOfData)) {
+    private fun loadCheckInList(forceRefresh: Boolean) {
+        if (forceRefresh) {
+            checkInsCache.clear()
+            page = 1
+            hasMoreData = true
+        } else if (!hasMoreData) {
             return
         }
-        if (refresh) {
-            page = 0
-            endOfData = false
-            itemsCache.clear()
-        }
-        page += 1
-        uiStateMachine.updateLoading(true)
 
-        checkInRepo.getHistory(userId, userType, page)
-            .onSuccess { list ->
-                if (list.isEmpty()) {
-                    endOfData = true
-                } else {
-                    itemsCache.addAll(list)
+        uiStateMachine.updateContentLoading(true)
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            checkInRepo.getHistory(userId, userType, page, forceRefresh)
+                .onSuccess { list ->
+                    if (list.isEmpty()) {
+                        hasMoreData = false
+                    } else {
+                        page++
+                    }
+                    checkInsCache.addAll(list)
+                    uiStateMachine.showCheckIns(checkInsCache)
                 }
-                uiStateMachine.updateData(itemsCache.toList())
-            }
-            .onFailure {
-                endOfData = true
-                if (itemsCache.isEmpty()) {
-                    val message = it.message ?: "Failed to load data"
-                    uiStateMachine.updateError(message)
-                } else {
-                    uiStateMachine.updateLoading(false)
+                .onFailure {
+                    uiStateMachine.updateContentLoading(false)
+                    if (checkInsCache.isEmpty()) {
+                        val message = it.message ?: "Failed to load data"
+                        uiStateMachine.showError(message)
+                    }
                 }
-            }
+        }
     }
 
     private fun onCheckInItemClicked(item: CheckIn) {
@@ -110,37 +100,39 @@ class MyCheckInListViewModel(
     }
 
     private fun changePrivacy(item: CheckIn, privacy: CheckInPrivacy) {
-        uiStateMachine.updateOperationLoading(true)
-
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                checkInRepo.updatePrivacy(item.id, privacy.value)
-            }.onSuccess {
-                uiStateMachine.updateOperationLoading(false)
-                _messageState.update { MyCheckInMessageState.Success("Changed successfully") }
-                loadCheckInList(refresh = true)
-            }.onFailure {
-                uiStateMachine.updateOperationLoading(false)
-                val message = it.message ?: "Failed to change. Please try again."
-                _messageState.update { MyCheckInMessageState.Error(message) }
+        _messageState.update {
+            MyCheckInMessageState.ConfirmPrivacyChange(item, privacy) {
+                uiStateMachine.updateOperationLoading(true)
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    checkInRepo.updatePrivacy(item.id, privacy.value).onSuccess {
+                        uiStateMachine.updateOperationLoading(false)
+                        _messageState.update { MyCheckInMessageState.Success("Changed successfully") }
+                        loadCheckInList(forceRefresh = true)
+                    }.onFailure {
+                        uiStateMachine.updateOperationLoading(false)
+                        val message = it.message ?: "Failed to change. Please try again."
+                        _messageState.update { MyCheckInMessageState.Error(message) }
+                    }
+                }
             }
         }
     }
 
     private fun delete(item: CheckIn) {
-        uiStateMachine.updateOperationLoading(true)
-
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                checkInRepo.delete(item.id)
-            }.onSuccess {
-                uiStateMachine.updateOperationLoading(false)
-                _messageState.update { MyCheckInMessageState.Success("Deleted successfully") }
-                loadCheckInList(refresh = true)
-            }.onFailure {
-                uiStateMachine.updateOperationLoading(false)
-                val message = it.message ?: "Failed to delete. Please try again"
-                _messageState.update { MyCheckInMessageState.Error(message) }
+        _messageState.update {
+            MyCheckInMessageState.ConfirmDelete(item) {
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    uiStateMachine.updateOperationLoading(true)
+                    checkInRepo.delete(item.id).onSuccess {
+                        uiStateMachine.updateOperationLoading(false)
+                        _messageState.update { MyCheckInMessageState.Success("Deleted successfully") }
+                        loadCheckInList(forceRefresh = true)
+                    }.onFailure {
+                        uiStateMachine.updateOperationLoading(false)
+                        val message = it.message ?: "Failed to delete. Please try again"
+                        _messageState.update { MyCheckInMessageState.Error(message) }
+                    }
+                }
             }
         }
     }

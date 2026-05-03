@@ -27,7 +27,7 @@ interface CheckInApiHelper  {
         userType: String,
     ): NetworkResult<Unit>
 
-    suspend fun updatePrivacy(checkInId: Int, privacy: String, ): NetworkResult<CheckInDto>
+    suspend fun updatePrivacy(checkInId: Int, privacy: String, ): NetworkResult<Unit>
 
     suspend fun delete(id: Int): NetworkResult<Unit>
 }

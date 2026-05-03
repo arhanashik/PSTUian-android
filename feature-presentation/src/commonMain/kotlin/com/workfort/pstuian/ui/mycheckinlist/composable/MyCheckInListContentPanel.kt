@@ -1,26 +1,33 @@
 package com.workfort.pstuian.ui.mycheckinlist.composable
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -31,13 +38,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInPrivacy
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
@@ -46,7 +55,9 @@ import com.workfort.pstuian.ui.common.composable.DotView
 import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
 import com.workfort.pstuian.ui.common.composable.MaterialButtonToggleGroup
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
-import com.workfort.pstuian.ui.common.composable.isLastItemVisible
+import com.workfort.pstuian.ui.common.composable.shimmerAnimation
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiEvent
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiState
 import com.workfort.pstuian.util.DateTimeUtilImpl
@@ -62,12 +73,12 @@ import pstuian.feature_presentation.generated.resources.txt_public
 
 @Composable
 fun MyCheckInListContentPanel(
-    uiState: MyCheckInListUiState,
+    uiState: MyCheckInListUiState.Content,
     onUiEvent: (MyCheckInListUiEvent) -> Unit,
 ) {
     if (uiState.error != null) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AnimatedErrorView()
@@ -75,53 +86,143 @@ fun MyCheckInListContentPanel(
         return
     }
 
-    Column {
-        if (uiState.items.isEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator()
-                } else {
+    Column(modifier = Modifier.fillMaxSize()) {
+        when {
+            uiState.checkIns.isEmpty() && uiState.isContentLoading -> {
+                MyCheckInListShimmer(modifier = Modifier.fillMaxSize())
+            }
+            uiState.checkIns.isEmpty() -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     AnimatedEmptyView()
                 }
             }
-        } else {
-            uiState.items.ListView(
-                isLoading = uiState.isLoading,
-                onUiEvent = onUiEvent,
-            )
+            else -> {
+                CheckInListView(
+                    checkIns = uiState.checkIns,
+                    isLoading = uiState.isContentLoading,
+                    onUiEvent = onUiEvent,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun List<CheckIn>.ListView(
-    modifier: Modifier = Modifier,
+private fun MyCheckInListShimmer(modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(6) {
+            MyCheckInListItemShimmer()
+        }
+    }
+}
+
+@Composable
+private fun MyCheckInListItemShimmer() {
+    val cardShape = RoundedCornerShape(16.dp)
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        shape = cardShape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 72.dp, height = 76.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .shimmerAnimation(),
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.72f)
+                        .height(16.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .shimmerAnimation(),
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.38f)
+                        .height(12.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .shimmerAnimation(),
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(26.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .shimmerAnimation(),
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(12.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                            .shimmerAnimation(),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CheckInListView(
+    checkIns: List<CheckIn>,
     isLoading: Boolean,
     onUiEvent: (MyCheckInListUiEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val isLastItemVisible by remember {
+    var lastLoadMoreRequestedAtSize by remember { mutableIntStateOf(-1) }
+    val shouldLoadMore by remember {
         derivedStateOf {
-            listState.isLastItemVisible
+            val totalItems = listState.layoutInfo.totalItemsCount
+            if (totalItems == 0) return@derivedStateOf false
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: return@derivedStateOf false
+            lastVisibleIndex >= totalItems - 1
         }
     }
 
-    LaunchedEffect(key1 = isLastItemVisible) {
-        if (isLastItemVisible) {
-            onUiEvent(MyCheckInListUiEvent.LoadMoreData(refresh = false))
+    LaunchedEffect(shouldLoadMore, isLoading, checkIns.size) {
+        val canRequestMore = shouldLoadMore && !isLoading && checkIns.isNotEmpty()
+        if (canRequestMore && lastLoadMoreRequestedAtSize != checkIns.size) {
+            lastLoadMoreRequestedAtSize = checkIns.size
+            onUiEvent(MyCheckInListUiEvent.LoadMore)
         }
     }
 
     LazyColumn(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         state = listState,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(this@ListView) { item ->
+        items(checkIns) { item ->
             ListItemView(
                 item = item,
                 onClick = {
@@ -131,9 +232,36 @@ private fun List<CheckIn>.ListView(
         }
         if (isLoading) {
             item {
-                CircularProgressIndicator()
+                MyCheckInListItemShimmer()
             }
         }
+    }
+}
+
+@Composable
+private fun MyCheckInLocationThumbnail(
+    imageUrl: String,
+    modifier: Modifier = Modifier,
+) {
+    val shape = RoundedCornerShape(16.dp)
+    Box(
+        modifier = modifier
+            .size(width = 72.dp, height = 76.dp)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f))
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                shape = shape,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        LoadAsyncImage(
+            modifier = Modifier.fillMaxSize(),
+            url = imageUrl,
+            placeholder = Icons.Default.LocationOn,
+            contentScale = ContentScale.Crop,
+        )
     }
 }
 
@@ -145,42 +273,74 @@ private fun ListItemView(
     val dateTimeUtil = DateTimeUtilImpl()
     val date = dateTimeUtil.getTimeAgo(item.date)
     val checkInCountStr = "${MathUtil.prettyCount(item.count)} check in"
-    val privacyTxt = when(item.privacy) {
+    val privacyTxt = when (item.privacy) {
         CheckInPrivacy.ONLY_ME.value -> stringResource(Res.string.txt_only_me)
         else -> stringResource(Res.string.txt_public)
     }
-    Row(
+    val cardShape = RoundedCornerShape(16.dp)
+    ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically,
+            .clip(cardShape)
+            .clickable(onClick = onClick),
+        shape = cardShape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Icon(
-            imageVector = Icons.Outlined.Edit,
-            contentDescription = "Edit Icon",
-            tint = Color.Gray,
-        )
-        LoadAsyncImage(
+        Row(
             modifier = Modifier
-                .padding(start = 8.dp)
-                .size(46.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            url = item.locationImageUrl,
-            placeholder = Icons.Default.LocationOn,
-            contentScale = ContentScale.Crop,
-        )
-        Column(modifier = Modifier.padding(start = 8.dp)) {
-            TitleTextSmall(text = item.name, fontSize = 14.sp)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            MyCheckInLocationThumbnail(imageUrl = item.locationImageUrl.orEmpty())
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(text = date, fontSize = 12.sp)
-                DotView(color = Color.Gray)
-                Text(text = checkInCountStr, fontSize = 12.sp)
-                DotView(color = Color.Gray)
-                Text(text = privacyTxt, fontSize = 12.sp)
+                Text(
+                    text = item.locationName,
+                    style = TextStyle.body2.copy(
+                        color = AppColors.textPrimary,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = date,
+                    style = TextStyle.label2.copy(color = AppColors.textSecondary),
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                    ) {
+                        Text(
+                            text = privacyTxt,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                            style = TextStyle.label2.copy(
+                                color = AppColors.textSecondary,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                        )
+                    }
+                    Text(
+                        text = "·",
+                        style = TextStyle.label2.copy(color = AppColors.textTertiary),
+                    )
+                    Text(
+                        text = checkInCountStr,
+                        style = TextStyle.label2.copy(color = AppColors.textSecondary),
+                    )
+                }
             }
         }
     }

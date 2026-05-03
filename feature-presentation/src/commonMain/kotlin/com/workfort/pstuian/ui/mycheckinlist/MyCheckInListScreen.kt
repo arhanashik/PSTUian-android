@@ -1,27 +1,17 @@
 package com.workfort.pstuian.ui.mycheckinlist
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppBarIconButton
-import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.LoadingOverlay
+import androidx.compose.runtime.remember
+import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.mycheckinlist.composable.MyCheckInItemBottomSheet
-import com.workfort.pstuian.ui.mycheckinlist.composable.MyCheckInListContentPanel
-import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiEvent
-import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiState
+import com.workfort.pstuian.ui.mycheckinlist.composable.MyCheckInListScreenContent
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInMessageState
 import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInNavigationState
 import org.jetbrains.compose.resources.stringResource
@@ -29,7 +19,6 @@ import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.msg_delete_permanent
 import pstuian.feature_presentation.generated.resources.txt_delete
-import pstuian.feature_presentation.generated.resources.txt_my_check_in_list
 import pstuian.feature_presentation.generated.resources.txt_retry
 import pstuian.feature_presentation.generated.resources.txt_update
 
@@ -40,52 +29,18 @@ fun MyCheckInListScreen(
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    MyCheckInListScreenContent(uiState, viewModel::onUiEvent)
+    MyCheckInListScreenContent(uiState, snackbarHostState, viewModel::onUiEvent)
 
-    HandleMessageState(message, viewModel::onMessageHandled)
+    HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MyCheckInListScreenContent(
-    uiState: MyCheckInListUiState,
-    onUiEvent: (MyCheckInListUiEvent) -> Unit,
-) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    AppScaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppBar(
-                title = stringResource(Res.string.txt_my_check_in_list),
-                navigation = {
-                    onUiEvent(MyCheckInListUiEvent.BackClicked)
-                },
-                actions = {
-                    AppBarIconButton(
-                        icon = Icons.Filled.Refresh,
-                        onClick = {
-                            onUiEvent(MyCheckInListUiEvent.LoadMoreData(refresh = true))
-                        }
-                    )
-                },
-                scrollBehavior = scrollBehavior,
-            )
-        },
-    ) {
-        MyCheckInListContentPanel(uiState, onUiEvent)
-
-        if (uiState.isOperationLoading) {
-            LoadingOverlay()
-        }
-    }
 }
 
 @Composable
 private fun HandleMessageState(
     message: MyCheckInMessageState?,
+    snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
 ) {
     message?.let {
@@ -127,7 +82,11 @@ private fun HandleMessageState(
                 )
             }
             is MyCheckInMessageState.Success -> {
-                ShowInfoDialog(message = it.message, onDismiss = onMessageHandled)
+                HandleSnackbar(
+                    message = it.message,
+                    snackbarHostState = snackbarHostState,
+                    onSnackbarShown = onMessageHandled,
+                )
             }
             is MyCheckInMessageState.Error -> {
                 ShowInfoDialog(

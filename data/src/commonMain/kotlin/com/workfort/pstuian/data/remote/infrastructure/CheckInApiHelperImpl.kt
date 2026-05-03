@@ -55,7 +55,7 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         }
     }
 
-    override suspend fun updatePrivacy(checkInId: Int, privacy: String): NetworkResult<CheckInDto> {
+    override suspend fun updatePrivacy(checkInId: Int, privacy: String): NetworkResult<Unit> {
         return runCatching {
             service.updatePrivacy(checkInId, privacy).toNetworkResult()
         }.getOrElse {

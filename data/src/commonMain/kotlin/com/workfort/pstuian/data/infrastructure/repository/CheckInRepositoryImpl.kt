@@ -77,8 +77,8 @@ class CheckInRepositoryImpl(
         ).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun updatePrivacy(checkInId: Int, privacy: String): DomainResult<CheckIn> {
-        return helper.updatePrivacy(checkInId, privacy).toDomainResult(domainErrorMapper).map { it.toModel() }
+    override suspend fun updatePrivacy(checkInId: Int, privacy: String): DomainResult<Unit> {
+        return helper.updatePrivacy(checkInId, privacy).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun delete(checkInId: Int): DomainResult<Unit> {

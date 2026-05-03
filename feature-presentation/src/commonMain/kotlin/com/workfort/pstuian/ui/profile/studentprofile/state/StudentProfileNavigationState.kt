@@ -24,7 +24,7 @@ sealed interface StudentProfileNavigationState {
         val userType: UserType,
     ) : StudentProfileNavigationState
     data class MyCheckInListScreen(
-        val userId: String,
+        val userId: Int,
         val userType: UserType,
     ) : StudentProfileNavigationState
     data class MyDeviceListScreen(

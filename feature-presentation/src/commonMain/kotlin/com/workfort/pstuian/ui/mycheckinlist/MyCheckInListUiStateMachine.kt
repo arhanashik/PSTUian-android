@@ -9,33 +9,52 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class MyCheckInListUiStateMachine : UiStateMachine<MyCheckInListUiState> {
-    private val _uiState = MutableStateFlow(MyCheckInListUiState())
+    private val _uiState = MutableStateFlow<MyCheckInListUiState>(MyCheckInListUiState.None)
     override val uiState: StateFlow<MyCheckInListUiState> = _uiState.asStateFlow()
 
-    fun updateLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isLoading = isLoading) }
-    }
-
     fun updateOperationLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isOperationLoading = isLoading) }
-    }
-
-    fun updateData(items: List<CheckIn>) {
-        _uiState.update {
-            it.copy(
-                items = items,
-                isLoading = false,
-                error = null
-            )
+        _uiState.update { current ->
+            when (current) {
+                is MyCheckInListUiState.Content -> current.copy(isOperationLoading = isLoading)
+                else -> MyCheckInListUiState.Content(isOperationLoading = true)
+            }
         }
     }
 
-    fun updateError(message: String) {
-        _uiState.update {
-            it.copy(
-                isLoading = false,
-                error = message
-            )
+    fun updateContentLoading(isLoading: Boolean) {
+        _uiState.update { current ->
+            when (current) {
+                is MyCheckInListUiState.Content -> current.copy(isContentLoading = isLoading, error = null)
+                else -> current
+            }
+        }
+    }
+
+    fun showCheckIns(checkIns: List<CheckIn>) {
+        _uiState.update { current ->
+            when (current) {
+                is MyCheckInListUiState.Content -> current.copy(
+                    checkIns = checkIns,
+                    isOperationLoading = false,
+                    isContentLoading = false,
+                    error = null,
+                )
+                else -> MyCheckInListUiState.Content(
+                    checkIns = checkIns,
+                    isOperationLoading = false,
+                    isContentLoading = false,
+                    error = null,
+                )
+            }
+        }
+    }
+
+    fun showError(error: String) {
+        _uiState.update { current ->
+            when (current) {
+                is MyCheckInListUiState.Content -> current.copy(error = error)
+                else -> MyCheckInListUiState.Content(error = error)
+            }
         }
     }
 }

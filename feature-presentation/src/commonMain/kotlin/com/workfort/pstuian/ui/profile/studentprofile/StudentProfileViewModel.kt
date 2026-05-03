@@ -256,7 +256,7 @@ class StudentProfileViewModel(
         profileCache?.student?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.MyCheckInListScreen(
-                    userId = student.authUserId,
+                    userId = student.userId,
                     userType = UserType.STUDENT,
                 )
             }

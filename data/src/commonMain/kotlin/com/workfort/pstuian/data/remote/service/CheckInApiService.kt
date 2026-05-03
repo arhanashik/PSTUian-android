@@ -66,7 +66,7 @@ class CheckInApiService(private val client: HttpClient) {
     suspend fun updatePrivacy(
         id: Int,
         privacy: String,
-    ): ApiResponse<CheckInDto> {
+    ): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.CheckIn.PRIVACY,
             formParameters = parameters {

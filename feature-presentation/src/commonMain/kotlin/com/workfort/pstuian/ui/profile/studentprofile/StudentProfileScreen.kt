@@ -165,7 +165,7 @@ private fun HandleNavigationState(
                     )
                 }
                 is StudentProfileNavigationState.MyCheckInListScreen -> {
-                    navigator?.navigateTo(AppScreen.MyCheckInList(it.userId, it.userType))
+                    navigator?.navigateToMyCheckInList(it.userId, it.userType)
                 }
                 is StudentProfileNavigationState.MyDeviceListScreen -> {
                     navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, it.userType))

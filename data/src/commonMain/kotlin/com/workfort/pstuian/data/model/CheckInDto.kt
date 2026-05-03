@@ -24,7 +24,7 @@ data class CheckInDto(
     val phone: String?,
     @SerialName("image_url")
     val imageUrl: String?,
-    val date: String
+    val date: String,
 ) {
     fun toModel() = CheckIn(
         id = id,
@@ -39,7 +39,7 @@ data class CheckInDto(
         batch = batch,
         phone = phone,
         imageUrl = imageUrl,
-        date = date
+        date = date,
     )
 }
 
@@ -56,5 +56,5 @@ fun CheckIn.toDto() = CheckInDto(
     batch = batch,
     phone = phone,
     imageUrl = imageUrl,
-    date = date
+    date = date,
 )
