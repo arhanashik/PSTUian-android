@@ -4,6 +4,7 @@ import com.workfort.pstuian.featuredomain.model.UserType
 
 sealed interface StudentProfileNavigationState {
     data object GoBack : StudentProfileNavigationState
+    data object ResetToHome : StudentProfileNavigationState
     data class ImageUploadScreen(
         val userId: String,
         val userType: UserType,

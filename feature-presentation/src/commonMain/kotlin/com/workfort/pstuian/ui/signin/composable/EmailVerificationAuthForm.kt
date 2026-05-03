@@ -20,13 +20,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.ActionButton
 import com.workfort.pstuian.ui.common.theme.TextStyle
+import com.workfort.pstuian.ui.signin.screendata.EmailVerificationFormData
 
 @Composable
 internal fun EmailVerificationAuthForm(
-    email: String,
-    password: String,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
+    formData: EmailVerificationFormData,
+    onFormDataChanged: (EmailVerificationFormData) -> Unit,
     onSendVerificationClicked: () -> Unit,
     onSwitchToSignIn: () -> Unit,
 ) {
@@ -38,16 +37,16 @@ internal fun EmailVerificationAuthForm(
         AuthFormPanelLayout {
             AuthUnderlinedField(
                 label = "Email Address",
-                value = email,
-                onValueChange = onEmailChange,
+                value = formData.email,
+                onValueChange = { onFormDataChanged(formData.copy(email = it)) },
                 focusRequester = emailFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             )
             Spacer(modifier = Modifier.height(12.dp))
             AuthPasswordField(
-                password = password,
-                onPasswordChange = onPasswordChange,
+                password = formData.password,
+                onPasswordChange = { onFormDataChanged(formData.copy(password = it)) },
                 focusRequester = passwordFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),

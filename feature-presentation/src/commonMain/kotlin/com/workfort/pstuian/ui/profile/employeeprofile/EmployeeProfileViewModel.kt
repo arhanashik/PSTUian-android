@@ -241,9 +241,9 @@ class EmployeeProfileViewModel(
         _message.update { EmployeeProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                authRepo.signOut(UserType.EMPLOYEE, fromAllDevice = false)
                 messageHandled()
-                loadProfile()
+                authRepo.signOut(UserType.EMPLOYEE, fromAllDevice = false)
+                _navigation.update { EmployeeProfileNavigationState.ResetToHome }
             }.onFailure {
                 val message = it.message ?: "Signing out failed. Please try again."
                 _message.update { EmployeeProfileMessageState.Error(message) }

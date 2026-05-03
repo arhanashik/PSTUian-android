@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalUriHandler
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
@@ -41,6 +42,16 @@ private fun HandleMessageState(
 ) {
     message?.let {
         when (it) {
+            is SignInMessageState.Success -> {
+                ShowSuccessDialog(message = it.message, onConfirm = onMessageHandled)
+            }
+            is SignInMessageState.Error -> {
+                ShowErrorDialog(
+                    message = it.message,
+                    onConfirm = onMessageHandled,
+                    onDismiss = onMessageHandled,
+                )
+            }
             is SignInMessageState.FacultySelection -> {
                 ListSelectionBottomSheet(
                     title = stringResource(Res.string.txt_select_faculty),
@@ -63,16 +74,8 @@ private fun HandleMessageState(
                     onConfirm = { batch -> it.onSaveAndContinue(batch) },
                 )
             }
-            is SignInMessageState.Success -> {
-                ShowSuccessDialog(message = it.message, onConfirm = onMessageHandled)
-            }
-            is SignInMessageState.Error -> {
-                ShowErrorDialog(
-                    message = it.message,
-                    onConfirm = onMessageHandled,
-                    onDismiss = onMessageHandled,
-                )
-            }
+
+            else -> {}
         }
     }
 }
@@ -83,11 +86,13 @@ private fun HandleNavigationState(
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(key1 = navigation) {
         navigation?.let {
             when (it) {
                 is SignInNavigationState.GoBack -> navigator?.goBack()
+                is SignInNavigationState.OpenWebScreen -> uriHandler.openUri(it.url)
             }
             onNavigationHandled()
         }

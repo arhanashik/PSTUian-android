@@ -271,9 +271,9 @@ class TeacherProfileViewModel(
         _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                authRepo.signOut(UserType.TEACHER, fromAllDevice = false)
                 messageHandled()
-                loadProfile()
+                authRepo.signOut(UserType.TEACHER, fromAllDevice = false)
+                _navigation.update { TeacherProfileNavigationState.ResetToHome }
             }.onFailure {
                 val message = it.message ?: "Signing out failed. Please try again."
                 _message.update { TeacherProfileMessageState.Error(message) }

@@ -25,7 +25,6 @@ import com.workfort.pstuian.ui.signin.state.SignInUiEvent
 @Composable
 internal fun SignInAuthForm(
     formData: SignInFormData,
-    rememberMe: Boolean,
     onUiEvent: (SignInUiEvent) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
@@ -37,7 +36,7 @@ internal fun SignInAuthForm(
             AuthUnderlinedField(
                 label = "Email Address",
                 value = formData.email,
-                onValueChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
+                onValueChange = { onUiEvent(SignInUiEvent.SignInFormDataChanged(formData.copy(email = it))) },
                 focusRequester = emailFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
@@ -45,15 +44,17 @@ internal fun SignInAuthForm(
             Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
             AuthPasswordField(
                 password = formData.password,
-                onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
+                onPasswordChange = { onUiEvent(SignInUiEvent.SignInFormDataChanged(formData.copy(password = it))) },
                 focusRequester = passwordFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             )
             Spacer(modifier = Modifier.height(16.dp))
             RememberMeRow(
-                rememberMe = rememberMe,
-                onRememberMeToggle = { onUiEvent(SignInUiEvent.SignInRememberMeToggled(!rememberMe)) },
+                rememberMe = formData.rememberMe,
+                onRememberMeToggle = {
+                    onUiEvent(SignInUiEvent.SignInFormDataChanged(formData.copy(rememberMe = !formData.rememberMe)))
+                },
                 onForgotPassword = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.ForgotPassword)) },
             )
             Spacer(modifier = Modifier.height(24.dp))

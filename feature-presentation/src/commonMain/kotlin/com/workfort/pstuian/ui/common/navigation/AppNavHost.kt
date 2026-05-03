@@ -79,7 +79,7 @@ fun AppNavHost(
                         is NavEvent.ResetTo -> {
                             safeNavigate(navController) {
                                 navigate(event.screen) {
-                                    popUpTo(event.screen) { inclusive = false }
+                                    popUpTo(event.screen) { inclusive = true }
                                 }
                             }
                         }
@@ -95,7 +95,7 @@ fun AppNavHost(
                             }
                         }
 
-                        is NavEvent.ResetAll -> {
+                        is NavEvent.ReplaceAll -> {
                             safeNavigate(navController) {
                                 navigate(event.screen) {
                                     popUpTo(0) { inclusive = true }

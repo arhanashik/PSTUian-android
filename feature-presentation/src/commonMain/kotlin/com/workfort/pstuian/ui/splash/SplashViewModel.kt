@@ -118,7 +118,7 @@ class SplashViewModel(
                 )
             }
             is InitialScreenState.Home -> {
-                authRepository.syncAuthTokenToPreferences(forceRefresh = true)
+                authRepository.syncAuthTokenToPreferences()
                 stateMachine.updateScreenState(
                     screenState,
                     statusText = "All Done",

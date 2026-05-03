@@ -40,7 +40,7 @@ object KtorClientFactory {
 
             defaultRequest {
                 val baseUrl = if (isDebug) {
-                    NetworkConst.Remote.DEV_API_SERVER
+                    NetworkConst.Remote.LOCAL_API_SERVER
                 } else {
                     NetworkConst.Remote.PROD_API_SERVER
                 }

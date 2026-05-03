@@ -14,10 +14,22 @@ fun <T> NetworkResult<T>.toDomainResult(domainErrorMapper: DomainErrorMapper): D
     }
 }
 
-fun <T> ApiResponse<T>.toNetworkResult(): NetworkResult<T> {
-    return if (isError || data == null) {
-        NetworkResult.failure(NetworkError(responseCode))
+/**
+ * Maps an [ApiResponse] to [NetworkResult]:
+ * - For [ApiResponse]<[Unit]> (reified [T] == [Unit]): success iff [ApiResponse.isSuccess]; value is always [Unit].
+ * - Otherwise: success iff [ApiResponse.isSuccess] and [ApiResponse.data] is non-null; value is [ApiResponse.data].
+ */
+inline fun <reified T> ApiResponse<T>.toNetworkResult(): NetworkResult<T> {
+    if (isError) {
+        return NetworkResult.failure(NetworkError(responseCode))
+    }
+    return if (T::class == Unit::class) {
+        NetworkResult.Success(Unit as T)
     } else {
-        NetworkResult.Success(data)
+        if (data == null) {
+            NetworkResult.failure(NetworkError(responseCode))
+        } else {
+            NetworkResult.Success(data)
+        }
     }
 }

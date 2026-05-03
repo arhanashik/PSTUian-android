@@ -139,6 +139,7 @@ private fun HandleNavigationState(
         navigation?.let {
             when (it) {
                 is EmployeeProfileNavigationState.GoBack -> navigator?.goBack()
+                is EmployeeProfileNavigationState.ResetToHome -> navigator?.resetTo(AppScreen.Home)
                 is EmployeeProfileNavigationState.ImagePreviewScreen -> {
                     navigator?.navigateToImagePreview(it.encodedImageUrl)
                 }

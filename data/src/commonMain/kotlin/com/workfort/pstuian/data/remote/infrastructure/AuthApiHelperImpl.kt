@@ -3,33 +3,16 @@ package com.workfort.pstuian.data.remote.infrastructure
 import com.workfort.pstuian.data.mapper.toNetworkResult
 import com.workfort.pstuian.data.model.ApiResponseCode
 import com.workfort.pstuian.data.model.CommonNetworkError
-import com.workfort.pstuian.data.model.NetworkError
 import com.workfort.pstuian.data.model.NetworkResult
-import com.workfort.pstuian.data.model.StudentDto
-import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.service.AuthApiService
 
 
 class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
 
-    override suspend fun signInStudent(
-        email: String,
-        deviceId: String
-    ): NetworkResult<StudentDto> {
+    override suspend fun validateSignIn(userType: String, email: String, deviceId: String): NetworkResult<Unit> {
         return runCatching {
-            service.signInStudent(email, deviceId).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
-    }
-
-    override suspend fun signInTeacher(
-        email: String,
-        deviceId: String
-    ): NetworkResult<TeacherDto> {
-        return runCatching {
-            service.signInTeacher(email, deviceId).toNetworkResult()
+            service.validateSignIn(userType, email, deviceId).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
@@ -43,9 +26,8 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         batchId: Int,
         session: String,
         email: String,
-        password: String,
         deviceId: String,
-    ): NetworkResult<StudentDto> {
+    ): NetworkResult<Unit> {
         return runCatching {
             service.signUpStudent(
                 name,
@@ -55,7 +37,6 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
                 batchId,
                 session,
                 email,
-                password,
                 deviceId,
             ).toNetworkResult()
         }.getOrElse {
@@ -69,9 +50,8 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         designation: String,
         department: String,
         email: String,
-        password: String,
         deviceId: String,
-    ): NetworkResult<TeacherDto> {
+    ): NetworkResult<Unit> {
         return runCatching {
             service.signUpTeacher(
                 name,
@@ -79,7 +59,6 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
                 designation,
                 department,
                 email,
-                password,
                 deviceId,
             ).toNetworkResult()
         }.getOrElse {
@@ -87,60 +66,17 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         }
     }
 
-    override suspend fun updateAuthUserId(
-        authUserId: String,
-        userType: String,
-        email: String,
-        password: String
-    ): NetworkResult<String> {
+    override suspend fun updateAuthUserId(userType: String): NetworkResult<Unit> {
         return runCatching {
-            service.updateAuthUserId(authUserId, userType, email, password).toNetworkResult()
+            service.updateAuthUserId(userType).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
-    override suspend fun signOut(
-        authUserId: String,
-        userType: String,
-        deviceId: String,
-        fromAllDevice: Boolean,
-    ): NetworkResult<Unit> {
+    override suspend fun deleteAccount(userType: String): NetworkResult<Unit> {
         return runCatching {
-            val response = if (fromAllDevice) {
-                service.signOutFromAllDevice(authUserId, userType, deviceId)
-            } else {
-                service.signOut(authUserId, userType, deviceId)
-            }
-
-            return if (response.isSuccess) NetworkResult.success(Unit)
-            else NetworkResult.failure(NetworkError(response.responseCode))
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
-    }
-
-    override suspend fun changePassword(
-        email: String,
-        userType: String,
-        oldPassword: String,
-        newPassword: String,
-        deviceId: String,
-    ): NetworkResult<String> {
-        return runCatching {
-            service.changePassword(email, userType, oldPassword, newPassword, deviceId).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
-    }
-
-    override suspend fun deleteAccount(
-        email: String,
-        userType: String,
-        password: String,
-    ): NetworkResult<Unit> {
-        return runCatching {
-            service.deleteAccount(email, userType, password).toNetworkResult()
+            service.deleteAccount(userType).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

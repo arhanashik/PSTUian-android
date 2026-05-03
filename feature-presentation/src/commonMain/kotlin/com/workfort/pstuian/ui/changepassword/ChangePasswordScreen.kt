@@ -12,9 +12,7 @@ import com.workfort.pstuian.ui.changepassword.state.ChangePasswordNavigationStat
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
-import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.common.navigation.AppScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -30,19 +28,15 @@ fun ChangePasswordScreen(viewModel: ChangePasswordViewModel) {
 
     ChangePasswordScreenContent(uiState = uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
 
-    HandleMessageState(
-        message = message,
-        onMessageHandled = viewModel::onMessageHandled,
-        onSuccessDismissToSignIn = viewModel::onPostSuccessNavigateToSignIn,
-    )
+    HandleMessageState(message = message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
 @Composable
 private fun HandleMessageState(
     message: ChangePasswordMessageState?,
+    snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
-    onSuccessDismissToSignIn: () -> Unit,
 ) {
     message?.let {
         when (it) {
@@ -50,17 +44,7 @@ private fun HandleMessageState(
                 ShowLoaderDialog(cancelable = it.cancelable)
             }
             is ChangePasswordMessageState.Success -> {
-                ShowSuccessDialog(
-                    message = it.message,
-                    onDismiss = {
-                        onMessageHandled()
-                        if (it.navigateToSignInAfterDismiss) onSuccessDismissToSignIn()
-                    },
-                    onConfirm = {
-                        onMessageHandled()
-                        if (it.navigateToSignInAfterDismiss) onSuccessDismissToSignIn()
-                    },
-                )
+                HandleSnackbar(it.message, snackbarHostState, onSnackbarShown = onMessageHandled)
             }
             is ChangePasswordMessageState.Error -> {
                 ShowErrorDialog(
@@ -84,7 +68,6 @@ private fun HandleNavigationState(
         navigation?.let {
             when (it) {
                 is ChangePasswordNavigationState.GoBack -> navigator?.goBack()
-                is ChangePasswordNavigationState.SignIn -> navigator?.resetAll(AppScreen.SignIn)
             }
             onNavigationHandled()
         }

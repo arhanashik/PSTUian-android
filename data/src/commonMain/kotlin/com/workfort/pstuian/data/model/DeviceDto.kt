@@ -14,7 +14,7 @@ data class DeviceDto(
     val appVersionCode: Int = 0,
     @SerialName("app_version_name")
     val appVersionName: String = "",
-    @SerialName("fcm_toke ")
+    @SerialName("fcm_token")
     val fcmToken: String? = null,
     val blocklisted: Boolean = false,
     val lat: String? = null,

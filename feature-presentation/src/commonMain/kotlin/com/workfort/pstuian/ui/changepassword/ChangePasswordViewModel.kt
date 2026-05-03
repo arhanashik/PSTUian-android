@@ -69,10 +69,6 @@ class ChangePasswordViewModel(
 
     fun onNavigationHandled() = _navigation.update { null }
 
-    fun onPostSuccessNavigateToSignIn() {
-        _navigation.update { ChangePasswordNavigationState.SignIn }
-    }
-
     private fun onBack() {
         when (uiState.value) {
             is ChangePasswordUiState.SendResetPasswordLink ->
@@ -102,6 +98,7 @@ class ChangePasswordViewModel(
                 .onSuccess {
                     onMessageHandled()
                     _message.update { ChangePasswordMessageState.Success("Password changed successfully!") }
+                    _navigation.update { ChangePasswordNavigationState.GoBack }
                 }
                 .onFailure { error ->
                     onMessageHandled()
@@ -129,16 +126,14 @@ class ChangePasswordViewModel(
                 .onSuccess {
                     onMessageHandled()
                     _message.update {
-                        ChangePasswordMessageState.Success(
-                            message = "Password reset link request has been sent to $email",
-                            navigateToSignInAfterDismiss = false,
-                        )
+                        ChangePasswordMessageState.Success(message = "Password reset link has been sent")
                     }
+                    _navigation.update { ChangePasswordNavigationState.GoBack }
                 }
                 .onFailure { error ->
                     onMessageHandled()
                     _message.update {
-                        ChangePasswordMessageState.Error(error.message ?: "Failed to send reset link. Please retry.")
+                        ChangePasswordMessageState.Error(error.message ?: "Failed to send reset link. Please retry")
                     }
                 }
         }
@@ -157,12 +152,8 @@ class ChangePasswordViewModel(
             authRepository.resetPasswordReset(oobCode, input.newPassword)
                 .onSuccess {
                     onMessageHandled()
-                    _message.update {
-                        ChangePasswordMessageState.Success(
-                            message = "Your password has been updated. You can sign in now.",
-                            navigateToSignInAfterDismiss = true,
-                        )
-                    }
+                    _message.update { ChangePasswordMessageState.Success(message = "Your password has been updated") }
+                    _navigation.update { ChangePasswordNavigationState.GoBack }
                 }
                 .onFailure { error ->
                     onMessageHandled()

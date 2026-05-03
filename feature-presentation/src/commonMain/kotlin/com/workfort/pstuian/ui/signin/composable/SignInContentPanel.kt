@@ -94,7 +94,6 @@ fun SignInContentPanel(
                     is SignInUiState.None -> Unit
                     is SignInUiState.SignInPanel -> SignInAuthForm(
                         formData = uiState.formData,
-                        rememberMe = uiState.rememberMe,
                         onUiEvent = onUiEvent,
                     )
                     is SignInUiState.SignUpPanel -> SignUpAuthFormContent(
@@ -105,19 +104,19 @@ fun SignInContentPanel(
                         ForgotPasswordAuthForm(
                             email = uiState.email,
                             validationError = "",
-                            onEmailChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
+                            onEmailChange = { onUiEvent(SignInUiEvent.ForgotPasswordFormDataChanged(email = it)) },
                             onResetPasswordClicked = { onUiEvent(SignInUiEvent.ForgotPasswordClicked(uiState.email)) },
                             onSwitchToSignIn = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
                         )
                     }
                     is SignInUiState.EmailVerificationPanel -> {
                         EmailVerificationAuthForm(
-                            email = uiState.email,
-                            password = uiState.password,
-                            onEmailChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
-                            onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
+                            formData = uiState.formData,
+                            onFormDataChanged = {
+                                onUiEvent(SignInUiEvent.EmailVerificationFormDataChanged(formData = it))
+                            },
                             onSendVerificationClicked = {
-                                onUiEvent(SignInUiEvent.EmailVerificationClicked(uiState.email, uiState.password))
+                                onUiEvent(SignInUiEvent.EmailVerificationClicked(uiState.formData))
                             },
                             onSwitchToSignIn = { onUiEvent(SignInUiEvent.AuthPanelChanged(AuthPanel.SignIn)) },
                         )

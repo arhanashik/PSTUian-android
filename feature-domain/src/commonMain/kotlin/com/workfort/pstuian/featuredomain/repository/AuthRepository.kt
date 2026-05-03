@@ -18,7 +18,7 @@ interface AuthRepository {
     suspend fun syncAuthTokenToPreferences(forceRefresh: Boolean = false)
 
     suspend fun observeSignedInAuthUser(): Flow<AuthUser?>
-    suspend fun signIn(userType: UserType, email: String, password: String): DomainResult<User>
+    suspend fun signIn(userType: UserType, email: String, password: String): DomainResult<Unit>
 
     suspend fun signUpStudent(
         name: String,

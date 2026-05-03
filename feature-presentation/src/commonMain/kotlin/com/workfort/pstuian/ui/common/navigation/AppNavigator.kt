@@ -21,8 +21,8 @@ class AppNavigator {
         _events.emit(NavEvent.ReplaceWith(screen))
     }
 
-    suspend fun resetAll(screen: AppScreen) {
-        _events.emit(NavEvent.ResetAll(screen))
+    suspend fun replaceAll(screen: AppScreen) {
+        _events.emit(NavEvent.ReplaceAll(screen))
     }
 
     suspend fun goBack() {

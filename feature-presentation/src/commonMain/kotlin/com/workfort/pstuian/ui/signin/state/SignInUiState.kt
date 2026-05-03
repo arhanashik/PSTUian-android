@@ -1,6 +1,7 @@
 package com.workfort.pstuian.ui.signin.state
 
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.signin.screendata.EmailVerificationFormData
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
 import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 
@@ -12,7 +13,6 @@ sealed interface SignInUiState {
     data class SignInPanel(
         override val isLoading: Boolean,
         val formData: SignInFormData,
-        val rememberMe: Boolean,
         val authUserTypeForForms: UserType,
     ) : SignInUiState
 
@@ -29,7 +29,6 @@ sealed interface SignInUiState {
 
     data class EmailVerificationPanel(
         override val isLoading: Boolean,
-        val email: String,
-        val password: String,
+        val formData: EmailVerificationFormData,
     ) : SignInUiState
 }

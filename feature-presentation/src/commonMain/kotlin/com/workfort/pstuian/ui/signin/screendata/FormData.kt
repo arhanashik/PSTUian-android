@@ -5,8 +5,9 @@ import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.util.isValidEmail
 
 data class SignInFormData(
-    val email: String,
-    val password: String,
+    val email: String = "",
+    val password: String = "",
+    val rememberMe: Boolean = false,
 ) {
     fun isInvalid(): Boolean = email.isEmpty() ||
             email.isValidEmail().not() ||
@@ -21,13 +22,13 @@ sealed interface SignUpFormData {
     val password: String
 
     data class StudentSignUpFormData(
-        override val name: String,
+        override val name: String = "",
         override val faculty: Faculty? = null,
-        override val email: String,
-        override val password: String,
-        val studentId: String,
-        val regNumber: String,
-        val session: String,
+        override val email: String = "",
+        override val password: String = "",
+        val studentId: String = "",
+        val regNumber: String = "",
+        val session: String = "",
         val batch: Batch? = null,
     ) : SignUpFormData {
 
@@ -44,12 +45,12 @@ sealed interface SignUpFormData {
     }
 
     data class TeacherSignUpFormData(
-        override val name: String,
+        override val name: String = "",
         override val faculty: Faculty? = null,
-        override val email: String,
-        override val password: String,
-        val department: String,
-        val designation: String,
+        override val email: String = "",
+        override val password: String = "",
+        val department: String = "",
+        val designation: String = "",
     ) : SignUpFormData {
 
         fun isInvalid(): Boolean = name.isEmpty() ||
@@ -61,4 +62,14 @@ sealed interface SignUpFormData {
                 password.isEmpty() ||
                 password.length < 6
     }
+}
+
+data class EmailVerificationFormData(
+    val email: String = "",
+    val password: String = "",
+) {
+    fun isInvalid(): Boolean = email.isEmpty() ||
+            email.isValidEmail().not() ||
+            password.isEmpty() ||
+            password.length < 6
 }

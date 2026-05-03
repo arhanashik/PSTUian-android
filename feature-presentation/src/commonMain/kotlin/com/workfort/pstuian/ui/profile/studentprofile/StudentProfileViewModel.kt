@@ -331,7 +331,7 @@ class StudentProfileViewModel(
             authRepo.signOut(UserType.STUDENT)
                 .onSuccess {
                     messageHandled()
-                    loadProfile()
+                    _navigation.update { StudentProfileNavigationState.ResetToHome }
                 }
                 .onFailure {
                     messageHandled()

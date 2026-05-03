@@ -71,7 +71,7 @@ private fun HandleNavigationState(
         navigationState?.let {
             when (it) {
                 is SplashNavigationState.HomeScreen -> {
-                    navigator?.resetAll(AppScreen.Home)
+                    navigator?.replaceAll(AppScreen.Home)
                     launchDeepLinkController.consumePendingDeepLink()?.let { action ->
                         deepLinkNavigator.navigate(action, navigator)
                     }

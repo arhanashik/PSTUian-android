@@ -153,7 +153,7 @@ private fun StudentSignUpInputFields(
         AuthUnderlinedField(
             label = "Email Address",
             value = formData.email,
-            onValueChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(email = it))) },
             focusRequester = emailFocus,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { studentIdFocus.requestFocus() }),
@@ -228,7 +228,7 @@ private fun StudentSignUpInputFields(
         Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
         AuthPasswordField(
             password = formData.password,
-            onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
+            onPasswordChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(password = it))) },
             focusRequester = passwordFocus,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
@@ -261,7 +261,7 @@ private fun TeacherSignUpInputFields(
         AuthUnderlinedField(
             label = "Email Address",
             value = formData.email,
-            onValueChange = { onUiEvent(SignInUiEvent.EmailChanged(it)) },
+            onValueChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(email = it))) },
             focusRequester = emailFocus,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { departmentFocus.requestFocus() }),
@@ -300,7 +300,7 @@ private fun TeacherSignUpInputFields(
         Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
         AuthPasswordField(
             password = formData.password,
-            onPasswordChange = { onUiEvent(SignInUiEvent.PasswordChanged(it)) },
+            onPasswordChange = { onUiEvent(SignInUiEvent.SignUpFormDataChanged(formData.copy(password = it))) },
             focusRequester = passwordFocus,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),

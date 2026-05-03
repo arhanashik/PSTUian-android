@@ -11,6 +11,7 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
+import com.workfort.pstuian.ui.signin.screendata.EmailVerificationFormData
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
 import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.state.SignInUiEvent
@@ -51,7 +52,6 @@ private fun SignInPanelPreview() {
             uiState = SignInUiState.SignInPanel(
                 isLoading = false,
                 formData = SignInFormData(email = "", password = ""),
-                rememberMe = false,
                 authUserTypeForForms = UserType.STUDENT,
             ),
             onUiEvent = {},
@@ -67,7 +67,6 @@ private fun SignInPanelDarkPreview() {
             uiState = SignInUiState.SignInPanel(
                 isLoading = false,
                 formData = SignInFormData(email = "", password = ""),
-                rememberMe = false,
                 authUserTypeForForms = UserType.STUDENT,
             ),
             onUiEvent = {},
@@ -194,7 +193,7 @@ private fun ForgotPasswordPanelDarkPreview() {
 private fun EmailVerificationPanelPreview() {
     AppTheme {
         SignInScreenContent(
-            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, email = "", password = ""),
+            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, formData = EmailVerificationFormData()),
             onUiEvent = {},
         )
     }
@@ -205,7 +204,7 @@ private fun EmailVerificationPanelPreview() {
 private fun EmailVerificationPanelDarkPreview() {
     AppTheme(theme = ThemeMode.Dark) {
         SignInScreenContent(
-            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, email = "", password = ""),
+            uiState = SignInUiState.EmailVerificationPanel(isLoading = false, formData = EmailVerificationFormData()),
             onUiEvent = {},
         )
     }

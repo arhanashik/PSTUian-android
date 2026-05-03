@@ -6,14 +6,18 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.DomainError
 import com.workfort.pstuian.featuredomain.model.Faculty
+import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
+import com.workfort.pstuian.ui.signin.screendata.EmailVerificationFormData
 import com.workfort.pstuian.ui.signin.screendata.SignInFormData
 import com.workfort.pstuian.ui.signin.screendata.SignUpFormData
 import com.workfort.pstuian.ui.signin.screendata.mapToErrorMessageForSignInScreen
@@ -29,6 +33,8 @@ class SignInViewModel(
     private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
     private val facultyRepository: FacultyRepository,
+    private val sharedPrefRepository: SharedPrefRepository,
+    private val sharedScreenData: SharedScreenData,
     private val stateMachine: SignInUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<SignInUiState>(stateMachine) {
@@ -46,9 +52,10 @@ class SignInViewModel(
         }
 
     override fun onUiReady() {
+        val savedEmail = sharedPrefRepository.getString(SharedPrefKey.SIGN_IN_EMAIL) ?: ""
         stateMachine.showInitialState(
-            email = "", // TODO get saved email from shared pref
-            rememberMe = false, // TODO get rememberMe saved value
+            email = savedEmail,
+            rememberMe = savedEmail.isNotBlank(),
             authUserTypeForForms = coercedStudentOrTeacherUserType(),
         )
     }
@@ -56,27 +63,43 @@ class SignInViewModel(
     fun onUiEvent(event: SignInUiEvent) {
         when (event) {
             is SignInUiEvent.BackClicked -> _navigation.update { SignInNavigationState.GoBack }
+
+            // Auth panel
             is SignInUiEvent.AuthPanelChanged -> stateMachine.setAuthPanel(event.panel)
-            is SignInUiEvent.EmailChanged -> stateMachine.updateEmail(event.email)
-            is SignInUiEvent.PasswordChanged -> stateMachine.updatePassword(event.password)
-            is SignInUiEvent.SignInFormDataChanged -> stateMachine.updateSignInForm(event.formData)
-            is SignInUiEvent.SignInRememberMeToggled -> stateMachine.toggleRememberMe(event.rememberMe)
             is SignInUiEvent.AuthUserTypeForFormsToggled -> onAuthUserTypeForFormsToggled(event.userType)
-            is SignInUiEvent.SignUpFromSignInClicked -> showSignUpPanelByUserType()
+
+            // Form data Changes
+            is SignInUiEvent.SignInFormDataChanged -> stateMachine.updateSignInForm(event.formData)
             is SignInUiEvent.SignUpFormDataChanged -> stateMachine.updateSignUpFormData(event.formData)
+            is SignInUiEvent.EmailVerificationFormDataChanged ->
+                stateMachine.updateEmailVerificationFormData(event.formData)
+            is SignInUiEvent.ForgotPasswordFormDataChanged -> stateMachine.updateForgotPasswordFormData(event.email)
+
+            // Sign in panel events
+            is SignInUiEvent.SignUpFromSignInClicked -> showSignUpPanelByUserType()
             is SignInUiEvent.SignInClicked -> signIn(event.formData)
-            is SignInUiEvent.StudentSignUpClicked -> studentSignUp(event.formData)
-            is SignInUiEvent.TeacherSignUpClicked -> teacherSignUp(event.formData)
-            is SignInUiEvent.ForgotPasswordClicked -> sendPasswordResetLink(event.email)
-            is SignInUiEvent.EmailVerificationClicked -> sendVerificationEmail(event.email, event.password)
-            is SignInUiEvent.TermsAndConditionsClicked -> {
-                // TODO
-            }
-            is SignInUiEvent.PrivacyPolicyClicked -> {
-                // TODO
-            }
+
+            // Sign up panel events
             is SignInUiEvent.SignUpFacultyPickerClicked -> openSignUpFacultySelectionSheet()
             is SignInUiEvent.SignUpBatchPickerClicked -> openSignUpBatchSelectionSheet()
+            is SignInUiEvent.TermsAndConditionsClicked -> {
+                sharedScreenData.getAppConfig()?.termsAndConditionsUrl?.let { url ->
+                    _message.update { SignInNavigationState.OpenWebScreen(url) }
+                }
+            }
+            is SignInUiEvent.PrivacyPolicyClicked -> {
+                sharedScreenData.getAppConfig()?.privacyPolicyUrl?.let { url ->
+                    _message.update { SignInNavigationState.OpenWebScreen(url) }
+                }
+            }
+            is SignInUiEvent.StudentSignUpClicked -> studentSignUp(event.formData)
+            is SignInUiEvent.TeacherSignUpClicked -> teacherSignUp(event.formData)
+
+            // Forgot password panel events
+            is SignInUiEvent.ForgotPasswordClicked -> sendPasswordResetLink(event.email)
+
+            // Email verification panel events
+            is SignInUiEvent.EmailVerificationClicked -> sendVerificationEmail(event.formData)
         }
     }
 
@@ -85,8 +108,7 @@ class SignInViewModel(
     fun onNavigationHandled() = _navigation.update { null }
 
     private fun currentSignUpFacultyId(): Int? {
-        val state = uiState.value
-        if (state !is SignInUiState.SignUpPanel) return null
+        val state = uiState.value as? SignInUiState.SignUpPanel ?: return null
         return when (val form = state.formData) {
             is SignUpFormData.StudentSignUpFormData -> form.faculty?.id
             is SignUpFormData.TeacherSignUpFormData -> form.faculty?.id
@@ -94,8 +116,7 @@ class SignInViewModel(
     }
 
     private fun currentSignUpBatchId(): Int? {
-        val state = uiState.value
-        if (state !is SignInUiState.SignUpPanel) return null
+        val state = uiState.value as? SignInUiState.SignUpPanel ?: return null
         return when (val form = state.formData) {
             is SignUpFormData.StudentSignUpFormData -> form.batch?.id
             is SignUpFormData.TeacherSignUpFormData -> null
@@ -239,14 +260,14 @@ class SignInViewModel(
         }
     }
 
-    private fun sendVerificationEmail(email: String, password: String) {
+    private fun sendVerificationEmail(formData: EmailVerificationFormData) {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
-            authRepository.sendVerificationEmail(email, password)
+            authRepository.sendVerificationEmail(formData.email, formData.password)
                 .onSuccess {
                     stateMachine.showLoading(false)
                     _message.update {
-                        SignInMessageState.Success("A verification link has been sent to $email")
+                        SignInMessageState.Success("A verification link has been sent to ${formData.email}")
                     }
                     stateMachine.setAuthPanel(AuthPanel.SignIn)
                 }
@@ -265,17 +286,18 @@ class SignInViewModel(
         val userType = settingsRepository.getUserType() ?: return
 
         if (formData.isInvalid()) {
-            _message.update {
-                SignInMessageState.Error("Please enter valid credentials and try again")
-            }
+            _message.update { SignInMessageState.Error("Please enter valid credentials and try again") }
             return
         }
+
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
             authRepository.signIn(userType, formData.email, formData.password)
-                .onSuccess { user ->
+                .onSuccess {
                     stateMachine.showLoading(false)
-                    _message.update { SignInMessageState.Success(message = "Welcome ${user.name}!") }
+                    val savedEmail = if (formData.rememberMe) formData.email else ""
+                    sharedPrefRepository.putString(SharedPrefKey.SIGN_IN_EMAIL, savedEmail)
+                    _message.update { SignInMessageState.Success(message = "Welcome Back!") }
                     _navigation.update { SignInNavigationState.GoBack }
                 }
                 .onFailure { error ->

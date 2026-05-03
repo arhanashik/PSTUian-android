@@ -14,12 +14,12 @@ data class SharedPrefKey(
         val APP_THEME = create("app_theme", false)
         val FCM_TOKEN = create("fcm_token", false)
         val DEVICE_ID = create("device_id", false)
+        val SIGN_IN_EMAIL = create("sign_in_email", false)
 
         // clear on sign out keys
         val AUTH_TOKEN = create("auth_token", true)
         val FIRESTORE_CACHE_CLEARED = create("firestore_cache_cleared", true)
         val DONATION_ID = create("donation_id", true)
-        val USER = create("user", true)
         val SELECTED_USER_TYPE = create("selected_user_type", true)
 
         fun create(name: String, clearOnSignOut: Boolean): SharedPrefKey {
