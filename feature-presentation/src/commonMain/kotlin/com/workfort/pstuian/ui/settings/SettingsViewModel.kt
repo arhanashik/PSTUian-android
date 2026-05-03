@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
@@ -63,6 +65,7 @@ class SettingsViewModel(
                 is SettingsUiEvent.ChangeThemeClicked -> onChangeTheme(event.theme)
                 is SettingsUiEvent.RefreshFcmTokenClicked -> onRefreshFcmToken()
                 is SettingsUiEvent.ClearCacheClicked -> onClearCache()
+                is SettingsUiEvent.ForceSignOutClicked -> onForceSignOut()
             }
         }
     }
@@ -102,7 +105,7 @@ class SettingsViewModel(
     private fun onClearCache() {
         val userType = settingsRepository.getUserType() ?: return
         _message.update {
-            SettingsMessageState.ConfirmClearPrefs(
+            SettingsMessageState.ConfirmAction(
                 title = "Clear Data",
                 message = "Are you sure you want to clear all app data? This will log you out and reset all settings.",
             ) {
@@ -111,6 +114,27 @@ class SettingsViewModel(
                     authRepository.signOut(userType, fromAllDevice = false)
                     settingsRepository.clearSharedPrefs()
                     _navigation.update { SettingsNavigationState.ResetToRoot }
+                }
+            }
+        }
+    }
+
+    private fun onForceSignOut() {
+        val userType = settingsRepository.getUserType() ?: return
+        _message.update {
+            SettingsMessageState.ConfirmAction(
+                title = "Force sign out",
+                message = "Are you sure you want to force sign out?",
+            ) {
+                onMessageHandled()
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    authRepository.signOut(userType, fromAllDevice = false)
+                        .onSuccess { _navigation.update { SettingsNavigationState.ResetToRoot } }
+                        .onFailure { err ->
+                            _message.update {
+                                SettingsMessageState.Error(err.message ?: "Sign out failed. Please try again.")
+                            }
+                        }
                 }
             }
         }

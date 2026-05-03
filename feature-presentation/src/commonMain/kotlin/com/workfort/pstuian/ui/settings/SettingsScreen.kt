@@ -48,7 +48,7 @@ private fun HandleMessageState(
                     onDismiss = { onMessageHandled() }
                 )
             }
-            is SettingsMessageState.ConfirmClearPrefs -> {
+            is SettingsMessageState.ConfirmAction -> {
                 ShowConfirmationDialog(
                     title = it.title,
                     message = it.message,

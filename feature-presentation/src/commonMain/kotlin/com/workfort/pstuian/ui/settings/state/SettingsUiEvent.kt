@@ -10,4 +10,5 @@ sealed interface SettingsUiEvent {
     data class ChangeThemeClicked(val theme: ThemeMode) : SettingsUiEvent
     data object RefreshFcmTokenClicked : SettingsUiEvent
     data object ClearCacheClicked : SettingsUiEvent
+    data object ForceSignOutClicked : SettingsUiEvent
 }

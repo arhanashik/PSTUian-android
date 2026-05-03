@@ -48,6 +48,7 @@ import com.workfort.pstuian.ui.settings.state.SettingsUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.label_user_type_row
+import pstuian.feature_presentation.generated.resources.txt_sign_out
 import pstuian.feature_presentation.generated.resources.txt_visitor
 
 @Composable
@@ -81,6 +82,7 @@ fun SettingsContentPanel(
                             debugPanelData = uiState.debugPanelData,
                             onRefreshFcmToken = { onUiEvent(SettingsUiEvent.RefreshFcmTokenClicked) },
                             onClearCache = { onUiEvent(SettingsUiEvent.ClearCacheClicked) },
+                            onForceSignOut = { onUiEvent(SettingsUiEvent.ForceSignOutClicked) },
                         )
                     }
                 }
@@ -211,18 +213,21 @@ private fun DebugSettingsView(
     debugPanelData: DebugPanelData,
     onRefreshFcmToken: () -> Unit,
     onClearCache: () -> Unit,
+    onForceSignOut: () -> Unit,
 ) {
     val rowLabelStyle = settingsCardLabelStyle()
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        ElevatedCard(
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+    ElevatedCard(
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -245,20 +250,10 @@ private fun DebugSettingsView(
                     style = TextStyle.body2.copy(color = AppColors.textSecondary),
                 )
             }
-        }
-
-        ElevatedCard(
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -275,6 +270,32 @@ private fun DebugSettingsView(
                         text = "Clear",
                         style = TextStyle.label2.copy(
                             color = AppColors.error,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 11.sp,
+                        ),
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = "Force Sign Out",
+                    style = rowLabelStyle,
+                )
+                OutlinedButton(
+                    onClick = onForceSignOut,
+                    modifier = Modifier.height(30.dp),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                ) {
+                    Text(
+                        text = stringResource(Res.string.txt_sign_out),
+                        style = TextStyle.label2.copy(
+                            color = AppColors.textSecondary,
                             fontWeight = FontWeight.Medium,
                             fontSize = 11.sp,
                         ),

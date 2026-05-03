@@ -4,7 +4,7 @@ import com.workfort.pstuian.featuredomain.model.UserType
 
 sealed interface SettingsMessageState {
     data class Error(val message: String) : SettingsMessageState
-    data class ConfirmClearPrefs(
+    data class ConfirmAction(
         val title: String,
         val message: String,
         val onConfirm: () -> Unit,
