@@ -15,8 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.ui.blooddonationrequestcreate.BloodDonationRequestCreateScreen
-import com.workfort.pstuian.ui.blooddonationrequestlist.BloodDonationRequestListScreen
+import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.BloodDonationRequestCreateScreen
+import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestListScreen
 import com.workfort.pstuian.ui.changepassword.ChangePasswordScreen
 import com.workfort.pstuian.ui.checkinlist.CheckInListScreen
 import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
