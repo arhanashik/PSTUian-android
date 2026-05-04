@@ -1,14 +1,15 @@
 package com.workfort.pstuian.ui.imageupload.composable
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -20,8 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -35,6 +41,11 @@ import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.img_placeholder_profile
 import pstuian.feature_presentation.generated.resources.txt_browse_gallery
 import pstuian.feature_presentation.generated.resources.txt_upload
+
+private val ImageUploadPreviewSquareSize = 240.dp
+
+/** Fraction of the square’s shorter side used for the circular guide (inset from full bleed). */
+private const val CropGuideCircleDiameterFraction = 0.80f
 
 @Composable
 internal fun ImageUploadContentPanel(
@@ -88,13 +99,9 @@ private fun ImageSelectorView(
                     placeholder = painterResource(Res.drawable.img_placeholder_profile),
                     error = painterResource(Res.drawable.img_placeholder_profile),
                 )
-                Image(
+                SquareCircleCropPreview(
                     painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(160.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(ImageUploadPreviewSquareSize),
                 )
             }
             Button(
@@ -131,6 +138,45 @@ private fun ImageSelectorView(
                 )
                 Text(text = stringResource(Res.string.txt_upload))
             }
+        }
+    }
+}
+
+@Composable
+private fun SquareCircleCropPreview(
+    painter: Painter,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+        )
+        val scrim = MaterialTheme.colorScheme.scrim
+        val outline = MaterialTheme.colorScheme.outline
+        Canvas(Modifier.fillMaxSize()) {
+            val w = size.width
+            val h = size.height
+            val side = minOf(w, h)
+            val diameter = side * CropGuideCircleDiameterFraction
+            val left = (w - diameter) / 2f
+            val top = (h - diameter) / 2f
+            val oval = Rect(left, top, left + diameter, top + diameter)
+            val dimPath = Path().apply {
+                fillType = PathFillType.EvenOdd
+                addRect(Rect(0f, 0f, w, h))
+                addOval(oval)
+            }
+            drawPath(dimPath, scrim.copy(alpha = 0.55f))
+            val radius = diameter / 2f
+            drawCircle(
+                color = outline.copy(alpha = 0.9f),
+                radius = radius,
+                center = Offset(w / 2f, h / 2f),
+                style = Stroke(width = 2.dp.toPx()),
+            )
         }
     }
 }

@@ -62,7 +62,7 @@ class ImageUploadViewModel(
     private fun onClickUpload(uri: String) {
         if (uiStateMachine.isUploading()) return
         _message.update {
-            ImageUploadMessageState.ConfirmUpload("This will replace your current profile photo") {
+            ImageUploadMessageState.ConfirmUpload("Are you surely want to upload the photo?") {
                 uploadImage(uri)
             }
         }

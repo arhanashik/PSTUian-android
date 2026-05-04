@@ -1,30 +1,22 @@
 package com.workfort.pstuian.ui.imageupload
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
-import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.imageupload.composable.ImageUploadContentPanel
+import com.workfort.pstuian.ui.imageupload.composable.ImageUploadScreenContent
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadMessageState
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadNavigationState
-import com.workfort.pstuian.ui.imageupload.state.ImageUploadUiEvent
-import com.workfort.pstuian.ui.imageupload.state.ImageUploadUiState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.msg_upload_profile_image
 import pstuian.feature_presentation.generated.resources.txt_dismiss
 import pstuian.feature_presentation.generated.resources.txt_upload
 
@@ -35,37 +27,10 @@ fun ImageUploadScreen(viewModel: ImageUploadViewModel) {
     val navigation by viewModel.navigation.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    ScreenContent(uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
+    ImageUploadScreenContent(uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
 
     HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ScreenContent(
-    uiState: ImageUploadUiState,
-    snackbarHostState: SnackbarHostState,
-    onUiEvent: (ImageUploadUiEvent) -> Unit,
-) {
-    AppScaffold(
-        topBar = {
-            AppBar(
-                title = "Upload Image",
-                navigation = {
-                    NavigationButton { onUiEvent(ImageUploadUiEvent.BackClicked) }
-                },
-            )
-        },
-        snackbarHost = { AppSnackbarHost(snackbarHostState) }
-    ) {
-        when (uiState) {
-            is ImageUploadUiState.None -> Unit
-            is ImageUploadUiState.Content -> {
-                ImageUploadContentPanel(uiState = uiState, onUiEvent = onUiEvent)
-            }
-        }
-    }
 }
 
 @Composable
