@@ -16,11 +16,11 @@ class StudentRepositoryImpl(
 
     private val cache = mutableSetOf<User.Student>()
 
-    override suspend fun getUser(studentId: Int): DomainResult<User.Student> {
-        cache.firstOrNull { it.userId == studentId }?.let { cache ->
+    override suspend fun getUser(userId: Int): DomainResult<User.Student> {
+        cache.firstOrNull { it.userId == userId }?.let { cache ->
             return DomainResult.success(cache)
         }
-        return helper.get(studentId)
+        return helper.get(userId)
             .toDomainResult(domainErrorMapper)
             .map { it.toModel() }
             .onSuccess { cache.add(it) }
@@ -36,8 +36,10 @@ class StudentRepositoryImpl(
             .onSuccess { cache.add(it) }
     }
 
-    override suspend fun changeProfileImage(imageUrl: String): DomainResult<Unit> {
-        return helper.changeProfileImage(imageUrl).toDomainResult(domainErrorMapper)
+    override suspend fun changeProfileImage(userId: Int, imageUrl: String): DomainResult<Unit> {
+        return helper.changeProfileImage(imageUrl)
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { cache.removeAll { it.userId == userId } }
     }
 
     override suspend fun changeName(

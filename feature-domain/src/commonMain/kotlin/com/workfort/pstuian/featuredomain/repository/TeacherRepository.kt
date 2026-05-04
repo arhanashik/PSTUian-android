@@ -9,7 +9,7 @@ interface TeacherRepository {
 
     suspend fun getUserByEmail(email: String): DomainResult<User.Teacher>
 
-    suspend fun changeProfileImage(imageUrl: String): DomainResult<Unit>
+    suspend fun changeProfileImage(userId: Int, imageUrl: String): DomainResult<Unit>
 
     suspend fun changeName(teacher: User.Teacher, name: String): Boolean
 

@@ -5,11 +5,11 @@ import com.workfort.pstuian.featuredomain.model.User
 
 interface StudentRepository {
 
-    suspend fun getUser(studentId: Int): DomainResult<User.Student>
+    suspend fun getUser(userId: Int): DomainResult<User.Student>
 
     suspend fun getUserByEmail(email: String): DomainResult<User.Student>
 
-    suspend fun changeProfileImage(imageUrl: String): DomainResult<Unit>
+    suspend fun changeProfileImage(userId: Int, imageUrl: String): DomainResult<Unit>
 
     suspend fun changeName(authUserId: String, name: String): DomainResult<Unit>
 

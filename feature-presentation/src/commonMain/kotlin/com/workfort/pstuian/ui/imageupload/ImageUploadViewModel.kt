@@ -106,8 +106,8 @@ class ImageUploadViewModel(
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             _message.update { ImageUploadMessageState.Loading() }
             when (userType) {
-                UserType.STUDENT -> studentRepository.changeProfileImage(imageUrl)
-                UserType.TEACHER -> teacherRepository.changeProfileImage(imageUrl)
+                UserType.STUDENT -> studentRepository.changeProfileImage(userId, imageUrl)
+                UserType.TEACHER -> teacherRepository.changeProfileImage(userId, imageUrl)
                 else -> return@launchOnMain
             }.onSuccess {
                 _message.update { ImageUploadMessageState.Snackbar("Profile photo changed successfully!") }

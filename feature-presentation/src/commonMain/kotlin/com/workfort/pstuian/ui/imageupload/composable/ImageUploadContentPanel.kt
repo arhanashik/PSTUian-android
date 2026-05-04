@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -43,6 +45,7 @@ import pstuian.feature_presentation.generated.resources.txt_browse_gallery
 import pstuian.feature_presentation.generated.resources.txt_upload
 
 private val ImageUploadPreviewSquareSize = 240.dp
+private val ImageUploadPreviewCornerRadius = 16.dp
 
 /** Fraction of the square’s shorter side used for the circular guide (inset from full bleed). */
 private const val CropGuideCircleDiameterFraction = 0.80f
@@ -149,7 +152,9 @@ private fun SquareCircleCropPreview(
     painter: Painter,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier.clip(RoundedCornerShape(ImageUploadPreviewCornerRadius)),
+    ) {
         Image(
             painter = painter,
             contentDescription = null,

@@ -39,6 +39,10 @@ fun TeacherProfileScreen(viewModel: TeacherProfileViewModel) {
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.onUiReady()
+    }
+
     TeacherProfileScreenContent(uiState, viewModel::onUiEvent)
 
     HandleMessageState(message, viewModel::messageHandled)
