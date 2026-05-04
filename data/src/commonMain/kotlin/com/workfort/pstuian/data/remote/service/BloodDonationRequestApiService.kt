@@ -72,6 +72,21 @@ class BloodDonationRequestApiService(private val client: HttpClient) {
         ).body()
     }
 
+    suspend fun markAsComplete(
+        id: Int,
+        userId: Int,
+        userType: String,
+    ): ApiResponse<Unit> {
+        return client.submitForm(
+            url = NetworkConst.Remote.Api.BloodDonationRequest.MARK_AS_COMPLETE,
+            formParameters = parameters {
+                append(NetworkConst.Params.ID, id.toString())
+                append(NetworkConst.Params.USER_ID, userId.toString())
+                append(NetworkConst.Params.USER_TYPE, userType)
+            }
+        ).body()
+    }
+
     suspend fun delete(id: Int): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonationRequest.DELETE,

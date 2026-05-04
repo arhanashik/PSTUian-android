@@ -68,6 +68,10 @@ class BloodDonationRequestRepositoryImpl(
         return helper.update(id, bloodGroup, beforeDate, contact, info).toDomainResult(domainErrorMapper)
     }
 
+    override suspend fun markAsComplete(id: Int, userId: Int, userType: UserType): DomainResult<Unit> {
+        return helper.markAsComplete(id, userId, userType.type).toDomainResult(domainErrorMapper)
+    }
+
     override suspend fun delete(id: Int): DomainResult<Unit> {
         return helper.delete(id).toDomainResult(domainErrorMapper)
     }

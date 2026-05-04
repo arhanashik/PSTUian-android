@@ -62,6 +62,14 @@ class BloodDonationRequestApiHelperImpl(
         }
     }
 
+    override suspend fun markAsComplete(id: Int, userId: Int, userType: String): NetworkResult<Unit> {
+        return runCatching {
+            service.markAsComplete(id, userId, userType).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
+    }
+
     override suspend fun delete(id: Int): NetworkResult<Unit> {
         return runCatching {
             service.delete(id).toNetworkResult()

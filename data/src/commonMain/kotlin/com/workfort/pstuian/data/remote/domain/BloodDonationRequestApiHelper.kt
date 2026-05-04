@@ -25,6 +25,12 @@ abstract class BloodDonationRequestApiHelper : ApiHelper<BloodDonationRequestDto
         info: String?,
     ): NetworkResult<Unit> = NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
 
+    open suspend fun markAsComplete(
+        id: Int,
+        userId: Int,
+        userType: String,
+    ): NetworkResult<Unit> = NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+
     open suspend fun update(
         id: Int,
         bloodGroup: String,

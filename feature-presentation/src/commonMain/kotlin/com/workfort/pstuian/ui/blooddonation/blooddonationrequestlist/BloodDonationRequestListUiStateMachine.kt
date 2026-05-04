@@ -1,6 +1,7 @@
 package com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist
 
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
+import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.screendata.BloodDonationRequestDisplayData
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiState
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,7 @@ class BloodDonationRequestListUiStateMachine : UiStateMachine<BloodDonationReque
         BloodDonationRequestListUiState.Content()
     }
 
-    fun updateRequestList(requestList: List<BloodDonationRequest>) = updateUiState {
+    fun updateRequestList(requestList: List<BloodDonationRequestDisplayData>) = updateUiState {
         when (this) {
             is BloodDonationRequestListUiState.None -> BloodDonationRequestListUiState.Content(
                 requestList = requestList,

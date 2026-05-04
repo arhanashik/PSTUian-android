@@ -187,6 +187,7 @@ object NetworkConst {
                 const val GET = "${BLOOD_DONATION_REQUEST_API_PATH}get"
                 const val INSERT = "${BLOOD_DONATION_REQUEST_API_PATH}insert"
                 const val UPDATE = "${BLOOD_DONATION_REQUEST_API_PATH}update"
+                const val MARK_AS_COMPLETE = "${BLOOD_DONATION_REQUEST_API_PATH}markAsComplete"
                 const val DELETE = "${BLOOD_DONATION_REQUEST_API_PATH}delete"
             }
 

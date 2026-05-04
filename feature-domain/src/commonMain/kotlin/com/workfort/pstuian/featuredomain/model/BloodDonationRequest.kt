@@ -9,7 +9,7 @@ data class BloodDonationRequest(
     val beforeDate: String,
     val contacts: String,
     val info: String?,
-    val userId: String,
+    val userId: Int,
     val userType: String,
     val name: String,
     val imageUrl: String?,

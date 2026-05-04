@@ -15,7 +15,7 @@ data class BloodDonationRequestDto(
     val contacts: String,
     val info: String?,
     @SerialName("user_id")
-    val userId: String,
+    val userId: Int,
     @SerialName("user_type")
     val userType: String,
     val name: String,

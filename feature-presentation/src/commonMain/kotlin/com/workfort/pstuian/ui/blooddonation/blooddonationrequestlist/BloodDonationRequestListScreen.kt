@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.composable.BloodDonationRequestScreenContent
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListMessageState
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListNavigationState
-import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiEvent
+import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
@@ -19,6 +19,10 @@ import com.workfort.pstuian.ui.common.navigation.AppScreen
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.blood_donation_request_status_active
+import pstuian.feature_presentation.generated.resources.blood_donation_request_status_approved
+import pstuian.feature_presentation.generated.resources.blood_donation_request_status_complete
+import pstuian.feature_presentation.generated.resources.blood_donation_request_status_pending
 import pstuian.feature_presentation.generated.resources.txt_call
 import pstuian.feature_presentation.generated.resources.txt_msg_call
 import pstuian.feature_presentation.generated.resources.txt_title_call
@@ -32,24 +36,42 @@ fun BloodDonationRequestListScreen(viewModel: BloodDonationRequestListViewModel)
 
     BloodDonationRequestScreenContent(uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
 
-    HandleMessageState(message, viewModel::onMessageHandled, viewModel::onUiEvent)
+    HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
 @Composable
 private fun HandleMessageState(
     message: BloodDonationRequestListMessageState?,
+    snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
-    onUiEvent: (BloodDonationRequestListUiEvent) -> Unit,
 ) {
     message?.let {
         when (it) {
             is BloodDonationRequestListMessageState.ShowDetails -> {
                 val date = it.item.beforeDate.split(" ")[0]
+                val approvalLine = stringResource(
+                    if (it.item.confirmed) {
+                        Res.string.blood_donation_request_status_approved
+                    } else {
+                        Res.string.blood_donation_request_status_pending
+                    },
+                )
+                val completionLine = stringResource(
+                    if (it.item.completed) {
+                        Res.string.blood_donation_request_status_complete
+                    } else {
+                        Res.string.blood_donation_request_status_active
+                    },
+                )
+                val statusSummary = "$approvalLine · $completionLine"
+                val detailBody = it.item.info.orEmpty()
+                val dialogBody = listOf(statusSummary, detailBody).filter { segment -> segment.isNotBlank() }
+                    .joinToString("\n\n")
                 ShowInfoDialog(
                     title = "Need ${it.item.bloodGroup} blood before $date",
-                    message = it.item.info.orEmpty(),
-                    onDismiss = onMessageHandled
+                    message = dialogBody,
+                    onDismiss = onMessageHandled,
                 )
             }
             is BloodDonationRequestListMessageState.Call -> {
@@ -64,6 +86,19 @@ private fun HandleMessageState(
                     },
                     onDismiss = onMessageHandled
                 )
+            }
+            is BloodDonationRequestListMessageState.Confirm -> {
+                ShowConfirmationDialog(
+                    message = it.message,
+                    onConfirm = {
+                        onMessageHandled()
+                        it.onConfirm()
+                    },
+                    onDismiss = onMessageHandled,
+                )
+            }
+            is BloodDonationRequestListMessageState.Snackbar -> {
+                HandleSnackbar(it.message, snackbarHostState, onMessageHandled)
             }
         }
     }

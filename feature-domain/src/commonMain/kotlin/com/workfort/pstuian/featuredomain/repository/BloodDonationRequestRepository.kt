@@ -29,5 +29,11 @@ interface BloodDonationRequestRepository {
         info: String,
     ) : DomainResult<Unit>
 
+    suspend fun markAsComplete(
+        id: Int,
+        userId: Int,
+        userType: UserType,
+    ): DomainResult<Unit>
+
     suspend fun delete(id: Int) : DomainResult<Unit>
 }

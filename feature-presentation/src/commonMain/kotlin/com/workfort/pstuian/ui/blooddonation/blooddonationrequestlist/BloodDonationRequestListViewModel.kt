@@ -3,11 +3,11 @@ package com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestRepository
 import com.workfort.pstuian.model.SharedScreenData
+import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.screendata.BloodDonationRequestDisplayData
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListMessageState
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListNavigationState
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiEvent
@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.update
 class BloodDonationRequestListViewModel(
     private val donationRequestRepo: BloodDonationRequestRepository,
     private val sharedScreenData: SharedScreenData,
+    private val bloodDonationRequestDisplayDataMapper: BloodDonationRequestDisplayDataMapper,
     private val uiStateMachine: BloodDonationRequestListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<BloodDonationRequestListUiState>(uiStateMachine) {
@@ -32,7 +33,7 @@ class BloodDonationRequestListViewModel(
 
     private var page = 1
     private var hasMoreData = true
-    private val requestListCache = arrayListOf<BloodDonationRequest>()
+    private val requestListCache = arrayListOf<BloodDonationRequestDisplayData>()
 
     override fun onUiReady() {
         uiStateMachine.setInitialContent()
@@ -45,6 +46,7 @@ class BloodDonationRequestListViewModel(
             is BloodDonationRequestListUiEvent.CreateRequestClicked -> onClickCreateRequest()
             is BloodDonationRequestListUiEvent.ItemClicked -> onClickItem(event.item)
             is BloodDonationRequestListUiEvent.CallClicked -> onClickCall(event.phoneNumber)
+            is BloodDonationRequestListUiEvent.MarkAsCompleteClicked -> onClickMarkAsComplete(event.item)
             is BloodDonationRequestListUiEvent.LoadMore -> loadDonationRequests(forceRefresh = false)
         }
     }
@@ -61,12 +63,34 @@ class BloodDonationRequestListViewModel(
         _navigation.update { BloodDonationRequestListNavigationState.BloodDonationRequestCreateScreen }
     }
 
-    private fun onClickItem(item: BloodDonationRequest) {
-        _message.update { BloodDonationRequestListMessageState.ShowDetails(item) }
+    private fun onClickItem(item: BloodDonationRequestDisplayData) {
+        _message.update { BloodDonationRequestListMessageState.ShowDetails(item.bloodDonationRequest) }
     }
 
     private fun onClickCall(phoneNumber: String) {
         _message.update { BloodDonationRequestListMessageState.Call(phoneNumber) }
+    }
+
+    private fun onClickMarkAsComplete(item: BloodDonationRequestDisplayData) {
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
+
+        _message.update {
+            BloodDonationRequestListMessageState.Confirm("Are you surely want to mark the item as complete") {
+                viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+                    // TODO show operation loading
+                    donationRequestRepo.markAsComplete(item.bloodDonationRequest.id, userId, userType)
+                        .onSuccess {
+                            _message.update { BloodDonationRequestListMessageState.Snackbar("Marked as completed!") }
+                            loadDonationRequests(forceRefresh = true)
+                        }
+                        .onFailure {
+                            val message = it.message ?: "Failed to mark as complete"
+                            _message.update { BloodDonationRequestListMessageState.Snackbar(message) }
+                        }
+                }
+            }
+        }
     }
 
     private fun loadDonationRequests(forceRefresh: Boolean) {
@@ -88,7 +112,9 @@ class BloodDonationRequestListViewModel(
                     hasMoreData = false
                 } else {
                     page++
-                    requestListCache.addAll(list)
+                    requestListCache.addAll(
+                        bloodDonationRequestDisplayDataMapper.map( userId, userType, list),
+                    )
                 }
                 uiStateMachine.updateRequestList(requestListCache)
             }.onFailure {

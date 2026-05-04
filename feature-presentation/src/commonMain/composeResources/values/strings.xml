@@ -134,6 +134,11 @@
     <string name="btn_apply">Apply</string>
     <string name="label_download_cv_screen">Download CV</string>
     <string name="label_blood_donation_request_list_screen">Blood donation requests</string>
+    <string name="blood_donation_request_status_approved">Approved</string>
+    <string name="blood_donation_request_status_pending">Pending</string>
+    <string name="blood_donation_request_status_active">Active</string>
+    <string name="blood_donation_request_status_complete">Complete</string>
+    <string name="blood_donation_request_mark_as_complete">Mark as complete</string>
     <string name="label_blood_donation">Blood Donation</string>
     <string name="txt_request_donation">Request donation</string>
     <string name="txt_create_new">Create new</string>

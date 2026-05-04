@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.screendata.BloodDonationRequestDisplayData
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiEvent
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiState
 import com.workfort.pstuian.ui.common.composable.AppBar
@@ -93,22 +94,44 @@ private fun mockBloodDonationRequest(
     id: Int = 1,
     name: String = "Jamil Ahmed",
     bloodGroup: String = "O+",
+    confirmed: Boolean = true,
+    completed: Boolean = false,
 ) = BloodDonationRequest(
     id = id,
     bloodGroup = bloodGroup,
     beforeDate = "2026-05-10 12:00:00",
     contacts = "01711111111,01822222222",
     info = "Urgent need at PSTU Medical Centre. Any donor nearby would be appreciated.",
-    userId = "42",
+    userId = 42,
     userType = "student",
     name = name,
     imageUrl = null,
-    confirmed = true,
-    completed = false,
+    confirmed = confirmed,
+    completed = completed,
+)
+
+private fun mockDisplayData(
+    id: Int = 1,
+    name: String = "Jamil Ahmed",
+    bloodGroup: String = "O+",
+    confirmed: Boolean = true,
+    completed: Boolean = false,
+    isOwnItem: Boolean = false,
+) = BloodDonationRequestDisplayData(
+    bloodDonationRequest = mockBloodDonationRequest(
+        id = id,
+        name = name,
+        bloodGroup = bloodGroup,
+        confirmed = confirmed,
+        completed = completed,
+    ),
+    contacts = listOf("01711111111", "01822222222"),
+    needBeforeFormattedDate = "2026-05-10",
+    isOwnItem = isOwnItem,
 )
 
 private fun mockContent(
-    requestList: List<BloodDonationRequest> = listOf(mockBloodDonationRequest()),
+    requestList: List<BloodDonationRequestDisplayData> = listOf(mockDisplayData()),
     isLoading: Boolean = false,
     error: String? = null,
 ) = BloodDonationRequestListUiState.Content(
@@ -124,8 +147,14 @@ fun BloodDonationRequestScreenContentListPreview() {
         BloodDonationRequestScreenContent(
             uiState = mockContent(
                 requestList = listOf(
-                    mockBloodDonationRequest(id = 1, name = "Jamil Ahmed"),
-                    mockBloodDonationRequest(id = 2, name = "Nusrat Jahan", bloodGroup = "B+"),
+                    mockDisplayData(id = 1, name = "Jamil Ahmed", isOwnItem = true),
+                    mockDisplayData(
+                        id = 2,
+                        name = "Nusrat Jahan",
+                        bloodGroup = "B+",
+                        confirmed = false,
+                        completed = true,
+                    ),
                 ),
             ),
             snackbarHostState = remember { SnackbarHostState() },
@@ -140,7 +169,7 @@ fun BloodDonationRequestScreenContentLoadingMorePreview() {
     AppTheme {
         BloodDonationRequestScreenContent(
             uiState = mockContent(
-                requestList = listOf(mockBloodDonationRequest()),
+                requestList = listOf(mockDisplayData()),
                 isLoading = true,
             ),
             snackbarHostState = remember { SnackbarHostState() },
@@ -180,8 +209,8 @@ fun BloodDonationRequestScreenContentDarkPreview() {
         BloodDonationRequestScreenContent(
             uiState = mockContent(
                 requestList = listOf(
-                    mockBloodDonationRequest(id = 1),
-                    mockBloodDonationRequest(id = 2, name = "Rafiq Hasan", bloodGroup = "A-"),
+                    mockDisplayData(id = 1, isOwnItem = true),
+                    mockDisplayData(id = 2, name = "Rafiq Hasan", bloodGroup = "A-"),
                 ),
             ),
             snackbarHostState = remember { SnackbarHostState() },

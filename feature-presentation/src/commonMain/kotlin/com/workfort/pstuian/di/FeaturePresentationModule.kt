@@ -8,6 +8,7 @@ import com.workfort.pstuian.ui.blooddonation.blooddonationcreate.BloodDonationCr
 import com.workfort.pstuian.ui.blooddonation.blooddonationcreate.BloodDonationCreateViewModel
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.BloodDonationRequestCreateUiStateMachine
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.BloodDonationRequestCreateViewModel
+import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestDisplayDataMapper
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestListUiStateMachine
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestListViewModel
 import com.workfort.pstuian.ui.changepassword.ChangePasswordUiStateMachine
@@ -85,6 +86,7 @@ private val bloodDonationRequestCreateModule = module {
 }
 
 private val bloodDonationRequestListModule = module {
+    factoryOf(::BloodDonationRequestDisplayDataMapper)
     factoryOf(::BloodDonationRequestListUiStateMachine)
     factoryOf(::BloodDonationRequestListViewModel)
 }
