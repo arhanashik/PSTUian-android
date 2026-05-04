@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 actual fun AppThemeSideEffect(
     isDark: Boolean,
     statusBarColor: Color,
+    systemBarSyncKey: Any?,
 ) {
     // No-op for iOS as status bar is handled differently
 }

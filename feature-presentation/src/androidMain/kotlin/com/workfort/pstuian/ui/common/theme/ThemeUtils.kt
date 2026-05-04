@@ -1,8 +1,8 @@
 package com.workfort.pstuian.ui.common.theme
 
 import android.app.Activity
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
@@ -10,21 +10,46 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @Composable
 actual fun AppThemeSideEffect(
     isDark: Boolean,
     statusBarColor: Color,
+    systemBarSyncKey: Any?,
 ) {
     val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            @Suppress("DEPRECATION")
-            window.statusBarColor = statusBarColor.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                statusBarColor.luminance() > 0.5f
+    if (view.isInEditMode) return
+    val window = (view.context as Activity).window
+    val controller = remember(view) { WindowCompat.getInsetsController(window, view) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    fun applyThemeStatusBar() {
+        @Suppress("DEPRECATION")
+        window.statusBarColor = statusBarColor.toArgb()
+        controller.isAppearanceLightStatusBars = statusBarColor.luminance() > 0.5f
+    }
+
+    // Default bar styling for the whole app: reapply when the activity resumes so returning
+    // from a screen that temporarily changed the window wins back the theme without each
+    // destination calling ApplySystemBarColors.
+    DisposableEffect(lifecycleOwner, statusBarColor, systemBarSyncKey) {
+        applyThemeStatusBar()
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                applyThemeStatusBar()
+            }
         }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    SideEffect {
+        applyThemeStatusBar()
     }
 }
 
@@ -39,35 +64,45 @@ actual fun ApplySystemBarColors(
     if (view.isInEditMode) return
     val window = (view.context as Activity).window
     val controller = remember(view) { WindowCompat.getInsetsController(window, view) }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Capture the values present when this composable entered the hierarchy so we can restore
-    // them when it leaves. Keyed on `Unit` so the snapshot is taken exactly once per lifetime.
-    DisposableEffect(Unit) {
-        @Suppress("DEPRECATION")
-        val previousStatusBarColor = window.statusBarColor
-        @Suppress("DEPRECATION")
-        val previousNavigationBarColor = window.navigationBarColor
-        val previousStatusBarDarkIcons = controller.isAppearanceLightStatusBars
-        val previousNavigationBarDarkIcons = controller.isAppearanceLightNavigationBars
-
-        onDispose {
-            @Suppress("DEPRECATION")
-            window.statusBarColor = previousStatusBarColor
-            @Suppress("DEPRECATION")
-            window.navigationBarColor = previousNavigationBarColor
-            controller.isAppearanceLightStatusBars = previousStatusBarDarkIcons
-            controller.isAppearanceLightNavigationBars = previousNavigationBarDarkIcons
-        }
-    }
-
-    // Re-apply on every composition so the values win over any ancestor side effects (e.g. the
-    // theme-wide status bar styling) that may run in the same pass.
-    SideEffect {
+    fun applyCurrentColors() {
         @Suppress("DEPRECATION")
         window.statusBarColor = statusBarColor.toArgb()
         @Suppress("DEPRECATION")
         window.navigationBarColor = navigationBarColor.toArgb()
         controller.isAppearanceLightStatusBars = statusBarDarkIcons
         controller.isAppearanceLightNavigationBars = navigationBarDarkIcons
+    }
+
+    // Intentionally no restore-on-dispose: snapshotting window.statusBarColor is unreliable with
+    // enableEdgeToEdge() (transparent / theme attrs), and disposal order can run after the
+    // destination we're returning to has already reapplied AppThemeSideEffect — restoring would
+    // flash or stick the wrong color (e.g. white from styles.xml).
+
+    // When returning to an existing destination from the back stack, the composable may become
+    // visible again without a full recomposition; reapply colors on resume to avoid stale bars.
+    DisposableEffect(
+        lifecycleOwner,
+        statusBarColor,
+        statusBarDarkIcons,
+        navigationBarColor,
+        navigationBarDarkIcons,
+    ) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                applyCurrentColors()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    // Re-apply on every composition so the values win over any ancestor side effects (e.g. the
+    // theme-wide status bar styling) that may run in the same pass.
+    SideEffect {
+        applyCurrentColors()
     }
 }

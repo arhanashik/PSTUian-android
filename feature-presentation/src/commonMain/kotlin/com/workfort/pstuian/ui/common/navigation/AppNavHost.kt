@@ -7,10 +7,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.workfort.pstuian.featuredomain.model.ThemeMode
@@ -57,7 +59,11 @@ fun AppNavHost(
 ) {
     ProvideCoilImageLoader()
 
-    AppTheme(theme = theme) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    AppTheme(
+        theme = theme,
+        systemBarSyncKey = navBackStackEntry?.id,
+    ) {
         Surface {
             LaunchedEffect(Unit) {
                 navigator.events.collect { event ->
