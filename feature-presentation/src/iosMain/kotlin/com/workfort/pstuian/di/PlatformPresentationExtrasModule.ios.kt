@@ -20,6 +20,7 @@ import platform.CoreGraphics.CGImageGetWidth
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
+import platform.Foundation.NSURL
 import platform.Foundation.create
 import platform.Foundation.data
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
@@ -28,9 +29,16 @@ import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
 
-private class IosUriBytesReaderStub : UriBytesReader {
-    override suspend fun readBytes(uri: String): Result<ByteArray> =
-        Result.failure(Exception("Image upload from gallery is not available on iOS yet"))
+private class IosUriBytesReader : UriBytesReader {
+    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+    override suspend fun readBytes(uri: String): Result<ByteArray> = withContext(Dispatchers.Default) {
+        runCatching {
+            val nsUrl = NSURL.URLWithString(uri) ?: error("Invalid URI")
+            val path = nsUrl.path ?: error("Invalid file path")
+            val data = NSData.create(contentsOfFile = path) ?: error("Could not read file")
+            data.toByteArray()
+        }
+    }
 }
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
@@ -151,6 +159,6 @@ private fun NSData.toByteArray(): ByteArray {
 }
 
 actual val platformPresentationExtrasModule: Module = module {
-    single<UriBytesReader> { IosUriBytesReaderStub() }
+    single<UriBytesReader> { IosUriBytesReader() }
     single<ImageToJpegEncoder> { IosImageToJpegEncoder() }
 }
