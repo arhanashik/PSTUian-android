@@ -11,6 +11,7 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 
 class FileHandlerApiService(private val client: HttpClient) {
+
     suspend fun uploadImage(
         userType: String,
         filename: String,

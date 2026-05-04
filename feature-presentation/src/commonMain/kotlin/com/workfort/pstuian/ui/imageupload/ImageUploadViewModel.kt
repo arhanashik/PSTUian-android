@@ -4,7 +4,10 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
+import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
+import com.workfort.pstuian.platform.UriBytesReader
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadMessageState
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadNavigationState
@@ -17,7 +20,8 @@ import kotlinx.coroutines.flow.update
 class ImageUploadViewModel(
     val userId: Int,
     val userType: UserType,
-    private val authRepository: AuthRepository,
+    private val fileHandlerRepository: FileHandlerRepository,
+    private val uriBytesReader: UriBytesReader,
     private val uiStateMachine: ImageUploadUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<ImageUploadUiState>(uiStateMachine) {
@@ -36,10 +40,7 @@ class ImageUploadViewModel(
         when (event) {
             is ImageUploadUiEvent.BackClicked -> onClickBack()
             is ImageUploadUiEvent.ImageSelected -> onImageSelected(event.uri)
-            is ImageUploadUiEvent.UploadClicked -> onClickUpload()
-            is ImageUploadUiEvent.ConfirmUpload -> uploadImage()
-            is ImageUploadUiEvent.UploadProgress -> onUploadProgress(event.progress)
-            is ImageUploadUiEvent.UploadResult -> onUploadResult(event.isSuccess, event.result, event.url)
+            is ImageUploadUiEvent.UploadClicked -> onClickUpload(event.uri)
         }
     }
 
@@ -56,39 +57,37 @@ class ImageUploadViewModel(
         uiStateMachine.onSelectImage(uri)
     }
 
-    private fun onClickUpload() {
+    private fun onClickUpload(uri: String) {
         if (uiStateMachine.isUploading()) return
-        _message.update { ImageUploadMessageState.ConfirmUpload }
-    }
-
-    private fun uploadImage() {
-        val state = uiState.value as? ImageUploadUiState.Content ?: return
-        val uri = state.selectedFileUri ?: return
-
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-//            authRepository.uploadProfileImage(
-//                userId,
-//                userType,
-//                uri,
-//                onProgress = { onUiEvent(ImageUploadUiEvent.UploadProgress(it)) },
-//                onResult = { isSuccess, result, url ->
-//                    onUiEvent(ImageUploadUiEvent.UploadResult(isSuccess, result, url))
-//                }
-//            )
+        _message.update {
+            ImageUploadMessageState.ConfirmUpload("This will replace your current profile photo") {
+                uploadImage(uri)
+            }
         }
     }
 
-    private fun onUploadProgress(progress: Int) {
-        uiStateMachine.onUploadProgress(progress)
-    }
+    private fun uploadImage(uri: String) {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            uiStateMachine.onUploadProgress(0)
 
-    private fun onUploadResult(isSuccess: Boolean, result: String, url: String?) {
-        uiStateMachine.onUploadResult(isSuccess, result)
-        if (isSuccess) {
-            _message.update { ImageUploadMessageState.Snackbar("Image uploaded successfully!") }
-            _navigation.update { ImageUploadNavigationState.GoBack(url) }
-        } else {
-            _message.update { ImageUploadMessageState.Error(result) }
+            val fileBytes = uriBytesReader.readBytes(uri).getOrElse { error ->
+                val msg = error.message ?: "Could not read the selected image"
+                _message.update { ImageUploadMessageState.Error(msg) }
+                return@launchOnMain
+            }
+
+            uiStateMachine.onUploadProgress(50)
+            // TODO file name should be userType_UserId.fileExtension
+            val filename = uriBytesReader.suggestedFileName(uri)
+
+            fileHandlerRepository.uploadImage(userType, filename, fileBytes).onSuccess { url ->
+                uiStateMachine.onUploadProgress(100)
+                _message.update { ImageUploadMessageState.Snackbar("Image uploaded successfully!") }
+                _navigation.update { ImageUploadNavigationState.GoBack(url) }
+            }.onFailure {
+                val msg = it.message ?: "Upload failed. Please try again."
+                _message.update { ImageUploadMessageState.Error(msg) }
+            }
         }
     }
 }

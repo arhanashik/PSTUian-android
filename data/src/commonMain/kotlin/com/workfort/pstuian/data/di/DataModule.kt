@@ -8,6 +8,7 @@ import com.workfort.pstuian.data.infrastructure.repository.CheckInLocationReposi
 import com.workfort.pstuian.data.infrastructure.repository.CheckInRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.DeviceRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.DonationRepositoryImpl
+import com.workfort.pstuian.data.infrastructure.repository.FileHandlerRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.NotificationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SettingsRepositoryImpl
@@ -73,6 +74,7 @@ import com.workfort.pstuian.featuredomain.repository.CheckInRepository
 import com.workfort.pstuian.featuredomain.repository.DeviceRepository
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
+import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
 import com.workfort.pstuian.featuredomain.repository.NotificationRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
@@ -196,6 +198,8 @@ val repositoryModule = module {
 
     // donation repository injections
     factoryOf(::DonationRepositoryImpl) bind DonationRepository::class
+
+    factoryOf(::FileHandlerRepositoryImpl) bind FileHandlerRepository::class
 
     // support repository injections
     factoryOf(::SupportRepositoryImpl) bind SupportRepository::class

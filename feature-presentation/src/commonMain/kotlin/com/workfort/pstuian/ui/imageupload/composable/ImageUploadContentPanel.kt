@@ -110,9 +110,7 @@ private fun ImageSelectorView(
         }
         Button(
             modifier = Modifier.size(100.dp),
-            onClick = {
-                onUiEvent(ImageUploadUiEvent.UploadClicked)
-            },
+            onClick = { selectedFile?.let { onUiEvent(ImageUploadUiEvent.UploadClicked(selectedFile)) } },
             colors = ButtonDefaults.buttonColors(
                 contentColor = if (selectedFile == null) {
                     Color.LightGray

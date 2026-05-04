@@ -14,6 +14,7 @@ import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.imageupload.composable.ImageUploadContentPanel
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadMessageState
@@ -36,7 +37,7 @@ fun ImageUploadScreen(viewModel: ImageUploadViewModel) {
 
     ScreenContent(uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
 
-    HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled, viewModel::onUiEvent)
+    HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
@@ -72,21 +73,23 @@ private fun HandleMessageState(
     message: ImageUploadMessageState?,
     snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
-    onUiEvent: (ImageUploadUiEvent) -> Unit,
 ) {
     message?.let {
         when (it) {
             is ImageUploadMessageState.ConfirmUpload -> {
                 ShowConfirmationDialog(
-                    message = stringResource(Res.string.msg_upload_profile_image),
+                    message = it.message,
                     confirmButtonText = stringResource(Res.string.txt_upload),
                     dismissButtonText = stringResource(Res.string.txt_dismiss),
                     onConfirm = {
                         onMessageHandled()
-                        onUiEvent(ImageUploadUiEvent.ConfirmUpload)
+                        it.onConfirm()
                     },
                     onDismiss = onMessageHandled,
                 )
+            }
+            is ImageUploadMessageState.Loading -> {
+                ShowLoaderDialog(cancelable = it.cancelable)
             }
             is ImageUploadMessageState.Error -> {
                 ShowErrorDialog(

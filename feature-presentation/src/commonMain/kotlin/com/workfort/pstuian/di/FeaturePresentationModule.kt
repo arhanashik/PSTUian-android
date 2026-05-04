@@ -115,7 +115,16 @@ private val checkInListModule = module {
 
 private val imageUploadModule = module {
     factoryOf(::ImageUploadUiStateMachine)
-    factoryOf(::ImageUploadViewModel)
+    factory { (userId: Int, userType: UserType) ->
+        ImageUploadViewModel(
+            userId = userId,
+            userType = userType,
+            fileHandlerRepository = get(),
+            uriBytesReader = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
 }
 
 private val cvDownloadModule = module {
@@ -323,6 +332,7 @@ private val teacherProfileEditModule = module {
 
 val featurePresentationModule = listOf(
     appCommonModule,
+    platformPresentationExtrasModule,
     profileScreenStateModule,
     bloodDonationCreateModule,
     bloodDonationRequestCreateModule,
