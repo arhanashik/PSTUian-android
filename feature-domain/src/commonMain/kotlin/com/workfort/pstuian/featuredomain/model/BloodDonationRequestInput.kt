@@ -34,7 +34,7 @@ data class BloodDonationRequestInputError(
         )
     }
 
-    fun isNotEmpty() = bloodGroup.isNotEmpty() ||
+    fun hasError() = bloodGroup.isNotEmpty() ||
             date.isNotEmpty() ||
             contact.isNotEmpty() ||
             message.isNotEmpty()

@@ -7,6 +7,7 @@ import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListMessageState
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListNavigationState
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiEvent
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.update
 
 class BloodDonationRequestListViewModel(
     private val donationRequestRepo: BloodDonationRequestRepository,
+    private val sharedScreenData: SharedScreenData,
     private val uiStateMachine: BloodDonationRequestListUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<BloodDonationRequestListUiState>(uiStateMachine) {
@@ -68,29 +70,30 @@ class BloodDonationRequestListViewModel(
     }
 
     private fun loadDonationRequests(forceRefresh: Boolean) {
-        val currentState = uiState.value as? BloodDonationRequestListUiState.Content
-        if (currentState?.isLoading == true || (forceRefresh.not() && hasMoreData)) {
-            return
-        }
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
+
         if (forceRefresh) {
             page = 1
             hasMoreData = true
             requestListCache.clear()
+        } else if (!hasMoreData) {
+            return
         }
 
-        uiStateMachine.updateRequestList(requestListCache.toList(), isLoading = true)
-
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            donationRequestRepo.getAll(page, forceRefresh).onSuccess { list ->
+            uiStateMachine.showLoading(true)
+            donationRequestRepo.getAll(userId, userType, page, forceRefresh).onSuccess { list ->
                 if (list.isEmpty()) {
                     hasMoreData = false
                 } else {
                     page++
                     requestListCache.addAll(list)
                 }
-                uiStateMachine.updateRequestList(requestListCache.toList(), isLoading = false)
+                uiStateMachine.updateRequestList(requestListCache)
             }.onFailure {
-                val message = it.message ?: "Failed to get data"
+                uiStateMachine.showLoading(false)
+                val message = it.message ?: "Failed to load data"
                 uiStateMachine.updateLoadError(message)
             }
         }

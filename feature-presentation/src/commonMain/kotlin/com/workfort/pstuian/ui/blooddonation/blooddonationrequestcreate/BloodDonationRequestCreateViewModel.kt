@@ -5,6 +5,8 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestInput
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestInputError
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestRepository
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.state.BloodDonationRequestCreateMessageState
@@ -18,7 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 class BloodDonationRequestCreateViewModel(
-    private val repo: BloodDonationRequestRepository,
+    private val bloodDonationRequestRepository: BloodDonationRequestRepository,
     private val sharedScreenData: SharedScreenData,
     private val dateTimeUtil: DateTimeUtil,
     private val uiStateMachine: BloodDonationRequestCreateUiStateMachine,
@@ -39,8 +41,8 @@ class BloodDonationRequestCreateViewModel(
         when (event) {
             is BloodDonationRequestCreateUiEvent.BackClicked -> onClickBack()
             is BloodDonationRequestCreateUiEvent.SelectDateClicked -> onClickSelectDate()
-            is BloodDonationRequestCreateUiEvent.InputChanged -> onChangeInput(event.input)
-            is BloodDonationRequestCreateUiEvent.SendClicked -> onSendClicked()
+            is BloodDonationRequestCreateUiEvent.InputChanged -> uiStateMachine.updateInput(event.input)
+            is BloodDonationRequestCreateUiEvent.SendClicked -> onSendClicked(event.input)
         }
     }
 
@@ -61,47 +63,37 @@ class BloodDonationRequestCreateViewModel(
                     dateTimeUtil.formatDateYYYYMMDD(dateMills)
                 }
                 val content = uiState.value as? BloodDonationRequestCreateUiState.Content ?: return@SelectDate
-                onChangeInput(content.input.copy(date = date))
+                uiStateMachine.updateInput(content.input.copy(date = date))
             }
         }
     }
 
-    private fun onChangeInput(input: BloodDonationRequestInput) {
-        uiStateMachine.updateInput(input)
-        uiStateMachine.updateValidationError(input.validate())
-    }
-
-    private fun onSendClicked() {
-        val userId = sharedScreenData.getCurrentUser()?.authUserId ?: return
+    private fun onSendClicked(input: BloodDonationRequestInput) {
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
-        val content = uiState.value as? BloodDonationRequestCreateUiState.Content ?: return
-        val input = content.input
         val validationError = input.validate()
         uiStateMachine.updateValidationError(validationError)
-        if (validationError.isNotEmpty()) {
+        if (validationError.hasError()) {
             return
         }
 
-        uiStateMachine.showLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                repo.insert(
-                    userId = userId,
-                    userType = userType,
-                    bloodGroup = input.bloodGroup,
-                    beforeDate = input.date,
-                    contact = input.contact,
-                    info = input.message,
-                )
+            uiStateMachine.showLoading(true)
+            bloodDonationRequestRepository.insert(
+                userId = userId,
+                userType = userType,
+                bloodGroup = input.bloodGroup,
+                beforeDate = input.date,
+                contact = input.contact,
+                info = input.message,
+            ).onSuccess {
                 uiStateMachine.showLoading(false)
-                _message.update {
-                    BloodDonationRequestCreateMessageState.Snackbar("Request created successfully!")
-                }
+                _message.update { BloodDonationRequestCreateMessageState.Snackbar("Request created successfully!") }
                 _navigation.update { BloodDonationRequestCreateNavigationState.GoBack }
             }.onFailure {
                 uiStateMachine.showLoading(false)
-                val message = it.message ?: "Failed to send the message. Please try again."
+                val message = it.message ?: "Request Failed. Please try again"
                 _message.update { BloodDonationRequestCreateMessageState.Error(message) }
             }
         }

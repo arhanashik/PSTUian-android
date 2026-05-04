@@ -103,6 +103,8 @@ private fun mockBloodDonationRequest(
     userType = "student",
     name = name,
     imageUrl = null,
+    confirmed = true,
+    completed = false,
 )
 
 private fun mockContent(

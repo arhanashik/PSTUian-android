@@ -11,11 +11,16 @@ import io.ktor.client.request.parameter
 import io.ktor.http.parameters
 
 class BloodDonationRequestApiService(private val client: HttpClient) {
+
     suspend fun getAll(
-        page: Int = 1,
-        limit: Int = 20,
+        userId: Int,
+        userType: String,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<BloodDonationRequestDto>> {
         return client.get(NetworkConst.Remote.Api.BloodDonationRequest.GET_ALL) {
+            parameter(NetworkConst.Params.USER_ID, userId)
+            parameter(NetworkConst.Params.USER_TYPE, userType)
             parameter(NetworkConst.Params.PAGE, page)
             parameter(NetworkConst.Params.LIMIT, limit)
         }.body()
@@ -28,22 +33,22 @@ class BloodDonationRequestApiService(private val client: HttpClient) {
     }
 
     suspend fun insert(
-        userId: String,
+        userId: Int,
         userType: String,
         bloodGroup: String,
         beforeDate: String,
         contact: String,
         info: String?,
-    ): ApiResponse<BloodDonationRequestDto> {
+    ): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonationRequest.INSERT,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.USER_ID, userId.toString())
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.BLOOD_GROUP, bloodGroup)
                 append(NetworkConst.Params.BEFORE_DATE, beforeDate)
                 append(NetworkConst.Params.CONTACT, contact)
-                if (info != null) append(NetworkConst.Params.INFO, info)
+                append(NetworkConst.Params.INFO, info ?: "")
             }
         ).body()
     }
@@ -54,7 +59,7 @@ class BloodDonationRequestApiService(private val client: HttpClient) {
         beforeDate: String,
         contact: String,
         info: String,
-    ): ApiResponse<BloodDonationRequestDto> {
+    ): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonationRequest.UPDATE,
             formParameters = parameters {

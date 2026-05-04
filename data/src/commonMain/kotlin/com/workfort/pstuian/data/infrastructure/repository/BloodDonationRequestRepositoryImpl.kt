@@ -18,13 +18,18 @@ class BloodDonationRequestRepositoryImpl(
 
     private val bloodDonationRequestCache = mutableMapOf<Int, List<BloodDonationRequest>>()
 
-    override suspend fun getAll(page: Int, forceRefresh: Boolean): DomainResult<List<BloodDonationRequest>> {
+    override suspend fun getAll(
+        userId: Int,
+        userType: UserType,
+        page: Int,
+        forceRefresh: Boolean,
+    ) : DomainResult<List<BloodDonationRequest>> {
         if (forceRefresh) bloodDonationRequestCache.clear()
 
         val cache = bloodDonationRequestCache[page]
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
-        return helper.getAll(page)
+        return helper.getAll(userId = userId, userType = userType.type, page = page)
             .toDomainResult(domainErrorMapper)
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { bloodDonationRequestCache[page] = it }
@@ -36,24 +41,21 @@ class BloodDonationRequestRepositoryImpl(
     }
 
     override suspend fun insert(
-        userId: String,
+        userId: Int,
         userType: UserType,
         bloodGroup: String,
         beforeDate: String,
         contact: String,
         info: String?,
-    ): BloodDonationRequest {
-        return when (val result = helper.insert(
+    ): DomainResult<Unit> {
+        return helper.insert(
             userId,
             userType.type,
             bloodGroup,
             beforeDate,
             contact,
-            info
-        )) {
-            is NetworkResult.Success -> result.value.toModel()
-            is NetworkResult.Failure -> throw result.error
-        }
+            info,
+        ).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun update(
@@ -62,13 +64,11 @@ class BloodDonationRequestRepositoryImpl(
         beforeDate: String,
         contact: String,
         info: String,
-    ) = when (val result = helper.update(id, bloodGroup, beforeDate, contact, info)) {
-        is NetworkResult.Success -> result.value.toModel()
-        is NetworkResult.Failure -> throw result.error
+    ): DomainResult<Unit> {
+        return helper.update(id, bloodGroup, beforeDate, contact, info).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun delete(id: Int) = when (helper.delete(id)) {
-        is NetworkResult.Success -> true
-        is NetworkResult.Failure -> false
+    override suspend fun delete(id: Int): DomainResult<Unit> {
+        return helper.delete(id).toDomainResult(domainErrorMapper)
     }
 }

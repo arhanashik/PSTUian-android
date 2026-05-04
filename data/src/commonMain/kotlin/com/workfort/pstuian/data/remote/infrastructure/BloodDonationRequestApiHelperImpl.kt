@@ -12,9 +12,14 @@ class BloodDonationRequestApiHelperImpl(
     private val service: BloodDonationRequestApiService
 ) : BloodDonationRequestApiHelper() {
 
-    override suspend fun getAll(page: Int, limit: Int): NetworkResult<List<BloodDonationRequestDto>> {
+    override suspend fun getAll(
+        userId: Int,
+        userType: String,
+        page: Int,
+        limit: Int,
+    ): NetworkResult<List<BloodDonationRequestDto>> {
         return runCatching {
-            service.getAll(page, limit).toNetworkResult()
+            service.getAll(userId, userType, page, limit).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
@@ -29,13 +34,13 @@ class BloodDonationRequestApiHelperImpl(
     }
 
     override suspend fun insert(
-        userId: String,
+        userId: Int,
         userType: String,
         bloodGroup: String,
         beforeDate: String,
         contact: String,
         info: String?
-    ): NetworkResult<BloodDonationRequestDto> {
+    ): NetworkResult<Unit> {
         return runCatching {
             service.insert(userId, userType, bloodGroup, beforeDate, contact, info).toNetworkResult()
         }.getOrElse {
@@ -49,7 +54,7 @@ class BloodDonationRequestApiHelperImpl(
         beforeDate: String,
         contact: String,
         info: String
-    ): NetworkResult<BloodDonationRequestDto> {
+    ): NetworkResult<Unit> {
         return runCatching {
             service.update(id, bloodGroup, beforeDate, contact, info).toNetworkResult()
         }.getOrElse {

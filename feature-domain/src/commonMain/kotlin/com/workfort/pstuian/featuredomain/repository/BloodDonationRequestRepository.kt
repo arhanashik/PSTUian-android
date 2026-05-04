@@ -5,16 +5,21 @@ import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.UserType
 
 interface BloodDonationRequestRepository {
-    suspend fun getAll(page: Int, forceRefresh: Boolean = false) : DomainResult<List<BloodDonationRequest>>
+    suspend fun getAll(
+        userId: Int,
+        userType: UserType,
+        page: Int,
+        forceRefresh: Boolean = false,
+    ) : DomainResult<List<BloodDonationRequest>>
     suspend fun get(id: Int) : BloodDonationRequest
     suspend fun insert(
-        userId: String,
+        userId: Int,
         userType: UserType,
         bloodGroup: String,
         beforeDate: String,
         contact: String,
         info: String?,
-    ): BloodDonationRequest
+    ): DomainResult<Unit>
 
     suspend fun update(
         id: Int,
@@ -22,7 +27,7 @@ interface BloodDonationRequestRepository {
         beforeDate: String,
         contact: String,
         info: String,
-    ) : BloodDonationRequest
+    ) : DomainResult<Unit>
 
-    suspend fun delete(id: Int) : Boolean
+    suspend fun delete(id: Int) : DomainResult<Unit>
 }

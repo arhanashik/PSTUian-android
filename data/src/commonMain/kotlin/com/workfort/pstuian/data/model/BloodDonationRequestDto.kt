@@ -20,7 +20,9 @@ data class BloodDonationRequestDto(
     val userType: String,
     val name: String,
     @SerialName("image_url")
-    val imageUrl: String?,
+    val imageUrl: String? = null,
+    val confirmed: Int = 0,
+    val completed: Int = 0,
 ) {
     fun toModel() = BloodDonationRequest(
         id = id,
@@ -31,7 +33,9 @@ data class BloodDonationRequestDto(
         userId = userId,
         userType = userType,
         name = name,
-        imageUrl = imageUrl
+        imageUrl = imageUrl,
+        confirmed = confirmed == 1,
+        completed = completed == 1,
     )
 }
 
@@ -44,5 +48,7 @@ fun BloodDonationRequest.toDto() = BloodDonationRequestDto(
     userId = userId,
     userType = userType,
     name = name,
-    imageUrl = imageUrl
+    imageUrl = imageUrl,
+    confirmed = if (confirmed) 1 else 0,
+    completed = if (completed) 1 else 0,
 )

@@ -21,17 +21,23 @@ class BloodDonationRequestListUiStateMachine : UiStateMachine<BloodDonationReque
         BloodDonationRequestListUiState.Content()
     }
 
-    fun updateRequestList(requestList: List<BloodDonationRequest>, isLoading: Boolean) = updateUiState {
+    fun updateRequestList(requestList: List<BloodDonationRequest>) = updateUiState {
         when (this) {
             is BloodDonationRequestListUiState.None -> BloodDonationRequestListUiState.Content(
                 requestList = requestList,
-                isLoading = isLoading,
             )
             is BloodDonationRequestListUiState.Content -> copy(
                 requestList = requestList,
-                isLoading = isLoading,
+                isLoading = false,
                 error = null,
             )
+        }
+    }
+
+    fun showLoading(isLoading: Boolean) = updateUiState {
+        when (this) {
+            is BloodDonationRequestListUiState.None -> BloodDonationRequestListUiState.Content(isLoading = isLoading)
+            is BloodDonationRequestListUiState.Content -> copy(isLoading = isLoading)
         }
     }
 

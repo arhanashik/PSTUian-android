@@ -13,4 +13,6 @@ data class BloodDonationRequest(
     val userType: String,
     val name: String,
     val imageUrl: String?,
+    val confirmed: Boolean,
+    val completed: Boolean,
 )
