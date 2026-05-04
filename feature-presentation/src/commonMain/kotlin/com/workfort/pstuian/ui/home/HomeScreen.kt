@@ -114,9 +114,6 @@ private fun HandleNavigationState(
     LaunchedEffect(navigation) {
         navigation?.let {
             when (it) {
-                is HomeNavigationState.SplashScreen -> {
-                    // TODO navigate to splash
-                }
                 is HomeNavigationState.SignInScreen -> {
                     navigator?.navigateToSignIn()
                 }
@@ -124,7 +121,7 @@ private fun HandleNavigationState(
                     navigator?.navigateToProfile(it.userId, it.userType)
                 }
                 is HomeNavigationState.NotificationScreen -> {
-                    // TODO navigate to notification
+                    navigator?.navigateToNotification()
                 }
                 is HomeNavigationState.FacultyScreen -> {
                      navigator?.navigateToFaculty(it.faculty.id)
@@ -132,25 +129,19 @@ private fun HandleNavigationState(
                 is HomeNavigationState.ImagePreviewScreen -> {
                     navigator?.navigateToImagePreview(it.url)
                 }
-                is HomeNavigationState.ContactUsScreen -> {
-                    navigator?.navigateToContactUs()
-                }
                 is HomeNavigationState.DonorsScreen -> {
                     navigator?.navigateToBloodDonationRequestList()
                 }
-                is HomeNavigationState.BloodDonationRequestScreen -> {
-                    navigator?.navigateToBloodDonationRequestCreate()
+                is HomeNavigationState.BloodDonationScreen -> {
+                    navigator?.navigateToBloodDonationRequestList()
                 }
                 is HomeNavigationState.CheckInScreen -> {
                     navigator?.navigateToCheckInList()
                 }
-                is HomeNavigationState.DonateScreen -> {
-                    navigator?.navigateToDonate()
-                }
                 is HomeNavigationState.SettingsScreen -> {
                     navigator?.navigateToSettings()
                 }
-                is HomeNavigationState.Browser -> {
+                is HomeNavigationState.OpenUrl -> {
                     uriHandler.openUri(it.url)
                 }
             }

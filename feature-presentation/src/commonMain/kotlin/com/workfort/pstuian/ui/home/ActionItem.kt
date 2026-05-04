@@ -3,35 +3,30 @@ package com.workfort.pstuian.ui.home
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Delete
-import com.workfort.pstuian.ui.common.icons.AppIcons
+import androidx.compose.material.icons.filled.Support
+import androidx.compose.material.icons.filled.SupportAgent
 import org.jetbrains.compose.resources.StringResource
 import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.ic_admission_support
+import pstuian.feature_presentation.generated.resources.ic_blood_donation
+import pstuian.feature_presentation.generated.resources.ic_check_in
 import pstuian.feature_presentation.generated.resources.ic_logo
 import pstuian.feature_presentation.generated.resources.img_admission_support
-import pstuian.feature_presentation.generated.resources.img_donors
-import pstuian.feature_presentation.generated.resources.img_help
 import pstuian.feature_presentation.generated.resources.label_admission_support
-import pstuian.feature_presentation.generated.resources.label_clear_data
-import pstuian.feature_presentation.generated.resources.label_donation_list
+import pstuian.feature_presentation.generated.resources.label_blood_donation
+import pstuian.feature_presentation.generated.resources.label_support
 import pstuian.feature_presentation.generated.resources.label_university_website
 import pstuian.feature_presentation.generated.resources.txt_check_in
 import pstuian.feature_presentation.generated.resources.txt_donate
-import pstuian.feature_presentation.generated.resources.txt_need_blood
-import pstuian.feature_presentation.generated.resources.txt_need_help
-import pstuian.feature_presentation.generated.resources.txt_rate_app
 import pstuian.feature_presentation.generated.resources.txt_settings
 
 sealed interface Action {
+    data object UniversityWebsite: Action
     data object AdmissionSupport: Action
-    data object Donors: Action
-    data object VarsityWebsite: Action
-    data object ContactUs: Action
-    data object RequestBloodDonation: Action
+    data object BloodDonation: Action
     data object CheckIn: Action
-    data object RateApp: Action
     data object Settings: Action
+    data object Support: Action
     data object Donate: Action
 }
 
@@ -45,45 +40,35 @@ val informationItems = listOf(
     ActionItem(
         Res.string.label_university_website,
         Res.drawable.ic_logo,
-        action = Action.VarsityWebsite,
+        action = Action.UniversityWebsite,
     ),
     ActionItem(
         Res.string.label_admission_support,
-        Res.drawable.img_admission_support,
+        Res.drawable.ic_admission_support,
         action = Action.AdmissionSupport,
     ),
     ActionItem(
-        Res.string.label_donation_list,
-        Res.drawable.img_donors,
-        action = Action.Donors,
+        Res.string.label_blood_donation,
+        Res.drawable.ic_blood_donation,
+        action = Action.BloodDonation,
     ),
     ActionItem(
-        Res.string.txt_need_help,
-        Res.drawable.img_help,
-        action = Action.ContactUs,
+        Res.string.txt_check_in,
+        Res.drawable.ic_check_in,
+        action = Action.CheckIn,
     ),
 )
 
 val optionsItems = listOf(
-    ActionItem(
-        Res.string.txt_need_blood,
-        AppIcons.BloodDrop,
-        action = Action.RequestBloodDonation,
-    ),
-    ActionItem(
-        Res.string.txt_check_in,
-        AppIcons.CheckIn,
-        action = Action.CheckIn,
-    ),
     ActionItem(
         Res.string.txt_settings,
         Icons.Default.Settings,
         action = Action.Settings,
     ),
     ActionItem(
-        Res.string.txt_rate_app,
-        Icons.Default.Star,
-        action = Action.RateApp,
+        Res.string.label_support,
+        Icons.Default.SupportAgent,
+        action = Action.Support,
     ),
     ActionItem(
         Res.string.txt_donate,

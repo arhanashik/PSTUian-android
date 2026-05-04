@@ -64,24 +64,16 @@ class HomeViewModel(
             is HomeUiEvent.FacultyClicked -> onClickFaculty(event.faculty)
             is HomeUiEvent.ActionItemClicked -> {
                 when (event.actionItem.action) {
+                    Action.UniversityWebsite -> {
+                        _navigation.update { HomeNavigationState.OpenUrl(NetworkConst.Remote.PSTU_WEBSITE) }
+                    }
                     Action.AdmissionSupport -> {
-                        _navigation.update {
-                            HomeNavigationState.Browser(NetworkConst.Remote.PSTU_WEBSITE)
-                        }
+                        _navigation.update { HomeNavigationState.OpenUrl(NetworkConst.Remote.PSTU_WEBSITE) }
                     }
-                    Action.Donors -> onClickDonors()
-                    Action.VarsityWebsite -> {
-                        _navigation.update {
-                            HomeNavigationState.Browser(NetworkConst.Remote.PSTU_WEBSITE)
-                        }
-                    }
-                    Action.ContactUs -> onClickContactUs()
-                    Action.RequestBloodDonation -> onClickRequestBloodDonation()
+                    Action.BloodDonation -> onClickBloodDonation()
                     Action.CheckIn -> onClickCheckIn()
-                    Action.RateApp -> {
-                        _navigation.update { HomeNavigationState.Browser(platformInfo.storeUrl) }
-                    }
                     Action.Settings -> onClickSettings()
+                    Action.Support -> onClickSupport()
                     Action.Donate -> onClickDonate()
                 }
             }
@@ -202,17 +194,14 @@ class HomeViewModel(
         }
     }
 
-    private fun onClickDonors() {
-        _navigation.update { HomeNavigationState.DonorsScreen }
+    private fun onClickSupport() {
+        val supportUrl = sharedScreenData.getAppConfig()?.contactUrl ?: return
+        _navigation.update { HomeNavigationState.OpenUrl(supportUrl) }
     }
 
-    private fun onClickContactUs() {
-        _navigation.update { HomeNavigationState.ContactUsScreen }
-    }
-
-    private fun onClickRequestBloodDonation() {
+    private fun onClickBloodDonation() {
         if (isSignedInUser) {
-            _navigation.update { HomeNavigationState.BloodDonationRequestScreen }
+            _navigation.update { HomeNavigationState.BloodDonationScreen }
         } else {
             _message.update { HomeMessageState.SignInNecessary }
         }
@@ -231,6 +220,6 @@ class HomeViewModel(
     }
 
     private fun onClickDonate() {
-        _navigation.update { HomeNavigationState.DonateScreen }
+        _navigation.update { HomeNavigationState.DonorsScreen }
     }
 }

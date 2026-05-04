@@ -24,6 +24,7 @@
     <string name="label_are_you_sure">Are you sure?</string>
     <string name="data_clear_message">This will clear all your local data. Do you want to continue?</string>
     <string name="label_admission_support">Admission Support</string>
+    <string name="label_support">Support</string>
     <string name="label_donation_list">Donation List</string>
     <string name="label_university_website">University Website</string>
     <string name="txt_need_help">Need Help?</string>
@@ -133,6 +134,7 @@
     <string name="btn_apply">Apply</string>
     <string name="label_download_cv_screen">Download CV</string>
     <string name="label_blood_donation_request_list_screen">Blood donation requests</string>
+    <string name="label_blood_donation">Blood Donation</string>
     <string name="txt_request_donation">Request donation</string>
     <string name="txt_create_new">Create new</string>
     <string name="txt_retry">Retry</string>
