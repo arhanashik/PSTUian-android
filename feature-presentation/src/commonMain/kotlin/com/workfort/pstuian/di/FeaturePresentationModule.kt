@@ -121,6 +121,7 @@ private val imageUploadModule = module {
             userType = userType,
             fileHandlerRepository = get(),
             uriBytesReader = get(),
+            imageToJpegEncoder = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )

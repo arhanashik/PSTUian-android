@@ -7,6 +7,7 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
+import com.workfort.pstuian.platform.ImageToJpegEncoder
 import com.workfort.pstuian.platform.UriBytesReader
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadMessageState
@@ -22,6 +23,7 @@ class ImageUploadViewModel(
     val userType: UserType,
     private val fileHandlerRepository: FileHandlerRepository,
     private val uriBytesReader: UriBytesReader,
+    private val imageToJpegEncoder: ImageToJpegEncoder,
     private val uiStateMachine: ImageUploadUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<ImageUploadUiState>(uiStateMachine) {
@@ -76,11 +78,16 @@ class ImageUploadViewModel(
                 return@launchOnMain
             }
 
-            uiStateMachine.onUploadProgress(50)
-            // TODO file name should be userType_UserId.fileExtension
-            val filename = uriBytesReader.suggestedFileName(uri)
+            val jpegBytes = imageToJpegEncoder.encodeToJpeg(fileBytes).getOrElse { error ->
+                val msg = error.message ?: "Could not convert image to JPEG"
+                _message.update { ImageUploadMessageState.Error(msg) }
+                return@launchOnMain
+            }
 
-            fileHandlerRepository.uploadImage(userType, filename, fileBytes).onSuccess { url ->
+            uiStateMachine.onUploadProgress(50)
+            val filename = "${userType.type}_${userId}.jpg"
+
+            fileHandlerRepository.uploadImage(userType, filename, jpegBytes).onSuccess { url ->
                 uiStateMachine.onUploadProgress(100)
                 _message.update { ImageUploadMessageState.Snackbar("Image uploaded successfully!") }
                 _navigation.update { ImageUploadNavigationState.GoBack(url) }
