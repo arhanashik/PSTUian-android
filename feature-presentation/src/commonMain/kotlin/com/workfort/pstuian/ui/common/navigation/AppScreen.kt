@@ -16,8 +16,6 @@ sealed interface AppScreen {
         val resetPasswordParams: ResetPasswordParams? = null,
     ) : AppScreen
     @Serializable
-    object ContactUs : AppScreen
-    @Serializable
     object Home : AppScreen
     @Serializable
     data class Students(val batchId: Int) : AppScreen

@@ -17,8 +17,6 @@ import com.workfort.pstuian.ui.checkinlist.CheckInListUiStateMachine
 import com.workfort.pstuian.ui.checkinlist.CheckInListViewModel
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.DeepLinkNavigator
-import com.workfort.pstuian.ui.contactus.ContactUsUiStateMachine
-import com.workfort.pstuian.ui.contactus.ContactUsViewModel
 import com.workfort.pstuian.ui.cvdownload.CvDownloadUiStateMachine
 import com.workfort.pstuian.ui.cvdownload.CvDownloadViewModel
 import com.workfort.pstuian.ui.cvupload.CvUploadUiStateMachine
@@ -109,11 +107,6 @@ private val checkInListModule = module {
     factoryOf(::CheckInDisplayDataMapper)
     factoryOf(::CheckInListUiStateMachine)
     factoryOf(::CheckInListViewModel)
-}
-
-private val contactUsModule = module {
-    factoryOf(::ContactUsUiStateMachine)
-    factoryOf(::ContactUsViewModel)
 }
 
 private val cvDownloadModule = module {
@@ -327,7 +320,6 @@ val featurePresentationModule = listOf(
     bloodDonationRequestListModule,
     changePasswordModule,
     checkInListModule,
-    contactUsModule,
     cvDownloadModule,
     cvUploadModule,
     donorsModule,

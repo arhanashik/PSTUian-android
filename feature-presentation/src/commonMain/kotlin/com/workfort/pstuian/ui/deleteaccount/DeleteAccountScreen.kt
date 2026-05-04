@@ -125,7 +125,7 @@ private fun HandleNavigationState(
             when (it) {
                 is DeleteAccountNavigationState.GoBack -> navigator?.goBack()
                 is DeleteAccountNavigationState.ResetToContactUsScreen -> {
-                    navigator?.resetTo(AppScreen.ContactUs)
+                    // TODO add url
                 }
                 is DeleteAccountNavigationState.ResetToHomeScreen -> {
                     navigator?.resetTo(AppScreen.Home)

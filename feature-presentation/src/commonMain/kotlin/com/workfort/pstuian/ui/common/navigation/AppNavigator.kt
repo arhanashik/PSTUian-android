@@ -36,7 +36,6 @@ class AppNavigator {
     // Convenience methods for every screen
     suspend fun navigateToSignIn() = navigateTo(AppScreen.SignIn)
     suspend fun navigateToChangePassword(resetPasswordParams: ResetPasswordParams? = null) = navigateTo(AppScreen.ChangePassword(resetPasswordParams))
-    suspend fun navigateToContactUs() = navigateTo(AppScreen.ContactUs)
     suspend fun navigateToHome() = navigateTo(AppScreen.Home)
     suspend fun navigateToStudents(batchId: Int) = navigateTo(AppScreen.Students(batchId))
     suspend fun navigateToBloodDonationRequestList() = navigateTo(AppScreen.BloodDonationRequestList)

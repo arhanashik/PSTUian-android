@@ -21,7 +21,6 @@ import com.workfort.pstuian.ui.changepassword.ChangePasswordScreen
 import com.workfort.pstuian.ui.checkinlist.CheckInListScreen
 import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
 import com.workfort.pstuian.ui.common.theme.AppTheme
-import com.workfort.pstuian.ui.contactus.ContactUsScreen
 import com.workfort.pstuian.ui.cvdownload.CvDownloadScreen
 import com.workfort.pstuian.ui.cvupload.CvUploadScreen
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
@@ -162,9 +161,6 @@ fun AppNavHost(
                     ChangePasswordScreen(
                         viewModel = koinViewModel { parametersOf(screen.resetPasswordParams) },
                     )
-                }
-                composable<AppScreen.ContactUs> {
-                    ContactUsScreen(viewModel = koinViewModel())
                 }
                 composable<AppScreen.Home> {
                     HomeScreen(viewModel = koinViewModel())
