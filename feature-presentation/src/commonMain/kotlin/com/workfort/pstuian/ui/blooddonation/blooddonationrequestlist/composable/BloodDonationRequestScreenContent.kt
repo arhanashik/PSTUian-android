@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
+import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiEvent
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiState
@@ -93,7 +93,7 @@ private fun mockBloodDonationRequest(
     id: Int = 1,
     name: String = "Jamil Ahmed",
     bloodGroup: String = "O+",
-) = BloodDonationRequestEntity(
+) = BloodDonationRequest(
     id = id,
     bloodGroup = bloodGroup,
     beforeDate = "2026-05-10 12:00:00",
@@ -106,7 +106,7 @@ private fun mockBloodDonationRequest(
 )
 
 private fun mockContent(
-    requestList: List<BloodDonationRequestEntity> = listOf(mockBloodDonationRequest()),
+    requestList: List<BloodDonationRequest> = listOf(mockBloodDonationRequest()),
     isLoading: Boolean = false,
     error: String? = null,
 ) = BloodDonationRequestListUiState.Content(

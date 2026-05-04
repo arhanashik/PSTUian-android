@@ -3,7 +3,7 @@ package com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
+import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestRepository
@@ -30,7 +30,7 @@ class BloodDonationRequestListViewModel(
 
     private var page = 1
     private var hasMoreData = true
-    private val requestListCache = arrayListOf<BloodDonationRequestEntity>()
+    private val requestListCache = arrayListOf<BloodDonationRequest>()
 
     override fun onUiReady() {
         uiStateMachine.setInitialContent()
@@ -59,7 +59,7 @@ class BloodDonationRequestListViewModel(
         _navigation.update { BloodDonationRequestListNavigationState.BloodDonationRequestCreateScreen }
     }
 
-    private fun onClickItem(item: BloodDonationRequestEntity) {
+    private fun onClickItem(item: BloodDonationRequest) {
         _message.update { BloodDonationRequestListMessageState.ShowDetails(item) }
     }
 

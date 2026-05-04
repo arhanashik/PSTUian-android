@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.model
 
-import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
+import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,7 +22,7 @@ data class BloodDonationRequestDto(
     @SerialName("image_url")
     val imageUrl: String?,
 ) {
-    fun toModel() = BloodDonationRequestEntity(
+    fun toModel() = BloodDonationRequest(
         id = id,
         bloodGroup = bloodGroup,
         beforeDate = beforeDate,
@@ -35,7 +35,7 @@ data class BloodDonationRequestDto(
     )
 }
 
-fun BloodDonationRequestEntity.toDto() = BloodDonationRequestDto(
+fun BloodDonationRequest.toDto() = BloodDonationRequestDto(
     id = id,
     bloodGroup = bloodGroup,
     beforeDate = beforeDate,

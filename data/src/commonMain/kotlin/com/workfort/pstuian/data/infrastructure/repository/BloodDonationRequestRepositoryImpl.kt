@@ -4,7 +4,7 @@ import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.BloodDonationRequestApiHelper
-import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
+import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.map
@@ -16,9 +16,9 @@ class BloodDonationRequestRepositoryImpl(
     private val domainErrorMapper: DomainErrorMapper,
 ) : BloodDonationRequestRepository {
 
-    private val bloodDonationRequestCache = mutableMapOf<Int, List<BloodDonationRequestEntity>>()
+    private val bloodDonationRequestCache = mutableMapOf<Int, List<BloodDonationRequest>>()
 
-    override suspend fun getAll(page: Int, forceRefresh: Boolean): DomainResult<List<BloodDonationRequestEntity>> {
+    override suspend fun getAll(page: Int, forceRefresh: Boolean): DomainResult<List<BloodDonationRequest>> {
         if (forceRefresh) bloodDonationRequestCache.clear()
 
         val cache = bloodDonationRequestCache[page]
@@ -42,7 +42,7 @@ class BloodDonationRequestRepositoryImpl(
         beforeDate: String,
         contact: String,
         info: String?,
-    ): BloodDonationRequestEntity {
+    ): BloodDonationRequest {
         return when (val result = helper.insert(
             userId,
             userType.type,

@@ -42,7 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
+import com.workfort.pstuian.featuredomain.model.BloodDonationRequest
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiEvent
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiState
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
@@ -95,7 +95,7 @@ internal fun BloodDonationRequestListContentPanel(
 
 @Composable
 private fun RequestListView(
-    requestList: List<BloodDonationRequestEntity>,
+    requestList: List<BloodDonationRequest>,
     isLoading: Boolean,
     onUiEvent: (BloodDonationRequestListUiEvent) -> Unit,
 ) {
@@ -231,8 +231,8 @@ private fun BloodDonationRequestListItemShimmer() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RequestListItemView(
-    item: BloodDonationRequestEntity,
-    onClickItem: (BloodDonationRequestEntity) -> Unit,
+    item: BloodDonationRequest,
+    onClickItem: (BloodDonationRequest) -> Unit,
     onClickCall: (String) -> Unit,
 ) {
     val dateOnly = remember(item.beforeDate) {
