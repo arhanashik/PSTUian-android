@@ -59,7 +59,7 @@ internal fun ImageUploadContentPanel(
         verticalArrangement = Arrangement.Center,
     ) {
         ImageSelectorView(
-            selectedFile = uiState.selectedFileUri,
+            selectedFileUri = uiState.selectedFileUri,
             onUiEvent = onUiEvent,
         )
         ImageUploadStatusView(
@@ -71,11 +71,11 @@ internal fun ImageUploadContentPanel(
 
 @Composable
 private fun ImageSelectorView(
-    selectedFile: String?,
+    selectedFileUri: String?,
     onUiEvent: (ImageUploadUiEvent) -> Unit,
 ) {
-    val imagePickerLauncher = rememberImagePickerLauncher { uri ->
-        onUiEvent(ImageUploadUiEvent.ImageSelected(uri))
+    val imagePickerLauncher = rememberImagePickerLauncher { fileUri ->
+        onUiEvent(ImageUploadUiEvent.ImageSelected(fileUri))
     }
 
     Column(
@@ -95,7 +95,7 @@ private fun ImageSelectorView(
                 contentAlignment = Alignment.BottomEnd,
             ) {
                 val painter = rememberAsyncImagePainter(
-                    model = selectedFile,
+                    model = selectedFileUri,
                     placeholder = painterResource(Res.drawable.img_placeholder_profile),
                     error = painterResource(Res.drawable.img_placeholder_profile),
                 )
@@ -117,15 +117,17 @@ private fun ImageSelectorView(
         }
         Button(
             modifier = Modifier.size(100.dp),
-            onClick = { selectedFile?.let { onUiEvent(ImageUploadUiEvent.UploadClicked(selectedFile)) } },
+            onClick = {
+                selectedFileUri?.let { onUiEvent(ImageUploadUiEvent.UploadClicked(selectedFileUri)) }
+            },
             colors = ButtonDefaults.buttonColors(
-                contentColor = if (selectedFile == null) {
+                contentColor = if (selectedFileUri == null) {
                     Color.LightGray
                 } else {
                     Color.White
                 }
             ),
-            enabled = selectedFile != null,
+            enabled = selectedFileUri != null,
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,

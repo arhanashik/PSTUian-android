@@ -271,7 +271,7 @@ class StudentProfileViewModel(
             _message.update { StudentProfileMessageState.Loading(cancelable = false) }
             viewModelScope.launch {
                 runCatching {
-                    studentRepo.changeProfileImage(cache.student.authUserId, imageUrl)
+                    studentRepo.changeProfileImage(imageUrl)
                 }.onSuccess {
                     isChangingPhoto = false
                     _message.update {

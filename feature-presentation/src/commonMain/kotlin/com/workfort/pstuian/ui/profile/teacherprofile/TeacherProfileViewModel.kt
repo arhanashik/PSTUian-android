@@ -236,7 +236,7 @@ class TeacherProfileViewModel(
             _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
             viewModelScope.launch {
                 runCatching {
-                    teacherRepo.changeProfileImage(cache.teacher, imageUrl)
+                    teacherRepo.changeProfileImage(imageUrl)
                 }.onSuccess {
                     isChangingPhoto = false
                     _message.update {

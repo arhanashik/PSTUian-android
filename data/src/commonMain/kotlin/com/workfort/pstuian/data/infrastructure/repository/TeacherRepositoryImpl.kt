@@ -23,13 +23,8 @@ class TeacherRepositoryImpl(
         return helper.getByEmail(email).toDomainResult(domainErrorMapper).map { it.toModel() }
     }
 
-    override suspend fun changeProfileImage(teacher: User.Teacher, imageUrl: String): Boolean {
-        val isChanged = helper.changeProfileImage(teacher.authUserId, imageUrl)
-        if (isChanged) {
-            val updated = teacher.copy(imageUrl = imageUrl)
-            cache.add(updated)
-        }
-        return isChanged
+    override suspend fun changeProfileImage(imageUrl: String): DomainResult<Unit> {
+        return helper.changeProfileImage(imageUrl).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun changeName(teacher: User.Teacher, name: String): Boolean {

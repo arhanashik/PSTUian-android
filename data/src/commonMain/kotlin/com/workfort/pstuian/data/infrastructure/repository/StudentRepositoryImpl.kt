@@ -36,11 +36,8 @@ class StudentRepositoryImpl(
             .onSuccess { cache.add(it) }
     }
 
-    override suspend fun changeProfileImage(
-        authUserId: String,
-        imageUrl: String
-    ): DomainResult<Unit> {
-        return helper.changeProfileImage(authUserId, imageUrl).toDomainResult(domainErrorMapper)
+    override suspend fun changeProfileImage(imageUrl: String): DomainResult<Unit> {
+        return helper.changeProfileImage(imageUrl).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun changeName(

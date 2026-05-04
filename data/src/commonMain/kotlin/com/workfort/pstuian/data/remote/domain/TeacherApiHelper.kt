@@ -8,10 +8,7 @@ interface TeacherApiHelper {
 
     suspend fun getByEmail(email: String): NetworkResult<TeacherDto>
 
-    suspend fun changeProfileImage(
-        authUserId: String,
-        imageUrl: String,
-    ): Boolean
+    suspend fun changeProfileImage(imageUrl: String): NetworkResult<Unit>
 
     suspend fun changeName(authUserId: String, name: String): Boolean
 

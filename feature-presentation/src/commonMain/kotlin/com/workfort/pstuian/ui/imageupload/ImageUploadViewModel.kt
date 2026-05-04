@@ -7,6 +7,8 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
+import com.workfort.pstuian.featuredomain.repository.StudentRepository
+import com.workfort.pstuian.featuredomain.repository.TeacherRepository
 import com.workfort.pstuian.platform.ImageToJpegEncoder
 import com.workfort.pstuian.platform.UriBytesReader
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
@@ -22,6 +24,8 @@ class ImageUploadViewModel(
     val userId: Int,
     val userType: UserType,
     private val fileHandlerRepository: FileHandlerRepository,
+    private val studentRepository: StudentRepository,
+    private val teacherRepository: TeacherRepository,
     private val uriBytesReader: UriBytesReader,
     private val imageToJpegEncoder: ImageToJpegEncoder,
     private val uiStateMachine: ImageUploadUiStateMachine,
@@ -41,8 +45,8 @@ class ImageUploadViewModel(
     fun onUiEvent(event: ImageUploadUiEvent) {
         when (event) {
             is ImageUploadUiEvent.BackClicked -> onClickBack()
-            is ImageUploadUiEvent.ImageSelected -> onImageSelected(event.uri)
-            is ImageUploadUiEvent.UploadClicked -> onClickUpload(event.uri)
+            is ImageUploadUiEvent.ImageSelected -> onImageSelected(event.fileUri)
+            is ImageUploadUiEvent.UploadClicked -> onClickUpload(event.fileUri)
         }
     }
 
@@ -52,27 +56,27 @@ class ImageUploadViewModel(
 
     private fun onClickBack() {
         if (uiStateMachine.isUploading()) return
-        _navigation.update { ImageUploadNavigationState.GoBack(null) }
+        _navigation.update { ImageUploadNavigationState.GoBack }
     }
 
     private fun onImageSelected(uri: String) {
         uiStateMachine.onSelectImage(uri)
     }
 
-    private fun onClickUpload(uri: String) {
+    private fun onClickUpload(fileUri: String) {
         if (uiStateMachine.isUploading()) return
         _message.update {
             ImageUploadMessageState.ConfirmUpload("Are you surely want to upload the photo?") {
-                uploadImage(uri)
+                uploadImage(fileUri)
             }
         }
     }
 
-    private fun uploadImage(uri: String) {
+    private fun uploadImage(fileUri: String) {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.onUploadProgress(0)
 
-            val fileBytes = uriBytesReader.readBytes(uri).getOrElse { error ->
+            val fileBytes = uriBytesReader.readBytes(fileUri).getOrElse { error ->
                 val msg = error.message ?: "Could not read the selected image"
                 _message.update { ImageUploadMessageState.Error(msg) }
                 return@launchOnMain
@@ -87,12 +91,29 @@ class ImageUploadViewModel(
             uiStateMachine.onUploadProgress(50)
             val filename = "${userType.type}_${userId}.jpg"
 
-            fileHandlerRepository.uploadImage(userType, filename, jpegBytes).onSuccess { url ->
+            fileHandlerRepository.uploadImage(userType, filename, jpegBytes).onSuccess { imageUrl ->
                 uiStateMachine.onUploadProgress(100)
                 _message.update { ImageUploadMessageState.Snackbar("Image uploaded successfully!") }
-                _navigation.update { ImageUploadNavigationState.GoBack(url) }
+                updateImageUrl(imageUrl)
             }.onFailure {
                 val msg = it.message ?: "Upload failed. Please try again."
+                _message.update { ImageUploadMessageState.Error(msg) }
+            }
+        }
+    }
+
+    private fun updateImageUrl(imageUrl: String) {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            _message.update { ImageUploadMessageState.Loading() }
+            when (userType) {
+                UserType.STUDENT -> studentRepository.changeProfileImage(imageUrl)
+                UserType.TEACHER -> teacherRepository.changeProfileImage(imageUrl)
+                else -> return@launchOnMain
+            }.onSuccess {
+                _message.update { ImageUploadMessageState.Snackbar("Profile photo changed successfully!") }
+                _navigation.update { ImageUploadNavigationState.GoBack }
+            }.onFailure {
+                val msg = it.message ?: "Failed. Please try again."
                 _message.update { ImageUploadMessageState.Error(msg) }
             }
         }

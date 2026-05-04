@@ -24,11 +24,10 @@ class StudentApiService(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun changeProfileImage(authUserId: String, imageUrl: String): ApiResponse<Unit> {
+    suspend fun changeProfileImage(imageUrl: String): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Student.CHANGE_PROFILE_IMAGE,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.IMAGE_URL, imageUrl)
             }
         ).body()

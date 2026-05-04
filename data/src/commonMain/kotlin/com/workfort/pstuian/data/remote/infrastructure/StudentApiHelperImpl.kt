@@ -26,8 +26,12 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         }
     }
 
-    override suspend fun changeProfileImage(authUserId: String, imageUrl: String): NetworkResult<Unit> {
-        return service.changeProfileImage(authUserId, imageUrl).toNetworkResult()
+    override suspend fun changeProfileImage(imageUrl: String): NetworkResult<Unit> {
+        return runCatching {
+            service.changeProfileImage(imageUrl).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun changeName(authUserId: String, name: String): NetworkResult<Unit> {
