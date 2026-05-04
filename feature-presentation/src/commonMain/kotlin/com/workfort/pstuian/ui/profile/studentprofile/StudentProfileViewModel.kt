@@ -76,7 +76,6 @@ class StudentProfileViewModel(
             is ProfileUiEvent.MyCheckInListClicked -> onClickMyCheckInList()
             is ProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
-            is ProfileUiEvent.ChangeProfileImage -> changeProfileImage(event.imageUrl)
         }
     }
 
@@ -259,31 +258,6 @@ class StudentProfileViewModel(
     private fun onClickDeleteAccount() {
         if (profileCache?.isSignedIn == true) {
             _navigation.update { StudentProfileNavigationState.DeleteAccountScreen }
-        }
-    }
-
-    private var isChangingPhoto = false
-    fun changeProfileImage(imageUrl: String) {
-        profileCache?.let { cache ->
-            if (isChangingPhoto || !cache.isSignedIn) return
-
-            isChangingPhoto = true
-            _message.update { StudentProfileMessageState.Loading(cancelable = false) }
-            viewModelScope.launch {
-                runCatching {
-                    studentRepo.changeProfileImage(imageUrl)
-                }.onSuccess {
-                    isChangingPhoto = false
-                    _message.update {
-                        StudentProfileMessageState.Success("Profile photo changed successfully!")
-                    }
-                    loadProfile()
-                }.onFailure {
-                    isChangingPhoto = false
-                    val message = it.message ?: "Failed to change photo. Please try again."
-                    _message.update { StudentProfileMessageState.Error(message) }
-                }
-            }
         }
     }
 

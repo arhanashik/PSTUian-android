@@ -19,5 +19,4 @@ sealed interface ProfileUiEvent {
     data object MyCheckInListClicked : ProfileUiEvent
     data object MyDeviceListClicked : ProfileUiEvent
     data object DeleteAccountClicked : ProfileUiEvent
-    data class ChangeProfileImage(val imageUrl: String) : ProfileUiEvent
 }

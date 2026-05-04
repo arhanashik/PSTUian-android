@@ -70,7 +70,6 @@ class EmployeeProfileViewModel(
             is ProfileUiEvent.MyCheckInListClicked -> Unit
             is ProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
-            is ProfileUiEvent.ChangeProfileImage -> changeProfileImage(event.imageUrl)
         }
     }
 
@@ -214,12 +213,6 @@ class EmployeeProfileViewModel(
     private fun onClickDeleteAccount() {
         if (profileCache?.isSignedIn == true) {
             _navigation.update { EmployeeProfileNavigationState.DeleteAccountScreen }
-        }
-    }
-
-    fun changeProfileImage(imageUrl: String) {
-        _message.update {
-            EmployeeProfileMessageState.Error("Changing profile photo is not supported for this profile yet.")
         }
     }
 
