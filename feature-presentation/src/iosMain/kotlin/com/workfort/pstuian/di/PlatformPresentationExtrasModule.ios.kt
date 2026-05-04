@@ -14,11 +14,14 @@ import kotlin.math.max
 import kotlin.math.min
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import platform.posix.memcpy
 import platform.CoreGraphics.CGImageGetHeight
 import platform.CoreGraphics.CGImageGetWidth
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
+import platform.Foundation.create
+import platform.Foundation.data
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
@@ -84,7 +87,7 @@ private class IosImageToJpegEncoder : ImageToJpegEncoder {
     }
 
     private fun UIImage.pixelSizePx(): Pair<Double, Double> {
-        cgImage?.also { cgRef ->
+        CGImage?.let { cgRef ->
             return Pair(
                 CGImageGetWidth(cgRef).toDouble(),
                 CGImageGetHeight(cgRef).toDouble(),
@@ -135,15 +138,16 @@ private fun ByteArray.toNSData(): NSData {
     }
 }
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun NSData.toByteArray(): ByteArray {
     val len = length.toInt()
     if (len == 0) return byteArrayOf()
-    val result = ByteArray(len)
-    result.usePinned { pinned ->
-        getBytes(pinned.addressOf(0), length)
+    val bytesPtr = bytes ?: return byteArrayOf()
+    return ByteArray(len).also { out ->
+        out.usePinned { pinned ->
+            memcpy(pinned.addressOf(0), bytesPtr, length)
+        }
     }
-    return result
 }
 
 actual val platformPresentationExtrasModule: Module = module {

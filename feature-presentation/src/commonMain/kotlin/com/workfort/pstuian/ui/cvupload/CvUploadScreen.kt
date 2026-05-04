@@ -1,25 +1,19 @@
 package com.workfort.pstuian.ui.cvupload
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
-import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.cvupload.composable.CvUploadContentPanel
+import com.workfort.pstuian.ui.cvupload.composable.CvUploadScreenContent
 import com.workfort.pstuian.ui.cvupload.state.CvUploadMessageState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadNavigationState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiEvent
-import com.workfort.pstuian.ui.cvupload.state.CvUploadUiState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
@@ -34,37 +28,10 @@ fun CvUploadScreen(viewModel: CvUploadViewModel) {
     val navigation by viewModel.navigation.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    ScreenContent(uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
+    CvUploadScreenContent(uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
 
     HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled, viewModel::onUiEvent)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ScreenContent(
-    uiState: CvUploadUiState,
-    snackbarHostState: SnackbarHostState,
-    onUiEvent: (CvUploadUiEvent) -> Unit,
-) {
-    AppScaffold(
-        topBar = {
-            AppBar(
-                title = "Upload CV",
-                navigation = {
-                    NavigationButton { onUiEvent(CvUploadUiEvent.BackClicked) }
-                },
-            )
-        },
-        snackbarHost = { AppSnackbarHost(snackbarHostState) }
-    ) {
-        when (uiState) {
-            is CvUploadUiState.None -> Unit
-            is CvUploadUiState.Content -> {
-                CvUploadContentPanel(uiState = uiState, onUiEvent = onUiEvent)
-            }
-        }
-    }
 }
 
 @Composable
