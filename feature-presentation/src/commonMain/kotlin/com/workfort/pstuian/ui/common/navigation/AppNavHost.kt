@@ -60,9 +60,21 @@ fun AppNavHost(
     ProvideCoilImageLoader()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    // Splash is [AppNavHost]'s start destination. `toRoute<AppScreen>()` can fail for the root
+    // typed route on some frames, so rely on the graph start id (and null entry before the host
+    // attaches) instead of only parsing the route.
+    val onSplashDestination =
+        navBackStackEntry == null ||
+            navController.currentDestination?.id == navController.graph.startDestinationId
+    val currentAppScreen = navBackStackEntry?.let { entry ->
+        runCatching { entry.toRoute<AppScreen>() }.getOrNull()
+    }
+    val useSchemeBackgroundForStatusBar =
+        onSplashDestination || currentAppScreen is AppScreen.Profile
     AppTheme(
         theme = theme,
         systemBarSyncKey = navBackStackEntry?.id,
+        useSchemeBackgroundForStatusBar = useSchemeBackgroundForStatusBar,
     ) {
         Surface {
             LaunchedEffect(Unit) {

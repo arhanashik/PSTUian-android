@@ -10,6 +10,8 @@ fun AppTheme(
     theme: ThemeMode = ThemeMode.System,
     /** When non-null and changes (e.g. nav back stack entry id), Android reapplies the themed status bar for in-app navigation. */
     systemBarSyncKey: Any? = null,
+    /** When true, [AppThemeSideEffect] uses the theme's background color for the status bar (Splash, Profile). */
+    useSchemeBackgroundForStatusBar: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val isDark = when (theme) {
@@ -24,6 +26,9 @@ fun AppTheme(
         AppColors.LightColorScheme
     }
 
+    val statusBarColorForThemeEffect =
+        if (useSchemeBackgroundForStatusBar) colorScheme.background else colorScheme.primary
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = getTypography(),
@@ -35,7 +40,7 @@ fun AppTheme(
             content()
             AppThemeSideEffect(
                 isDark = isDark,
-                statusBarColor = colorScheme.primary,
+                statusBarColor = statusBarColorForThemeEffect,
                 systemBarSyncKey = systemBarSyncKey,
             )
         },
