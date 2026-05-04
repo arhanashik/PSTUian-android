@@ -8,6 +8,6 @@ sealed interface BloodDonationRequestListUiState {
     data class Content(
         val requestList: List<BloodDonationRequestEntity> = emptyList(),
         val isLoading: Boolean = false,
-        val loadError: String? = null,
+        val error: String? = null,
     ) : BloodDonationRequestListUiState
 }

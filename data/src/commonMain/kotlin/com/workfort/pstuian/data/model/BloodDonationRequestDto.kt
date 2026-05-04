@@ -22,7 +22,7 @@ data class BloodDonationRequestDto(
     @SerialName("image_url")
     val imageUrl: String?,
 ) {
-    fun toEntity() = BloodDonationRequestEntity(
+    fun toModel() = BloodDonationRequestEntity(
         id = id,
         bloodGroup = bloodGroup,
         beforeDate = beforeDate,

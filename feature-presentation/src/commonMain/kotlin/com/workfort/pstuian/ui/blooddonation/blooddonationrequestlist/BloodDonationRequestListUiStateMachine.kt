@@ -30,7 +30,7 @@ class BloodDonationRequestListUiStateMachine : UiStateMachine<BloodDonationReque
             is BloodDonationRequestListUiState.Content -> copy(
                 requestList = requestList,
                 isLoading = isLoading,
-                loadError = null,
+                error = null,
             )
         }
     }
@@ -38,11 +38,11 @@ class BloodDonationRequestListUiStateMachine : UiStateMachine<BloodDonationReque
     fun updateLoadError(message: String) = updateUiState {
         when (this) {
             is BloodDonationRequestListUiState.None -> BloodDonationRequestListUiState.Content(
-                loadError = message,
+                error = message,
                 isLoading = false,
             )
             is BloodDonationRequestListUiState.Content -> copy(
-                loadError = message,
+                error = message,
                 isLoading = false,
             )
         }

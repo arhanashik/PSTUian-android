@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,15 +49,25 @@ internal fun BloodDonationRequestListContentPanel(
     uiState: BloodDonationRequestListUiState.Content,
     onUiEvent: (BloodDonationRequestListUiEvent) -> Unit,
 ) {
+    if (uiState.error != null) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            AnimatedErrorView()
+        }
+        return
+    }
+
     if (uiState.requestList.isEmpty()) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator()
-            } else if (uiState.loadError != null) {
-                AnimatedErrorView()
             } else {
                 AnimatedEmptyView()
             }
@@ -85,7 +96,7 @@ private fun RequestListView(
 
     LaunchedEffect(key1 = isLastItemVisible) {
         if (isLastItemVisible) {
-            onUiEvent(BloodDonationRequestListUiEvent.LoadMore(refresh = false))
+            onUiEvent(BloodDonationRequestListUiEvent.LoadMore)
         }
     }
 

@@ -7,5 +7,5 @@ sealed class BloodDonationRequestListUiEvent {
     data object CreateRequestClicked : BloodDonationRequestListUiEvent()
     data class ItemClicked(val item: BloodDonationRequestEntity) : BloodDonationRequestListUiEvent()
     data class CallClicked(val phoneNumber: String) : BloodDonationRequestListUiEvent()
-    data class LoadMore(val refresh: Boolean) : BloodDonationRequestListUiEvent()
+    data object LoadMore : BloodDonationRequestListUiEvent()
 }

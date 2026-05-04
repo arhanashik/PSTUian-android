@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestRepository
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListMessageState
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListNavigationState
@@ -26,9 +28,13 @@ class BloodDonationRequestListViewModel(
     private val _navigation = MutableStateFlow<BloodDonationRequestListNavigationState?>(null)
     val navigation: StateFlow<BloodDonationRequestListNavigationState?> = _navigation
 
+    private var page = 1
+    private var hasMoreData = true
+    private val requestListCache = arrayListOf<BloodDonationRequestEntity>()
+
     override fun onUiReady() {
         uiStateMachine.setInitialContent()
-        loadDonationRequests(refresh = true)
+        loadDonationRequests(forceRefresh = true)
     }
 
     fun onUiEvent(event: BloodDonationRequestListUiEvent) {
@@ -37,7 +43,7 @@ class BloodDonationRequestListViewModel(
             is BloodDonationRequestListUiEvent.CreateRequestClicked -> onClickCreateRequest()
             is BloodDonationRequestListUiEvent.ItemClicked -> onClickItem(event.item)
             is BloodDonationRequestListUiEvent.CallClicked -> onClickCall(event.phoneNumber)
-            is BloodDonationRequestListUiEvent.LoadMore -> loadDonationRequests(event.refresh)
+            is BloodDonationRequestListUiEvent.LoadMore -> loadDonationRequests(forceRefresh = false)
         }
     }
 
@@ -61,40 +67,31 @@ class BloodDonationRequestListViewModel(
         _message.update { BloodDonationRequestListMessageState.Call(phoneNumber) }
     }
 
-    private var requestListPage = 0
-    private var endOfRequestListData = false
-    private val requestListCache = arrayListOf<BloodDonationRequestEntity>()
-
-    private fun loadDonationRequests(refresh: Boolean) {
+    private fun loadDonationRequests(forceRefresh: Boolean) {
         val currentState = uiState.value as? BloodDonationRequestListUiState.Content
-        if (currentState?.isLoading == true || (refresh.not() && endOfRequestListData)) {
+        if (currentState?.isLoading == true || (forceRefresh.not() && hasMoreData)) {
             return
         }
-        if (refresh) {
-            requestListPage = 0
-            endOfRequestListData = false
+        if (forceRefresh) {
+            page = 1
+            hasMoreData = true
             requestListCache.clear()
         }
-        requestListPage += 1
+
         uiStateMachine.updateRequestList(requestListCache.toList(), isLoading = true)
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                val list = donationRequestRepo.getAll(requestListPage)
+            donationRequestRepo.getAll(page, forceRefresh).onSuccess { list ->
                 if (list.isEmpty()) {
-                    endOfRequestListData = true
+                    hasMoreData = false
                 } else {
+                    page++
                     requestListCache.addAll(list)
                 }
                 uiStateMachine.updateRequestList(requestListCache.toList(), isLoading = false)
             }.onFailure {
-                endOfRequestListData = true
-                if (requestListCache.isEmpty()) {
-                    val message = it.message ?: "Failed to get data"
-                    uiStateMachine.updateLoadError(message)
-                } else {
-                    uiStateMachine.updateRequestList(requestListCache.toList(), isLoading = false)
-                }
+                val message = it.message ?: "Failed to get data"
+                uiStateMachine.updateLoadError(message)
             }
         }
     }

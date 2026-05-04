@@ -1,10 +1,11 @@
 package com.workfort.pstuian.featuredomain.repository
 
 import com.workfort.pstuian.featuredomain.model.BloodDonationRequestEntity
+import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.UserType
 
 interface BloodDonationRequestRepository {
-    suspend fun getAll(page: Int) : List<BloodDonationRequestEntity>
+    suspend fun getAll(page: Int, forceRefresh: Boolean = false) : DomainResult<List<BloodDonationRequestEntity>>
     suspend fun get(id: Int) : BloodDonationRequestEntity
     suspend fun insert(
         userId: String,

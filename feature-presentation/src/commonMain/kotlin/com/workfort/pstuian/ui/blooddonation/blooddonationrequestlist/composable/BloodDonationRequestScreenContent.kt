@@ -53,14 +53,6 @@ internal fun BloodDonationRequestScreenContent(
                 navigation = {
                     NavigationButton { onUiEvent(BloodDonationRequestListUiEvent.BackClicked) }
                 },
-                actions = {
-                    AppBarIconButton(
-                        icon = Icons.Filled.Refresh,
-                        onClick = {
-                            onUiEvent(BloodDonationRequestListUiEvent.LoadMore(refresh = true))
-                        },
-                    )
-                },
             )
         },
         floatingActionButton = {
