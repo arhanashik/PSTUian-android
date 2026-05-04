@@ -15,16 +15,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +40,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
 import com.workfort.pstuian.ui.common.composable.OnlineOfflineStatusLabel
@@ -44,6 +53,7 @@ import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayDat
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.txt_change
 import pstuian.feature_presentation.generated.resources.txt_follow
 import pstuian.feature_presentation.generated.resources.txt_message
 
@@ -54,9 +64,23 @@ internal fun ProfileHeader(
     userPresence: UserPresenceDisplayData,
     onUiEvent: (ProfileUiEvent) -> Unit,
 ) {
+    var showOwnProfilePictureDialog by remember { mutableStateOf(false) }
     val followLabel = stringResource(Res.string.txt_follow)
     val messageLabel = stringResource(Res.string.txt_message)
     val editLabel = "Edit Profile"
+
+    if (showOwnProfilePictureDialog) {
+        OwnProfilePictureDialog(
+            imageUrl = displayData.imageUrl,
+            isOnline = userPresence.isOnline,
+            changeLabel = stringResource(Res.string.txt_change),
+            onDismiss = { showOwnProfilePictureDialog = false },
+            onChangeClick = {
+                onUiEvent(ProfileUiEvent.ChangeImageClicked)
+                showOwnProfilePictureDialog = false
+            },
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -71,10 +95,14 @@ internal fun ProfileHeader(
             AvatarWithStatusChip(
                 imageUrl = displayData.imageUrl,
                 isOnline = userPresence.isOnline,
-                onClickImage = if (!displayData.imageUrl.isNullOrEmpty()) {
-                    { onUiEvent(ProfileUiEvent.ImageClicked(displayData.imageUrl)) }
-                } else {
-                    null
+                onAvatarClick = {
+                    if (isSignedIn) {
+                        showOwnProfilePictureDialog = true
+                    } else {
+                        displayData.imageUrl?.takeIf { it.isNotEmpty() }?.let { url ->
+                            onUiEvent(ProfileUiEvent.ImageClicked(url))
+                        }
+                    }
                 },
             )
 
@@ -163,23 +191,84 @@ internal fun ProfileHeader(
 private val OfflineStatusLightGray = Color(0xFFD6D6D6)
 
 @Composable
+private fun statusRingBorderColor(isOnline: Boolean): Color =
+    if (isOnline) MaterialTheme.colorScheme.primary else OfflineStatusLightGray
+
+@Composable
+private fun OwnProfilePictureDialog(
+    imageUrl: String?,
+    isOnline: Boolean,
+    changeLabel: String,
+    onDismiss: () -> Unit,
+    onChangeClick: () -> Unit,
+) {
+    val ringBorderColor = statusRingBorderColor(isOnline)
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        ),
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 28.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .border(width = 3.dp, color = ringBorderColor, shape = CircleShape)
+                        .background(color = MaterialTheme.colorScheme.surface, shape = CircleShape)
+                        .padding(5.dp),
+                ) {
+                    LoadAsyncUserImage(url = imageUrl, size = 132.dp)
+                }
+                Button(
+                    onClick = onChangeClick,
+                    shape = CircleShape,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AppColors.primary,
+                    ),
+                ) {
+                    Text(
+                        text = changeLabel,
+                        style = TextStyle.label1,
+                        color = AppColors.onPrimary,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun AvatarWithStatusChip(
     imageUrl: String?,
     isOnline: Boolean,
-    onClickImage: (() -> Unit)?,
+    onAvatarClick: () -> Unit,
 ) {
-    val ringBorderColor = if (isOnline) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        OfflineStatusLightGray
-    }
+    val ringBorderColor = statusRingBorderColor(isOnline)
 
     Box {
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
                 .clip(CircleShape)
-                .clickable { onClickImage?.invoke() }
+                .clickable { onAvatarClick() }
                 .border(width = 2.dp, color = ringBorderColor, shape = CircleShape)
                 .background(color = MaterialTheme.colorScheme.surface, shape = CircleShape)
                 .padding(4.dp),
