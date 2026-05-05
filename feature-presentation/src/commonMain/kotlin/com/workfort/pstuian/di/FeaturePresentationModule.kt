@@ -34,10 +34,10 @@ import com.workfort.pstuian.ui.home.HomeUiStateMachine
 import com.workfort.pstuian.ui.home.HomeViewModel
 import com.workfort.pstuian.ui.imageupload.ImageUploadUiStateMachine
 import com.workfort.pstuian.ui.imageupload.ImageUploadViewModel
-import com.workfort.pstuian.ui.myblooddonationlist.MyBloodDonationListUiStateMachine
-import com.workfort.pstuian.ui.myblooddonationlist.MyBloodDonationListViewModel
-import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListUiStateMachine
-import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListViewModel
+import com.workfort.pstuian.ui.blooddonationhistory.BloodDonationHistoryUiStateMachine
+import com.workfort.pstuian.ui.blooddonationhistory.BloodDonationHistoryViewModel
+import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryUiStateMachine
+import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryViewModel
 import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
 import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileDisplayDataMapper
@@ -271,10 +271,10 @@ private val deleteAccountModule = module {
     factoryOf(::DeleteAccountViewModel)
 }
 
-private val myBloodDonationListModule = module {
-    factoryOf(::MyBloodDonationListUiStateMachine)
+private val bloodDonationHistoryModule = module {
+    factoryOf(::BloodDonationHistoryUiStateMachine)
     factory { (userId: Int, userType: UserType) ->
-        MyBloodDonationListViewModel(
+        BloodDonationHistoryViewModel(
             userId = userId,
             userType = userType,
             donationRepo = get(),
@@ -284,10 +284,10 @@ private val myBloodDonationListModule = module {
     }
 }
 
-private val myCheckInListModule = module {
-    factoryOf(::MyCheckInListUiStateMachine)
+private val checkInHistoryModule = module {
+    factoryOf(::CheckInHistoryUiStateMachine)
     factory { (userId: Int, userType: UserType) ->
-        MyCheckInListViewModel(
+        CheckInHistoryViewModel(
             userId = userId,
             userType = userType,
             checkInRepo = get(),
@@ -350,8 +350,8 @@ val featurePresentationModule = listOf(
     studentsModule,
     profileModule,
     deleteAccountModule,
-    myBloodDonationListModule,
-    myCheckInListModule,
+    bloodDonationHistoryModule,
+    checkInHistoryModule,
     settingsModule,
     studentProfileEditModule,
     teacherProfileEditModule,

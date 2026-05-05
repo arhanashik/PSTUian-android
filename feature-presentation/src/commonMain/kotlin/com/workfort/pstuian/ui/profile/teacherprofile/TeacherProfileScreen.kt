@@ -152,8 +152,8 @@ private fun HandleNavigationState(
                 is TeacherProfileNavigationState.ChangePasswordScreen -> {
                     navigator?.navigateTo(AppScreen.ChangePassword())
                 }
-                is TeacherProfileNavigationState.MyCheckInListScreen -> {
-                    navigator?.navigateToMyCheckInList(it.userId, UserType.TEACHER)
+                is TeacherProfileNavigationState.CheckInHistoryScreen -> {
+                    navigator?.navigateToCheckInHistory(it.userId, UserType.TEACHER)
                 }
                 is TeacherProfileNavigationState.TeacherProfileEditScreen -> {
                     navigator?.navigateToTeacherProfileEdit(it.userId)

@@ -194,13 +194,13 @@ private fun HandleNavigationState(
                 is StudentProfileNavigationState.ChangePasswordScreen -> {
                     navigator?.navigateTo(AppScreen.ChangePassword())
                 }
-                is StudentProfileNavigationState.MyBloodDonationListScreen -> {
+                is StudentProfileNavigationState.BloodDonationHistoryScreen -> {
                     navigator?.navigateTo(
-                        AppScreen.MyBloodDonationList(it.userId, UserType.STUDENT),
+                        AppScreen.BloodDonationHistory(it.userId, UserType.STUDENT),
                     )
                 }
-                is StudentProfileNavigationState.MyCheckInListScreen -> {
-                    navigator?.navigateToMyCheckInList(it.userId, UserType.STUDENT)
+                is StudentProfileNavigationState.CheckInHistoryScreen -> {
+                    navigator?.navigateToCheckInHistory(it.userId, UserType.STUDENT)
                 }
                 is StudentProfileNavigationState.StudentProfileEditScreen -> {
                     navigator?.navigateToStudentProfileEdit(it.userId)

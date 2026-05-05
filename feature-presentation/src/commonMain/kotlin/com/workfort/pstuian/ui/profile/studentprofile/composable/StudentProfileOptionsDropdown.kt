@@ -21,12 +21,12 @@ import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.hint_upload_new_cv
+import pstuian.feature_presentation.generated.resources.txt_blood_donation_history
 import pstuian.feature_presentation.generated.resources.txt_call
 import pstuian.feature_presentation.generated.resources.txt_change_password
+import pstuian.feature_presentation.generated.resources.txt_check_in_history
 import pstuian.feature_presentation.generated.resources.txt_delete_account
 import pstuian.feature_presentation.generated.resources.txt_email
-import pstuian.feature_presentation.generated.resources.txt_my_check_in_list
-import pstuian.feature_presentation.generated.resources.txt_my_donation_list
 import pstuian.feature_presentation.generated.resources.txt_sign_out
 
 @Composable
@@ -38,8 +38,8 @@ fun StudentProfileOptionsDropdown(
 ) {
     val changePasswordLabel = stringResource(Res.string.txt_change_password)
     val uploadCvLabel = stringResource(Res.string.hint_upload_new_cv)
-    val bloodDonationLabel = stringResource(Res.string.txt_my_donation_list)
-    val checkInLabel = stringResource(Res.string.txt_my_check_in_list)
+    val bloodDonationLabel = stringResource(Res.string.txt_blood_donation_history)
+    val checkInLabel = stringResource(Res.string.txt_check_in_history)
     val signOutLabel = stringResource(Res.string.txt_sign_out)
     val deleteAccountLabel = stringResource(Res.string.txt_delete_account)
 
@@ -67,7 +67,7 @@ fun StudentProfileOptionsDropdown(
                 leadingIcon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
                 onClick = {
                     onDismiss()
-                    onUiEvent(ProfileUiEvent.MyBloodDonationListClicked)
+                    onUiEvent(ProfileUiEvent.BloodDonationHistoryClicked)
                 },
             )
             DropdownMenuItem(
@@ -75,7 +75,7 @@ fun StudentProfileOptionsDropdown(
                 leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
                 onClick = {
                     onDismiss()
-                    onUiEvent(ProfileUiEvent.MyCheckInListClicked)
+                    onUiEvent(ProfileUiEvent.CheckInHistoryClicked)
                 },
             )
             HorizontalDivider()

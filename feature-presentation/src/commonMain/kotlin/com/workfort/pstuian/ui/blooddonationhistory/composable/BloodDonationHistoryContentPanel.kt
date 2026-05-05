@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.myblooddonationlist.composable
+package com.workfort.pstuian.ui.blooddonationhistory.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -42,17 +41,17 @@ import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.LabelText
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.common.composable.isLastItemVisible
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiEvent
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiState
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiEvent
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_delete
 import pstuian.feature_presentation.generated.resources.txt_edit
 
 @Composable
-fun MyBloodDonationListContentPanel(
-    uiState: MyBloodDonationListUiState,
-    onUiEvent: (MyBloodDonationListUiEvent) -> Unit,
+fun BloodDonationHistoryContentPanel(
+    uiState: BloodDonationHistoryUiState,
+    onUiEvent: (BloodDonationHistoryUiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (uiState.donations.isEmpty()) {
@@ -83,7 +82,7 @@ fun MyBloodDonationListContentPanel(
 private fun DonationListView(
     donations: List<BloodDonationEntity>,
     isLoading: Boolean,
-    onUiEvent: (MyBloodDonationListUiEvent) -> Unit,
+    onUiEvent: (BloodDonationHistoryUiEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val isLastItemVisible by remember {
@@ -94,7 +93,7 @@ private fun DonationListView(
 
     LaunchedEffect(key1 = isLastItemVisible) {
         if (isLastItemVisible) {
-            onUiEvent(MyBloodDonationListUiEvent.LoadList(refresh = false))
+            onUiEvent(BloodDonationHistoryUiEvent.LoadList(refresh = false))
         }
     }
 
@@ -108,10 +107,10 @@ private fun DonationListView(
             DonationItemView(
                 item = item,
                 onClickEdit = {
-                    onUiEvent(MyBloodDonationListUiEvent.EditClicked(item))
+                    onUiEvent(BloodDonationHistoryUiEvent.EditClicked(item))
                 },
                 onClickDelete = {
-                    onUiEvent(MyBloodDonationListUiEvent.DeleteClicked(item))
+                    onUiEvent(BloodDonationHistoryUiEvent.DeleteClicked(item))
                 },
             )
         }

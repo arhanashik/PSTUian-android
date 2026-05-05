@@ -32,9 +32,9 @@ sealed interface AppScreen {
     @Serializable
     data class Profile(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
-    data class MyBloodDonationList(val userId: Int, val userType: UserType) : AppScreen
+    data class BloodDonationHistory(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
-    data class MyCheckInList(val userId: Int, val userType: UserType) : AppScreen
+    data class CheckInHistory(val userId: Int, val userType: UserType) : AppScreen
     @Serializable
     data class StudentProfileEdit(val userId: Int) : AppScreen
     @Serializable

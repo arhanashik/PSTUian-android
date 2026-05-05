@@ -242,8 +242,8 @@ private fun handleProfileInfoItemAction(
         is ProfileInfoItemAction.Link -> onUiEvent(ProfileUiEvent.ImageClicked(action.url))
         is ProfileInfoItemAction.Password -> onUiEvent(ProfileUiEvent.ChangePasswordClicked)
         is ProfileInfoItemAction.UploadCv -> onUiEvent(ProfileUiEvent.UploadCvClicked)
-        is ProfileInfoItemAction.BloodDonationList -> onUiEvent(ProfileUiEvent.MyBloodDonationListClicked)
-        is ProfileInfoItemAction.CheckInList -> onUiEvent(ProfileUiEvent.MyCheckInListClicked)
+        is ProfileInfoItemAction.BloodDonationList -> onUiEvent(ProfileUiEvent.BloodDonationHistoryClicked)
+        is ProfileInfoItemAction.CheckInList -> onUiEvent(ProfileUiEvent.CheckInHistoryClicked)
         is ProfileInfoItemAction.DeleteAccount -> onUiEvent(ProfileUiEvent.DeleteAccountClicked)
     }
 }

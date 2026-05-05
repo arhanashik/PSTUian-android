@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.mycheckinlist.composable
+package com.workfort.pstuian.ui.checkinhistory.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -70,8 +70,8 @@ import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
-import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiEvent
-import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiState
+import com.workfort.pstuian.ui.checkinhistory.state.CheckInHistoryUiEvent
+import com.workfort.pstuian.ui.checkinhistory.state.CheckInHistoryUiState
 import com.workfort.pstuian.util.DateTimeUtilImpl
 import com.workfort.pstuian.util.helper.MathUtil
 import kotlinx.coroutines.launch
@@ -89,9 +89,9 @@ private val MyCheckInLocationListThumbnailSlotSize = 96.dp
 private val MyCheckInBottomSheetThumbnailShape = RoundedCornerShape(20.dp)
 
 @Composable
-internal fun MyCheckInListContentPanel(
-    uiState: MyCheckInListUiState.Content,
-    onUiEvent: (MyCheckInListUiEvent) -> Unit,
+internal fun CheckInHistoryContentPanel(
+    uiState: CheckInHistoryUiState.Content,
+    onUiEvent: (CheckInHistoryUiEvent) -> Unit,
 ) {
     if (uiState.error != null) {
         Column(
@@ -107,7 +107,7 @@ internal fun MyCheckInListContentPanel(
     Column(modifier = Modifier.fillMaxSize()) {
         when {
             uiState.checkIns.isEmpty() && uiState.isContentLoading -> {
-                MyCheckInListShimmer()
+                CheckInHistoryShimmer()
             }
             uiState.checkIns.isEmpty() -> {
                 Column(
@@ -130,20 +130,20 @@ internal fun MyCheckInListContentPanel(
 }
 
 @Composable
-private fun MyCheckInListShimmer() {
+private fun CheckInHistoryShimmer() {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(6) {
-            MyCheckInListItemShimmer()
+            CheckInHistoryItemShimmer()
         }
     }
 }
 
 @Composable
-private fun MyCheckInListItemShimmer() {
+private fun CheckInHistoryItemShimmer() {
     val cardShape = RoundedCornerShape(16.dp)
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -212,7 +212,7 @@ private fun MyCheckInListItemShimmer() {
 private fun CheckInListView(
     checkIns: List<CheckIn>,
     isLoading: Boolean,
-    onUiEvent: (MyCheckInListUiEvent) -> Unit,
+    onUiEvent: (CheckInHistoryUiEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
     var lastLoadMoreRequestedAtSize by remember { mutableIntStateOf(-1) }
@@ -229,7 +229,7 @@ private fun CheckInListView(
         val canRequestMore = shouldLoadMore && !isLoading && checkIns.isNotEmpty()
         if (canRequestMore && lastLoadMoreRequestedAtSize != checkIns.size) {
             lastLoadMoreRequestedAtSize = checkIns.size
-            onUiEvent(MyCheckInListUiEvent.LoadMore)
+            onUiEvent(CheckInHistoryUiEvent.LoadMore)
         }
     }
 
@@ -243,13 +243,13 @@ private fun CheckInListView(
             ListItemView(
                 item = item,
                 onClick = {
-                    onUiEvent(MyCheckInListUiEvent.ItemClicked(item))
+                    onUiEvent(CheckInHistoryUiEvent.ItemClicked(item))
                 },
             )
         }
         if (isLoading) {
             item {
-                MyCheckInListItemShimmer()
+                CheckInHistoryItemShimmer()
             }
         }
     }

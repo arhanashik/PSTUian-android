@@ -63,11 +63,11 @@ class EmployeeProfileViewModel(
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
                 is ProfileUiEvent.EditClicked -> onClickEdit()
-            is ProfileUiEvent.MyBloodDonationListClicked -> Unit
+            is ProfileUiEvent.BloodDonationHistoryClicked -> Unit
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> Unit
             is ProfileUiEvent.UploadCvClicked -> Unit
-            is ProfileUiEvent.MyCheckInListClicked -> Unit
+            is ProfileUiEvent.CheckInHistoryClicked -> Unit
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
         }
     }

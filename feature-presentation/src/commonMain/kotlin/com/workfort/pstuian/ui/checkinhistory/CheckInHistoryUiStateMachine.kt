@@ -1,22 +1,22 @@
-package com.workfort.pstuian.ui.mycheckinlist
+package com.workfort.pstuian.ui.checkinhistory
 
 import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
-import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInListUiState
+import com.workfort.pstuian.ui.checkinhistory.state.CheckInHistoryUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class MyCheckInListUiStateMachine : UiStateMachine<MyCheckInListUiState> {
-    private val _uiState = MutableStateFlow<MyCheckInListUiState>(MyCheckInListUiState.None)
-    override val uiState: StateFlow<MyCheckInListUiState> = _uiState.asStateFlow()
+class CheckInHistoryUiStateMachine : UiStateMachine<CheckInHistoryUiState> {
+    private val _uiState = MutableStateFlow<CheckInHistoryUiState>(CheckInHistoryUiState.None)
+    override val uiState: StateFlow<CheckInHistoryUiState> = _uiState.asStateFlow()
 
     fun updateOperationLoading(isLoading: Boolean) {
         _uiState.update { current ->
             when (current) {
-                is MyCheckInListUiState.Content -> current.copy(isOperationLoading = isLoading)
-                else -> MyCheckInListUiState.Content(isOperationLoading = true)
+                is CheckInHistoryUiState.Content -> current.copy(isOperationLoading = isLoading)
+                else -> CheckInHistoryUiState.Content(isOperationLoading = true)
             }
         }
     }
@@ -24,7 +24,7 @@ class MyCheckInListUiStateMachine : UiStateMachine<MyCheckInListUiState> {
     fun updateContentLoading(isLoading: Boolean) {
         _uiState.update { current ->
             when (current) {
-                is MyCheckInListUiState.Content -> current.copy(isContentLoading = isLoading, error = null)
+                is CheckInHistoryUiState.Content -> current.copy(isContentLoading = isLoading, error = null)
                 else -> current
             }
         }
@@ -33,13 +33,13 @@ class MyCheckInListUiStateMachine : UiStateMachine<MyCheckInListUiState> {
     fun showCheckIns(checkIns: List<CheckIn>) {
         _uiState.update { current ->
             when (current) {
-                is MyCheckInListUiState.Content -> current.copy(
+                is CheckInHistoryUiState.Content -> current.copy(
                     checkIns = checkIns,
                     isOperationLoading = false,
                     isContentLoading = false,
                     error = null,
                 )
-                else -> MyCheckInListUiState.Content(
+                else -> CheckInHistoryUiState.Content(
                     checkIns = checkIns,
                     isOperationLoading = false,
                     isContentLoading = false,
@@ -52,8 +52,8 @@ class MyCheckInListUiStateMachine : UiStateMachine<MyCheckInListUiState> {
     fun showError(error: String) {
         _uiState.update { current ->
             when (current) {
-                is MyCheckInListUiState.Content -> current.copy(error = error)
-                else -> MyCheckInListUiState.Content(error = error)
+                is CheckInHistoryUiState.Content -> current.copy(error = error)
+                else -> CheckInHistoryUiState.Content(error = error)
             }
         }
     }

@@ -12,10 +12,10 @@ sealed interface ProfileUiEvent {
     data object ChangeImageClicked : ProfileUiEvent
     data object EditBioClicked : ProfileUiEvent
     data object EditClicked : ProfileUiEvent
-    data object MyBloodDonationListClicked : ProfileUiEvent
+    data object BloodDonationHistoryClicked : ProfileUiEvent
     data object ChangePasswordClicked : ProfileUiEvent
     data class DownloadCvClicked(val url: String) : ProfileUiEvent
     data object UploadCvClicked : ProfileUiEvent
-    data object MyCheckInListClicked : ProfileUiEvent
+    data object CheckInHistoryClicked : ProfileUiEvent
     data object DeleteAccountClicked : ProfileUiEvent
 }

@@ -69,11 +69,11 @@ class TeacherProfileViewModel(
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
                 is ProfileUiEvent.EditClicked -> onClickEdit()
-            is ProfileUiEvent.MyBloodDonationListClicked -> Unit
+            is ProfileUiEvent.BloodDonationHistoryClicked -> Unit
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> Unit
             is ProfileUiEvent.UploadCvClicked -> Unit
-            is ProfileUiEvent.MyCheckInListClicked -> onClickMyCheckInList()
+            is ProfileUiEvent.CheckInHistoryClicked -> onClickCheckInHistory()
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
         }
     }
@@ -203,12 +203,12 @@ class TeacherProfileViewModel(
         _navigation.update { TeacherProfileNavigationState.ChangePasswordScreen }
     }
 
-    private fun onClickMyCheckInList() {
+    private fun onClickCheckInHistory() {
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.teacher?.let { student ->
             _navigation.update {
-                TeacherProfileNavigationState.MyCheckInListScreen(userId = student.userId)
+                TeacherProfileNavigationState.CheckInHistoryScreen(userId = student.userId)
             }
         }
     }

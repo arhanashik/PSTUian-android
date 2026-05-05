@@ -72,11 +72,11 @@ class StudentProfileViewModel(
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
             is ProfileUiEvent.EditClicked -> onClickEdit()
-            is ProfileUiEvent.MyBloodDonationListClicked -> onClickMyBloodDonationList()
+            is ProfileUiEvent.BloodDonationHistoryClicked -> onClickMyBloodDonationHistory()
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> onClickDownloadCv(event.url)
             is ProfileUiEvent.UploadCvClicked -> onClickUploadCv()
-            is ProfileUiEvent.MyCheckInListClicked -> onClickMyCheckInList()
+            is ProfileUiEvent.CheckInHistoryClicked -> onClickCheckInHistory()
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
         }
     }
@@ -203,12 +203,12 @@ class StudentProfileViewModel(
         }
     }
 
-    private fun onClickMyBloodDonationList() {
+    private fun onClickMyBloodDonationHistory() {
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.student?.let { student ->
             _navigation.update {
-                StudentProfileNavigationState.MyBloodDonationListScreen(userId = student.userId)
+                StudentProfileNavigationState.BloodDonationHistoryScreen(userId = student.userId)
             }
         }
     }
@@ -256,12 +256,12 @@ class StudentProfileViewModel(
         }
     }
 
-    private fun onClickMyCheckInList() {
+    private fun onClickCheckInHistory() {
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.student?.let { student ->
             _navigation.update {
-                StudentProfileNavigationState.MyCheckInListScreen(userId = student.userId)
+                StudentProfileNavigationState.CheckInHistoryScreen(userId = student.userId)
             }
         }
     }

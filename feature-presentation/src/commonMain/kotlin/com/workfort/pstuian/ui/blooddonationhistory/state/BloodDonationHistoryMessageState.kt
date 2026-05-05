@@ -1,0 +1,8 @@
+package com.workfort.pstuian.ui.blooddonationhistory.state
+
+sealed interface BloodDonationHistoryMessageState {
+    data class Loading(val cancelable: Boolean) : BloodDonationHistoryMessageState
+    data class ConfirmDelete(val onConfirm: () -> Unit) : BloodDonationHistoryMessageState
+    data class Success(val message: String) : BloodDonationHistoryMessageState
+    data class Error(val message: String) : BloodDonationHistoryMessageState
+}

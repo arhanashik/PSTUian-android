@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.mycheckinlist
+package com.workfort.pstuian.ui.checkinhistory
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -10,10 +10,10 @@ import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.mycheckinlist.composable.MyCheckInItemBottomSheet
-import com.workfort.pstuian.ui.mycheckinlist.composable.MyCheckInListScreenContent
-import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInMessageState
-import com.workfort.pstuian.ui.mycheckinlist.state.MyCheckInNavigationState
+import com.workfort.pstuian.ui.checkinhistory.composable.CheckInHistoryScreenContent
+import com.workfort.pstuian.ui.checkinhistory.composable.MyCheckInItemBottomSheet
+import com.workfort.pstuian.ui.checkinhistory.state.CheckInHistoryMessageState
+import com.workfort.pstuian.ui.checkinhistory.state.CheckInHistoryNavigationState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
@@ -23,15 +23,15 @@ import pstuian.feature_presentation.generated.resources.txt_retry
 import pstuian.feature_presentation.generated.resources.txt_update
 
 @Composable
-fun MyCheckInListScreen(
-    viewModel: MyCheckInListViewModel,
+fun CheckInHistoryScreen(
+    viewModel: CheckInHistoryViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    MyCheckInListScreenContent(uiState, snackbarHostState, viewModel::onUiEvent)
+    CheckInHistoryScreenContent(uiState, snackbarHostState, viewModel::onUiEvent)
 
     HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
@@ -39,13 +39,13 @@ fun MyCheckInListScreen(
 
 @Composable
 private fun HandleMessageState(
-    message: MyCheckInMessageState?,
+    message: CheckInHistoryMessageState?,
     snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
 ) {
     message?.let {
         when (it) {
-            is MyCheckInMessageState.ShowDetails -> {
+            is CheckInHistoryMessageState.ShowDetails -> {
                 MyCheckInItemBottomSheet(
                     item = it.item,
                     onClickChangePrivacy = { privacy ->
@@ -59,7 +59,7 @@ private fun HandleMessageState(
                     onDismiss = onMessageHandled,
                 )
             }
-            is MyCheckInMessageState.ConfirmPrivacyChange -> {
+            is CheckInHistoryMessageState.ConfirmPrivacyChange -> {
                 ShowConfirmationDialog(
                     title = stringResource(Res.string.txt_update),
                     message = "Are you surely want to change the privacy?",
@@ -70,7 +70,7 @@ private fun HandleMessageState(
                     onDismiss = onMessageHandled,
                 )
             }
-            is MyCheckInMessageState.ConfirmDelete -> {
+            is CheckInHistoryMessageState.ConfirmDelete -> {
                 ShowConfirmationDialog(
                     title = stringResource(Res.string.txt_delete),
                     message = stringResource(Res.string.msg_delete_permanent),
@@ -81,14 +81,14 @@ private fun HandleMessageState(
                     onDismiss = onMessageHandled,
                 )
             }
-            is MyCheckInMessageState.Success -> {
+            is CheckInHistoryMessageState.Success -> {
                 HandleSnackbar(
                     message = it.message,
                     snackbarHostState = snackbarHostState,
                     onSnackbarShown = onMessageHandled,
                 )
             }
-            is MyCheckInMessageState.Error -> {
+            is CheckInHistoryMessageState.Error -> {
                 ShowInfoDialog(
                     message = it.message,
                     dismissButtonText = stringResource(Res.string.txt_retry),
@@ -101,7 +101,7 @@ private fun HandleMessageState(
 
 @Composable
 private fun HandleNavigationState(
-    navigation: MyCheckInNavigationState?,
+    navigation: CheckInHistoryNavigationState?,
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
@@ -109,7 +109,7 @@ private fun HandleNavigationState(
     LaunchedEffect(key1 = navigation) {
         navigation?.let {
             when (it) {
-                is MyCheckInNavigationState.GoBack -> navigator?.goBack()
+                is CheckInHistoryNavigationState.GoBack -> navigator?.goBack()
             }
             onNavigationHandled()
         }

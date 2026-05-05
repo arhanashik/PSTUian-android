@@ -1,10 +1,10 @@
-package com.workfort.pstuian.ui.myblooddonationlist.state
+package com.workfort.pstuian.ui.blooddonationhistory.state
 
 import androidx.compose.runtime.Immutable
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 
 @Immutable
-data class MyBloodDonationListUiState(
+data class BloodDonationHistoryUiState(
     val donations: List<BloodDonationEntity> = emptyList(),
     val isLoading: Boolean = false,
     val isEndOfData: Boolean = false,

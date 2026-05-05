@@ -105,8 +105,8 @@
     <string name="txt_password">Password</string>
     <string name="hint_upload_new_cv">Upload new CV</string>
     <string name="txt_blood_donation">Blood Donation</string>
-    <string name="txt_my_donation_list">My Donation List</string>
-    <string name="txt_my_check_in_list">My Check In List</string>
+    <string name="txt_blood_donation_history">Blood Donation History</string>
+    <string name="txt_check_in_history">Check In History</string>
 
     <string name="label_blood_donation_create_screen">Create donation</string>
     <string name="label_create_blood_donation_request_screen">Create blood donation request</string>

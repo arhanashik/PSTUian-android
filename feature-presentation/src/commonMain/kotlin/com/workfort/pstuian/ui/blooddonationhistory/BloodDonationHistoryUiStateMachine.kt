@@ -1,16 +1,16 @@
-package com.workfort.pstuian.ui.myblooddonationlist
+package com.workfort.pstuian.ui.blooddonationhistory
 
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiState
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class MyBloodDonationListUiStateMachine : UiStateMachine<MyBloodDonationListUiState> {
-    private val _uiState = MutableStateFlow(MyBloodDonationListUiState())
-    override val uiState: StateFlow<MyBloodDonationListUiState> = _uiState.asStateFlow()
+class BloodDonationHistoryUiStateMachine : UiStateMachine<BloodDonationHistoryUiState> {
+    private val _uiState = MutableStateFlow(BloodDonationHistoryUiState())
+    override val uiState: StateFlow<BloodDonationHistoryUiState> = _uiState.asStateFlow()
 
     fun updateLoading(isLoading: Boolean, isRefresh: Boolean) {
         _uiState.update {

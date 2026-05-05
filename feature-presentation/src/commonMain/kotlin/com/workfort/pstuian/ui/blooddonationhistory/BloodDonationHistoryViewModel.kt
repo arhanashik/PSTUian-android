@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.myblooddonationlist
+package com.workfort.pstuian.ui.blooddonationhistory
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
@@ -7,45 +7,45 @@ import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListMessageState
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListNavigationState
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiEvent
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiState
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryMessageState
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryNavigationState
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiEvent
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MyBloodDonationListViewModel(
+class BloodDonationHistoryViewModel(
     private val userId: Int,
     private val userType: UserType,
     private val donationRepo: BloodDonationRepository,
-    private val uiStateMachine: MyBloodDonationListUiStateMachine,
+    private val uiStateMachine: BloodDonationHistoryUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-) : UiStateMachineViewModel<MyBloodDonationListUiState>(uiStateMachine) {
+) : UiStateMachineViewModel<BloodDonationHistoryUiState>(uiStateMachine) {
 
-    private val _message = MutableStateFlow<MyBloodDonationListMessageState?>(null)
-    val message: StateFlow<MyBloodDonationListMessageState?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<BloodDonationHistoryMessageState?>(null)
+    val message: StateFlow<BloodDonationHistoryMessageState?> = _message.asStateFlow()
 
-    private val _navigation = MutableStateFlow<MyBloodDonationListNavigationState?>(null)
-    val navigation: StateFlow<MyBloodDonationListNavigationState?> = _navigation.asStateFlow()
+    private val _navigation = MutableStateFlow<BloodDonationHistoryNavigationState?>(null)
+    val navigation: StateFlow<BloodDonationHistoryNavigationState?> = _navigation.asStateFlow()
 
     private var page = 0
 
     override fun onUiReady() {
-        onUiEvent(MyBloodDonationListUiEvent.LoadList(refresh = true))
+        onUiEvent(BloodDonationHistoryUiEvent.LoadList(refresh = true))
     }
 
-    fun onUiEvent(event: MyBloodDonationListUiEvent) {
+    fun onUiEvent(event: BloodDonationHistoryUiEvent) {
         viewModelScope.launch {
             when (event) {
-                is MyBloodDonationListUiEvent.BackClicked -> onClickBack()
-                is MyBloodDonationListUiEvent.CreateRequestClicked -> onClickCreateRequest()
-                is MyBloodDonationListUiEvent.EditClicked -> onClickEdit(event.item)
-                is MyBloodDonationListUiEvent.DeleteClicked -> onClickDelete(event.item)
-                is MyBloodDonationListUiEvent.ConfirmDeleteClicked -> deleteDonation(event.item)
-                is MyBloodDonationListUiEvent.LoadList -> loadDonationList(event.refresh)
+                is BloodDonationHistoryUiEvent.BackClicked -> onClickBack()
+                is BloodDonationHistoryUiEvent.CreateRequestClicked -> onClickCreateRequest()
+                is BloodDonationHistoryUiEvent.EditClicked -> onClickEdit(event.item)
+                is BloodDonationHistoryUiEvent.DeleteClicked -> onClickDelete(event.item)
+                is BloodDonationHistoryUiEvent.ConfirmDeleteClicked -> deleteDonation(event.item)
+                is BloodDonationHistoryUiEvent.LoadList -> loadDonationList(event.refresh)
             }
         }
     }
@@ -54,21 +54,21 @@ class MyBloodDonationListViewModel(
 
     fun onNavigationHandled() = _navigation.update { null }
 
-    private fun onClickBack() = _navigation.update { MyBloodDonationListNavigationState.GoBack }
+    private fun onClickBack() = _navigation.update { BloodDonationHistoryNavigationState.GoBack }
 
     private fun onClickCreateRequest() {
-        _navigation.update { MyBloodDonationListNavigationState.GoToCreateBloodDonationRequest }
+        _navigation.update { BloodDonationHistoryNavigationState.GoToCreateBloodDonationRequest }
     }
 
     private fun onClickEdit(item: BloodDonationEntity) {
         _navigation.update {
-            MyBloodDonationListNavigationState.GoToEditBloodDonationRequest(item.id)
+            BloodDonationHistoryNavigationState.GoToEditBloodDonationRequest(item.id)
         }
     }
 
     private fun onClickDelete(item: BloodDonationEntity) {
         _message.update {
-            MyBloodDonationListMessageState.ConfirmDelete {
+            BloodDonationHistoryMessageState.ConfirmDelete {
                 deleteDonation(item)
             }
         }
@@ -101,20 +101,20 @@ class MyBloodDonationListViewModel(
     }
 
     private fun deleteDonation(item: BloodDonationEntity) {
-        _message.update { MyBloodDonationListMessageState.Loading(cancelable = false) }
+        _message.update { BloodDonationHistoryMessageState.Loading(cancelable = false) }
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             runCatching {
                 donationRepo.delete(item.id)
             }.onSuccess {
                 _message.update {
-                    MyBloodDonationListMessageState.Success("Deleted successfully")
+                    BloodDonationHistoryMessageState.Success("Deleted successfully")
                 }
                 // Refresh list after deletion
                 loadDonationList(refresh = true)
             }.onFailure {
                 val message = it.message ?: "Failed to delete"
-                _message.update { MyBloodDonationListMessageState.Error(message) }
+                _message.update { BloodDonationHistoryMessageState.Error(message) }
             }
         }
     }

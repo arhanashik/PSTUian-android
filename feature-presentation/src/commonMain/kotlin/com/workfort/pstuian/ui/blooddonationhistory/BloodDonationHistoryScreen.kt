@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.myblooddonationlist
+package com.workfort.pstuian.ui.blooddonationhistory
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -27,27 +27,27 @@ import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
-import com.workfort.pstuian.ui.myblooddonationlist.composable.MyBloodDonationListContentPanel
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListMessageState
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListNavigationState
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiEvent
-import com.workfort.pstuian.ui.myblooddonationlist.state.MyBloodDonationListUiState
+import com.workfort.pstuian.ui.blooddonationhistory.composable.BloodDonationHistoryContentPanel
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryMessageState
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryNavigationState
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiEvent
+import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiState
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.msg_delete_permanent
+import pstuian.feature_presentation.generated.resources.txt_blood_donation_history
 import pstuian.feature_presentation.generated.resources.txt_create_new
-import pstuian.feature_presentation.generated.resources.txt_my_donation_list
 import pstuian.feature_presentation.generated.resources.txt_retry
 
 @Composable
-fun MyBloodDonationListScreen(viewModel: MyBloodDonationListViewModel) {
+fun BloodDonationHistoryScreen(viewModel: BloodDonationHistoryViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
 
-    MyBloodDonationListScreenContent(uiState, viewModel::onUiEvent)
+    BloodDonationHistoryScreenContent(uiState, viewModel::onUiEvent)
 
     HandleMessageState(message, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
@@ -55,9 +55,9 @@ fun MyBloodDonationListScreen(viewModel: MyBloodDonationListViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MyBloodDonationListScreenContent(
-    uiState: MyBloodDonationListUiState,
-    onUiEvent: (MyBloodDonationListUiEvent) -> Unit,
+private fun BloodDonationHistoryScreenContent(
+    uiState: BloodDonationHistoryUiState,
+    onUiEvent: (BloodDonationHistoryUiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var fabButtonExpanded by remember { mutableStateOf(true) }
@@ -71,15 +71,15 @@ private fun MyBloodDonationListScreenContent(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
-                title = stringResource(Res.string.txt_my_donation_list),
+                title = stringResource(Res.string.txt_blood_donation_history),
                 navigation = {
-                    NavigationButton { onUiEvent(MyBloodDonationListUiEvent.BackClicked) }
+                    NavigationButton { onUiEvent(BloodDonationHistoryUiEvent.BackClicked) }
                 },
                 actions = {
                     AppBarIconButton(
                         icon = Icons.Filled.Refresh,
                         onClick = {
-                            onUiEvent(MyBloodDonationListUiEvent.LoadList(refresh = true))
+                            onUiEvent(BloodDonationHistoryUiEvent.LoadList(refresh = true))
                         }
                     )
                 },
@@ -91,7 +91,7 @@ private fun MyBloodDonationListScreenContent(
                 expanded = fabButtonExpanded,
                 text = { Text(text = stringResource(Res.string.txt_create_new)) },
                 onClick = {
-                    onUiEvent(MyBloodDonationListUiEvent.CreateRequestClicked)
+                    onUiEvent(BloodDonationHistoryUiEvent.CreateRequestClicked)
                 },
                 icon = {
                     Icon(
@@ -102,18 +102,18 @@ private fun MyBloodDonationListScreenContent(
             )
         },
     ) {
-        MyBloodDonationListContentPanel(uiState, onUiEvent)
+        BloodDonationHistoryContentPanel(uiState, onUiEvent)
     }
 }
 
 @Composable
 private fun HandleMessageState(
-    message: MyBloodDonationListMessageState?,
+    message: BloodDonationHistoryMessageState?,
     onMessageHandled: () -> Unit,
 ) {
     message?.let {
         when (it) {
-            is MyBloodDonationListMessageState.ConfirmDelete -> {
+            is BloodDonationHistoryMessageState.ConfirmDelete -> {
                 ShowConfirmationDialog(
                     message = stringResource(Res.string.msg_delete_permanent),
                     onConfirm = {
@@ -123,16 +123,16 @@ private fun HandleMessageState(
                     onDismiss = { onMessageHandled() }
                 )
             }
-            is MyBloodDonationListMessageState.Loading -> {
+            is BloodDonationHistoryMessageState.Loading -> {
                 ShowLoaderDialog(cancelable = it.cancelable)
             }
-            is MyBloodDonationListMessageState.Success -> {
+            is BloodDonationHistoryMessageState.Success -> {
                 ShowInfoDialog(
                     message = it.message,
                     onDismiss = { onMessageHandled() }
                 )
             }
-            is MyBloodDonationListMessageState.Error -> {
+            is BloodDonationHistoryMessageState.Error -> {
                 ShowInfoDialog(
                     message = it.message,
                     dismissButtonText = stringResource(Res.string.txt_retry),
@@ -145,7 +145,7 @@ private fun HandleMessageState(
 
 @Composable
 private fun HandleNavigationState(
-    navigation: MyBloodDonationListNavigationState?,
+    navigation: BloodDonationHistoryNavigationState?,
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
@@ -153,11 +153,11 @@ private fun HandleNavigationState(
     LaunchedEffect(navigation) {
         navigation?.let {
             when (it) {
-                is MyBloodDonationListNavigationState.GoBack -> navigator?.goBack()
-                is MyBloodDonationListNavigationState.GoToCreateBloodDonationRequest -> {
+                is BloodDonationHistoryNavigationState.GoBack -> navigator?.goBack()
+                is BloodDonationHistoryNavigationState.GoToCreateBloodDonationRequest -> {
                     navigator?.navigateTo(AppScreen.BloodDonationRequestCreate)
                 }
-                is MyBloodDonationListNavigationState.GoToEditBloodDonationRequest -> {
+                is BloodDonationHistoryNavigationState.GoToEditBloodDonationRequest -> {
                     navigator?.navigateTo(
                         AppScreen.BloodDonationRequestEdit(it.donationId),
                     )

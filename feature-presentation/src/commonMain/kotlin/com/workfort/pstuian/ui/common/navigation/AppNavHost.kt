@@ -31,8 +31,8 @@ import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
 import com.workfort.pstuian.ui.imageupload.ImageUploadScreen
 import com.workfort.pstuian.ui.locationpicker.LocationPickerScreen
-import com.workfort.pstuian.ui.myblooddonationlist.MyBloodDonationListScreen
-import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListScreen
+import com.workfort.pstuian.ui.blooddonationhistory.BloodDonationHistoryScreen
+import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryScreen
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileScreen
 import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileScreen
 import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditScreen
@@ -209,15 +209,15 @@ fun AppNavHost(
                         )
                     }
                 }
-                composable<AppScreen.MyBloodDonationList>(typeMap = navTypeMap) { backStackEntry ->
-                    val screen: AppScreen.MyBloodDonationList = backStackEntry.toRoute()
-                    MyBloodDonationListScreen(
+                composable<AppScreen.BloodDonationHistory>(typeMap = navTypeMap) { backStackEntry ->
+                    val screen: AppScreen.BloodDonationHistory = backStackEntry.toRoute()
+                    BloodDonationHistoryScreen(
                         viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) },
                     )
                 }
-                composable<AppScreen.MyCheckInList>(typeMap = navTypeMap) { backStackEntry ->
-                    val screen: AppScreen.MyCheckInList = backStackEntry.toRoute()
-                    MyCheckInListScreen(
+                composable<AppScreen.CheckInHistory>(typeMap = navTypeMap) { backStackEntry ->
+                    val screen: AppScreen.CheckInHistory = backStackEntry.toRoute()
+                    CheckInHistoryScreen(
                         viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) },
                     )
                 }
