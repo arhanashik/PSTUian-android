@@ -19,19 +19,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
+import com.workfort.pstuian.ui.common.theme.AppColors
 
 @Composable
 internal fun StudentProfileShimmer() {
-    val headerCardGradient = Brush.verticalGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.10f),
-            MaterialTheme.colorScheme.surface,
-        ),
-    )
+    val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val headerCardBackgroundColor =
+        if (isDarkTheme) MaterialTheme.colorScheme.surface else AppColors.card
 
     Column(modifier = Modifier.fillMaxSize()) {
         // Top bar skeleton (outside header card)
@@ -47,13 +45,13 @@ internal fun StudentProfileShimmer() {
             ShimmerCircle(size = 44.dp)
         }
 
-        // Header card (no elevation, slight gradient)
+        // Header card (solid — matches loaded profile header)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(headerCardGradient),
+                .background(headerCardBackgroundColor),
         ) {
             Column(
                 modifier = Modifier

@@ -13,13 +13,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
+import coil3.SingletonImageLoader
+import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.workfort.pstuian.ui.common.composable.extractProfileHeaderBackground
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.common.theme.AppColors
@@ -30,7 +41,10 @@ import com.workfort.pstuian.ui.profile.common.displaydata.ProfileInfoItemAction
 import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayData
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_academic
@@ -95,6 +109,42 @@ private fun ProfileView(
     val pagerState = rememberPagerState(pageCount = { 2 })
     val tabOptions = listOf(stringResource(Res.string.txt_academic), stringResource(Res.string.txt_connect))
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val themeBg = MaterialTheme.colorScheme.background
+    val avatarUrl = headerDisplayData.imageUrl
+    val canSampleAvatarTint = !isDarkTheme && !avatarUrl.isNullOrEmpty()
+
+    var lightHeaderImageFill by remember(avatarUrl, themeBg) { mutableStateOf<Color?>(null) }
+
+    LaunchedEffect(isDarkTheme, avatarUrl) {
+        if (isDarkTheme || avatarUrl.isNullOrEmpty()) {
+            lightHeaderImageFill = null
+        }
+    }
+
+    if (canSampleAvatarTint) {
+        val urlForTint = avatarUrl!!
+        val platformContext = LocalPlatformContext.current
+        val imageLoader = remember(platformContext) { SingletonImageLoader.get(platformContext) }
+        val request = remember(urlForTint, platformContext) {
+            ImageRequest.Builder(platformContext).data(urlForTint).crossfade(true).build()
+        }
+        val painter = rememberAsyncImagePainter(model = request, imageLoader = imageLoader)
+
+        LaunchedEffect(painter, urlForTint, themeBg) {
+            painter.state.collectLatest { state ->
+                when (state) {
+                    is AsyncImagePainter.State.Success -> {
+                        val tint = withContext(Dispatchers.Default) {
+                            extractProfileHeaderBackground(state.result.image)
+                        }
+                        lightHeaderImageFill = tint
+                    }
+                    is AsyncImagePainter.State.Error -> lightHeaderImageFill = null
+                    else -> Unit
+                }
+            }
+        }
+    }
 
     LaunchedEffect(pagerState.currentPage) {
         onUiEvent(ProfileUiEvent.TabClicked(pagerState.currentPage))
@@ -115,27 +165,19 @@ private fun ProfileView(
             optionsDropdown(expanded, onDismiss, isSignedIn, onUiEvent)
         }
 
-        val headerCardGradient = Brush.verticalGradient(
-            colors = listOf(
-                if (isDarkTheme) {
-                    MaterialTheme.colorScheme.surfaceVariant
-                } else {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
-                },
-                if (isDarkTheme) {
-                    MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-                } else {
-                    AppColors.card
-                },
-            ),
-        )
+        val headerCardBackgroundColor =
+            if (isDarkTheme) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                lightHeaderImageFill ?: AppColors.card
+            }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(headerCardGradient),
+                .background(headerCardBackgroundColor),
         ) {
             ProfileHeader(
                 displayData = headerDisplayData,

@@ -33,16 +33,14 @@ fun AppTheme(
         colorScheme = colorScheme,
         typography = getTypography(),
         content = {
-            // Compose SideEffects for children run before effects that appear later in this block.
-            // Placing AppThemeSideEffect after `content()` matches the historic ordering where the
-            // themed status bar won over ApplySystemBarColors for the status bar only (nav bar is
-            // left to per-screen ApplySystemBarColors). `systemBarSyncKey` triggers reapply on nav.
-            content()
+            // SideEffects run in composition order. Apply the themed defaults first so screens can
+            // call [ApplySystemBarColors] after and overwrite status + navigation bar until they leave.
             AppThemeSideEffect(
                 isDark = isDark,
                 statusBarColor = statusBarColorForThemeEffect,
                 systemBarSyncKey = systemBarSyncKey,
             )
+            content()
         },
     )
 }

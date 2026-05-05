@@ -32,9 +32,9 @@ actual fun AppThemeSideEffect(
         controller.isAppearanceLightStatusBars = statusBarColor.luminance() > 0.5f
     }
 
-    // Default bar styling for the whole app: reapply when the activity resumes so returning
-    // from a screen that temporarily changed the window wins back the theme without each
-    // destination calling ApplySystemBarColors.
+    // Default themed status bar while no overriding screen runs: also reapply on resume so transient
+    // window changes revert to theme when navigating back (screens that need custom bars use
+    // ApplySystemBarColors and run after AppThemeSideEffect in the composition order).
     DisposableEffect(lifecycleOwner, statusBarColor, systemBarSyncKey) {
         applyThemeStatusBar()
         val observer = LifecycleEventObserver { _, event ->
@@ -100,8 +100,8 @@ actual fun ApplySystemBarColors(
         }
     }
 
-    // Re-apply on every composition so the values win over any ancestor side effects (e.g. the
-    // theme-wide status bar styling) that may run in the same pass.
+    // Re-apply on every composition so per-screen overrides win after [AppThemeSideEffect] applies
+    // the default themed status/nav colors in the same frame.
     SideEffect {
         applyCurrentColors()
     }
