@@ -5,6 +5,7 @@ import com.workfort.pstuian.featuredomain.model.DomainErrorCode
 internal fun DomainErrorCode.mapToErrorMessageForSignInScreen(): String? = when (this) {
     is DomainErrorCode.Auth -> mapToMessage()
     is DomainErrorCode.Validation -> mapToMessage()
+    is DomainErrorCode.File -> null
 }
 
 private fun DomainErrorCode.Auth.mapToMessage(): String? = when (this) {

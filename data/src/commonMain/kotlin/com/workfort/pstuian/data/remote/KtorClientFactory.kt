@@ -15,6 +15,29 @@ import kotlinx.serialization.json.Json
 
 object KtorClientFactory {
 
+    /**
+     * Minimal client for arbitrary absolute URLs (no API base URL, no auth headers).
+     */
+    fun createPlainHttpClient(platformInfo: PlatformInfo): HttpClient {
+        val isDebug = platformInfo.isDebug
+        val userAgent = "PSTUian/${platformInfo.appVersionName} (${platformInfo.platform}; ${platformInfo.model})"
+        return HttpClient {
+            install(Logging) {
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        println("Ktor: $message")
+                    }
+                }
+                level = if (isDebug) LogLevel.ALL else LogLevel.NONE
+            }
+
+            defaultRequest {
+                header("User-Agent", userAgent)
+                header("Cache-Control", "no-cache")
+            }
+        }
+    }
+
     fun create(
         platformInfo: PlatformInfo,
         baseUrlProvider: () -> String,

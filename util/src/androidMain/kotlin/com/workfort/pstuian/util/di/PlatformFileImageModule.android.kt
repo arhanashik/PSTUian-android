@@ -33,6 +33,15 @@ private class AndroidFileUtil(
         }
     }
 
+    override suspend fun writeBytes(destinationUri: String, bytes: ByteArray): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val parsed = destinationUri.toUri()
+                context.contentResolver.openOutputStream(parsed)?.use { out -> out.write(bytes) }
+                    ?: error("Could not open destination for writing")
+            }
+        }
+
     override suspend fun getFileName(uri: String): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
             val parsed = uri.toUri()

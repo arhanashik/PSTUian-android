@@ -137,6 +137,8 @@ private val cvDownloadModule = module {
             userId = userId,
             userType = userType,
             urlToDownload = urlToDownload,
+            fileUtil = get(),
+            cvPdfRemoteFetcher = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )

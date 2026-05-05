@@ -39,4 +39,14 @@ class CvDownloadUiStateMachine : UiStateMachine<CvDownloadUiState> {
             else -> this
         }
     }
+
+    fun clearDownloadOutcome() = updateUiState {
+        when (this) {
+            is CvDownloadUiState.Content -> copy(
+                downloadResult = null,
+                isDownloadSuccess = false,
+            )
+            else -> this
+        }
+    }
 }

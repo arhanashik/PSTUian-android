@@ -46,6 +46,7 @@ import com.workfort.pstuian.data.remote.infrastructure.DeviceApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.DonationApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.FacultyApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.NotificationApiHelperImpl
+import com.workfort.pstuian.data.remote.infrastructure.CvPdfRemoteFetcherImpl
 import com.workfort.pstuian.data.remote.infrastructure.StudentApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.SupportApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.TeacherApiHelperImpl
@@ -64,6 +65,7 @@ import com.workfort.pstuian.data.remote.service.StudentApiService
 import com.workfort.pstuian.data.remote.service.SupportApiService
 import com.workfort.pstuian.data.remote.service.TeacherApiService
 import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
+import com.workfort.pstuian.featuredomain.network.CvPdfRemoteFetcher
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -89,6 +91,7 @@ import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.database
 import dev.gitlive.firebase.firestore.firestore
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -108,7 +111,16 @@ private val firebaseModule = module {
     singleOf(::FirebaseUserPresenceDataSource)
 }
 
+private val plainHttpClientQualifier = named("plainHttpClient")
+
 private val networkModule = module {
+    single(qualifier = plainHttpClientQualifier) {
+        KtorClientFactory.createPlainHttpClient(platformInfo = get())
+    }
+    single<CvPdfRemoteFetcher> {
+        CvPdfRemoteFetcherImpl(httpClient = get(qualifier = plainHttpClientQualifier))
+    }
+
     single {
         KtorClientFactory.create(
             platformInfo = get(),

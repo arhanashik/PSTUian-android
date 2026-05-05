@@ -6,6 +6,8 @@ package com.workfort.pstuian.util
 interface FileUtil {
     suspend fun readBytes(uri: String): Result<ByteArray>
 
+    suspend fun writeBytes(destinationUri: String, bytes: ByteArray): Result<Unit>
+
     suspend fun getFileName(uri: String): Result<String>
 
     companion object {

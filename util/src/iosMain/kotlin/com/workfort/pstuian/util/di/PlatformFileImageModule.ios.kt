@@ -23,6 +23,7 @@ import platform.Foundation.NSData
 import platform.Foundation.NSURL
 import platform.Foundation.create
 import platform.Foundation.data
+import platform.Foundation.writeToURL
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
@@ -39,6 +40,28 @@ private class IosFileUtil : FileUtil {
             data.toByteArray()
         }
     }
+
+    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+    override suspend fun writeBytes(destinationUri: String, bytes: ByteArray): Result<Unit> =
+        withContext(Dispatchers.Default) {
+            runCatching {
+                val nsUrl = NSURL.URLWithString(destinationUri) ?: error("Invalid URI")
+                val data = bytes.toNSData()
+                // Locations from UIDocumentPicker (export/save-as) are security-scoped; writing without
+                // startAccessing… fails silently with writeToURL == false for many destinations.
+                val securityScopedAccess = nsUrl.startAccessingSecurityScopedResource()
+                try {
+                    // atomically:true often fails outside the app sandbox (File Provider / iCloud).
+                    if (!data.writeToURL(nsUrl, false)) {
+                        error("Could not write file")
+                    }
+                } finally {
+                    if (securityScopedAccess) {
+                        nsUrl.stopAccessingSecurityScopedResource()
+                    }
+                }
+            }
+        }
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     override suspend fun getFileName(uri: String): Result<String> = withContext(Dispatchers.Default) {

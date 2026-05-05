@@ -44,4 +44,10 @@ sealed interface DomainErrorCode {
         InputInvalid,
         ;
     }
+
+    enum class File : DomainErrorCode {
+        DownloadFailed,
+        SaveFailed,
+        ;
+    }
 }

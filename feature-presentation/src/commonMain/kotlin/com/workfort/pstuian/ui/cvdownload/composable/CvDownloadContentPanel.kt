@@ -36,13 +36,7 @@ internal fun CvDownloadContentPanel(
     onUiEvent: (CvDownloadUiEvent) -> Unit,
 ) {
     val pdfSaver = rememberPdfSaverLauncher { uri ->
-        // This is a placeholder. The actual download logic should be triggered here.
-        // Since we don't have a direct way to download to URI in this common layer,
-        // we might need to handle it in the platform-specific code.
-        // For now, we'll just log or handle it via a UI event if needed.
-        // Actually, the original code had: onUiEvent(CvDownloadScreenUiEvent.OnDownload(uri))
-        // But CvDownloadScreenUiEvent.OnDownload is not in our new CvDownloadUiEvent.
-        // Let's assume the UI layer handles the actual download process once a URI is selected.
+        onUiEvent(CvDownloadUiEvent.OnSaveDestinationChosen(uri))
     }
 
     val isDownloadButtonEnabled = uiState.urlToDownload.isNotEmpty() &&
