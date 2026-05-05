@@ -1,42 +1,20 @@
 package com.workfort.pstuian.ui.blooddonation.blooddonationhistory
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.NavigationButton
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
-import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.common.navigation.AppScreen
-import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.composable.BloodDonationHistoryContentPanel
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.composable.BloodDonationHistoryScreenContent
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryMessageState
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryNavigationState
-import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
-import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
-import kotlinx.coroutines.delay
+import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
+import com.workfort.pstuian.ui.common.navigation.AppNavigator
+import com.workfort.pstuian.ui.common.navigation.AppScreen
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.msg_delete_permanent
-import pstuian.feature_presentation.generated.resources.txt_blood_donation_history
-import pstuian.feature_presentation.generated.resources.txt_create_new
 import pstuian.feature_presentation.generated.resources.txt_retry
 
 @Composable
@@ -49,59 +27,6 @@ fun BloodDonationHistoryScreen(viewModel: BloodDonationHistoryViewModel) {
 
     HandleMessageState(message, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun BloodDonationHistoryScreenContent(
-    uiState: BloodDonationHistoryUiState,
-    onUiEvent: (BloodDonationHistoryUiEvent) -> Unit,
-) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    var fabButtonExpanded by remember { mutableStateOf(true) }
-
-    LaunchedEffect(key1 = null) {
-        delay(1000)
-        fabButtonExpanded = false
-    }
-
-    AppScaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppBar(
-                title = stringResource(Res.string.txt_blood_donation_history),
-                navigation = {
-                    NavigationButton { onUiEvent(BloodDonationHistoryUiEvent.BackClicked) }
-                },
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                expanded = fabButtonExpanded,
-                text = { Text(text = stringResource(Res.string.txt_create_new)) },
-                onClick = {
-                    onUiEvent(BloodDonationHistoryUiEvent.CreateRequestClicked)
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "",
-                    )
-                },
-            )
-        },
-    ) {
-        when (uiState) {
-            BloodDonationHistoryUiState.None -> Unit
-            is BloodDonationHistoryUiState.Content -> {
-                BloodDonationHistoryContentPanel(uiState, onUiEvent)
-                if (uiState.isOperationLoading) {
-                    ShowLoaderDialog(cancelable = false)
-                }
-            }
-        }
-    }
 }
 
 @Composable

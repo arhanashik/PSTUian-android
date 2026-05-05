@@ -6,25 +6,28 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,13 +38,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
-import com.workfort.pstuian.ui.common.composable.LabelText
-import com.workfort.pstuian.ui.common.composable.TitleTextSmall
+import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
 import org.jetbrains.compose.resources.stringResource
@@ -64,9 +68,7 @@ fun BloodDonationHistoryContentPanel(
     Column(modifier = Modifier.fillMaxSize()) {
         if (uiState.donations.isEmpty()) {
             if (uiState.isContentLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
+                BloodDonationHistoryShimmer()
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     AnimatedEmptyView()
@@ -77,6 +79,68 @@ fun BloodDonationHistoryContentPanel(
                 donations = uiState.donations,
                 isLoading = uiState.isContentLoading,
                 onUiEvent = onUiEvent,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BloodDonationHistoryShimmer() {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(6) {
+            BloodDonationHistoryItemShimmer()
+        }
+    }
+}
+
+@Composable
+private fun BloodDonationHistoryItemShimmer() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(16.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .shimmerAnimation(),
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .height(14.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .shimmerAnimation(),
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(110.dp)
+                    .height(30.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .shimmerAnimation(),
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .shimmerAnimation(),
+            )
+            Spacer(modifier = Modifier.padding(start = 8.dp))
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .shimmerAnimation(),
             )
         }
     }
@@ -126,9 +190,7 @@ private fun DonationListView(
         }
         if (isLoading) {
             item {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
+                BloodDonationHistoryItemShimmer()
             }
         }
     }
@@ -140,58 +202,104 @@ private fun DonationItemView(
     onClickEdit: () -> Unit,
     onClickDelete: () -> Unit,
 ) {
-    val requestId = if (item.requestId == null || item.requestId == 0) {
-        "Unregistered"
-    } else {
-        item.requestId.toString()
-    }
+    val hasRegisteredRequest = item.requestId != null && item.requestId != 0
+    val requestId = if (hasRegisteredRequest) item.requestId.toString() else "Unregistered"
     val date = item.date.split(" ")[0]
+    val cardShape = RoundedCornerShape(16.dp)
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(cardShape),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = cardShape,
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            TitleTextSmall(text = "Request Id: $requestId", fontSize = 14.sp)
-            item.info?.let { Text(text = it) }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                LabelText(text = date)
+                Text(
+                    text = "Request #$requestId",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
                 Spacer(modifier = Modifier.weight(1f))
-                AssistChip(
-                    onClick = { onClickEdit() },
-                    label = { Text(stringResource(Res.string.txt_edit)) },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = null,
-                            Modifier.size(AssistChipDefaults.IconSize)
-                        )
+                IconButton(onClick = onClickEdit) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(Res.string.txt_edit),
+                        modifier = Modifier.size(AssistChipDefaults.IconSize),
+                    )
+                }
+                IconButton(onClick = onClickDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.txt_delete),
+                        modifier = Modifier.size(AssistChipDefaults.IconSize),
+                    )
+                }
+            }
+            Text(
+                text = item.info.orEmpty().ifBlank { "No notes provided" },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = if (hasRegisteredRequest) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
                     },
-                    shape = CircleShape,
-                )
-                Spacer(modifier = Modifier.padding(start = 8.dp))
-                AssistChip(
-                    onClick = { onClickDelete() },
-                    label = { Text(stringResource(Res.string.txt_delete)) },
-                    leadingIcon = {
+                ) {
+                    Text(
+                        text = if (hasRegisteredRequest) "Registered" else "Unregistered",
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = if (hasRegisteredRequest) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    )
+                }
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Icon(
-                            Icons.Default.Delete,
+                            imageVector = Icons.Default.CalendarToday,
                             contentDescription = null,
-                            Modifier.size(AssistChipDefaults.IconSize)
+                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                    },
-                    shape = CircleShape,
-                )
+                        Spacer(modifier = Modifier.padding(start = 4.dp))
+                        Text(
+                            text = date,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
             }
         }
     }
