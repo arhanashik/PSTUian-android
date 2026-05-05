@@ -20,7 +20,7 @@ abstract class ApiHelper<T> {
     open suspend fun insert(item: T): NetworkResult<T> =
         NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
 
-    open suspend fun update(item: T): NetworkResult<T> =
+    open suspend fun update(item: T): NetworkResult<Unit> =
         NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
 
     open suspend fun delete(id: Int): NetworkResult<Unit> =

@@ -7,6 +7,5 @@ sealed interface BloodDonationHistoryUiEvent {
     data object CreateRequestClicked : BloodDonationHistoryUiEvent
     data class EditClicked(val item: BloodDonationEntity) : BloodDonationHistoryUiEvent
     data class DeleteClicked(val item: BloodDonationEntity) : BloodDonationHistoryUiEvent
-    data class ConfirmDeleteClicked(val item: BloodDonationEntity) : BloodDonationHistoryUiEvent
-    data class LoadList(val refresh: Boolean) : BloodDonationHistoryUiEvent
+    data object LoadMore : BloodDonationHistoryUiEvent
 }

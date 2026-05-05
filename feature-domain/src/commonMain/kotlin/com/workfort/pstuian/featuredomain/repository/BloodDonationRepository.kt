@@ -1,6 +1,7 @@
 package com.workfort.pstuian.featuredomain.repository
 
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
+import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.UserType
 
 interface BloodDonationRepository {
@@ -9,9 +10,9 @@ interface BloodDonationRepository {
         userId: Int,
         userType: String,
         page: Int,
-    ): List<BloodDonationEntity>
+    ): DomainResult<List<BloodDonationEntity>>
 
-    suspend fun get(id: Int): BloodDonationEntity
+    suspend fun get(id: Int): DomainResult<BloodDonationEntity>
 
     suspend fun insert(
         requestId: Int?,
@@ -19,9 +20,9 @@ interface BloodDonationRepository {
         userType: UserType,
         date: Long,
         info: String?,
-    ) : BloodDonationEntity
+    ) : DomainResult<BloodDonationEntity>
 
-    suspend fun update(item: BloodDonationEntity): BloodDonationEntity
+    suspend fun update(item: BloodDonationEntity): DomainResult<Unit>
 
-    suspend fun delete(id: Int): Boolean
+    suspend fun delete(id: Int): DomainResult<Unit>
 }

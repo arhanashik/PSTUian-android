@@ -56,7 +56,7 @@ class BloodDonationApiService(private val client: HttpClient) {
         requestId: Int?,
         date: String,
         info: String?,
-    ): ApiResponse<BloodDonationDto> {
+    ): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonation.UPDATE,
             formParameters = parameters {

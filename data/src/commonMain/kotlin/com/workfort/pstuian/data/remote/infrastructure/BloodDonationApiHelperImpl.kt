@@ -47,7 +47,7 @@ class BloodDonationApiHelperImpl(
         }
     }
 
-    override suspend fun update(item: BloodDonationDto): NetworkResult<BloodDonationDto> {
+    override suspend fun update(item: BloodDonationDto): NetworkResult<Unit> {
         return runCatching {
             service.update(item.id, item.requestId, item.date, item.info).toNetworkResult()
         }.getOrElse {

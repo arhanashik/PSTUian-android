@@ -30,7 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -40,7 +42,6 @@ import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.LabelText
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
-import com.workfort.pstuian.ui.common.composable.isLastItemVisible
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
 import org.jetbrains.compose.resources.stringResource
@@ -50,18 +51,21 @@ import pstuian.feature_presentation.generated.resources.txt_edit
 
 @Composable
 fun BloodDonationHistoryContentPanel(
-    uiState: BloodDonationHistoryUiState,
+    uiState: BloodDonationHistoryUiState.Content,
     onUiEvent: (BloodDonationHistoryUiEvent) -> Unit,
 ) {
+    if (uiState.error != null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            AnimatedErrorView()
+        }
+        return
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         if (uiState.donations.isEmpty()) {
-            if (uiState.isLoading) {
+            if (uiState.isContentLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
-                }
-            } else if (uiState.error != null) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    AnimatedErrorView()
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -71,7 +75,7 @@ fun BloodDonationHistoryContentPanel(
         } else {
             DonationListView(
                 donations = uiState.donations,
-                isLoading = uiState.isLoading,
+                isLoading = uiState.isContentLoading,
                 onUiEvent = onUiEvent,
             )
         }
@@ -85,15 +89,21 @@ private fun DonationListView(
     onUiEvent: (BloodDonationHistoryUiEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val isLastItemVisible by remember {
+    var lastLoadMoreRequestedAtSize by remember { mutableIntStateOf(-1) }
+    val shouldLoadMore by remember {
         derivedStateOf {
-            listState.isLastItemVisible
+            val totalItems = listState.layoutInfo.totalItemsCount
+            if (totalItems == 0) return@derivedStateOf false
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: return@derivedStateOf false
+            lastVisibleIndex >= totalItems - 1
         }
     }
 
-    LaunchedEffect(key1 = isLastItemVisible) {
-        if (isLastItemVisible) {
-            onUiEvent(BloodDonationHistoryUiEvent.LoadList(refresh = false))
+    LaunchedEffect(shouldLoadMore, isLoading, donations.size) {
+        val canRequestMore = shouldLoadMore && !isLoading && donations.isNotEmpty()
+        if (canRequestMore && lastLoadMoreRequestedAtSize != donations.size) {
+            lastLoadMoreRequestedAtSize = donations.size
+            onUiEvent(BloodDonationHistoryUiEvent.LoadMore)
         }
     }
 

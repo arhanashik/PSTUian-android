@@ -2,7 +2,6 @@ package com.workfort.pstuian.ui.blooddonation.blooddonationhistory
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -19,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.workfort.pstuian.ui.common.composable.AppBar
-import com.workfort.pstuian.ui.common.composable.AppBarIconButton
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
@@ -75,14 +73,6 @@ private fun BloodDonationHistoryScreenContent(
                 navigation = {
                     NavigationButton { onUiEvent(BloodDonationHistoryUiEvent.BackClicked) }
                 },
-                actions = {
-                    AppBarIconButton(
-                        icon = Icons.Filled.Refresh,
-                        onClick = {
-                            onUiEvent(BloodDonationHistoryUiEvent.LoadList(refresh = true))
-                        }
-                    )
-                },
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -102,7 +92,15 @@ private fun BloodDonationHistoryScreenContent(
             )
         },
     ) {
-        BloodDonationHistoryContentPanel(uiState, onUiEvent)
+        when (uiState) {
+            BloodDonationHistoryUiState.None -> Unit
+            is BloodDonationHistoryUiState.Content -> {
+                BloodDonationHistoryContentPanel(uiState, onUiEvent)
+                if (uiState.isOperationLoading) {
+                    ShowLoaderDialog(cancelable = false)
+                }
+            }
+        }
     }
 }
 
@@ -122,9 +120,6 @@ private fun HandleMessageState(
                     },
                     onDismiss = { onMessageHandled() }
                 )
-            }
-            is BloodDonationHistoryMessageState.Loading -> {
-                ShowLoaderDialog(cancelable = it.cancelable)
             }
             is BloodDonationHistoryMessageState.Success -> {
                 ShowInfoDialog(
