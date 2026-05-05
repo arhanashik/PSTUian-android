@@ -11,21 +11,21 @@ private const val SAMPLE_WIDTH_PX = 72
  * Defaults for tiny remote assets (e.g. faculty icons): heavier wash toward neutral so thumbnails
  * stay calm. Raise blend for subtler hue; lower for bolder backdrops.
  */
-internal const val DEFAULT_BACKDROP_NEUTRAL_BLEND = 0.8f
+internal const val DEFAULT_BACKDROP_NEUTRAL_BLEND = 0.74f
 
 /** Default chroma amplification before blending toward neutral for small raster/icon sources. */
-internal const val DEFAULT_BACKDROP_CHROMA_AMPLIFY = 1.10f
+internal const val DEFAULT_BACKDROP_CHROMA_AMPLIFY = 1.18f
 
 /** Fullscreen image preview: keep dominant photo hues visible. */
-internal const val IMAGE_PREVIEW_NEUTRAL_BLEND = 0.4f
-internal const val IMAGE_PREVIEW_CHROMA_AMPLIFY = 1.28f
+internal const val IMAGE_PREVIEW_NEUTRAL_BLEND = 0.36f
+internal const val IMAGE_PREVIEW_CHROMA_AMPLIFY = 1.34f
 
 /**
  * Profile header from avatars: more saturation than defaults; tweak [PROFILE_HEADER_NEUTRAL_BLEND] /
  * [PROFILE_HEADER_CHROMA_AMPLIFY] for liveliness vs calm.
  */
-internal const val PROFILE_HEADER_NEUTRAL_BLEND = 0.42f
-internal const val PROFILE_HEADER_CHROMA_AMPLIFY = 1.32f
+internal const val PROFILE_HEADER_NEUTRAL_BLEND = 0.38f
+internal const val PROFILE_HEADER_CHROMA_AMPLIFY = 1.36f
 
 private val BACKDROP_BLEND_NEUTRAL = Color(red = 1f, green = 252f / 255f, blue = 251f / 255f)
 
@@ -50,7 +50,7 @@ internal fun averageInterestingRgb(
         while (x < width) {
             val p = pixelAt(x, y)
             val a = (p ushr 24) and 0xFF
-            if (a >= 40) {
+            if (a >= 56) {
                 val rv = (p ushr 16) and 0xFF
                 val gv = (p ushr 8) and 0xFF
                 val bv = p and 0xFF
