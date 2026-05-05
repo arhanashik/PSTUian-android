@@ -24,8 +24,8 @@ class BloodDonationInputUiStateMachine : UiStateMachine<BloodDonationInputUiStat
         }
     }
 
-    fun setInitialContent(title: String) = updateUiState {
-        BloodDonationInputUiState.Content(title = title)
+    fun setInitialContent(title: String, requestId: Int) = updateUiState {
+        BloodDonationInputUiState.Content(title = title, inputData = BloodDonationInputData(requestId = requestId))
     }
 
     fun updateInputData(inputData: BloodDonationInputData) = updateUiState {

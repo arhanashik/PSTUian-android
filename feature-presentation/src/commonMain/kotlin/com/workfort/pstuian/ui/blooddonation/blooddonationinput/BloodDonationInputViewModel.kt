@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.update
 
 class BloodDonationInputViewModel(
     private val donationId: Int?,
+    private val requestId: Int?,
     private val userId: Int,
     private val userType: UserType,
     private val bloodDonationRepository: BloodDonationRepository,
@@ -36,7 +37,7 @@ class BloodDonationInputViewModel(
 
     override fun onUiReady() {
         val title = if (donationId == null) "Create Donation" else "Update Donation"
-        uiStateMachine.setInitialContent(title)
+        uiStateMachine.setInitialContent(title, requestId ?: 0)
 
         donationId?.let { loadData(it) } // Update flow - load data to update
     }

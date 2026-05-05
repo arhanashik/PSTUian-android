@@ -8,5 +8,6 @@ sealed class BloodDonationRequestListUiEvent {
     data class ItemClicked(val item: BloodDonationRequestDisplayData) : BloodDonationRequestListUiEvent()
     data class CallClicked(val phoneNumber: String) : BloodDonationRequestListUiEvent()
     data class MarkAsCompleteClicked(val item: BloodDonationRequestDisplayData) : BloodDonationRequestListUiEvent()
+    data class DonateClicked(val item: BloodDonationRequestDisplayData) : BloodDonationRequestListUiEvent()
     data object LoadMore : BloodDonationRequestListUiEvent()
 }

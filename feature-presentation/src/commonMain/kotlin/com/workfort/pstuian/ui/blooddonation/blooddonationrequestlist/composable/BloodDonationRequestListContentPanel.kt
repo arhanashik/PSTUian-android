@@ -61,6 +61,7 @@ import pstuian.feature_presentation.generated.resources.blood_donation_request_s
 import pstuian.feature_presentation.generated.resources.blood_donation_request_status_complete
 import pstuian.feature_presentation.generated.resources.blood_donation_request_status_pending
 import pstuian.feature_presentation.generated.resources.txt_call
+import pstuian.feature_presentation.generated.resources.txt_donate
 
 @Composable
 internal fun BloodDonationRequestListContentPanel(
@@ -142,6 +143,9 @@ private fun RequestListView(
                 },
                 onClickMarkAsComplete = {
                     onUiEvent(BloodDonationRequestListUiEvent.MarkAsCompleteClicked(it))
+                },
+                onClickDonate = {
+                    onUiEvent(BloodDonationRequestListUiEvent.DonateClicked(it))
                 },
             )
         }
@@ -244,6 +248,7 @@ private fun RequestListItemView(
     onClickItem: (BloodDonationRequestDisplayData) -> Unit,
     onClickCall: (String) -> Unit,
     onClickMarkAsComplete: (BloodDonationRequestDisplayData) -> Unit,
+    onClickDonate: (BloodDonationRequestDisplayData) -> Unit,
 ) {
     val cardShape = RoundedCornerShape(16.dp)
     ElevatedCard(
@@ -288,6 +293,7 @@ private fun RequestListItemView(
                         isCompleted = item.bloodDonationRequest.completed,
                         isOwnItem = item.isOwnItem,
                         onClickMarkAsComplete = { onClickMarkAsComplete(item) },
+                        onClickDonate = { onClickDonate(item) },
                     )
                     Text(
                         text = buildAnnotatedString {
@@ -360,6 +366,7 @@ private fun BloodDonationRequestStatusRow(
     isCompleted: Boolean,
     isOwnItem: Boolean,
     onClickMarkAsComplete: () -> Unit,
+    onClickDonate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val approvalText = stringResource(
@@ -397,6 +404,22 @@ private fun BloodDonationRequestStatusRow(
             containerColor = approvalBg,
             contentColor = approvalFg,
         )
+        if (isConfirmed && !isCompleted) {
+            Surface(
+                modifier = Modifier.clickable(onClick = onClickDonate),
+                shape = RoundedCornerShape(8.dp),
+                color = MaterialTheme.colorScheme.primaryContainer,
+            ) {
+                Text(
+                    text = stringResource(Res.string.txt_donate),
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                    style = TextStyle.label2.copy(
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                )
+            }
+        }
         if (shouldShowMarkAsCompleteAction) {
             Surface(
                 modifier = Modifier.clickable(onClick = onClickMarkAsComplete),

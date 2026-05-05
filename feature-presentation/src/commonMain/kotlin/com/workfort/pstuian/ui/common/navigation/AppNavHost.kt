@@ -197,7 +197,9 @@ fun AppNavHost(
                 composable<AppScreen.BloodDonationInput> { backStackEntry ->
                     val screen: AppScreen.BloodDonationInput = backStackEntry.toRoute()
                     BloodDonationInputScreen(
-                        viewModel = koinViewModel { parametersOf(screen.donationId, screen.userId, screen.userType)}
+                        viewModel = koinViewModel {
+                            parametersOf(screen.donationId, screen.requestId, screen.userId, screen.userType)
+                        }
                     )
                 }
                 composable<AppScreen.Profile>(typeMap = navTypeMap) { backStackEntry ->

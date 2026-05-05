@@ -77,9 +77,10 @@ private val profileScreenStateModule = module {
 
 private val bloodDonationInputModule = module {
     factoryOf(::BloodDonationInputUiStateMachine)
-    factory { (donationId: Int?, userId: Int, userType: UserType) ->
+    factory { (donationId: Int?, requestId: Int?, userId: Int, userType: UserType) ->
         BloodDonationInputViewModel(
             donationId = donationId,
+            requestId = requestId,
             userId = userId,
             userType = userType,
             bloodDonationRepository = get(),

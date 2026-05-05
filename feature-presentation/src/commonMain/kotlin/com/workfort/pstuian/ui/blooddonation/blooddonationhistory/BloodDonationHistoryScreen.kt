@@ -92,10 +92,10 @@ private fun HandleNavigationState(
             when (it) {
                 is BloodDonationHistoryNavigationState.GoBack -> navigator?.goBack()
                 is BloodDonationHistoryNavigationState.GoToCreateBloodDonation -> {
-                    navigator?.navigateToBloodDonationInput(donationId = null, it.userId, it.userType)
+                    navigator?.navigateToBloodDonationInput(donationId = null, requestId = null, it.userId, it.userType)
                 }
                 is BloodDonationHistoryNavigationState.GoToEditBloodDonation -> {
-                    navigator?.navigateToBloodDonationInput(it.donationId, it.userId, it.userType)
+                    navigator?.navigateToBloodDonationInput(it.donationId, requestId = null, it.userId, it.userType)
                 }
             }
             onNavigationHandled()

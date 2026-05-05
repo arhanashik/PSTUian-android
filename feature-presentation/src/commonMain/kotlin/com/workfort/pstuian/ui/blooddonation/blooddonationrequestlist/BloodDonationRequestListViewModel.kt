@@ -47,6 +47,7 @@ class BloodDonationRequestListViewModel(
             is BloodDonationRequestListUiEvent.ItemClicked -> onClickItem(event.item)
             is BloodDonationRequestListUiEvent.CallClicked -> onClickCall(event.phoneNumber)
             is BloodDonationRequestListUiEvent.MarkAsCompleteClicked -> onClickMarkAsComplete(event.item)
+            is BloodDonationRequestListUiEvent.DonateClicked -> onClickDonate(event.item)
             is BloodDonationRequestListUiEvent.LoadMore -> loadDonationRequests(forceRefresh = false)
         }
     }
@@ -90,6 +91,18 @@ class BloodDonationRequestListViewModel(
                         }
                 }
             }
+        }
+    }
+
+    private fun onClickDonate(item: BloodDonationRequestDisplayData) {
+        val userId = sharedScreenData.getCurrentUser()?.userId ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
+        _navigation.update {
+            BloodDonationRequestListNavigationState.BloodDonationCreateScreen(
+                requestId = item.bloodDonationRequest.id,
+                userId = userId,
+                userType = userType,
+            )
         }
     }
 

@@ -120,6 +120,14 @@ private fun HandleNavigationState(
                 BloodDonationRequestListNavigationState.BloodDonationRequestCreateScreen -> {
                     navigator?.navigateTo(AppScreen.BloodDonationRequestCreate)
                 }
+                is BloodDonationRequestListNavigationState.BloodDonationCreateScreen -> {
+                    navigator?.navigateToBloodDonationInput(
+                        donationId = null,
+                        requestId = it.requestId,
+                        it.userId,
+                        it.userType,
+                    )
+                }
             }
             onNavigationHandled()
         }
