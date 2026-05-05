@@ -25,7 +25,7 @@ class ImageUploadUiStateMachine : UiStateMachine<ImageUploadUiState> {
             is ImageUploadUiState.None -> this
             is ImageUploadUiState.Content -> copy(
                 selectedFileUri = uri,
-                uploadState = ImageUploadUiState.Content.ImageUploadState.None
+                uploadState = ImageUploadUiState.Content.ImageUploadState.None,
             )
         }
     }
@@ -34,7 +34,7 @@ class ImageUploadUiStateMachine : UiStateMachine<ImageUploadUiState> {
         when (this) {
             is ImageUploadUiState.None -> this
             is ImageUploadUiState.Content -> copy(
-                uploadState = ImageUploadUiState.Content.ImageUploadState.Uploading(progress)
+                uploadState = ImageUploadUiState.Content.ImageUploadState.Uploading(progress),
             )
         }
     }

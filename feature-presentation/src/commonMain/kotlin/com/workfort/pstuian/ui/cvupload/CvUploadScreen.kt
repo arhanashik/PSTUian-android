@@ -9,15 +9,14 @@ import androidx.compose.runtime.remember
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.cvupload.composable.CvUploadScreenContent
 import com.workfort.pstuian.ui.cvupload.state.CvUploadMessageState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadNavigationState
-import com.workfort.pstuian.ui.cvupload.state.CvUploadUiEvent
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.msg_upload_new_cv
 import pstuian.feature_presentation.generated.resources.txt_dismiss
 import pstuian.feature_presentation.generated.resources.txt_upload
 
@@ -30,7 +29,7 @@ fun CvUploadScreen(viewModel: CvUploadViewModel) {
 
     CvUploadScreenContent(uiState, snackbarHostState, onUiEvent = viewModel::onUiEvent)
 
-    HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled, viewModel::onUiEvent)
+    HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
@@ -39,21 +38,23 @@ private fun HandleMessageState(
     message: CvUploadMessageState?,
     snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
-    onUiEvent: (CvUploadUiEvent) -> Unit,
 ) {
     message?.let {
         when (it) {
             is CvUploadMessageState.ConfirmUpload -> {
                 ShowConfirmationDialog(
-                    message = stringResource(Res.string.msg_upload_new_cv),
+                    message = it.message,
                     confirmButtonText = stringResource(Res.string.txt_upload),
                     dismissButtonText = stringResource(Res.string.txt_dismiss),
                     onConfirm = {
                         onMessageHandled()
-                        onUiEvent(CvUploadUiEvent.ConfirmUpload)
+                        it.onConfirm()
                     },
                     onDismiss = onMessageHandled,
                 )
+            }
+            is CvUploadMessageState.Loading -> {
+                ShowLoaderDialog(cancelable = it.cancelable)
             }
             is CvUploadMessageState.Error -> {
                 ShowErrorDialog(

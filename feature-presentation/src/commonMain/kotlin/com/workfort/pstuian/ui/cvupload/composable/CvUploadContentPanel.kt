@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,22 +44,23 @@ internal fun CvUploadContentPanel(
         verticalArrangement = Arrangement.Center,
     ) {
         CvSelectorView(
-            selectedFileName = uiState.selectedFileName,
+            selectedFileUri = uiState.selectedFileUri,
             onUiEvent = onUiEvent,
         )
-        CvUploadStatusView(uiState)
+        CvUploadStatusView(
+            uploadState = uiState.uploadState,
+            isCvSelected = uiState.selectedFileUri != null,
+        )
     }
 }
 
 @Composable
 private fun CvSelectorView(
-    selectedFileName: String,
+    selectedFileUri: String?,
     onUiEvent: (CvUploadUiEvent) -> Unit,
 ) {
-    val pdfPickerLauncher = rememberPdfPickerLauncher { uri ->
-        // Assuming we can get the filename from URI or it's handled elsewhere
-        // For now, using a placeholder for filename if not provided
-        onUiEvent(CvUploadUiEvent.CvSelected(uri, "selected_file.pdf"))
+    val pdfPickerLauncher = rememberPdfPickerLauncher { fileUri ->
+        onUiEvent(CvUploadUiEvent.CvSelected(fileUri))
     }
 
     Column(
@@ -74,7 +76,7 @@ private fun CvSelectorView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            if (selectedFileName.isEmpty()) {
+            if (selectedFileUri.isNullOrEmpty()) {
                 TitleTextSmall(text = "Select a cv to upload")
                 Text(
                     text = "Format should be PDF and no more than 2Mb in size",
@@ -83,32 +85,28 @@ private fun CvSelectorView(
                 )
             } else {
                 Text(
-                    text = "Selected file: $selectedFileName",
+                    text = "Selected file: $selectedFileUri",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp),
                 )
             }
-            OutlinedButton(
-                onClick = {
-                    pdfPickerLauncher()
-                },
-            ) {
+            OutlinedButton(onClick = { pdfPickerLauncher() }) {
                 Text(text = stringResource(Res.string.txt_browse_files))
             }
         }
         Button(
             modifier = Modifier.size(100.dp),
             onClick = {
-                onUiEvent(CvUploadUiEvent.UploadClicked)
+                selectedFileUri?.let { onUiEvent(CvUploadUiEvent.UploadClicked(selectedFileUri)) }
             },
             colors = ButtonDefaults.buttonColors(
-                contentColor = if (selectedFileName.isEmpty()) {
+                contentColor = if (selectedFileUri.isNullOrEmpty()) {
                     Color.LightGray
                 } else {
                     Color.White
                 }
             ),
-            enabled = selectedFileName.isNotEmpty(),
+            enabled = !selectedFileUri.isNullOrEmpty(),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -126,22 +124,41 @@ private fun CvSelectorView(
 }
 
 @Composable
-private fun CvUploadStatusView(uiState: CvUploadUiState.Content) {
-    when {
-        uiState.progress in 1..99 -> {
+private fun CvUploadStatusView(
+    uploadState: CvUploadUiState.Content.CvUploadState,
+    isCvSelected: Boolean,
+) {
+    when (uploadState) {
+        is CvUploadUiState.Content.CvUploadState.None -> {
+            if (isCvSelected) {
+                Text(
+                    text = "Cv Selected",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+        is CvUploadUiState.Content.CvUploadState.Uploading -> {
             Row(
                 modifier = Modifier.padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                Text(text = "Uploading... ${uiState.progress}%")
+                Text(text = "Uploading... ${uploadState.progress}%")
             }
         }
-        uiState.uploadResult != null -> {
+        is CvUploadUiState.Content.CvUploadState.Success -> {
             Text(
-                text = uiState.uploadResult,
-                color = if (uiState.isUploadSuccess) Color.Green else Color.Red,
+                text = "Upload Successful!",
+                color = Color.Green,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        is CvUploadUiState.Content.CvUploadState.Error -> {
+            Text(
+                text = "Error: ${uploadState.message}",
+                color = Color.Red,
                 modifier = Modifier.padding(16.dp)
             )
         }

@@ -22,4 +22,13 @@ class FileHandlerRepositoryImpl(
             .toNetworkResult()
             .toDomainResult(domainErrorMapper)
     }
+
+    override suspend fun uploadCv(
+        filename: String,
+        fileBytes: ByteArray
+    ): DomainResult<String> {
+        return fileHandlerApiService.uploadPdf(filename, fileBytes)
+            .toNetworkResult()
+            .toDomainResult(domainErrorMapper)
+    }
 }

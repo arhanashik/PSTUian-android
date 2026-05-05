@@ -10,4 +10,9 @@ interface FileHandlerRepository {
         filename: String,
         fileBytes: ByteArray,
     ): DomainResult<String>
+
+    suspend fun uploadCv(
+        filename: String,
+        fileBytes: ByteArray,
+    ): DomainResult<String>
 }

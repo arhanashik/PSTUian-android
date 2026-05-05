@@ -15,6 +15,8 @@ interface StudentRepository {
 
     suspend fun changeBio(authUserId: String, bio: String): DomainResult<Unit>
 
+    suspend fun changeCvUrl(userId: Int, fileUrl: String): DomainResult<Unit>
+
     suspend fun changeAcademicInfo(
         authUserId: String,
         name: String,

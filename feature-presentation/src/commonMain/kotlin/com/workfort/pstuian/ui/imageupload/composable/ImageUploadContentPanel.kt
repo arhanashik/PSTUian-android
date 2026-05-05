@@ -18,18 +18,19 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -107,14 +108,7 @@ private fun ImageSelectorView(
                     modifier = Modifier.size(ImageUploadPreviewSquareSize),
                 )
             }
-            Button(
-                onClick = {
-                    imagePickerLauncher()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Color.White,
-                ),
-            ) {
+            OutlinedButton(onClick = { imagePickerLauncher() }) {
                 Text(text = stringResource(Res.string.txt_browse_gallery))
             }
         }

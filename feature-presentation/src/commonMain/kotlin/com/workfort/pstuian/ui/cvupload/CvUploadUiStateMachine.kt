@@ -20,35 +20,40 @@ class CvUploadUiStateMachine : UiStateMachine<CvUploadUiState> {
         CvUploadUiState.Content()
     }
 
-    fun setSelectedFile(uri: String, fileName: String) = updateUiState {
+    fun setSelectedFile(uri: String) = updateUiState {
         when (this) {
             is CvUploadUiState.Content -> copy(
                 selectedFileUri = uri,
-                selectedFileName = fileName,
-                progress = 0,
-                uploadResult = null,
-                isUploadSuccess = false,
+                uploadState = CvUploadUiState.Content.CvUploadState.None,
             )
             else -> this
         }
     }
 
-    fun updateUploadProgress(progress: Int) = updateUiState {
+    fun onUploadProgress(progress: Int) = updateUiState {
         when (this) {
-            is CvUploadUiState.Content -> copy(progress = progress)
-            else -> this
-        }
-    }
-
-    fun updateUploadResult(isSuccess: Boolean, result: String) = updateUiState {
-        when (this) {
+            is CvUploadUiState.None -> this
             is CvUploadUiState.Content -> copy(
-                selectedFileUri = if (isSuccess) "" else selectedFileUri,
-                selectedFileName = if (isSuccess) "" else selectedFileName,
-                isUploadSuccess = isSuccess,
-                uploadResult = result,
+                uploadState = CvUploadUiState.Content.CvUploadState.Uploading(progress),
             )
-            else -> this
         }
+    }
+
+    fun onUploadResult(isSuccess: Boolean, result: String) = updateUiState {
+        when (this) {
+            is CvUploadUiState.None -> this
+            is CvUploadUiState.Content -> copy(
+                uploadState = if (isSuccess) {
+                    CvUploadUiState.Content.CvUploadState.Success
+                } else {
+                    CvUploadUiState.Content.CvUploadState.Error(result)
+                }
+            )
+        }
+    }
+
+    fun isUploading(): Boolean {
+        val currentContent = _state.value as? CvUploadUiState.Content ?: return false
+        return currentContent.uploadState is CvUploadUiState.Content.CvUploadState.Uploading
     }
 }

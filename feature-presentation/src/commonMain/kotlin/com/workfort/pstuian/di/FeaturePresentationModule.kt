@@ -149,7 +149,9 @@ private val cvUploadModule = module {
         CvUploadViewModel(
             userId = userId,
             userType = userType,
-            authRepository = get(),
+            studentRepository = get(),
+            fileHandlerRepository = get(),
+            uriBytesReader = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )

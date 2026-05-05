@@ -45,7 +45,7 @@ class ImageUploadViewModel(
     fun onUiEvent(event: ImageUploadUiEvent) {
         when (event) {
             is ImageUploadUiEvent.BackClicked -> onClickBack()
-            is ImageUploadUiEvent.ImageSelected -> onImageSelected(event.fileUri)
+            is ImageUploadUiEvent.ImageSelected -> uiStateMachine.onSelectImage(event.fileUri)
             is ImageUploadUiEvent.UploadClicked -> onClickUpload(event.fileUri)
         }
     }
@@ -57,10 +57,6 @@ class ImageUploadViewModel(
     private fun onClickBack() {
         if (uiStateMachine.isUploading()) return
         _navigation.update { ImageUploadNavigationState.GoBack }
-    }
-
-    private fun onImageSelected(uri: String) {
-        uiStateMachine.onSelectImage(uri)
     }
 
     private fun onClickUpload(fileUri: String) {
@@ -78,12 +74,14 @@ class ImageUploadViewModel(
 
             val fileBytes = uriBytesReader.readBytes(fileUri).getOrElse { error ->
                 val msg = error.message ?: "Could not read the selected image"
+                uiStateMachine.onUploadResult(isSuccess = false, result = msg)
                 _message.update { ImageUploadMessageState.Error(msg) }
                 return@launchOnMain
             }
 
             val jpegBytes = imageToJpegEncoder.encodeToJpeg(fileBytes).getOrElse { error ->
                 val msg = error.message ?: "Could not convert image to JPEG"
+                uiStateMachine.onUploadResult(isSuccess = false, result = msg)
                 _message.update { ImageUploadMessageState.Error(msg) }
                 return@launchOnMain
             }
@@ -93,10 +91,12 @@ class ImageUploadViewModel(
 
             fileHandlerRepository.uploadImage(userType, filename, jpegBytes).onSuccess { imageUrl ->
                 uiStateMachine.onUploadProgress(100)
+                uiStateMachine.onUploadResult(isSuccess = true, result = "Image uploaded successfully!")
                 _message.update { ImageUploadMessageState.Snackbar("Image uploaded successfully!") }
                 updateImageUrl(imageUrl)
             }.onFailure {
                 val msg = it.message ?: "Upload failed. Please try again."
+                uiStateMachine.onUploadResult(isSuccess = false, result = msg)
                 _message.update { ImageUploadMessageState.Error(msg) }
             }
         }

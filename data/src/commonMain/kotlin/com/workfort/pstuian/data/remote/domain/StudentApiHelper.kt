@@ -15,6 +15,8 @@ interface StudentApiHelper {
 
     suspend fun changeBio(authUserId: String, bio: String): NetworkResult<Unit>
 
+    suspend fun changeCvUrl(fileUrl: String): NetworkResult<Unit>
+
     suspend fun changeAcademicInfo(
         authUserId: String,
         name: String,

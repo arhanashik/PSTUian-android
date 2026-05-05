@@ -145,6 +145,7 @@ object NetworkConst {
                 const val GET = "${STUDENT_API_PATH}get"
                 const val GET_BY_EMAIL = "${STUDENT_API_PATH}getByEmail"
                 const val CHANGE_PROFILE_IMAGE = "${STUDENT_API_PATH}updateImageUrl"
+                const val CHANGE_CV_URL = "${STUDENT_API_PATH}updateCv"
                 const val UPDATE_NAME = "${STUDENT_API_PATH}updateName"
                 const val UPDATE_BIO= "${STUDENT_API_PATH}updateBio"
                 const val UPDATE_ACADEMIC_INFO= "${STUDENT_API_PATH}updateAcademicInfo"

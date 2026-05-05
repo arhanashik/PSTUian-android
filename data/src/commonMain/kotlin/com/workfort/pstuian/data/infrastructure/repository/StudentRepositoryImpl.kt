@@ -56,6 +56,15 @@ class StudentRepositoryImpl(
         return helper.changeBio(authUserId, bio).toDomainResult(domainErrorMapper)
     }
 
+    override suspend fun changeCvUrl(
+        userId: Int,
+        fileUrl: String
+    ): DomainResult<Unit> {
+        return helper.changeCvUrl(fileUrl)
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { cache.removeAll { it.userId == userId } }
+    }
+
     override suspend fun changeAcademicInfo(
         authUserId: String,
         name: String,

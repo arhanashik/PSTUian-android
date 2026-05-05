@@ -53,6 +53,15 @@ class StudentApiService(private val client: HttpClient) {
         ).body()
     }
 
+    suspend fun changeCvUrl(fileUrl: String): ApiResponse<Unit> {
+        return client.submitForm(
+            url = NetworkConst.Remote.Api.Student.CHANGE_CV_URL,
+            formParameters = parameters {
+                append(NetworkConst.Params.CV_LINK, fileUrl)
+            }
+        ).body()
+    }
+
     suspend fun changeAcademicInfo(
         authUserId: String,
         name: String,

@@ -42,6 +42,14 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         return service.changeBio(authUserId, bio).toNetworkResult()
     }
 
+    override suspend fun changeCvUrl(fileUrl: String): NetworkResult<Unit> {
+        return runCatching {
+            service.changeCvUrl(fileUrl).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
+    }
+
     override suspend fun changeAcademicInfo(
         authUserId: String,
         name: String,

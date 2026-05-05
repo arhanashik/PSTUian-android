@@ -4,7 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.featuredomain.repository.AuthRepository
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
+import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
+import com.workfort.pstuian.featuredomain.repository.StudentRepository
+import com.workfort.pstuian.platform.UriBytesReader
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.cvupload.state.CvUploadMessageState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadNavigationState
@@ -17,7 +21,9 @@ import kotlinx.coroutines.flow.update
 class CvUploadViewModel(
     private val userId: Int,
     private val userType: UserType,
-    private val authRepository: AuthRepository,
+    private val studentRepository: StudentRepository,
+    private val fileHandlerRepository: FileHandlerRepository,
+    private val uriBytesReader: UriBytesReader,
     private val uiStateMachine: CvUploadUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<CvUploadUiState>(uiStateMachine) {
@@ -35,11 +41,8 @@ class CvUploadViewModel(
     fun onUiEvent(event: CvUploadUiEvent) {
         when (event) {
             is CvUploadUiEvent.BackClicked -> onClickBack()
-            is CvUploadUiEvent.CvSelected -> onSelectCv(event.uri, event.fileName)
-            is CvUploadUiEvent.UploadClicked -> onClickUpload()
-            is CvUploadUiEvent.ConfirmUpload -> uploadCv()
-            is CvUploadUiEvent.UploadProgress -> onUploadProgress(event.progress)
-            is CvUploadUiEvent.UploadResult -> onUploadResult(event.isSuccess, event.result)
+            is CvUploadUiEvent.CvSelected -> uiStateMachine.setSelectedFile(event.fileUri)
+            is CvUploadUiEvent.UploadClicked -> onClickUpload(event.fileUri)
         }
     }
 
@@ -51,41 +54,55 @@ class CvUploadViewModel(
         _navigation.update { CvUploadNavigationState.GoBack }
     }
 
-    private fun onSelectCv(uri: String, fileName: String) {
-        uiStateMachine.setSelectedFile(uri, fileName)
-    }
-
-    private fun onClickUpload() {
-        _message.update { CvUploadMessageState.ConfirmUpload }
-    }
-
-    private fun uploadCv() {
-        val state = uiState.value as? CvUploadUiState.Content ?: return
-        val uri = state.selectedFileUri
-
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-//            authRepository.uploadCv(
-//                userId,
-//                userType,
-//                uri,
-//                onProgress = { onUiEvent(CvUploadUiEvent.UploadProgress(it)) },
-//                onResult = { isSuccess, result ->
-//                    onUiEvent(CvUploadUiEvent.UploadResult(isSuccess, result))
-//                }
-//            )
+    private fun onClickUpload(fileUri: String) {
+        if (uiStateMachine.isUploading()) return
+        _message.update {
+            CvUploadMessageState.ConfirmUpload("Are you surely want to upload the cv?") {
+                uploadCv(fileUri)
+            }
         }
     }
 
-    private fun onUploadProgress(progress: Int) {
-        uiStateMachine.updateUploadProgress(progress)
+    private fun uploadCv(fileUri: String) {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            uiStateMachine.onUploadProgress(0)
+
+            val fileBytes = uriBytesReader.readBytes(fileUri).getOrElse { error ->
+                val msg = error.message ?: "Could not read the selected file"
+                uiStateMachine.onUploadResult(isSuccess = false, result = msg)
+                _message.update { CvUploadMessageState.Error(msg) }
+                return@launchOnMain
+            }
+
+            uiStateMachine.onUploadProgress(50)
+            val filename = "cv_${userType.type}_${userId}.pdf"
+
+            fileHandlerRepository.uploadCv(filename, fileBytes).onSuccess { fileUrl ->
+                uiStateMachine.onUploadProgress(100)
+                uiStateMachine.onUploadResult(isSuccess = true, result = "Image uploaded successfully!")
+                _message.update { CvUploadMessageState.Snackbar("Image uploaded successfully!") }
+                updateFileUrl(fileUrl)
+            }.onFailure {
+                val msg = it.message ?: "Upload failed. Please try again."
+                uiStateMachine.onUploadResult(isSuccess = false, result = msg)
+                _message.update { CvUploadMessageState.Error(msg) }
+            }
+        }
     }
 
-    private fun onUploadResult(isSuccess: Boolean, result: String) {
-        uiStateMachine.updateUploadResult(isSuccess, result)
-        if (isSuccess) {
-            _message.update { CvUploadMessageState.Snackbar(result) }
-        } else {
-            _message.update { CvUploadMessageState.Error(result) }
+    private fun updateFileUrl(fileUrl: String) {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            _message.update { CvUploadMessageState.Loading() }
+            when (userType) {
+                UserType.STUDENT -> studentRepository.changeCvUrl(userId, fileUrl)
+                else -> return@launchOnMain
+            }.onSuccess {
+                _message.update { CvUploadMessageState.Snackbar("Profile photo changed successfully!") }
+                _navigation.update { CvUploadNavigationState.GoBack }
+            }.onFailure {
+                val msg = it.message ?: "Failed. Please try again."
+                _message.update { CvUploadMessageState.Error(msg) }
+            }
         }
     }
 }
