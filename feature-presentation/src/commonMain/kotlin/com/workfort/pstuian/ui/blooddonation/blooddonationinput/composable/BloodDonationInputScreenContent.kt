@@ -21,7 +21,7 @@ internal fun BloodDonationInputScreenContent(
     AppScaffold(
         topBar = {
             AppBar(
-                title = "Create donation",
+                title = uiState.title,
                 navigation = {
                     NavigationButton { onUiEvent(BloodDonationInputUiEvent.BackClicked) }
                 },

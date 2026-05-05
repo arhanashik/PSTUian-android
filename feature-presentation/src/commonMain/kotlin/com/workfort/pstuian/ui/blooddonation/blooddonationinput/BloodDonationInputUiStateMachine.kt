@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.update
 
 class BloodDonationInputUiStateMachine : UiStateMachine<BloodDonationInputUiState> {
 
-    private val _state = MutableStateFlow<BloodDonationInputUiState>(BloodDonationInputUiState.None)
+    private val _state = MutableStateFlow<BloodDonationInputUiState>(BloodDonationInputUiState.None())
     override val uiState: StateFlow<BloodDonationInputUiState> = _state.asStateFlow()
 
     private fun updateUiState(
@@ -23,8 +23,8 @@ class BloodDonationInputUiStateMachine : UiStateMachine<BloodDonationInputUiStat
         }
     }
 
-    fun setInitialContent() = updateUiState {
-        BloodDonationInputUiState.Content()
+    fun setInitialContent(title: String) = updateUiState {
+        BloodDonationInputUiState.Content(title = title)
     }
 
     fun updateRequestId(requestId: Int) = updateUiState {

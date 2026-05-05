@@ -31,7 +31,8 @@ class BloodDonationInputViewModel(
     val navigation: StateFlow<BloodDonationInputNavigationState?> = _navigation
 
     override fun onUiReady() {
-        uiStateMachine.setInitialContent()
+        val title = if (donationId == null) "Create Donation" else "Update Donation"
+        uiStateMachine.setInitialContent(title)
     }
 
     fun onUiEvent(event: BloodDonationInputUiEvent) {
