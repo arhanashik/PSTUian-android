@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.blooddonationhistory.state
+package com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state
 
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 

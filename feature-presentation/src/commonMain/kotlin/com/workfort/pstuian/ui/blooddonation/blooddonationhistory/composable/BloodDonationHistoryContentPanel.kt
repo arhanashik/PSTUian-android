@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.blooddonationhistory.composable
+package com.workfort.pstuian.ui.blooddonation.blooddonationhistory.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,8 +41,8 @@ import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.LabelText
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.common.composable.isLastItemVisible
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiEvent
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiState
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_delete

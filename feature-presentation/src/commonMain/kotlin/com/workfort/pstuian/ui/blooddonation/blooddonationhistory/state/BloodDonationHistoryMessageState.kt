@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.blooddonationhistory.state
+package com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state
 
 sealed interface BloodDonationHistoryMessageState {
     data class Loading(val cancelable: Boolean) : BloodDonationHistoryMessageState

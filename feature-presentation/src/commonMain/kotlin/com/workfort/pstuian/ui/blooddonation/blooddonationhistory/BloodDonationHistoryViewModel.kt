@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.blooddonationhistory
+package com.workfort.pstuian.ui.blooddonation.blooddonationhistory
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
@@ -7,10 +7,10 @@ import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryMessageState
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryNavigationState
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiEvent
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiState
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryMessageState
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryNavigationState
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

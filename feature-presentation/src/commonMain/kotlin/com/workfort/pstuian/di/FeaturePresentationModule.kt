@@ -34,8 +34,8 @@ import com.workfort.pstuian.ui.home.HomeUiStateMachine
 import com.workfort.pstuian.ui.home.HomeViewModel
 import com.workfort.pstuian.ui.imageupload.ImageUploadUiStateMachine
 import com.workfort.pstuian.ui.imageupload.ImageUploadViewModel
-import com.workfort.pstuian.ui.blooddonationhistory.BloodDonationHistoryUiStateMachine
-import com.workfort.pstuian.ui.blooddonationhistory.BloodDonationHistoryViewModel
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryUiStateMachine
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryViewModel
 import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryUiStateMachine
 import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryViewModel
 import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper

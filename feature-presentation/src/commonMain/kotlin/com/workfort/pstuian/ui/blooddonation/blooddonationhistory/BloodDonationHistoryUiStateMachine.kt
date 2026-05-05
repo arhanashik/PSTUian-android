@@ -1,8 +1,8 @@
-package com.workfort.pstuian.ui.blooddonationhistory
+package com.workfort.pstuian.ui.blooddonation.blooddonationhistory
 
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiState
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

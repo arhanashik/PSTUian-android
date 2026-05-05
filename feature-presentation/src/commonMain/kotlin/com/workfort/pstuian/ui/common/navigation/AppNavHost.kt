@@ -31,7 +31,7 @@ import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
 import com.workfort.pstuian.ui.imageupload.ImageUploadScreen
 import com.workfort.pstuian.ui.locationpicker.LocationPickerScreen
-import com.workfort.pstuian.ui.blooddonationhistory.BloodDonationHistoryScreen
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryScreen
 import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryScreen
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileScreen
 import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileScreen

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.blooddonationhistory.state
+package com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state
 
 sealed interface BloodDonationHistoryNavigationState {
     data object GoBack : BloodDonationHistoryNavigationState

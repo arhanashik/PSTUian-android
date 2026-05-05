@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.blooddonationhistory
+package com.workfort.pstuian.ui.blooddonation.blooddonationhistory
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -27,11 +27,11 @@ import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
-import com.workfort.pstuian.ui.blooddonationhistory.composable.BloodDonationHistoryContentPanel
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryMessageState
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryNavigationState
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiEvent
-import com.workfort.pstuian.ui.blooddonationhistory.state.BloodDonationHistoryUiState
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.composable.BloodDonationHistoryContentPanel
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryMessageState
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryNavigationState
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
