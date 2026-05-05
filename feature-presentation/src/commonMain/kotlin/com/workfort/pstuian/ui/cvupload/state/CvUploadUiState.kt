@@ -5,6 +5,7 @@ sealed interface CvUploadUiState {
 
     data class Content(
         val selectedFileUri: String? = null,
+        val selectedFileName: String = "",
         val uploadState: CvUploadState = CvUploadState.None,
     ) : CvUploadUiState {
         sealed interface CvUploadState {

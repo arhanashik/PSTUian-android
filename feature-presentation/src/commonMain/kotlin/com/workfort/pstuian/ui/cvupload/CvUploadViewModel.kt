@@ -8,12 +8,12 @@ import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
-import com.workfort.pstuian.platform.UriBytesReader
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.cvupload.state.CvUploadMessageState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadNavigationState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiEvent
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiState
+import com.workfort.pstuian.util.FileUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -23,7 +23,7 @@ class CvUploadViewModel(
     private val userType: UserType,
     private val studentRepository: StudentRepository,
     private val fileHandlerRepository: FileHandlerRepository,
-    private val uriBytesReader: UriBytesReader,
+    private val fileUtil: FileUtil,
     private val uiStateMachine: CvUploadUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<CvUploadUiState>(uiStateMachine) {
@@ -41,7 +41,7 @@ class CvUploadViewModel(
     fun onUiEvent(event: CvUploadUiEvent) {
         when (event) {
             is CvUploadUiEvent.BackClicked -> onClickBack()
-            is CvUploadUiEvent.CvSelected -> uiStateMachine.setSelectedFile(event.fileUri)
+            is CvUploadUiEvent.CvSelected -> onSelectCv(event.fileUri)
             is CvUploadUiEvent.UploadClicked -> onClickUpload(event.fileUri)
         }
     }
@@ -51,7 +51,15 @@ class CvUploadViewModel(
     fun onNavigationHandled() = _navigation.update { null }
 
     private fun onClickBack() {
+        if (uiStateMachine.isUploading()) return
         _navigation.update { CvUploadNavigationState.GoBack }
+    }
+
+    private fun onSelectCv(fileUri: String) {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            val fileName = fileUtil.getFileName(fileUri).getOrElse { FileUtil.FALLBACK_DOCUMENT_NAME }
+            uiStateMachine.setSelectedFile(fileUri, fileName)
+        }
     }
 
     private fun onClickUpload(fileUri: String) {
@@ -67,7 +75,7 @@ class CvUploadViewModel(
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.onUploadProgress(0)
 
-            val fileBytes = uriBytesReader.readBytes(fileUri).getOrElse { error ->
+            val fileBytes = fileUtil.readBytes(fileUri).getOrElse { error ->
                 val msg = error.message ?: "Could not read the selected file"
                 uiStateMachine.onUploadResult(isSuccess = false, result = msg)
                 _message.update { CvUploadMessageState.Error(msg) }
@@ -75,7 +83,7 @@ class CvUploadViewModel(
             }
 
             uiStateMachine.onUploadProgress(50)
-            val filename = "cv_${userType.type}_${userId}.pdf"
+            val filename = "cv_${userType.type}_$userId.pdf"
 
             fileHandlerRepository.uploadCv(filename, fileBytes).onSuccess { fileUrl ->
                 uiStateMachine.onUploadProgress(100)

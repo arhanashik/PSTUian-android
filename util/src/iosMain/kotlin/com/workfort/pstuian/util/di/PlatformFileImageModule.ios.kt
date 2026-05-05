@@ -1,7 +1,7 @@
-package com.workfort.pstuian.di
+package com.workfort.pstuian.util.di
 
-import com.workfort.pstuian.platform.ImageToJpegEncoder
-import com.workfort.pstuian.platform.UriBytesReader
+import com.workfort.pstuian.util.FileUtil
+import com.workfort.pstuian.util.ImageUtil
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -29,7 +29,7 @@ import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
 
-private class IosUriBytesReader : UriBytesReader {
+private class IosFileUtil : FileUtil {
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     override suspend fun readBytes(uri: String): Result<ByteArray> = withContext(Dispatchers.Default) {
         runCatching {
@@ -39,21 +39,32 @@ private class IosUriBytesReader : UriBytesReader {
             data.toByteArray()
         }
     }
+
+    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+    override suspend fun getFileName(uri: String): Result<String> = withContext(Dispatchers.Default) {
+        runCatching {
+            val nsUrl = NSURL.URLWithString(uri) ?: error("Invalid URI")
+            val name = nsUrl.path
+                ?.substringAfterLast('/')
+                ?.takeIf { it.isNotBlank() }
+            name ?: FileUtil.FALLBACK_DOCUMENT_NAME
+        }
+    }
 }
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-private class IosImageToJpegEncoder : ImageToJpegEncoder {
+private class IosImageUtil : ImageUtil {
 
     override suspend fun encodeToJpeg(imageBytes: ByteArray, quality: Int): Result<ByteArray> =
         withContext(Dispatchers.Default) {
-            val startQuality = ImageToJpegEncoder.clampQuality(quality)
+            val startQuality = ImageUtil.clampQuality(quality)
             runCatching {
                 val inputData = imageBytes.toNSData()
                 val loaded = UIImage.imageWithData(inputData)
                     ?: error("Unsupported or corrupt image")
 
                 val fitted =
-                    loaded.scaledToLongEdgePx(ImageToJpegEncoder.UPLOAD_MAX_DIMENSION_PX.toDouble())
+                    loaded.scaledToLongEdgePx(ImageUtil.UPLOAD_MAX_DIMENSION_PX.toDouble())
 
                 jpegShrinkUntilUnderCap(fitted, startQuality)
             }
@@ -112,25 +123,25 @@ private class IosImageToJpegEncoder : ImageToJpegEncoder {
         var candidate = seed
         while (true) {
             var q = min(startQuality, 100)
-            while (q >= ImageToJpegEncoder.MIN_JPEG_QUALITY_FOR_SIZE_CAP) {
+            while (q >= ImageUtil.MIN_JPEG_QUALITY_FOR_SIZE_CAP) {
                 val jpegData =
                     UIImageJPEGRepresentation(candidate, q / 100.0)
                         ?: error("Could not compress image as JPEG")
 
                 val blob = jpegData.toByteArray()
-                if (blob.size <= ImageToJpegEncoder.UPLOAD_MAX_JPEG_BYTES) {
+                if (blob.size <= ImageUtil.UPLOAD_MAX_JPEG_BYTES) {
                     return blob
                 }
-                q -= ImageToJpegEncoder.JPEG_QUALITY_STEP
+                q -= ImageUtil.JPEG_QUALITY_STEP
             }
 
             val (pw, ph) = candidate.pixelSizePx()
             val longEdgePx = max(pw, ph)
-            check(longEdgePx >= ImageToJpegEncoder.MIN_DIMENSION_FOR_RETRY_PX.toDouble()) {
+            check(longEdgePx >= ImageUtil.MIN_DIMENSION_FOR_RETRY_PX.toDouble()) {
                 "Photo could not be reduced under 500KB while keeping usable quality."
             }
 
-            candidate = candidate.scaledUniformly(ImageToJpegEncoder.SIZE_CAP_SCALE_FACTOR)
+            candidate = candidate.scaledUniformly(ImageUtil.SIZE_CAP_SCALE_FACTOR)
         }
     }
 }
@@ -158,7 +169,7 @@ private fun NSData.toByteArray(): ByteArray {
     }
 }
 
-actual val platformPresentationExtrasModule: Module = module {
-    single<UriBytesReader> { IosUriBytesReader() }
-    single<ImageToJpegEncoder> { IosImageToJpegEncoder() }
+actual val platformFileImageModule: Module = module {
+    single<FileUtil> { IosFileUtil() }
+    single<ImageUtil> { IosImageUtil() }
 }

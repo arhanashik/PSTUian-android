@@ -1,13 +1,14 @@
-package com.workfort.pstuian.di
+package com.workfort.pstuian.util.di
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
+import android.provider.OpenableColumns
 import androidx.core.net.toUri
-import com.workfort.pstuian.platform.ImageToJpegEncoder
-import com.workfort.pstuian.platform.UriBytesReader
+import com.workfort.pstuian.util.FileUtil
+import com.workfort.pstuian.util.ImageUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.max
@@ -18,10 +19,11 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import androidx.core.graphics.scale
 
-private class AndroidUriBytesReader(
+private class AndroidFileUtil(
     private val context: Context,
-) : UriBytesReader {
+) : FileUtil {
 
     override suspend fun readBytes(uri: String): Result<ByteArray> = withContext(Dispatchers.IO) {
         runCatching {
@@ -30,11 +32,48 @@ private class AndroidUriBytesReader(
                 ?: error("Could not open the selected image")
         }
     }
+
+    override suspend fun getFileName(uri: String): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val parsed = uri.toUri()
+            when (parsed.scheme?.lowercase()) {
+                "content" -> {
+                    var displayName: String? = null
+                    context.contentResolver.query(
+                        parsed,
+                        arrayOf(OpenableColumns.DISPLAY_NAME),
+                        null,
+                        null,
+                        null,
+                    )?.use { cursor ->
+                        if (cursor.moveToFirst()) {
+                            val idx = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                            if (idx >= 0 && !cursor.isNull(idx)) {
+                                displayName = cursor.getString(idx)
+                            }
+                        }
+                    }
+                    displayName?.takeIf { it.isNotBlank() }
+                        ?: parsed.lastPathSegment?.takeIf { it.isNotBlank() }
+                        ?: FileUtil.FALLBACK_DOCUMENT_NAME
+                }
+
+                "file" ->
+                    parsed.path?.let { File(it).name }?.takeIf { it.isNotBlank() }
+                        ?: parsed.lastPathSegment?.takeIf { it.isNotBlank() }
+                        ?: FileUtil.FALLBACK_DOCUMENT_NAME
+
+                else ->
+                    parsed.lastPathSegment?.takeIf { it.isNotBlank() }
+                        ?: FileUtil.FALLBACK_DOCUMENT_NAME
+            }
+        }
+    }
 }
 
-private class AndroidImageToJpegEncoder(
+private class AndroidImageUtil(
     private val context: Context,
-) : ImageToJpegEncoder {
+) : ImageUtil {
 
     override suspend fun encodeToJpeg(imageBytes: ByteArray, quality: Int): Result<ByteArray> =
         withContext(Dispatchers.IO) {
@@ -43,10 +82,10 @@ private class AndroidImageToJpegEncoder(
                     decodeBitmap(context, imageBytes) ?: error("Unsupported or corrupt image")
 
                 val working =
-                    decoded.scaledToMaxDimension(ImageToJpegEncoder.UPLOAD_MAX_DIMENSION_PX)
+                    decoded.scaledToMaxDimension(ImageUtil.UPLOAD_MAX_DIMENSION_PX)
                 shrinkAndEncodeUntilUnderByteCap(
                     bitmap = working,
-                    startQuality = ImageToJpegEncoder.clampQuality(quality),
+                    startQuality = ImageUtil.clampQuality(quality),
                 )
             }
         }
@@ -57,22 +96,22 @@ private class AndroidImageToJpegEncoder(
         try {
             while (true) {
                 var q = min(startQuality, 100)
-                while (q >= ImageToJpegEncoder.MIN_JPEG_QUALITY_FOR_SIZE_CAP) {
+                while (q >= ImageUtil.MIN_JPEG_QUALITY_FOR_SIZE_CAP) {
                     val jpeg = current.compressToJpeg(q)
-                    if (jpeg.size <= ImageToJpegEncoder.UPLOAD_MAX_JPEG_BYTES) {
+                    if (jpeg.size <= ImageUtil.UPLOAD_MAX_JPEG_BYTES) {
                         current.recycle()
                         return jpeg
                     }
-                    q -= ImageToJpegEncoder.JPEG_QUALITY_STEP
+                    q -= ImageUtil.JPEG_QUALITY_STEP
                 }
 
                 val longEdge = max(current.width, current.height)
 
-                check(longEdge >= ImageToJpegEncoder.MIN_DIMENSION_FOR_RETRY_PX) {
+                check(longEdge >= ImageUtil.MIN_DIMENSION_FOR_RETRY_PX) {
                     "Photo could not be reduced under 500KB while keeping usable quality."
                 }
 
-                val scaled = current.scaledUniformly(ImageToJpegEncoder.SIZE_CAP_SCALE_FACTOR)
+                val scaled = current.scaledUniformly(ImageUtil.SIZE_CAP_SCALE_FACTOR)
                 current.recycle()
                 current = scaled
             }
@@ -92,8 +131,7 @@ private class AndroidImageToJpegEncoder(
             "Could not scale image further."
         }
 
-        return Bitmap.createScaledBitmap(this, nw, nh, true)
-            ?: error("Bitmap.createScaledBitmap failed")
+        return this.scale(nw, nh) ?: error("Bitmap.createScaledBitmap failed")
     }
 
     private fun decodeBitmap(ctx: Context, bytes: ByteArray): Bitmap? {
@@ -121,7 +159,7 @@ private class AndroidImageToJpegEncoder(
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
 
         var sampleSize = 1
-        val interim = ImageToJpegEncoder.INTERIM_DECODE_MAX_EDGE_PX
+        val interim = ImageUtil.INTERIM_DECODE_MAX_EDGE_PX
         while (bounds.outWidth / sampleSize > interim || bounds.outHeight / sampleSize > interim) {
             sampleSize *= 2
         }
@@ -145,8 +183,7 @@ private fun Bitmap.scaledToMaxDimension(maxPx: Int): Bitmap {
     val ratio = maxPx / longest
     val nw = max(1, (width.toDouble() * ratio).roundToInt())
     val nh = max(1, (height.toDouble() * ratio).roundToInt())
-    val out = Bitmap.createScaledBitmap(this, nw, nh, true)
-        ?: error("Bitmap.createScaledBitmap failed")
+    val out = this.scale(nw, nh) ?: error("Bitmap.createScaledBitmap failed")
     if (this !== out) recycle()
     return out
 }
@@ -159,7 +196,7 @@ private fun Bitmap.compressToJpeg(quality: Int): ByteArray {
     }
 }
 
-actual val platformPresentationExtrasModule: Module = module {
-    single<UriBytesReader> { AndroidUriBytesReader(androidContext()) }
-    single<ImageToJpegEncoder> { AndroidImageToJpegEncoder(androidContext()) }
+actual val platformFileImageModule: Module = module {
+    single<FileUtil> { AndroidFileUtil(androidContext()) }
+    single<ImageUtil> { AndroidImageUtil(androidContext()) }
 }

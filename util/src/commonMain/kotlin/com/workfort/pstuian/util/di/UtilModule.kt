@@ -15,4 +15,4 @@ private val utils = module {
     singleOf(::DeepLinkParser)
 }
 
-val utilModule = listOf(utils)
+val utilModule = listOf(utils, platformFileImageModule)

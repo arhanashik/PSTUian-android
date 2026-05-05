@@ -20,10 +20,11 @@ class CvUploadUiStateMachine : UiStateMachine<CvUploadUiState> {
         CvUploadUiState.Content()
     }
 
-    fun setSelectedFile(uri: String) = updateUiState {
+    fun setSelectedFile(fileUri: String, fileName: String) = updateUiState {
         when (this) {
             is CvUploadUiState.Content -> copy(
-                selectedFileUri = uri,
+                selectedFileUri = fileUri,
+                selectedFileName = fileName,
                 uploadState = CvUploadUiState.Content.CvUploadState.None,
             )
             else -> this
@@ -56,4 +57,7 @@ class CvUploadUiStateMachine : UiStateMachine<CvUploadUiState> {
         val currentContent = _state.value as? CvUploadUiState.Content ?: return false
         return currentContent.uploadState is CvUploadUiState.Content.CvUploadState.Uploading
     }
+
+    fun selectedFileDisplayName(): String =
+        (_state.value as? CvUploadUiState.Content)?.selectedFileName.orEmpty()
 }

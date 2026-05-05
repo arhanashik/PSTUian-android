@@ -9,8 +9,8 @@ import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
-import com.workfort.pstuian.platform.ImageToJpegEncoder
-import com.workfort.pstuian.platform.UriBytesReader
+import com.workfort.pstuian.util.FileUtil
+import com.workfort.pstuian.util.ImageUtil
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadMessageState
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadNavigationState
@@ -26,8 +26,8 @@ class ImageUploadViewModel(
     private val fileHandlerRepository: FileHandlerRepository,
     private val studentRepository: StudentRepository,
     private val teacherRepository: TeacherRepository,
-    private val uriBytesReader: UriBytesReader,
-    private val imageToJpegEncoder: ImageToJpegEncoder,
+    private val fileUtil: FileUtil,
+    private val imageUtil: ImageUtil,
     private val uiStateMachine: ImageUploadUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<ImageUploadUiState>(uiStateMachine) {
@@ -72,14 +72,14 @@ class ImageUploadViewModel(
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.onUploadProgress(0)
 
-            val fileBytes = uriBytesReader.readBytes(fileUri).getOrElse { error ->
+            val fileBytes = fileUtil.readBytes(fileUri).getOrElse { error ->
                 val msg = error.message ?: "Could not read the selected image"
                 uiStateMachine.onUploadResult(isSuccess = false, result = msg)
                 _message.update { ImageUploadMessageState.Error(msg) }
                 return@launchOnMain
             }
 
-            val jpegBytes = imageToJpegEncoder.encodeToJpeg(fileBytes).getOrElse { error ->
+            val jpegBytes = imageUtil.encodeToJpeg(fileBytes).getOrElse { error ->
                 val msg = error.message ?: "Could not convert image to JPEG"
                 uiStateMachine.onUploadResult(isSuccess = false, result = msg)
                 _message.update { ImageUploadMessageState.Error(msg) }

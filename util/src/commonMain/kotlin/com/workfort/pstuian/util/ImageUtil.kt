@@ -1,10 +1,10 @@
-package com.workfort.pstuian.platform
+package com.workfort.pstuian.util
 
 /**
  * Decodes image bytes (PNG, JPEG, WebP, GIF, HEIC where the platform supports it), fits long edge to
  * [UPLOAD_MAX_DIMENSION_PX], and re-encodes as JPEG at most [UPLOAD_MAX_JPEG_BYTES] when possible.
  */
-interface ImageToJpegEncoder {
+interface ImageUtil {
 
     /**
      * @param quality Preferred starting JPEG quality 1–100; implementation may reduce quality and/or dimensions

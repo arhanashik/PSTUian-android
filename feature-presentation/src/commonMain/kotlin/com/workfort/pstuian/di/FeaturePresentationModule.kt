@@ -122,8 +122,8 @@ private val imageUploadModule = module {
             fileHandlerRepository = get(),
             studentRepository = get(),
             teacherRepository = get(),
-            uriBytesReader = get(),
-            imageToJpegEncoder = get(),
+            fileUtil = get(),
+            imageUtil = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
@@ -151,7 +151,7 @@ private val cvUploadModule = module {
             userType = userType,
             studentRepository = get(),
             fileHandlerRepository = get(),
-            uriBytesReader = get(),
+            fileUtil = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )
@@ -337,7 +337,6 @@ private val teacherProfileEditModule = module {
 
 val featurePresentationModule = listOf(
     appCommonModule,
-    platformPresentationExtrasModule,
     profileScreenStateModule,
     bloodDonationCreateModule,
     bloodDonationRequestCreateModule,

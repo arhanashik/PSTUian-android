@@ -45,6 +45,7 @@ internal fun CvUploadContentPanel(
     ) {
         CvSelectorView(
             selectedFileUri = uiState.selectedFileUri,
+            selectedFileName = uiState.selectedFileName,
             onUiEvent = onUiEvent,
         )
         CvUploadStatusView(
@@ -57,6 +58,7 @@ internal fun CvUploadContentPanel(
 @Composable
 private fun CvSelectorView(
     selectedFileUri: String?,
+    selectedFileName: String,
     onUiEvent: (CvUploadUiEvent) -> Unit,
 ) {
     val pdfPickerLauncher = rememberPdfPickerLauncher { fileUri ->
@@ -85,7 +87,7 @@ private fun CvSelectorView(
                 )
             } else {
                 Text(
-                    text = "Selected file: $selectedFileUri",
+                    text = "Selected file: $selectedFileName",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp),
                 )
