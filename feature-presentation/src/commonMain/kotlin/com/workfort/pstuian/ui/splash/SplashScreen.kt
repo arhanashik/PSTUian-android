@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import coil3.compose.LocalPlatformContext
+import com.workfort.pstuian.ui.common.composable.clearSingletonCoilImageCaches
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.userTypeListSelectionOptions
 import com.workfort.pstuian.model.AppLaunchDeepLinkController
@@ -27,6 +29,11 @@ fun SplashScreen(viewModel: SplashViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
+    val platformContext = LocalPlatformContext.current
+
+    LaunchedEffect(Unit) {
+        clearSingletonCoilImageCaches(platformContext)
+    }
 
     SplashContentPanel(uiState, viewModel::onUiEvent)
 
