@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.checkinlist
+package com.workfort.pstuian.ui.checkin
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
@@ -9,9 +9,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
-import com.workfort.pstuian.ui.checkinlist.composable.CheckInListScreenContent
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListMessageState
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListNavigationState
+import com.workfort.pstuian.ui.checkin.composable.CheckInScreenContent
+import com.workfort.pstuian.ui.checkin.state.CheckInMessageState
+import com.workfort.pstuian.ui.checkin.state.CheckInNavigationState
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
 import com.workfort.pstuian.ui.common.composable.ListSelectionOption
@@ -32,13 +32,13 @@ import pstuian.feature_presentation.generated.resources.txt_msg_call
 import pstuian.feature_presentation.generated.resources.txt_title_call
 
 @Composable
-fun CheckInListScreen(viewModel: CheckInListViewModel) {
+fun CheckInScreen(viewModel: CheckInViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val navigation by viewModel.navigation.collectAsState()
 
-    CheckInListScreenContent(uiState, snackbarHostState, viewModel::onUiEvent)
+    CheckInScreenContent(uiState, snackbarHostState, viewModel::onUiEvent)
 
     HandleMessageState(message, snackbarHostState, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
@@ -46,30 +46,30 @@ fun CheckInListScreen(viewModel: CheckInListViewModel) {
 
 @Composable
 private fun HandleMessageState(
-    message: CheckInListMessageState?,
+    message: CheckInMessageState?,
     snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
 ) {
     val uriHandler = LocalUriHandler.current
     message?.let {
         when (it) {
-            is CheckInListMessageState.Loading -> {
+            is CheckInMessageState.Loading -> {
                 ShowLoaderDialog(cancelable = it.cancelable)
             }
-            is CheckInListMessageState.Success -> {
+            is CheckInMessageState.Success -> {
                 ShowInfoDialog(
                     message = it.message,
                     onDismiss = onMessageHandled,
                 )
             }
-            is CheckInListMessageState.Error -> {
+            is CheckInMessageState.Error -> {
                 ShowErrorDialog(
                     message = it.message,
                     onConfirm = onMessageHandled,
                     onDismiss = onMessageHandled,
                 )
             }
-            is CheckInListMessageState.Call -> {
+            is CheckInMessageState.Call -> {
                 ShowConfirmationDialog(
                     icon = Icons.Default.Notifications,
                     title = stringResource(Res.string.txt_title_call),
@@ -82,7 +82,7 @@ private fun HandleMessageState(
                     onDismiss = onMessageHandled,
                 )
             }
-            is CheckInListMessageState.CheckInLocationSelection -> {
+            is CheckInMessageState.CheckInLocationSelection -> {
                 ListSelectionBottomSheet(
                     title = stringResource(Res.string.label_location_picker_screen),
                     primaryButtonLabel = "Select & Check In",
@@ -103,7 +103,7 @@ private fun HandleMessageState(
                     },
                 )
             }
-            is CheckInListMessageState.ConfirmCheckIn -> {
+            is CheckInMessageState.ConfirmCheckIn -> {
                 ShowConfirmationDialog(
                     icon = Icons.Default.Notifications,
                     message = stringResource(Res.string.msg_confirm_check_in).plus(" ${it.location.name}"),
@@ -115,7 +115,7 @@ private fun HandleMessageState(
                     onDismiss = onMessageHandled,
                 )
             }
-            is CheckInListMessageState.ShowSnackBar -> {
+            is CheckInMessageState.ShowSnackBar -> {
                 HandleSnackbar(it.message, snackbarHostState, onMessageHandled)
             }
         }
@@ -124,7 +124,7 @@ private fun HandleMessageState(
 
 @Composable
 private fun HandleNavigationState(
-    navigation: CheckInListNavigationState?,
+    navigation: CheckInNavigationState?,
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
@@ -132,11 +132,11 @@ private fun HandleNavigationState(
     LaunchedEffect(navigation) {
         navigation?.let {
             when (it) {
-                is CheckInListNavigationState.GoBack -> navigator?.goBack()
-                is CheckInListNavigationState.ProfileScreen -> {
+                is CheckInNavigationState.GoBack -> navigator?.goBack()
+                is CheckInNavigationState.ProfileScreen -> {
                     navigator?.navigateTo(AppScreen.Profile(it.userId, it.userType))
                 }
-                is CheckInListNavigationState.LocationPickerScreen -> {
+                is CheckInNavigationState.LocationPickerScreen -> {
                     navigator?.navigateTo(AppScreen.LocationPicker)
                 }
             }

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.checkinlist.composable
+package com.workfort.pstuian.ui.checkin.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,9 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.CheckIn
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
 import com.workfort.pstuian.featuredomain.model.ThemeMode
-import com.workfort.pstuian.ui.checkinlist.displaydata.CheckInDisplayData
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
+import com.workfort.pstuian.ui.checkin.displaydata.CheckInDisplayData
+import com.workfort.pstuian.ui.checkin.state.CheckInUiEvent
+import com.workfort.pstuian.ui.checkin.state.CheckInUiState
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
@@ -28,35 +28,35 @@ import pstuian.feature_presentation.generated.resources.label_check_in_screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CheckInListScreenContent(
-    uiState: CheckInListUiState,
+internal fun CheckInScreenContent(
+    uiState: CheckInUiState,
     snackbarHostState: SnackbarHostState,
-    onUiEvent: (CheckInListUiEvent) -> Unit,
+    onUiEvent: (CheckInUiEvent) -> Unit,
 ) {
     AppScaffold(
         topBar = {
             AppBar(
                 title = stringResource(Res.string.label_check_in_screen),
                 navigation = {
-                    NavigationButton { onUiEvent(CheckInListUiEvent.BackClicked) }
+                    NavigationButton { onUiEvent(CheckInUiEvent.BackClicked) }
                 },
             )
         },
         snackbarHost = { AppSnackbarHost(snackbarHostState) },
     ) {
         when (uiState) {
-            is CheckInListUiState.None -> Unit
-            is CheckInListUiState.Loading -> {
-                CheckInListFullScreenShimmer(modifier = Modifier.fillMaxSize())
+            is CheckInUiState.None -> Unit
+            is CheckInUiState.Loading -> {
+                CheckInFullScreenShimmer(modifier = Modifier.fillMaxSize())
             }
-            is CheckInListUiState.Content -> {
-                CheckInListContentPanel(
+            is CheckInUiState.Content -> {
+                CheckInContentPanel(
                     modifier = Modifier.fillMaxSize(),
                     uiState = uiState,
                     onUiEvent = onUiEvent,
                 )
             }
-            is CheckInListUiState.Error -> {
+            is CheckInUiState.Error -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -130,22 +130,22 @@ private fun mockCheckInContentUiState(
             isOnline = false,
         ),
     ),
-    isCheckInListLoading: Boolean = false,
-): CheckInListUiState.Content = CheckInListUiState.Content(
+    isCheckInLoading: Boolean = false,
+): CheckInUiState.Content = CheckInUiState.Content(
     checkInLocations = mockCheckInLocations(),
     selectedLocationId = 1,
     currentUserCheckIn = currentUserCheckIn,
     otherCheckIns = otherCheckIns,
     isLocationListLoading = false,
-    isCheckInListLoading = isCheckInListLoading,
+    isCheckInLoading = isCheckInLoading,
 )
 
 @Preview(showBackground = true, name = "Loading")
 @Composable
-private fun CheckInListScreenContentLoadingPreview() {
+private fun CheckInScreenContentLoadingPreview() {
     AppTheme {
-        CheckInListScreenContent(
-            uiState = CheckInListUiState.Loading,
+        CheckInScreenContent(
+            uiState = CheckInUiState.Loading,
             snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
@@ -154,9 +154,9 @@ private fun CheckInListScreenContentLoadingPreview() {
 
 @Preview(showBackground = true, name = "Content")
 @Composable
-private fun CheckInListScreenContentGridPreview() {
+private fun CheckInScreenContentGridPreview() {
     AppTheme {
-        CheckInListScreenContent(
+        CheckInScreenContent(
             uiState = mockCheckInContentUiState(),
             snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
@@ -166,9 +166,9 @@ private fun CheckInListScreenContentGridPreview() {
 
 @Preview(showBackground = true, name = "Content - Dark")
 @Composable
-private fun CheckInListScreenContentGridDarkPreview() {
+private fun CheckInScreenContentGridDarkPreview() {
     AppTheme(theme = ThemeMode.Dark) {
-        CheckInListScreenContent(
+        CheckInScreenContent(
             uiState = mockCheckInContentUiState(),
             snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
@@ -178,9 +178,9 @@ private fun CheckInListScreenContentGridDarkPreview() {
 
 @Preview(showBackground = true, name = "Content - Check in here")
 @Composable
-private fun CheckInListScreenContentPromptCardPreview() {
+private fun CheckInScreenContentPromptCardPreview() {
     AppTheme {
-        CheckInListScreenContent(
+        CheckInScreenContent(
             uiState = mockCheckInContentUiState(
                 currentUserCheckIn = null,
             ),
@@ -192,10 +192,10 @@ private fun CheckInListScreenContentPromptCardPreview() {
 
 @Preview(showBackground = true, name = "Content - Load more shimmer")
 @Composable
-private fun CheckInListScreenContentLoadMorePreview() {
+private fun CheckInScreenContentLoadMorePreview() {
     AppTheme {
-        CheckInListScreenContent(
-            uiState = mockCheckInContentUiState(isCheckInListLoading = true),
+        CheckInScreenContent(
+            uiState = mockCheckInContentUiState(isCheckInLoading = true),
             snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
@@ -204,10 +204,10 @@ private fun CheckInListScreenContentLoadMorePreview() {
 
 @Preview(showBackground = true, name = "Error")
 @Composable
-private fun CheckInListScreenContentErrorPreview() {
+private fun CheckInScreenContentErrorPreview() {
     AppTheme {
-        CheckInListScreenContent(
-            uiState = CheckInListUiState.Error(error = null),
+        CheckInScreenContent(
+            uiState = CheckInUiState.Error(error = null),
             snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )

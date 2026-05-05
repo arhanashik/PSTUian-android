@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.checkinlist.composable
+package com.workfort.pstuian.ui.checkin.composable
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -70,9 +70,9 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
-import com.workfort.pstuian.ui.checkinlist.displaydata.CheckInDisplayData
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
+import com.workfort.pstuian.ui.checkin.displaydata.CheckInDisplayData
+import com.workfort.pstuian.ui.checkin.state.CheckInUiEvent
+import com.workfort.pstuian.ui.checkin.state.CheckInUiState
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
 import com.workfort.pstuian.ui.common.composable.OnlineOfflineStatusLabel
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
@@ -96,11 +96,11 @@ private val OfflineStatusLightGray = Color(0xFFD6D6D6)
 private const val CheckInNameMarqueeMillis = 2400
 private const val CheckInNameMarqueePauseMillis = 400
 
-private val CheckInListCardShape = RoundedCornerShape(12.dp)
+private val CheckInCardShape = RoundedCornerShape(12.dp)
 /** Square location thumbnail (width == height); row height matches so the slot is not clipped. */
 private val CheckInLocationListThumbnailSize = 48.dp
 private val CheckInLocationListRowHeight = CheckInLocationListThumbnailSize
-private val CheckInListGridSpacing = 16.dp
+private val CheckInGridSpacing = 16.dp
 
 @Composable
 private fun CheckInNameSingleLineMaybeMarquee(
@@ -191,41 +191,41 @@ private fun CheckInNameSingleLineMaybeMarquee(
 }
 
 @Composable
-internal fun CheckInListFullScreenShimmer(modifier: Modifier = Modifier) {
+internal fun CheckInFullScreenShimmer(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize()) {
         CheckInLocationListShimmer()
-        CheckInListGridShimmer(modifier = Modifier.fillMaxSize())
+        CheckInGridShimmer(modifier = Modifier.fillMaxSize())
     }
 }
 
 @Composable
-internal fun CheckInListContentPanel(
+internal fun CheckInContentPanel(
     modifier: Modifier = Modifier,
-    uiState: CheckInListUiState.Content,
-    onUiEvent: (CheckInListUiEvent) -> Unit,
+    uiState: CheckInUiState.Content,
+    onUiEvent: (CheckInUiEvent) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        CheckInListHeaderView(
+        CheckInHeaderView(
             checkInLocations = uiState.checkInLocations,
             selectedCheckInLocationId = uiState.selectedLocationId,
             isLoadingMore = uiState.isLocationListLoading && uiState.checkInLocations.isNotEmpty(),
             onClickLocation = { locationId ->
-                onUiEvent(CheckInListUiEvent.LocationSelected(locationId))
+                onUiEvent(CheckInUiEvent.LocationSelected(locationId))
             },
-            onLoadMoreLocations = { onUiEvent(CheckInListUiEvent.OnLoadMoreLocations) },
+            onLoadMoreLocations = { onUiEvent(CheckInUiEvent.OnLoadMoreLocations) },
         )
 
         when {
-            uiState.otherCheckIns.isEmpty() && uiState.isCheckInListLoading -> {
-                CheckInListGridShimmer(modifier = Modifier.fillMaxSize())
+            uiState.otherCheckIns.isEmpty() && uiState.isCheckInLoading -> {
+                CheckInGridShimmer(modifier = Modifier.fillMaxSize())
             }
             else -> {
-                CheckInListScrollableGrid(
+                CheckInScrollableGrid(
                     modifier = Modifier.fillMaxSize(),
                     selectedLocationId = uiState.selectedLocationId,
                     currentUserCheckIn = uiState.currentUserCheckIn,
                     otherCheckIns = uiState.otherCheckIns,
-                    isContentLoading = uiState.isCheckInListLoading,
+                    isContentLoading = uiState.isCheckInLoading,
                     onUiEvent = onUiEvent,
                 )
             }
@@ -239,17 +239,17 @@ private fun CheckInLocationListShimmer(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                horizontal = CheckInListGridSpacing,
-                vertical = CheckInListGridSpacing,
+                horizontal = CheckInGridSpacing,
+                vertical = CheckInGridSpacing,
             ),
-        horizontalArrangement = Arrangement.spacedBy(CheckInListGridSpacing),
+        horizontalArrangement = Arrangement.spacedBy(CheckInGridSpacing),
     ) {
         repeat(4) {
             Box(
                 modifier = Modifier
                     .height(CheckInLocationListRowHeight)
                     .width(168.dp)
-                    .clip(CheckInListCardShape)
+                    .clip(CheckInCardShape)
                     .shimmerAnimation(),
             )
         }
@@ -257,22 +257,22 @@ private fun CheckInLocationListShimmer(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun CheckInListGridShimmer(modifier: Modifier = Modifier) {
+private fun CheckInGridShimmer(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(GridColumnCount),
-        contentPadding = PaddingValues(horizontal = CheckInListGridSpacing),
-        horizontalArrangement = Arrangement.spacedBy(CheckInListGridSpacing),
-        verticalArrangement = Arrangement.spacedBy(CheckInListGridSpacing),
+        contentPadding = PaddingValues(horizontal = CheckInGridSpacing),
+        horizontalArrangement = Arrangement.spacedBy(CheckInGridSpacing),
+        verticalArrangement = Arrangement.spacedBy(CheckInGridSpacing),
     ) {
         gridItems(List(6) { it }) { _ ->
-            CheckInListItemShimmer()
+            CheckInItemShimmer()
         }
     }
 }
 
 @Composable
-private fun CheckInListItemShimmer() {
+private fun CheckInItemShimmer() {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -315,13 +315,13 @@ private fun CheckInListItemShimmer() {
 }
 
 @Composable
-private fun CheckInListScrollableGrid(
+private fun CheckInScrollableGrid(
     modifier: Modifier,
     selectedLocationId: Int,
     currentUserCheckIn: CheckInDisplayData?,
     otherCheckIns: List<CheckInDisplayData>,
     isContentLoading: Boolean,
-    onUiEvent: (CheckInListUiEvent) -> Unit,
+    onUiEvent: (CheckInUiEvent) -> Unit,
 ) {
     val listState = rememberLazyGridState()
     var lastLoadMoreRequestedAtSize by remember { mutableIntStateOf(-1) }
@@ -340,23 +340,23 @@ private fun CheckInListScrollableGrid(
             shouldLoadMore && !isContentLoading && otherCheckIns.isNotEmpty()
         if (canRequestMore && lastLoadMoreRequestedAtSize != otherCheckIns.size) {
             lastLoadMoreRequestedAtSize = otherCheckIns.size
-            onUiEvent(CheckInListUiEvent.OnLoadMoreCheckIn(selectedLocationId))
+            onUiEvent(CheckInUiEvent.OnLoadMoreCheckIn(selectedLocationId))
         }
     }
 
-    CheckInListView(
+    CheckInView(
         modifier = modifier,
         currentUserCheckIn = currentUserCheckIn,
         otherCheckIns = otherCheckIns,
         listState = listState,
         isLoadingMore = isContentLoading && otherCheckIns.isNotEmpty(),
-        onClickItem = { onUiEvent(CheckInListUiEvent.CheckInItemClicked(it)) },
-        onClickCheckInSelf = { onUiEvent(CheckInListUiEvent.CheckInClicked(selectedLocationId)) },
+        onClickItem = { onUiEvent(CheckInUiEvent.CheckInItemClicked(it)) },
+        onClickCheckInSelf = { onUiEvent(CheckInUiEvent.CheckInClicked(selectedLocationId)) },
     )
 }
 
 @Composable
-private fun CheckInListView(
+private fun CheckInView(
     modifier: Modifier,
     currentUserCheckIn: CheckInDisplayData?,
     otherCheckIns: List<CheckInDisplayData>,
@@ -370,9 +370,9 @@ private fun CheckInListView(
         modifier = modifier,
         state = listState,
         columns = GridCells.Fixed(GridColumnCount),
-        contentPadding = PaddingValues(horizontal = CheckInListGridSpacing),
-        horizontalArrangement = Arrangement.spacedBy(CheckInListGridSpacing),
-        verticalArrangement = Arrangement.spacedBy(CheckInListGridSpacing),
+        contentPadding = PaddingValues(horizontal = CheckInGridSpacing),
+        horizontalArrangement = Arrangement.spacedBy(CheckInGridSpacing),
+        verticalArrangement = Arrangement.spacedBy(CheckInGridSpacing),
     ) {
         // current user check in item
         if (currentUserCheckIn == null) {
@@ -381,7 +381,7 @@ private fun CheckInListView(
             }
         } else {
             gridItems(listOf(currentUserCheckIn)) { item ->
-                CheckInListItemView(
+                CheckInItemView(
                     item = item,
                     onClickItem = { onClickItem(item) },
                 )
@@ -390,7 +390,7 @@ private fun CheckInListView(
 
         // other check in items
         gridItems(otherCheckIns) { item ->
-            CheckInListItemView(
+            CheckInItemView(
                 item = item,
                 onClickItem = { onClickItem(item) },
             )
@@ -399,7 +399,7 @@ private fun CheckInListView(
         // load more items
         if (isLoadingMore) {
             gridItems(List(GridColumnCount) { it }) { _ ->
-                CheckInListItemShimmer()
+                CheckInItemShimmer()
             }
         }
     }
@@ -413,12 +413,12 @@ private fun CheckInSelfActionCard(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .clip(CheckInListCardShape)
+            .clip(CheckInCardShape)
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = CheckInListCardShape,
+        shape = CheckInCardShape,
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
     ) {
         Column(
@@ -497,19 +497,19 @@ private fun CheckInSelfActionCard(
 }
 
 @Composable
-private fun CheckInListItemView(
+private fun CheckInItemView(
     item: CheckInDisplayData,
     onClickItem: () -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(CheckInListCardShape)
+            .clip(CheckInCardShape)
             .clickable { onClickItem() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = CheckInListCardShape,
+        shape = CheckInCardShape,
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
     ) {
         Column(
@@ -652,9 +652,9 @@ private fun CheckInLocationListItemCard(
     ElevatedCard(
         modifier = Modifier
             .wrapContentWidth()
-            .clip(CheckInListCardShape)
+            .clip(CheckInCardShape)
             .clickable(enabled = !selected, onClick = onClick),
-        shape = CheckInListCardShape,
+        shape = CheckInCardShape,
         colors = CardDefaults.cardColors(
             containerColor = if (selected) {
                 MaterialTheme.colorScheme.secondaryContainer
@@ -707,7 +707,7 @@ private fun CheckInLocationListItemCard(
 }
 
 @Composable
-private fun CheckInListHeaderView(
+private fun CheckInHeaderView(
     checkInLocations: List<CheckInLocation>,
     selectedCheckInLocationId: Int,
     isLoadingMore: Boolean,
@@ -756,10 +756,10 @@ private fun CheckInListHeaderView(
             modifier = Modifier.fillMaxWidth(),
             state = listState,
             contentPadding = PaddingValues(
-                horizontal = CheckInListGridSpacing,
-                vertical = CheckInListGridSpacing,
+                horizontal = CheckInGridSpacing,
+                vertical = CheckInGridSpacing,
             ),
-            horizontalArrangement = Arrangement.spacedBy(CheckInListGridSpacing),
+            horizontalArrangement = Arrangement.spacedBy(CheckInGridSpacing),
         ) {
             items(checkInLocations) { location ->
                 val selected = location.id == selectedCheckInLocationId
@@ -775,7 +775,7 @@ private fun CheckInListHeaderView(
                         modifier = Modifier
                             .height(CheckInLocationListRowHeight)
                             .width(168.dp)
-                            .clip(CheckInListCardShape)
+                            .clip(CheckInCardShape)
                             .shimmerAnimation(),
                     )
                 }

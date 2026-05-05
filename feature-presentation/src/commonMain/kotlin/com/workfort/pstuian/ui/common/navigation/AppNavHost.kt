@@ -20,7 +20,7 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.BloodDonationRequestCreateScreen
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestListScreen
 import com.workfort.pstuian.ui.changepassword.ChangePasswordScreen
-import com.workfort.pstuian.ui.checkinlist.CheckInListScreen
+import com.workfort.pstuian.ui.checkin.CheckInScreen
 import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
@@ -268,8 +268,8 @@ fun AppNavHost(
                     val screen: AppScreen.Faculty = backStackEntry.toRoute()
                     FacultyScreen(viewModel = koinViewModel { parametersOf(screen.facultyId) })
                 }
-                composable<AppScreen.CheckInList> {
-                    CheckInListScreen(viewModel = koinViewModel())
+                composable<AppScreen.CheckIn> {
+                    CheckInScreen(viewModel = koinViewModel())
                 }
                 composable<AppScreen.Donors> {
                     DonorsScreen(viewModel = koinViewModel())

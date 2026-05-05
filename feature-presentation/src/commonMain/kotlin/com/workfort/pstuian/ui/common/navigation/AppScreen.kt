@@ -57,7 +57,7 @@ sealed interface AppScreen {
     @Serializable
     data class Faculty(val facultyId: Int) : AppScreen
     @Serializable
-    data object CheckInList : AppScreen
+    data object CheckIn : AppScreen
     @Serializable
     object Donors : AppScreen
     @Serializable

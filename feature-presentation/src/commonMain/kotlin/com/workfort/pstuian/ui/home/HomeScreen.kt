@@ -136,7 +136,7 @@ private fun HandleNavigationState(
                     navigator?.navigateToBloodDonationRequestList()
                 }
                 is HomeNavigationState.CheckInScreen -> {
-                    navigator?.navigateToCheckInList()
+                    navigator?.navigateToCheckIn()
                 }
                 is HomeNavigationState.SettingsScreen -> {
                     navigator?.navigateToSettings()

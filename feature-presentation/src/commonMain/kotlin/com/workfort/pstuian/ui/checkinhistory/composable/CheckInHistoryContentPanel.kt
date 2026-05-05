@@ -119,7 +119,7 @@ internal fun CheckInHistoryContentPanel(
                 }
             }
             else -> {
-                CheckInListView(
+                CheckInView(
                     checkIns = uiState.checkIns,
                     isLoading = uiState.isContentLoading,
                     onUiEvent = onUiEvent,
@@ -209,7 +209,7 @@ private fun CheckInHistoryItemShimmer() {
 }
 
 @Composable
-private fun CheckInListView(
+private fun CheckInView(
     checkIns: List<CheckIn>,
     isLoading: Boolean,
     onUiEvent: (CheckInHistoryUiEvent) -> Unit,

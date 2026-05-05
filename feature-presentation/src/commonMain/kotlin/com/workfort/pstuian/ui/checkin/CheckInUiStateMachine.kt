@@ -1,35 +1,35 @@
-package com.workfort.pstuian.ui.checkinlist
+package com.workfort.pstuian.ui.checkin
 
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
-import com.workfort.pstuian.ui.checkinlist.displaydata.CheckInDisplayData
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
+import com.workfort.pstuian.ui.checkin.displaydata.CheckInDisplayData
+import com.workfort.pstuian.ui.checkin.state.CheckInUiState
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
+class CheckInUiStateMachine : UiStateMachine<CheckInUiState> {
 
-    private val _state = MutableStateFlow<CheckInListUiState>(CheckInListUiState.None)
-    override val uiState: StateFlow<CheckInListUiState> = _state.asStateFlow()
+    private val _state = MutableStateFlow<CheckInUiState>(CheckInUiState.None)
+    override val uiState: StateFlow<CheckInUiState> = _state.asStateFlow()
 
-    private fun updateUiState(updater: CheckInListUiState.() -> CheckInListUiState) = _state.update(updater)
+    private fun updateUiState(updater: CheckInUiState.() -> CheckInUiState) = _state.update(updater)
 
     fun showOperationLoading() = updateUiState {
-        CheckInListUiState.Loading
+        CheckInUiState.Loading
     }
 
     fun showLocationListLoading(isLoading: Boolean) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(isLocationListLoading = isLoading)
+            is CheckInUiState.Content -> copy(isLocationListLoading = isLoading)
             else -> this
         }
     }
 
-    fun showCheckInListLoading(isLoading: Boolean) = updateUiState {
+    fun showCheckInLoading(isLoading: Boolean) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(isCheckInListLoading = isLoading)
+            is CheckInUiState.Content -> copy(isCheckInLoading = isLoading)
             else -> this
         }
     }
@@ -39,11 +39,11 @@ class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
         selectedLocationId: Int,
     ) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(
+            is CheckInUiState.Content -> copy(
                 checkInLocations = checkInLocations,
                 selectedLocationId = selectedLocationId,
             )
-            else -> CheckInListUiState.Content(
+            else -> CheckInUiState.Content(
                 checkInLocations = checkInLocations,
                 selectedLocationId = selectedLocationId,
             )
@@ -52,18 +52,18 @@ class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
 
     fun updatedSelectedCheckInLocationId(selectedCheckInLocationId: Int) = updateUiState {
         when (this) {
-            is CheckInListUiState.Content -> copy(selectedLocationId = selectedCheckInLocationId)
+            is CheckInUiState.Content -> copy(selectedLocationId = selectedCheckInLocationId)
             else -> this
         }
     }
 
-    fun showCheckInList(currentUserCheckIn: CheckInDisplayData?, otherCheckIns: List<CheckInDisplayData>) {
+    fun showCheckIn(currentUserCheckIn: CheckInDisplayData?, otherCheckIns: List<CheckInDisplayData>) {
         updateUiState {
             when (this) {
-                is CheckInListUiState.Content -> copy(
+                is CheckInUiState.Content -> copy(
                     currentUserCheckIn = currentUserCheckIn,
                     otherCheckIns = otherCheckIns,
-                    isCheckInListLoading = false,
+                    isCheckInLoading = false,
                 )
                 else -> this
             }
@@ -71,6 +71,6 @@ class CheckInListUiStateMachine : UiStateMachine<CheckInListUiState> {
     }
 
     fun showError(message: String) = updateUiState {
-        CheckInListUiState.Error(message)
+        CheckInUiState.Error(message)
     }
 }

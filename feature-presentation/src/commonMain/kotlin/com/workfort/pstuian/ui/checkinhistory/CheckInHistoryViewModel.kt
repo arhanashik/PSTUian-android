@@ -37,13 +37,13 @@ class CheckInHistoryViewModel(
     private val checkInsCache = mutableListOf<CheckIn>()
 
     override fun onUiReady() {
-        loadCheckInList(forceRefresh = false)
+        loadCheckIn(forceRefresh = false)
     }
 
     fun onUiEvent(event: CheckInHistoryUiEvent) {
         when (event) {
             is CheckInHistoryUiEvent.BackClicked -> _navigationState.update { CheckInHistoryNavigationState.GoBack }
-            is CheckInHistoryUiEvent.LoadMore -> loadCheckInList(forceRefresh = false)
+            is CheckInHistoryUiEvent.LoadMore -> loadCheckIn(forceRefresh = false)
             is CheckInHistoryUiEvent.ItemClicked -> onCheckInItemClicked(event.item)
             is CheckInHistoryUiEvent.ChangePrivacy -> changePrivacy(event.item, event.privacy)
             is CheckInHistoryUiEvent.Delete -> delete(event.item)
@@ -58,7 +58,7 @@ class CheckInHistoryViewModel(
         _navigationState.update { null }
     }
 
-    private fun loadCheckInList(forceRefresh: Boolean) {
+    private fun loadCheckIn(forceRefresh: Boolean) {
         if (forceRefresh) {
             checkInsCache.clear()
             page = 1
@@ -107,7 +107,7 @@ class CheckInHistoryViewModel(
                     checkInRepo.updatePrivacy(item.id, privacy.value).onSuccess {
                         uiStateMachine.updateOperationLoading(false)
                         _messageState.update { CheckInHistoryMessageState.Success("Changed successfully") }
-                        loadCheckInList(forceRefresh = true)
+                        loadCheckIn(forceRefresh = true)
                     }.onFailure {
                         uiStateMachine.updateOperationLoading(false)
                         val message = it.message ?: "Failed to change. Please try again."
@@ -126,7 +126,7 @@ class CheckInHistoryViewModel(
                     checkInRepo.delete(item.id).onSuccess {
                         uiStateMachine.updateOperationLoading(false)
                         _messageState.update { CheckInHistoryMessageState.Success("Deleted successfully") }
-                        loadCheckInList(forceRefresh = true)
+                        loadCheckIn(forceRefresh = true)
                     }.onFailure {
                         uiStateMachine.updateOperationLoading(false)
                         val message = it.message ?: "Failed to delete. Please try again"

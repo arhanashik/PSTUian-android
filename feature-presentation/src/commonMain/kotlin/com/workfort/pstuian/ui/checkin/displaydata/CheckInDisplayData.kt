@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.checkinlist.displaydata
+package com.workfort.pstuian.ui.checkin.displaydata
 
 import com.workfort.pstuian.featuredomain.model.CheckIn
 import kotlinx.serialization.Serializable

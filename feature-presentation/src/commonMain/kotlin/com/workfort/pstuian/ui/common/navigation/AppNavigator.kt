@@ -54,7 +54,7 @@ class AppNavigator {
     suspend fun navigateToImagePreview(encodedImageUrl: String) = navigateTo(AppScreen.ImagePreview(encodedImageUrl))
     suspend fun navigateToSettings() = navigateTo(AppScreen.Settings)
     suspend fun navigateToFaculty(facultyId: Int) = navigateTo(AppScreen.Faculty(facultyId))
-    suspend fun navigateToCheckInList() = navigateTo(AppScreen.CheckInList)
+    suspend fun navigateToCheckIn() = navigateTo(AppScreen.CheckIn)
     suspend fun navigateToDonors() = navigateTo(AppScreen.Donors)
     suspend fun navigateToNotification() = navigateTo(AppScreen.Notification)
 }

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.checkinlist
+package com.workfort.pstuian.ui.checkin
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.remote.NetworkConst
@@ -11,32 +11,32 @@ import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 import com.workfort.pstuian.featuredomain.repository.CheckInRepository
 import com.workfort.pstuian.model.SharedScreenData
-import com.workfort.pstuian.ui.checkinlist.displaydata.CheckInDisplayData
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListMessageState
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListNavigationState
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiEvent
-import com.workfort.pstuian.ui.checkinlist.state.CheckInListUiState
+import com.workfort.pstuian.ui.checkin.displaydata.CheckInDisplayData
+import com.workfort.pstuian.ui.checkin.state.CheckInMessageState
+import com.workfort.pstuian.ui.checkin.state.CheckInNavigationState
+import com.workfort.pstuian.ui.checkin.state.CheckInUiEvent
+import com.workfort.pstuian.ui.checkin.state.CheckInUiState
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-class CheckInListViewModel(
+class CheckInViewModel(
     private val checkInRepo: CheckInRepository,
     private val checkInLocationRepo: CheckInLocationRepository,
     private val sharedScreenData: SharedScreenData,
     private val checkInDisplayDataMapper: CheckInDisplayDataMapper,
-    private val uiStateMachine: CheckInListUiStateMachine,
+    private val uiStateMachine: CheckInUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-) : UiStateMachineViewModel<CheckInListUiState>(uiStateMachine) {
+) : UiStateMachineViewModel<CheckInUiState>(uiStateMachine) {
 
     private val currentUserId = sharedScreenData.getCurrentUser()?.userId ?: 0
 
-    private val _message = MutableStateFlow<CheckInListMessageState?>(null)
-    val message: StateFlow<CheckInListMessageState?> = _message
+    private val _message = MutableStateFlow<CheckInMessageState?>(null)
+    val message: StateFlow<CheckInMessageState?> = _message
 
-    private val _navigation = MutableStateFlow<CheckInListNavigationState?>(null)
-    val navigation: StateFlow<CheckInListNavigationState?> = _navigation
+    private val _navigation = MutableStateFlow<CheckInNavigationState?>(null)
+    val navigation: StateFlow<CheckInNavigationState?> = _navigation
 
     // cache data
     private var checkInLocationsPage = 1
@@ -51,18 +51,18 @@ class CheckInListViewModel(
 
     override fun onUiReady() {
         uiStateMachine.showOperationLoading()
-        loadCheckInLocations(forceRefresh = false, loadCheckInListAfter = true)
+        loadCheckInLocations(forceRefresh = false, loadCheckInAfter = true)
     }
 
-    fun onUiEvent(event: CheckInListUiEvent) {
+    fun onUiEvent(event: CheckInUiEvent) {
         when (event) {
-            is CheckInListUiEvent.BackClicked -> _navigation.update { CheckInListNavigationState.GoBack }
-            is CheckInListUiEvent.CheckInItemClicked -> onClickCheckInItem(event.item)
-            is CheckInListUiEvent.LocationSelected -> onSelectLocation(event.locationId)
-            is CheckInListUiEvent.CallClicked -> onClickCall(event.phoneNumber)
-            is CheckInListUiEvent.CheckInClicked -> onClickCheckIn(event.selectedLocationId)
-            is CheckInListUiEvent.OnLoadMoreLocations -> loadCheckInLocations(forceRefresh = false)
-            is CheckInListUiEvent.OnLoadMoreCheckIn -> loadCheckInList(event.locationId, forceRefresh = false)
+            is CheckInUiEvent.BackClicked -> _navigation.update { CheckInNavigationState.GoBack }
+            is CheckInUiEvent.CheckInItemClicked -> onClickCheckInItem(event.item)
+            is CheckInUiEvent.LocationSelected -> onSelectLocation(event.locationId)
+            is CheckInUiEvent.CallClicked -> onClickCall(event.phoneNumber)
+            is CheckInUiEvent.CheckInClicked -> onClickCheckIn(event.selectedLocationId)
+            is CheckInUiEvent.OnLoadMoreLocations -> loadCheckInLocations(forceRefresh = false)
+            is CheckInUiEvent.OnLoadMoreCheckIn -> loadCheckIn(event.locationId, forceRefresh = false)
         }
     }
 
@@ -72,13 +72,13 @@ class CheckInListViewModel(
 
     private fun onSelectLocation(locationId: Int) {
         uiStateMachine.updatedSelectedCheckInLocationId(locationId)
-        loadCheckInList(locationId, forceRefresh = true)
+        loadCheckIn(locationId, forceRefresh = true)
     }
 
     private fun onClickCheckInItem(item: CheckInDisplayData) {
         val userType = UserType.fromType(item.checkIn.userType) ?: return
         _navigation.update {
-            CheckInListNavigationState.ProfileScreen(
+            CheckInNavigationState.ProfileScreen(
                 userId = item.checkIn.userId,
                 userType = userType,
             )
@@ -86,23 +86,23 @@ class CheckInListViewModel(
     }
 
     private fun onClickCall(phoneNumber: String) {
-        _message.update { CheckInListMessageState.Call(phoneNumber) }
+        _message.update { CheckInMessageState.Call(phoneNumber) }
     }
 
     private fun onClickCheckIn(selectedLocationId: Int) {
         _message.update {
-            CheckInListMessageState.CheckInLocationSelection(
+            CheckInMessageState.CheckInLocationSelection(
                 checkInLocationsCache,
                 selectedLocationId,
             ) { location ->
                 _message.update {
-                    CheckInListMessageState.ConfirmCheckIn(location) { checkIn(location.id) }
+                    CheckInMessageState.ConfirmCheckIn(location) { checkIn(location.id) }
                 }
             }
         }
     }
 
-    private fun loadCheckInLocations(forceRefresh: Boolean, loadCheckInListAfter: Boolean = false) {
+    private fun loadCheckInLocations(forceRefresh: Boolean, loadCheckInAfter: Boolean = false) {
         if (isLoadingCheckInLocations) return
         if (forceRefresh) {
             checkInLocationsPage = 1
@@ -130,8 +130,8 @@ class CheckInListViewModel(
                         selectedLocationId = selectedLocationId,
                     )
                     uiStateMachine.showLocationListLoading(isLoading = false)
-                    if (loadCheckInListAfter) {
-                        loadCheckInList(selectedLocationId, forceRefresh = true)
+                    if (loadCheckInAfter) {
+                        loadCheckIn(selectedLocationId, forceRefresh = true)
                     }
                 }
                 .onFailure {
@@ -149,20 +149,20 @@ class CheckInListViewModel(
         return checkInRepo.get(currentUserId, userType).getOrNull()?.locationId ?: defaultValue
     }
 
-    private fun loadCheckInList(locationId: Int, forceRefresh: Boolean) {
+    private fun loadCheckIn(locationId: Int, forceRefresh: Boolean) {
         if (isLoadingCheckIns) return
         if (forceRefresh) {
             checkInsPage = 1
             hasMoreCheckInsData = true
             checkInsCache.clear()
-            uiStateMachine.showCheckInList(currentUserCheckIn = null, otherCheckIns = emptyList())
+            uiStateMachine.showCheckIn(currentUserCheckIn = null, otherCheckIns = emptyList())
         } else if (!hasMoreCheckInsData) {
             return
         }
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             isLoadingCheckIns = true
-            uiStateMachine.showCheckInListLoading(isLoading = true)
+            uiStateMachine.showCheckInLoading(isLoading = true)
             checkInRepo.getAll(locationId, checkInsPage, forceRefresh)
                 .onSuccess { checkInList ->
                     if (checkInList.isEmpty()) {
@@ -173,15 +173,15 @@ class CheckInListViewModel(
                     val displayDataList = checkInDisplayDataMapper.map(checkInList, currentUserId)
                     checkInsCache.addAll(displayDataList)
 
-                    uiStateMachine.showCheckInListLoading(isLoading = false)
+                    uiStateMachine.showCheckInLoading(isLoading = false)
                     val currentUserCheckIn = checkInsCache.firstOrNull { it.checkIn.userId == currentUserId }
                     val otherCheckIns = checkInsCache.filter { it.checkIn.userId != currentUserId }
-                    uiStateMachine.showCheckInList(currentUserCheckIn, otherCheckIns)
+                    uiStateMachine.showCheckIn(currentUserCheckIn, otherCheckIns)
                 }
                 .onFailure {
-                    uiStateMachine.showCheckInListLoading(isLoading = false)
+                    uiStateMachine.showCheckInLoading(isLoading = false)
                     val message = it.message ?: "Failed to load data"
-                    _message.update { CheckInListMessageState.Error(message) }
+                    _message.update { CheckInMessageState.Error(message) }
                 }
             isLoadingCheckIns = false
         }
@@ -190,18 +190,18 @@ class CheckInListViewModel(
     private fun checkIn(locationId: Int) {
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
-        _message.update { CheckInListMessageState.Loading() }
+        _message.update { CheckInMessageState.Loading() }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             checkInRepo.checkIn(locationId, currentUserId, userType)
                 .onSuccess {
                     onMessageHandled()
-                    _message.update { CheckInListMessageState.ShowSnackBar("Checked in successfully!") }
-                    loadCheckInList(locationId, forceRefresh = true)
+                    _message.update { CheckInMessageState.ShowSnackBar("Checked in successfully!") }
+                    loadCheckIn(locationId, forceRefresh = true)
                 }
                 .onFailure {
                     onMessageHandled()
                     val message = it.message ?: "Check in failed. Please try again."
-                    _message.update { CheckInListMessageState.Error(message) }
+                    _message.update { CheckInMessageState.Error(message) }
                 }
         }
     }

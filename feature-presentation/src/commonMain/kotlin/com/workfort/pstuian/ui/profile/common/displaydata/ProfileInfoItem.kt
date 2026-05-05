@@ -26,7 +26,7 @@ sealed class ProfileInfoItemAction {
 
     data object BloodDonationList : ProfileInfoItemAction()
 
-    data object CheckInList : ProfileInfoItemAction()
+    data object CheckIn : ProfileInfoItemAction()
 
     data object DeleteAccount : ProfileInfoItemAction()
 }

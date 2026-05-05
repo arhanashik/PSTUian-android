@@ -243,7 +243,7 @@ private fun handleProfileInfoItemAction(
         is ProfileInfoItemAction.Password -> onUiEvent(ProfileUiEvent.ChangePasswordClicked)
         is ProfileInfoItemAction.UploadCv -> onUiEvent(ProfileUiEvent.UploadCvClicked)
         is ProfileInfoItemAction.BloodDonationList -> onUiEvent(ProfileUiEvent.BloodDonationHistoryClicked)
-        is ProfileInfoItemAction.CheckInList -> onUiEvent(ProfileUiEvent.CheckInHistoryClicked)
+        is ProfileInfoItemAction.CheckIn -> onUiEvent(ProfileUiEvent.CheckInHistoryClicked)
         is ProfileInfoItemAction.DeleteAccount -> onUiEvent(ProfileUiEvent.DeleteAccountClicked)
     }
 }

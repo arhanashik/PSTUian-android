@@ -13,9 +13,9 @@ import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonat
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestListViewModel
 import com.workfort.pstuian.ui.changepassword.ChangePasswordUiStateMachine
 import com.workfort.pstuian.ui.changepassword.ChangePasswordViewModel
-import com.workfort.pstuian.ui.checkinlist.CheckInDisplayDataMapper
-import com.workfort.pstuian.ui.checkinlist.CheckInListUiStateMachine
-import com.workfort.pstuian.ui.checkinlist.CheckInListViewModel
+import com.workfort.pstuian.ui.checkin.CheckInDisplayDataMapper
+import com.workfort.pstuian.ui.checkin.CheckInUiStateMachine
+import com.workfort.pstuian.ui.checkin.CheckInViewModel
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.DeepLinkNavigator
 import com.workfort.pstuian.ui.cvdownload.CvDownloadUiStateMachine
@@ -105,10 +105,10 @@ private val changePasswordModule = module {
     }
 }
 
-private val checkInListModule = module {
+private val checkInModule = module {
     factoryOf(::CheckInDisplayDataMapper)
-    factoryOf(::CheckInListUiStateMachine)
-    factoryOf(::CheckInListViewModel)
+    factoryOf(::CheckInUiStateMachine)
+    factoryOf(::CheckInViewModel)
 }
 
 private val imageUploadModule = module {
@@ -337,7 +337,7 @@ val featurePresentationModule = listOf(
     bloodDonationRequestCreateModule,
     bloodDonationRequestListModule,
     changePasswordModule,
-    checkInListModule,
+    checkInModule,
     imageUploadModule,
     cvDownloadModule,
     cvUploadModule,
