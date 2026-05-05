@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.common.composable.dashedBorder
 import com.workfort.pstuian.ui.common.composable.rememberPdfPickerLauncher
@@ -97,10 +98,8 @@ private fun CvSelectorView(
             }
         }
         Button(
-            modifier = Modifier.size(100.dp),
-            onClick = {
-                selectedFileUri?.let { onUiEvent(CvUploadUiEvent.UploadClicked(selectedFileUri)) }
-            },
+            modifier = Modifier.size(120.dp),
+            onClick = { selectedFileUri?.let { onUiEvent(CvUploadUiEvent.UploadClicked(selectedFileUri)) } },
             colors = ButtonDefaults.buttonColors(
                 contentColor = if (selectedFileUri.isNullOrEmpty()) {
                     Color.LightGray
@@ -112,14 +111,12 @@ private fun CvSelectorView(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowUp,
-                    contentDescription = null,
-                    modifier = Modifier.size(32.dp)
+                    contentDescription = null
                 )
-                Text(text = stringResource(Res.string.txt_upload))
+                Text(text = stringResource(Res.string.txt_upload), fontSize = 14.sp)
             }
         }
     }
