@@ -84,7 +84,7 @@ class BloodDonationHistoryViewModel(
 
         uiStateMachine.updateContentLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            donationRepo.getAll(userId, userType.type, page)
+            donationRepo.getAll(userId, userType.type, page, forceRefresh)
                 .onSuccess { list ->
                     if (list.isEmpty()) {
                         hasMoreData = false

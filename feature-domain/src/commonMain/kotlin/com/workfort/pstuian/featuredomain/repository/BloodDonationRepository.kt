@@ -10,6 +10,7 @@ interface BloodDonationRepository {
         userId: Int,
         userType: String,
         page: Int,
+        forceRefresh: Boolean = false,
     ): DomainResult<List<BloodDonationEntity>>
 
     suspend fun get(id: Int): DomainResult<BloodDonationEntity>
