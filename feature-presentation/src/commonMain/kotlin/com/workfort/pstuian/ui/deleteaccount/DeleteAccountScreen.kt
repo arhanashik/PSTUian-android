@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
@@ -53,7 +54,9 @@ private fun DeleteAccountScreenContent(
         topBar = {
             AppBar(
                 title = stringResource(Res.string.txt_delete_account),
-                navigation = { onUiEvent(DeleteAccountUiEvent.OnClickBack) },
+                navigation = {
+                    NavigationButton { onUiEvent(DeleteAccountUiEvent.OnClickBack) }
+                },
                 scrollBehavior = scrollBehavior,
             )
         },
