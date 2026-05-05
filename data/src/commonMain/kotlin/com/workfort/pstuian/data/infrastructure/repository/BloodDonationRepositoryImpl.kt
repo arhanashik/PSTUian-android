@@ -51,8 +51,13 @@ class BloodDonationRepositoryImpl(
             .map { it.toModel() }
     }
 
-    override suspend fun update(item: BloodDonationEntity): DomainResult<Unit> {
-        return helper.update(item.toDto()).toDomainResult(domainErrorMapper)
+    override suspend fun update(
+        id: Int,
+        requestId: Int,
+        date: String,
+        info: String,
+    ): DomainResult<Unit> {
+        return helper.update(id, requestId, date, info).toDomainResult(domainErrorMapper)
     }
 
     override suspend fun delete(id: Int): DomainResult<Unit> {

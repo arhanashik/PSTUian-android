@@ -1,5 +1,6 @@
 package com.workfort.pstuian.ui.blooddonation.blooddonationinput
 
+import com.workfort.pstuian.ui.blooddonation.blooddonationinput.state.BloodDonationInputData
 import com.workfort.pstuian.ui.blooddonation.blooddonationinput.state.BloodDonationInputUiState
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,30 +28,13 @@ class BloodDonationInputUiStateMachine : UiStateMachine<BloodDonationInputUiStat
         BloodDonationInputUiState.Content(title = title)
     }
 
-    fun updateRequestId(requestId: Int) = updateUiState {
+    fun updateInputData(inputData: BloodDonationInputData) = updateUiState {
         when (this) {
             is BloodDonationInputUiState.None -> this
             is BloodDonationInputUiState.Content -> copy(
-                inputData = inputData.copy(requestId = requestId),
-            )
-        }
-    }
-
-    fun updateDate(formattedDate: String) = updateUiState {
-        when (this) {
-            is BloodDonationInputUiState.None -> this
-            is BloodDonationInputUiState.Content -> copy(
-                inputData = inputData.copy(date = date, formattedDate = formattedDate),
-                enableSendButton = formattedDate.isNotEmpty(),
-            )
-        }
-    }
-
-    fun updateInfo(info: String) = updateUiState {
-        when (this) {
-            is BloodDonationInputUiState.None -> this
-            is BloodDonationInputUiState.Content -> copy(
-                inputData = inputData.copy(info = info),
+                inputData = inputData,
+                enableSendButton = !inputData.hasError(),
+                isOperationLoading = false,
             )
         }
     }

@@ -37,14 +37,15 @@ class BloodDonationInputViewModel(
     override fun onUiReady() {
         val title = if (donationId == null) "Create Donation" else "Update Donation"
         uiStateMachine.setInitialContent(title)
+
+        donationId?.let { loadData(it) } // Update flow - load data to update
     }
 
     fun onUiEvent(event: BloodDonationInputUiEvent) {
         when (event) {
             is BloodDonationInputUiEvent.BackClicked -> _navigation.update { BloodDonationInputNavigationState.GoBack }
-            is BloodDonationInputUiEvent.RequestIdChanged -> uiStateMachine.updateRequestId(event.requestId)
-            is BloodDonationInputUiEvent.SelectDateClicked -> onClickSelectDate()
-            is BloodDonationInputUiEvent.InfoChanged -> onInfoChanged(event.info)
+            is BloodDonationInputUiEvent.InputChanged -> uiStateMachine.updateInputData(event.input)
+            is BloodDonationInputUiEvent.SelectDateClicked -> onClickSelectDate(event.input)
             is BloodDonationInputUiEvent.SendClicked -> onSendClicked(event.input)
         }
     }
@@ -53,7 +54,27 @@ class BloodDonationInputViewModel(
 
     fun onNavigationHandled() = _navigation.update { null }
 
-    private fun onClickSelectDate() {
+    private fun loadData(donationId: Int) {
+        uiStateMachine.showLoading(true)
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            bloodDonationRepository.get(donationId).onSuccess {
+                uiStateMachine.updateInputData(
+                    BloodDonationInputData(
+                        requestId = it.requestId ?: 0,
+                        formattedDate = it.date.split(" ").firstOrNull() ?: "",
+                        info = it.info ?: "",
+                    )
+                )
+            }.onFailure {
+                uiStateMachine.showLoading(false)
+                val message = it.message ?: "Failed to load data"
+                _message.update { BloodDonationInputMessageState.Snackbar(message) }
+                _navigation.update { BloodDonationInputNavigationState.GoBack }
+            }
+        }
+    }
+
+    private fun onClickSelectDate(input: BloodDonationInputData) {
         _message.update {
             // only allow dates until today
             BloodDonationInputMessageState.SelectDate(
@@ -62,13 +83,9 @@ class BloodDonationInputViewModel(
                 val formattedDate = if (dateMills == null) "" else {
                     dateTimeUtil.formatDateYYYYMMDD(dateMills)
                 }
-                uiStateMachine.updateDate(formattedDate)
+                uiStateMachine.updateInputData(input.copy(formattedDate = formattedDate))
             }
         }
-    }
-
-    private fun onInfoChanged(info: String) {
-        uiStateMachine.updateInfo(info)
     }
 
     private fun onSendClicked(input: BloodDonationInputData) {
@@ -79,17 +96,19 @@ class BloodDonationInputViewModel(
 
         uiStateMachine.showLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            bloodDonationRepository.insert(input.requestId, userId, userType, input.formattedDate, input.info)
-                .onSuccess {
-                    uiStateMachine.showLoading(false)
-                    _message.update { BloodDonationInputMessageState.Snackbar("Donation created successfully!") }
-                    _navigation.update { BloodDonationInputNavigationState.GoBack }
-                }
-                .onFailure {
-                    uiStateMachine.showLoading(false)
-                    val message = it.message ?: "Failed to create"
-                    _message.update { BloodDonationInputMessageState.Error(message) }
-                }
+            if (donationId == null) { // new entry flow
+                bloodDonationRepository.insert(input.requestId, userId, userType, input.formattedDate, input.info)
+            } else { // update flow
+                bloodDonationRepository.update(donationId, input.requestId, input.formattedDate, input.info)
+            }.onSuccess {
+                uiStateMachine.showLoading(false)
+                _message.update { BloodDonationInputMessageState.Snackbar("Action successful!") }
+                _navigation.update { BloodDonationInputNavigationState.GoBack }
+            }.onFailure {
+                uiStateMachine.showLoading(false)
+                val message = it.message ?: "Action failed. Please try again"
+                _message.update { BloodDonationInputMessageState.Error(message) }
+            }
         }
     }
 }

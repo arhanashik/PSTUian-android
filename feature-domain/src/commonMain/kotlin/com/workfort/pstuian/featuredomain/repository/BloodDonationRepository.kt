@@ -23,7 +23,12 @@ interface BloodDonationRepository {
         info: String,
     ) : DomainResult<BloodDonationEntity>
 
-    suspend fun update(item: BloodDonationEntity): DomainResult<Unit>
+    suspend fun update(
+        id: Int,
+        requestId: Int,
+        date: String,
+        info: String,
+    ): DomainResult<Unit>
 
     suspend fun delete(id: Int): DomainResult<Unit>
 }

@@ -47,9 +47,14 @@ class BloodDonationApiHelperImpl(
         }
     }
 
-    override suspend fun update(item: BloodDonationDto): NetworkResult<Unit> {
+    override suspend fun update(
+        id: Int,
+        requestId: Int,
+        date: String,
+        info: String,
+    ): NetworkResult<Unit> {
         return runCatching {
-            service.update(item.id, item.requestId, item.date, item.info).toNetworkResult()
+            service.update(id, requestId, date, info).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

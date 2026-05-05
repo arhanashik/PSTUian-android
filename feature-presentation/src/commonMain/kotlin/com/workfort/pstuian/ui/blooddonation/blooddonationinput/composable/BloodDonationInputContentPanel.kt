@@ -57,7 +57,7 @@ internal fun BloodDonationInputContentPanel(
                 value = uiState.inputData.requestId.toString(),
                 onValueChange = {
                     val requestId = it.toIntOrNull() ?: 0
-                    onUiEvent(BloodDonationInputUiEvent.RequestIdChanged(requestId))
+                    onUiEvent(BloodDonationInputUiEvent.InputChanged(uiState.inputData.copy(requestId = requestId)))
                 },
                 supportingText = stringResource(Res.string.helper_text_blood_donation_request_id),
                 keyboardOptions = KeyboardOptions(
@@ -70,7 +70,7 @@ internal fun BloodDonationInputContentPanel(
             AuthUnderlinedField(
                 modifier = Modifier.onFocusChanged {
                     if (it.isFocused) {
-                        onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
+                        onUiEvent(BloodDonationInputUiEvent.SelectDateClicked(uiState.inputData))
                     }
                 },
                 label = stringResource(Res.string.hint_donation_date),
@@ -84,7 +84,7 @@ internal fun BloodDonationInputContentPanel(
                         modifier = Modifier
                             .size(22.dp)
                             .clickable {
-                                onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
+                                onUiEvent(BloodDonationInputUiEvent.SelectDateClicked(uiState.inputData))
                             },
                     )
                 },
@@ -94,7 +94,9 @@ internal fun BloodDonationInputContentPanel(
             AuthUnderlinedField(
                 label = stringResource(Res.string.hint_message),
                 value = uiState.inputData.info,
-                onValueChange = { onUiEvent(BloodDonationInputUiEvent.InfoChanged(it)) },
+                onValueChange = { info ->
+                    onUiEvent(BloodDonationInputUiEvent.InputChanged(uiState.inputData.copy(info = info)))
+                },
                 singleLine = false,
                 minLines = 5,
                 maxLines = 10,
