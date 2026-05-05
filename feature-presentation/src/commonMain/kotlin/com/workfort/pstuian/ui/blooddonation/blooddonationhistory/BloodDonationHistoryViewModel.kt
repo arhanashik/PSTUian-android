@@ -96,10 +96,11 @@ class BloodDonationHistoryViewModel(
                 }
                 .onFailure {
                     uiStateMachine.updateContentLoading(false)
+                    val message = it.message ?: "Failed to load data"
                     if (donationsCache.isEmpty()) {
-                        val message = it.message ?: "Failed to get data"
                         uiStateMachine.showError(message)
                     }
+                    _message.update { BloodDonationHistoryMessageState.Error(message) }
                 }
         }
     }
