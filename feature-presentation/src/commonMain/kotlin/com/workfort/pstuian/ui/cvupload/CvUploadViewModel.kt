@@ -10,12 +10,14 @@ import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.cvupload.state.CvUploadMessageState
-import com.workfort.pstuian.ui.cvupload.state.CvUploadNavigationState
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiEvent
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiState
 import com.workfort.pstuian.util.FileUtil
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 
 class CvUploadViewModel(
@@ -31,8 +33,8 @@ class CvUploadViewModel(
     private val _message = MutableStateFlow<CvUploadMessageState?>(null)
     val message: StateFlow<CvUploadMessageState?> = _message
 
-    private val _navigation = MutableStateFlow<CvUploadNavigationState?>(null)
-    val navigation: StateFlow<CvUploadNavigationState?> = _navigation
+    private val _finishSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val finishSuccess: SharedFlow<Unit> = _finishSuccess.asSharedFlow()
 
     override fun onUiReady() {
         uiStateMachine.setInitialContent()
@@ -40,20 +42,12 @@ class CvUploadViewModel(
 
     fun onUiEvent(event: CvUploadUiEvent) {
         when (event) {
-            is CvUploadUiEvent.BackClicked -> onClickBack()
             is CvUploadUiEvent.CvSelected -> onSelectCv(event.fileUri)
             is CvUploadUiEvent.UploadClicked -> onClickUpload(event.fileUri)
         }
     }
 
     fun onMessageHandled() = _message.update { null }
-
-    fun onNavigationHandled() = _navigation.update { null }
-
-    private fun onClickBack() {
-        if (uiStateMachine.isUploading()) return
-        _navigation.update { CvUploadNavigationState.GoBack }
-    }
 
     private fun onSelectCv(fileUri: String) {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
@@ -88,7 +82,6 @@ class CvUploadViewModel(
             fileHandlerRepository.uploadCv(filename, fileBytes).onSuccess { fileUrl ->
                 uiStateMachine.onUploadProgress(100)
                 uiStateMachine.onUploadResult(isSuccess = true, result = "Image uploaded successfully!")
-                _message.update { CvUploadMessageState.Snackbar("Image uploaded successfully!") }
                 updateFileUrl(fileUrl)
             }.onFailure {
                 val msg = it.message ?: "Upload failed. Please try again."
@@ -105,8 +98,8 @@ class CvUploadViewModel(
                 UserType.STUDENT -> studentRepository.changeCvUrl(userId, fileUrl)
                 else -> return@launchOnMain
             }.onSuccess {
-                _message.update { CvUploadMessageState.Snackbar("Profile photo changed successfully!") }
-                _navigation.update { CvUploadNavigationState.GoBack }
+                _message.update { null }
+                _finishSuccess.tryEmit(Unit)
             }.onFailure {
                 val msg = it.message ?: "Failed. Please try again."
                 _message.update { CvUploadMessageState.Error(msg) }

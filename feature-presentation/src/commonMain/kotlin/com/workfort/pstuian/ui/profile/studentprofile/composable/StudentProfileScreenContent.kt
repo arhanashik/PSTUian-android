@@ -18,8 +18,9 @@ import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileDisplayDataM
 internal fun StudentProfileScreenContent(
     uiState: ProfileUiState,
     onUiEvent: (ProfileUiEvent) -> Unit,
+    snackbarHost: @Composable () -> Unit = {},
 ) {
-    AppScaffold {
+    AppScaffold(snackbarHost = snackbarHost) {
         StudentProfileContentPanel(uiState, onUiEvent)
     }
 }

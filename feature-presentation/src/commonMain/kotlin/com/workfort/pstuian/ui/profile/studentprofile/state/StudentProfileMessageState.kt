@@ -5,7 +5,11 @@ sealed interface StudentProfileMessageState {
     data class CvDownloadSheet(val userId: Int, val url: String, val openId: Long) : StudentProfileMessageState
 
     /** Each open uses a new [openId] so the CV sheet gets a fresh ViewModel via Compose `key`. */
-    data class CvUploadSheet(val userId: Int, val openId: Long) : StudentProfileMessageState
+    data class CvUploadSheet(
+        val userId: Int,
+        val openId: Long,
+        val onDismiss: (isSuccess: Boolean) -> Unit,
+    ) : StudentProfileMessageState
 
     data class Loading(val cancelable: Boolean) : StudentProfileMessageState
     data class InputBio(
@@ -23,4 +27,5 @@ sealed interface StudentProfileMessageState {
     data class ConfirmSignOut(val onConfirm: () -> Unit) : StudentProfileMessageState
     data class Success(val message: String) : StudentProfileMessageState
     data class Error(val message: String) : StudentProfileMessageState
+    data class Snackbar(val message: String) : StudentProfileMessageState
 }

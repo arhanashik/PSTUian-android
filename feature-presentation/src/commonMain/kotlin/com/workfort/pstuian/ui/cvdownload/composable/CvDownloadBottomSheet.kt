@@ -16,15 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.cvdownload.CvDownloadViewModel
-import com.workfort.pstuian.ui.cvdownload.state.CvDownloadNavigationState
-import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiEvent
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiState
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -42,22 +42,11 @@ fun CvDownloadBottomSheet(
     viewModel: CvDownloadViewModel = koinViewModel { parametersOf(userId, userType, url) },
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val navigation by viewModel.navigation.collectAsState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.onUiReady()
-    }
-
-    LaunchedEffect(navigation) {
-        when (navigation) {
-            is CvDownloadNavigationState.GoBack -> {
-                sheetState.hide()
-                viewModel.onNavigationHandled()
-                onDismiss()
-            }
-            null -> Unit
-        }
     }
 
     ModalBottomSheet(
@@ -76,7 +65,12 @@ fun CvDownloadBottomSheet(
             ) {
                 TitleTextSmall(text = stringResource(Res.string.label_download_cv_screen))
                 IconButton(
-                    onClick = { viewModel.onUiEvent(CvDownloadUiEvent.OnClickBack) },
+                    onClick = {
+                        scope.launch {
+                            sheetState.hide()
+                            onDismiss()
+                        }
+                    },
                 ) {
                     Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.txt_dismiss))
                 }

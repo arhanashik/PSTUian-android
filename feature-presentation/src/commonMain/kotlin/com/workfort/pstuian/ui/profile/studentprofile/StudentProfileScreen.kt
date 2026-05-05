@@ -3,12 +3,16 @@ package com.workfort.pstuian.ui.profile.studentprofile
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
+import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowInputDialog
@@ -42,19 +46,30 @@ fun StudentProfileScreen(viewModel: StudentProfileViewModel) {
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(Unit) {
         viewModel.onUiReady()
     }
 
-    StudentProfileScreenContent(uiState, viewModel::onUiEvent)
+    StudentProfileScreenContent(
+        uiState,
+        viewModel::onUiEvent,
+        snackbarHost = { AppSnackbarHost(snackbarHostState) },
+    )
 
-    HandleMessageState(message, viewModel::messageHandled)
+    HandleMessageState(
+        message,
+        snackbarHostState = snackbarHostState,
+        onMessageHandled = viewModel::messageHandled,
+    )
     HandleNavigationState(navigation, viewModel::navigationHandled)
 }
 
 @Composable
 private fun HandleMessageState(
     message: StudentProfileMessageState?,
+    snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
 ) {
     message?.let { state ->
@@ -73,7 +88,10 @@ private fun HandleMessageState(
                     CvUploadBottomSheet(
                         userId = state.userId,
                         userType = UserType.STUDENT,
-                        onDismiss = onMessageHandled,
+                        onDismiss = { isSuccess ->
+                            onMessageHandled()
+                            state.onDismiss(isSuccess)
+                        },
                     )
                 }
             is StudentProfileMessageState.Loading -> {
@@ -146,6 +164,9 @@ private fun HandleMessageState(
                     onConfirm = onMessageHandled,
                     onDismiss = onMessageHandled,
                 )
+            }
+            is StudentProfileMessageState.Snackbar -> {
+                HandleSnackbar(state.message, snackbarHostState, onMessageHandled)
             }
         }
     }

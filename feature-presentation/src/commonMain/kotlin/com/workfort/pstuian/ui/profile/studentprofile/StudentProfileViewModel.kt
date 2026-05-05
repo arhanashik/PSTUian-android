@@ -242,7 +242,11 @@ class StudentProfileViewModel(
                 StudentProfileMessageState.CvUploadSheet(
                     userId = student.userId,
                     openId = cvUploadSheetOpenId,
-                )
+                ) { isSuccess ->
+                    if (isSuccess) {
+                        _message.update { StudentProfileMessageState.Snackbar("Cv updated successfully") }
+                    }
+                }
             }
         }
     }
