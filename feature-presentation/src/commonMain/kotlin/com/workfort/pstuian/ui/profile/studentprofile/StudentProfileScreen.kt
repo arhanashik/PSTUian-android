@@ -80,7 +80,10 @@ private fun HandleMessageState(
                         userId = state.userId,
                         userType = UserType.STUDENT,
                         url = state.url,
-                        onDismiss = onMessageHandled,
+                        onDismiss = { isSuccess ->
+                            onMessageHandled()
+                            state.onDismiss(isSuccess)
+                        },
                     )
                 }
             is StudentProfileMessageState.CvUploadSheet ->

@@ -228,7 +228,13 @@ class StudentProfileViewModel(
                     userId = student.userId,
                     url = url,
                     openId = cvDownloadSheetOpenId,
-                )
+                ) { isSuccess ->
+                    if (isSuccess) {
+                        _message.update {
+                            StudentProfileMessageState.Snackbar("Cv downloaded successfully")
+                        }
+                    }
+                }
             }
         }
     }
