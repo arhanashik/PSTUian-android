@@ -9,7 +9,6 @@ sealed interface TeacherProfileNavigationState {
     data class ImageUploadScreen(val userId: Int) : TeacherProfileNavigationState
     data object ChangePasswordScreen : TeacherProfileNavigationState
     data class MyCheckInListScreen(val userId: Int) : TeacherProfileNavigationState
-    data class MyDeviceListScreen(val userId: Int) : TeacherProfileNavigationState
     data class TeacherProfileEditScreen(val userId: Int) : TeacherProfileNavigationState
     data object DeleteAccountScreen : TeacherProfileNavigationState
 }

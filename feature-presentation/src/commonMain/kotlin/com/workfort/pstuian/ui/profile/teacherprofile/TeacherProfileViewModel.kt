@@ -74,7 +74,6 @@ class TeacherProfileViewModel(
             is ProfileUiEvent.DownloadCvClicked -> Unit
             is ProfileUiEvent.UploadCvClicked -> Unit
             is ProfileUiEvent.MyCheckInListClicked -> onClickMyCheckInList()
-            is ProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
         }
     }
@@ -214,16 +213,6 @@ class TeacherProfileViewModel(
         }
     }
 
-    private fun onClickMyDeviceList() {
-        if (profileCache?.isSignedIn != true) return
-
-        profileCache?.teacher?.let { teacher ->
-            _navigation.update {
-                TeacherProfileNavigationState.MyDeviceListScreen(userId = teacher.userId)
-            }
-        }
-    }
-
     private fun onClickDeleteAccount() {
         if (profileCache?.isSignedIn == true) {
             _navigation.update { TeacherProfileNavigationState.DeleteAccountScreen }
@@ -247,13 +236,13 @@ class TeacherProfileViewModel(
         }
     }
 
-    fun signOut() {
+    fun signOut(fromAllDevice: Boolean) {
         cancelUserPresenceObservation()
         _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
                 messageHandled()
-                authRepo.signOut()
+                authRepo.signOut(fromAllDevice = fromAllDevice)
                 _navigation.update { TeacherProfileNavigationState.ResetToHome }
             }.onFailure {
                 val message = it.message ?: "Signing out failed. Please try again."

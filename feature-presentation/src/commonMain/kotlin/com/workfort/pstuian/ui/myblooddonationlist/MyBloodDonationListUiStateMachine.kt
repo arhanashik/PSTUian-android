@@ -28,6 +28,7 @@ class MyBloodDonationListUiStateMachine : UiStateMachine<MyBloodDonationListUiSt
                 donations = donations,
                 isLoading = false,
                 isEndOfData = isEndOfData,
+                error = null,
             )
         }
     }

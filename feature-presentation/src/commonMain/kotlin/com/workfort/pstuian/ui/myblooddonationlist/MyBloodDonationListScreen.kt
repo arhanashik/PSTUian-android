@@ -21,6 +21,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppBarIconButton
 import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
@@ -48,7 +49,7 @@ fun MyBloodDonationListScreen(viewModel: MyBloodDonationListViewModel) {
 
     MyBloodDonationListScreenContent(uiState, viewModel::onUiEvent)
 
-    HandleMessageState(message, viewModel::onMessageHandled, viewModel::onUiEvent)
+    HandleMessageState(message, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
@@ -71,7 +72,9 @@ private fun MyBloodDonationListScreenContent(
         topBar = {
             AppBar(
                 title = stringResource(Res.string.txt_my_donation_list),
-                navigation = { onUiEvent(MyBloodDonationListUiEvent.BackClicked) },
+                navigation = {
+                    NavigationButton { onUiEvent(MyBloodDonationListUiEvent.BackClicked) }
+                },
                 actions = {
                     AppBarIconButton(
                         icon = Icons.Filled.Refresh,
@@ -107,7 +110,6 @@ private fun MyBloodDonationListScreenContent(
 private fun HandleMessageState(
     message: MyBloodDonationListMessageState?,
     onMessageHandled: () -> Unit,
-    onUiEvent: (MyBloodDonationListUiEvent) -> Unit,
 ) {
     message?.let {
         when (it) {

@@ -9,14 +9,14 @@ import com.workfort.pstuian.data.remote.NetworkConst
 abstract class BloodDonationApiHelper : ApiHelper<BloodDonationDto>()  {
 
     open suspend fun getAll(
-        userId: String,
+        userId: Int,
         userType: String,
         page: Int,
         limit: Int = NetworkConst.Params.Default.PAGE_SIZE
     ): NetworkResult<List<BloodDonationDto>> = super.getAll(page, limit)
 
     open suspend fun insert(
-        userId: String,
+        userId: Int,
         userType: String,
         requestId: Int?,
         date: Long,

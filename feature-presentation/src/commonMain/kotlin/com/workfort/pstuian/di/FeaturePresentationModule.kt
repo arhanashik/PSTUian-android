@@ -38,8 +38,6 @@ import com.workfort.pstuian.ui.myblooddonationlist.MyBloodDonationListUiStateMac
 import com.workfort.pstuian.ui.myblooddonationlist.MyBloodDonationListViewModel
 import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListUiStateMachine
 import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListViewModel
-import com.workfort.pstuian.ui.mydevicelist.MyDeviceListUiStateMachine
-import com.workfort.pstuian.ui.mydevicelist.MyDeviceListViewModel
 import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
 import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileDisplayDataMapper
@@ -275,7 +273,7 @@ private val deleteAccountModule = module {
 
 private val myBloodDonationListModule = module {
     factoryOf(::MyBloodDonationListUiStateMachine)
-    factory { (userId: String, userType: UserType) ->
+    factory { (userId: Int, userType: UserType) ->
         MyBloodDonationListViewModel(
             userId = userId,
             userType = userType,
@@ -297,11 +295,6 @@ private val myCheckInListModule = module {
             coroutineDispatcherProvider = get(),
         )
     }
-}
-
-private val myDeviceListModule = module {
-    factoryOf(::MyDeviceListUiStateMachine)
-    factoryOf(::MyDeviceListViewModel)
 }
 
 private val settingsModule = module {
@@ -359,7 +352,6 @@ val featurePresentationModule = listOf(
     deleteAccountModule,
     myBloodDonationListModule,
     myCheckInListModule,
-    myDeviceListModule,
     settingsModule,
     studentProfileEditModule,
     teacherProfileEditModule,

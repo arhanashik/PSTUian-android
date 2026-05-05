@@ -98,6 +98,5 @@ private fun ProfileInfoItemAction.getIcon(): ImageVector? = when (this) {
     is ProfileInfoItemAction.UploadCv -> Icons.Default.KeyboardArrowUp
     is ProfileInfoItemAction.BloodDonationList -> null
     is ProfileInfoItemAction.CheckInList -> Icons.Default.LocationOn
-    is ProfileInfoItemAction.SignedInDevices -> null
     is ProfileInfoItemAction.DeleteAccount -> Icons.Default.Delete
 }

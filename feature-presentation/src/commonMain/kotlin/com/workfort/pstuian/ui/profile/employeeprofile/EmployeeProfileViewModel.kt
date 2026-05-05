@@ -68,7 +68,6 @@ class EmployeeProfileViewModel(
             is ProfileUiEvent.DownloadCvClicked -> Unit
             is ProfileUiEvent.UploadCvClicked -> Unit
             is ProfileUiEvent.MyCheckInListClicked -> Unit
-            is ProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
         }
     }
@@ -200,16 +199,6 @@ class EmployeeProfileViewModel(
         _navigation.update { EmployeeProfileNavigationState.ChangePasswordScreen }
     }
 
-    private fun onClickMyDeviceList() {
-        if (profileCache?.isSignedIn != true) return
-
-        profileCache?.employee?.let { employee ->
-            _navigation.update {
-                EmployeeProfileNavigationState.MyDeviceListScreen(userId = employee.userId)
-            }
-        }
-    }
-
     private fun onClickDeleteAccount() {
         if (profileCache?.isSignedIn == true) {
             _navigation.update { EmployeeProfileNavigationState.DeleteAccountScreen }
@@ -222,13 +211,13 @@ class EmployeeProfileViewModel(
         }
     }
 
-    fun signOut() {
+    fun signOut(fromAllDevice: Boolean) {
         cancelUserPresenceObservation()
         _message.update { EmployeeProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
                 messageHandled()
-                authRepo.signOut()
+                authRepo.signOut(fromAllDevice = fromAllDevice)
                 _navigation.update { EmployeeProfileNavigationState.ResetToHome }
             }.onFailure {
                 val message = it.message ?: "Signing out failed. Please try again."

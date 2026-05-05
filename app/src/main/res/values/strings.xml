@@ -384,7 +384,6 @@
     <string name="txt_verify_now">Verify now</string>
     <string name="label_email_verification_screen">Email Verification</string>
     <string name="txt_devices">Devices</string>
-    <string name="txt_signed_in_devices">Signed In Devices</string>
     <string name="txt_sign_out_from_all">Sign out from all</string>
     <string name="msg_sign_out_from_all">Are you surely want to sign out from all devices? You will have to sign in again.</string>
     <string name="msg_sign_out">Are you surely want to sign out?</string>

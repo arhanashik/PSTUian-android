@@ -29,7 +29,7 @@ sealed interface StudentProfileMessageState {
         val email: String,
         val onConfirm: () -> Unit,
     ) : StudentProfileMessageState
-    data class ConfirmSignOut(val onConfirm: () -> Unit) : StudentProfileMessageState
+    data class ConfirmSignOut(val onConfirm: (Boolean) -> Unit) : StudentProfileMessageState
     data class Success(val message: String) : StudentProfileMessageState
     data class Error(val message: String) : StudentProfileMessageState
     data class Snackbar(val message: String) : StudentProfileMessageState

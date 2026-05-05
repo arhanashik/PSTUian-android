@@ -14,7 +14,7 @@ sealed interface EmployeeProfileMessageState {
         val email: String,
         val onConfirm: () -> Unit,
     ) : EmployeeProfileMessageState
-    data class ConfirmSignOut(val onConfirm: () -> Unit) : EmployeeProfileMessageState
+    data class ConfirmSignOut(val onConfirm: (Boolean) -> Unit) : EmployeeProfileMessageState
     data class Success(val message: String) : EmployeeProfileMessageState
     data class Error(val message: String) : EmployeeProfileMessageState
 }

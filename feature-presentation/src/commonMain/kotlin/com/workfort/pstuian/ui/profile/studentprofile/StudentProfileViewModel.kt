@@ -77,7 +77,6 @@ class StudentProfileViewModel(
             is ProfileUiEvent.DownloadCvClicked -> onClickDownloadCv(event.url)
             is ProfileUiEvent.UploadCvClicked -> onClickUploadCv()
             is ProfileUiEvent.MyCheckInListClicked -> onClickMyCheckInList()
-            is ProfileUiEvent.MyDeviceListClicked -> onClickMyDeviceList()
             is ProfileUiEvent.DeleteAccountClicked -> onClickDeleteAccount()
         }
     }
@@ -162,9 +161,9 @@ class StudentProfileViewModel(
     private fun onClickSignOut() {
         if (profileCache?.isSignedIn != true) return
         _message.update {
-            StudentProfileMessageState.ConfirmSignOut {
+            StudentProfileMessageState.ConfirmSignOut { signOutFromAllDevices ->
                 messageHandled()
-                signOut()
+                signOut(signOutFromAllDevices)
             }
         }
     }
@@ -267,16 +266,6 @@ class StudentProfileViewModel(
         }
     }
 
-    private fun onClickMyDeviceList() {
-        if (profileCache?.isSignedIn != true) return
-
-        profileCache?.student?.let { student ->
-            _navigation.update {
-                StudentProfileNavigationState.MyDeviceListScreen(userId = student.userId)
-            }
-        }
-    }
-
     private fun onClickDeleteAccount() {
         if (profileCache?.isSignedIn == true) {
             _navigation.update { StudentProfileNavigationState.DeleteAccountScreen }
@@ -300,11 +289,11 @@ class StudentProfileViewModel(
         }
     }
 
-    fun signOut() {
+    fun signOut(fromAllDevice: Boolean) {
         cancelUserPresenceObservation()
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            authRepo.signOut()
+            authRepo.signOut(fromAllDevice = fromAllDevice)
                 .onSuccess {
                     messageHandled()
                     _navigation.update { StudentProfileNavigationState.ResetToHome }

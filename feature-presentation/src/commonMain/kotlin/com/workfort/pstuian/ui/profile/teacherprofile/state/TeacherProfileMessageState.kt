@@ -14,7 +14,7 @@ sealed interface TeacherProfileMessageState {
         val email: String,
         val onConfirm: () -> Unit,
     ) : TeacherProfileMessageState
-    data class ConfirmSignOut(val onConfirm: () -> Unit) : TeacherProfileMessageState
+    data class ConfirmSignOut(val onConfirm: (Boolean) -> Unit) : TeacherProfileMessageState
     data class Success(val message: String) : TeacherProfileMessageState
     data class Error(val message: String) : TeacherProfileMessageState
 }

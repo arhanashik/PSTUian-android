@@ -13,7 +13,7 @@ import io.ktor.http.parameters
 class BloodDonationApiService(private val client: HttpClient) {
 
     suspend fun getAll(
-        userId: String,
+        userId: Int,
         userType: String,
         page: Int = 1,
         limit: Int = 20,
@@ -33,7 +33,7 @@ class BloodDonationApiService(private val client: HttpClient) {
     }
 
     suspend fun insert(
-        userId: String,
+        userId: Int,
         userType: String,
         requestId: Int?,
         date: Long,
@@ -42,7 +42,7 @@ class BloodDonationApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonation.INSERT,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
+                append(NetworkConst.Params.USER_ID, userId.toString())
                 append(NetworkConst.Params.USER_TYPE, userType)
                 if (requestId != null) append(NetworkConst.Params.REQUEST_ID, requestId.toString())
                 append(NetworkConst.Params.DATE, date.toString())

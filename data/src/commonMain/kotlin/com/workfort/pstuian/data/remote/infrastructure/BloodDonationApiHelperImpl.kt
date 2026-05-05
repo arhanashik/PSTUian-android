@@ -13,7 +13,7 @@ class BloodDonationApiHelperImpl(
 ) : BloodDonationApiHelper() {
 
     override suspend fun getAll(
-        userId: String,
+        userId: Int,
         userType: String,
         page: Int,
         limit: Int
@@ -34,7 +34,7 @@ class BloodDonationApiHelperImpl(
     }
 
     override suspend fun insert(
-        userId: String,
+        userId: Int,
         userType: String,
         requestId: Int?,
         date: Long,

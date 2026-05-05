@@ -12,6 +12,7 @@ import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowInputDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.ShowSignOutBottomSheet
 import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
@@ -22,7 +23,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.hint_bio
-import pstuian.feature_presentation.generated.resources.msg_sign_out
 import pstuian.feature_presentation.generated.resources.txt_call
 import pstuian.feature_presentation.generated.resources.txt_change_bio
 import pstuian.feature_presentation.generated.resources.txt_email
@@ -105,12 +105,10 @@ private fun HandleMessageState(
                 )
             }
             is TeacherProfileMessageState.ConfirmSignOut -> {
-                ShowConfirmationDialog(
-                    title = stringResource(Res.string.txt_sign_out),
-                    message = stringResource(Res.string.msg_sign_out),
-                    onConfirm = {
+                ShowSignOutBottomSheet(
+                    onConfirm = { signOutFromAllDevices ->
                         onMessageHandled()
-                        message.onConfirm()
+                        message.onConfirm(signOutFromAllDevices)
                     },
                     onDismiss = onMessageHandled,
                 )
@@ -156,9 +154,6 @@ private fun HandleNavigationState(
                 }
                 is TeacherProfileNavigationState.MyCheckInListScreen -> {
                     navigator?.navigateToMyCheckInList(it.userId, UserType.TEACHER)
-                }
-                is TeacherProfileNavigationState.MyDeviceListScreen -> {
-                    navigator?.navigateTo(AppScreen.MyDeviceList(it.userId, UserType.TEACHER))
                 }
                 is TeacherProfileNavigationState.TeacherProfileEditScreen -> {
                     navigator?.navigateToTeacherProfileEdit(it.userId)

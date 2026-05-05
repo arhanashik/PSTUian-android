@@ -12,7 +12,7 @@ class BloodDonationRepositoryImpl(
 ) : BloodDonationRepository {
 
     override suspend fun getAll(
-        userId: String,
+        userId: Int,
         userType: String,
         page: Int,
     ): List<BloodDonationEntity> {
@@ -29,7 +29,7 @@ class BloodDonationRepositoryImpl(
 
     override suspend fun insert(
         requestId: Int?,
-        userId: String,
+        userId: Int,
         userType: UserType,
         date: Long,
         info: String?,

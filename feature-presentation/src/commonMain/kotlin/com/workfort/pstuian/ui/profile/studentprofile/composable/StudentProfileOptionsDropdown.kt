@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -29,7 +28,6 @@ import pstuian.feature_presentation.generated.resources.txt_email
 import pstuian.feature_presentation.generated.resources.txt_my_check_in_list
 import pstuian.feature_presentation.generated.resources.txt_my_donation_list
 import pstuian.feature_presentation.generated.resources.txt_sign_out
-import pstuian.feature_presentation.generated.resources.txt_signed_in_devices
 
 @Composable
 fun StudentProfileOptionsDropdown(
@@ -42,7 +40,6 @@ fun StudentProfileOptionsDropdown(
     val uploadCvLabel = stringResource(Res.string.hint_upload_new_cv)
     val bloodDonationLabel = stringResource(Res.string.txt_my_donation_list)
     val checkInLabel = stringResource(Res.string.txt_my_check_in_list)
-    val devicesLabel = stringResource(Res.string.txt_signed_in_devices)
     val signOutLabel = stringResource(Res.string.txt_sign_out)
     val deleteAccountLabel = stringResource(Res.string.txt_delete_account)
 
@@ -79,14 +76,6 @@ fun StudentProfileOptionsDropdown(
                 onClick = {
                     onDismiss()
                     onUiEvent(ProfileUiEvent.MyCheckInListClicked)
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(devicesLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
-                leadingIcon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                onClick = {
-                    onDismiss()
-                    onUiEvent(ProfileUiEvent.MyDeviceListClicked)
                 },
             )
             HorizontalDivider()

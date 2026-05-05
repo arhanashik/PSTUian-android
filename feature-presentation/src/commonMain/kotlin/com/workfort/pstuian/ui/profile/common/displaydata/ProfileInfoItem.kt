@@ -28,7 +28,5 @@ sealed class ProfileInfoItemAction {
 
     data object CheckInList : ProfileInfoItemAction()
 
-    data object SignedInDevices : ProfileInfoItemAction()
-
     data object DeleteAccount : ProfileInfoItemAction()
 }

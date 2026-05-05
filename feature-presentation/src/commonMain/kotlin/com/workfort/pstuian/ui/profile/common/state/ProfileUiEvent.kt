@@ -17,6 +17,5 @@ sealed interface ProfileUiEvent {
     data class DownloadCvClicked(val url: String) : ProfileUiEvent
     data object UploadCvClicked : ProfileUiEvent
     data object MyCheckInListClicked : ProfileUiEvent
-    data object MyDeviceListClicked : ProfileUiEvent
     data object DeleteAccountClicked : ProfileUiEvent
 }

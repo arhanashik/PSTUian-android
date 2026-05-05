@@ -33,7 +33,6 @@ import com.workfort.pstuian.ui.imageupload.ImageUploadScreen
 import com.workfort.pstuian.ui.locationpicker.LocationPickerScreen
 import com.workfort.pstuian.ui.myblooddonationlist.MyBloodDonationListScreen
 import com.workfort.pstuian.ui.mycheckinlist.MyCheckInListScreen
-import com.workfort.pstuian.ui.mydevicelist.MyDeviceListScreen
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileScreen
 import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileScreen
 import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditScreen
@@ -221,10 +220,6 @@ fun AppNavHost(
                     MyCheckInListScreen(
                         viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) },
                     )
-                }
-                composable<AppScreen.MyDeviceList>(typeMap = navTypeMap) { backStackEntry ->
-                    val screen: AppScreen.MyDeviceList = backStackEntry.toRoute()
-                    MyDeviceListScreen(viewModel = koinViewModel())
                 }
                 composable<AppScreen.StudentProfileEdit>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.StudentProfileEdit = backStackEntry.toRoute()
