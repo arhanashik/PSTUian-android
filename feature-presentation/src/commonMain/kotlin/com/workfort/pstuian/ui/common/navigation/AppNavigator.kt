@@ -53,8 +53,6 @@ class AppNavigator {
     suspend fun navigateToDonate() = navigateTo(AppScreen.Donate)
     suspend fun navigateToImageUpload(userId: Int, userType: UserType) = navigateTo(AppScreen.ImageUpload(userId, userType))
     suspend fun navigateToImagePreview(encodedImageUrl: String) = navigateTo(AppScreen.ImagePreview(encodedImageUrl))
-    suspend fun navigateToDownloadCv(userId: Int, userType: UserType, url: String) = navigateTo(AppScreen.DownloadCv(userId, userType, url))
-    suspend fun navigateToUploadCv(userId: Int, userType: UserType) = navigateTo(AppScreen.UploadCv(userId, userType))
     suspend fun navigateToSettings() = navigateTo(AppScreen.Settings)
     suspend fun navigateToFaculty(facultyId: Int) = navigateTo(AppScreen.Faculty(facultyId))
     suspend fun navigateToCheckInList() = navigateTo(AppScreen.CheckInList)

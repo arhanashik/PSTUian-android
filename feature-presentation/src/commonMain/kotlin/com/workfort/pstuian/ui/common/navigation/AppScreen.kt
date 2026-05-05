@@ -54,14 +54,6 @@ sealed interface AppScreen {
     @Serializable
     data class ImagePreview(val encodedImageUrl: String) : AppScreen
     @Serializable
-    data class DownloadCv(
-        val userId: Int,
-        val userType: UserType,
-        val url: String,
-    ) : AppScreen
-    @Serializable
-    data class UploadCv(val userId: Int, val userType: UserType) : AppScreen
-    @Serializable
     object Settings : AppScreen
 
     @Serializable

@@ -48,6 +48,9 @@ class StudentProfileViewModel(
     private val _navigation = MutableStateFlow<StudentProfileNavigationState?>(null)
     val navigation: StateFlow<StudentProfileNavigationState?> = _navigation.asStateFlow()
 
+    private var cvDownloadSheetOpenId = 0L
+    private var cvUploadSheetOpenId = 0L
+
     private var profileCache: UserProfile.StudentProfile? = null
 
     private var userPresenceCollectionJob: Job? = null
@@ -219,8 +222,13 @@ class StudentProfileViewModel(
 
     private fun onClickDownloadCv(url: String) {
         profileCache?.student?.let { student ->
-            _navigation.update {
-                StudentProfileNavigationState.DownloadCvScreen(userId = student.userId, url = url)
+            cvDownloadSheetOpenId += 1
+            _message.update {
+                StudentProfileMessageState.CvDownloadSheet(
+                    userId = student.userId,
+                    url = url,
+                    openId = cvDownloadSheetOpenId,
+                )
             }
         }
     }
@@ -229,8 +237,12 @@ class StudentProfileViewModel(
         if (profileCache?.isSignedIn != true) return
 
         profileCache?.student?.let { student ->
-            _navigation.update {
-                StudentProfileNavigationState.UploadCvScreen(userId = student.userId)
+            cvUploadSheetOpenId += 1
+            _message.update {
+                StudentProfileMessageState.CvUploadSheet(
+                    userId = student.userId,
+                    openId = cvUploadSheetOpenId,
+                )
             }
         }
     }

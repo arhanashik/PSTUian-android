@@ -1,6 +1,12 @@
 package com.workfort.pstuian.ui.profile.studentprofile.state
 
 sealed interface StudentProfileMessageState {
+    /** Each open uses a new [openId] so the CV sheet gets a fresh ViewModel via Compose `key`. */
+    data class CvDownloadSheet(val userId: Int, val url: String, val openId: Long) : StudentProfileMessageState
+
+    /** Each open uses a new [openId] so the CV sheet gets a fresh ViewModel via Compose `key`. */
+    data class CvUploadSheet(val userId: Int, val openId: Long) : StudentProfileMessageState
+
     data class Loading(val cancelable: Boolean) : StudentProfileMessageState
     data class InputBio(
         val currentBio: String,

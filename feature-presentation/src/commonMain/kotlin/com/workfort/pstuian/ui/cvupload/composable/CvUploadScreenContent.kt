@@ -13,6 +13,9 @@ import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiEvent
 import com.workfort.pstuian.ui.cvupload.state.CvUploadUiState
+import org.jetbrains.compose.resources.stringResource
+import pstuian.feature_presentation.generated.resources.Res
+import pstuian.feature_presentation.generated.resources.label_upload_cv_screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +27,7 @@ internal fun CvUploadScreenContent(
     AppScaffold(
         topBar = {
             AppBar(
-                title = "Upload CV",
+                title = stringResource(Res.string.label_upload_cv_screen),
                 navigation = {
                     NavigationButton { onUiEvent(CvUploadUiEvent.BackClicked) }
                 },

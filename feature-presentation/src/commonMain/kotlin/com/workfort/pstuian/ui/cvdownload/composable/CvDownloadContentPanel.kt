@@ -46,7 +46,7 @@ internal fun CvDownloadContentPanel(
     }
 
     val isDownloadButtonEnabled = uiState.urlToDownload.isNotEmpty() &&
-            uiState.progress == 0 || uiState.progress == 100
+            (uiState.progress == 0 || uiState.progress == 100)
 
     Column(
         modifier = modifier,

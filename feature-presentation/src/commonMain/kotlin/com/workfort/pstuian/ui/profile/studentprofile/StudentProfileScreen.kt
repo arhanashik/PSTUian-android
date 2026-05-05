@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
@@ -15,6 +16,8 @@ import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
+import com.workfort.pstuian.ui.cvdownload.composable.CvDownloadBottomSheet
+import com.workfort.pstuian.ui.cvupload.composable.CvUploadBottomSheet
 import com.workfort.pstuian.ui.profile.studentprofile.composable.StudentProfileScreenContent
 import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileMessageState
 import com.workfort.pstuian.ui.profile.studentprofile.state.StudentProfileNavigationState
@@ -54,16 +57,33 @@ private fun HandleMessageState(
     message: StudentProfileMessageState?,
     onMessageHandled: () -> Unit,
 ) {
-    message?.let {
-        when (message) {
+    message?.let { state ->
+        when (state) {
+            is StudentProfileMessageState.CvDownloadSheet ->
+                key(state.userId, state.url, state.openId) {
+                    CvDownloadBottomSheet(
+                        userId = state.userId,
+                        userType = UserType.STUDENT,
+                        url = state.url,
+                        onDismiss = onMessageHandled,
+                    )
+                }
+            is StudentProfileMessageState.CvUploadSheet ->
+                key(state.userId, state.openId) {
+                    CvUploadBottomSheet(
+                        userId = state.userId,
+                        userType = UserType.STUDENT,
+                        onDismiss = onMessageHandled,
+                    )
+                }
             is StudentProfileMessageState.Loading -> {
-                ShowLoaderDialog(cancelable = message.cancelable)
+                ShowLoaderDialog(cancelable = state.cancelable)
             }
             is StudentProfileMessageState.InputBio -> {
                 ShowInputDialog(
                     title = stringResource(Res.string.txt_change_bio),
                     label = stringResource(Res.string.hint_bio),
-                    input = message.currentBio,
+                    input = state.currentBio,
                     singleLine = false,
                     minLines = 3,
                     maxLines = 5,
@@ -71,7 +91,7 @@ private fun HandleMessageState(
                     confirmButtonText = stringResource(Res.string.txt_update),
                     onConfirm = { newBio ->
                         onMessageHandled()
-                        message.onConfirm(newBio)
+                        state.onConfirm(newBio)
                     },
                     onDismiss = onMessageHandled,
                 )
@@ -80,11 +100,11 @@ private fun HandleMessageState(
                 ShowConfirmationDialog(
                     icon = Icons.Default.Call,
                     title = stringResource(Res.string.txt_title_call),
-                    message = stringResource(Res.string.txt_msg_call).plus(" ${message.phoneNumber}"),
+                    message = stringResource(Res.string.txt_msg_call).plus(" ${state.phoneNumber}"),
                     confirmButtonText = stringResource(Res.string.txt_call),
                     onConfirm = {
                         onMessageHandled()
-                        message.onConfirm()
+                        state.onConfirm()
                     },
                     onDismiss = onMessageHandled,
                 )
@@ -93,11 +113,11 @@ private fun HandleMessageState(
                 ShowConfirmationDialog(
                     icon = Icons.Default.Email,
                     title = stringResource(Res.string.txt_title_email),
-                    message = stringResource(Res.string.txt_msg_email).plus(" ${message.email}"),
+                    message = stringResource(Res.string.txt_msg_email).plus(" ${state.email}"),
                     confirmButtonText = stringResource(Res.string.txt_email),
                     onConfirm = {
                         onMessageHandled()
-                        message.onConfirm()
+                        state.onConfirm()
                     },
                     onDismiss = onMessageHandled,
                 )
@@ -108,21 +128,21 @@ private fun HandleMessageState(
                     message = stringResource(Res.string.msg_sign_out),
                     onConfirm = {
                         onMessageHandled()
-                        message.onConfirm()
+                        state.onConfirm()
                     },
                     onDismiss = onMessageHandled,
                 )
             }
             is StudentProfileMessageState.Success -> {
                 ShowSuccessDialog(
-                    message = message.message,
+                    message = state.message,
                     onConfirm = onMessageHandled,
                     onDismiss = onMessageHandled,
                 )
             }
             is StudentProfileMessageState.Error -> {
                 ShowErrorDialog(
-                    message = message.message,
+                    message = state.message,
                     onConfirm = onMessageHandled,
                     onDismiss = onMessageHandled,
                 )
@@ -151,14 +171,6 @@ private fun HandleNavigationState(
                 }
                 is StudentProfileNavigationState.ChangePasswordScreen -> {
                     navigator?.navigateTo(AppScreen.ChangePassword())
-                }
-                is StudentProfileNavigationState.DownloadCvScreen -> {
-                    navigator?.navigateTo(
-                        AppScreen.DownloadCv(it.userId, UserType.STUDENT, it.url),
-                    )
-                }
-                is StudentProfileNavigationState.UploadCvScreen -> {
-                    navigator?.navigateTo(AppScreen.UploadCv(it.userId, UserType.STUDENT))
                 }
                 is StudentProfileNavigationState.MyBloodDonationListScreen -> {
                     navigator?.navigateTo(

@@ -133,6 +133,7 @@
     <string name="helper_select_debug_api_server">Choose which backend the app uses in debug builds.</string>
     <string name="btn_apply">Apply</string>
     <string name="label_download_cv_screen">Download CV</string>
+    <string name="label_upload_cv_screen">Upload CV</string>
     <string name="label_blood_donation_request_list_screen">Blood donation requests</string>
     <string name="blood_donation_request_status_approved">Approved</string>
     <string name="blood_donation_request_status_pending">Pending</string>

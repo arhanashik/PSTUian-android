@@ -23,8 +23,6 @@ import com.workfort.pstuian.ui.changepassword.ChangePasswordScreen
 import com.workfort.pstuian.ui.checkinlist.CheckInListScreen
 import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
 import com.workfort.pstuian.ui.common.theme.AppTheme
-import com.workfort.pstuian.ui.cvdownload.CvDownloadScreen
-import com.workfort.pstuian.ui.cvupload.CvUploadScreen
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
 import com.workfort.pstuian.ui.donate.DonateScreen
 import com.workfort.pstuian.ui.donors.DonorsScreen
@@ -266,18 +264,6 @@ fun AppNavHost(
                     ImagePreviewScreen(
                         imageUrl = screen.encodedImageUrl,
                         onBack = { navController.popBackStack() },
-                    )
-                }
-                composable<AppScreen.DownloadCv>(typeMap = navTypeMap) { backStackEntry ->
-                    val screen: AppScreen.DownloadCv = backStackEntry.toRoute()
-                    CvDownloadScreen(
-                        viewModel = koinViewModel { parametersOf(screen.userId, screen.userType, screen.url) },
-                    )
-                }
-                composable<AppScreen.UploadCv>(typeMap = navTypeMap) { backStackEntry ->
-                    val screen: AppScreen.UploadCv = backStackEntry.toRoute()
-                    CvUploadScreen(
-                        viewModel = koinViewModel { parametersOf(screen.userId, screen.userType) },
                     )
                 }
                 composable<AppScreen.Settings> {
