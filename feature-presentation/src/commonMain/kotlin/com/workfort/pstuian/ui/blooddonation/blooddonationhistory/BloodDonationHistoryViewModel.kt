@@ -42,7 +42,7 @@ class BloodDonationHistoryViewModel(
     fun onUiEvent(event: BloodDonationHistoryUiEvent) {
         when (event) {
             is BloodDonationHistoryUiEvent.BackClicked -> onClickBack()
-            is BloodDonationHistoryUiEvent.CreateRequestClicked -> onClickCreateRequest()
+            is BloodDonationHistoryUiEvent.CreateDonationClicked -> onClickCreateDonation()
             is BloodDonationHistoryUiEvent.EditClicked -> onClickEdit(event.item)
             is BloodDonationHistoryUiEvent.DeleteClicked -> onClickDelete(event.item)
             is BloodDonationHistoryUiEvent.LoadMore -> loadDonationList(forceRefresh = false)
@@ -55,13 +55,13 @@ class BloodDonationHistoryViewModel(
 
     private fun onClickBack() = _navigation.update { BloodDonationHistoryNavigationState.GoBack }
 
-    private fun onClickCreateRequest() {
-        _navigation.update { BloodDonationHistoryNavigationState.GoToCreateBloodDonationRequest }
+    private fun onClickCreateDonation() {
+        _navigation.update { BloodDonationHistoryNavigationState.GoToCreateBloodDonation }
     }
 
     private fun onClickEdit(item: BloodDonationEntity) {
         _navigation.update {
-            BloodDonationHistoryNavigationState.GoToEditBloodDonationRequest(item.id)
+            BloodDonationHistoryNavigationState.GoToEditBloodDonation(item.id)
         }
     }
 

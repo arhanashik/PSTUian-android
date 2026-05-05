@@ -4,8 +4,10 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.model.AppLaunchDeepLinkController
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.AppViewModel
-import com.workfort.pstuian.ui.blooddonation.blooddonationcreate.BloodDonationCreateUiStateMachine
-import com.workfort.pstuian.ui.blooddonation.blooddonationcreate.BloodDonationCreateViewModel
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryUiStateMachine
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryViewModel
+import com.workfort.pstuian.ui.blooddonation.blooddonationinput.BloodDonationInputUiStateMachine
+import com.workfort.pstuian.ui.blooddonation.blooddonationinput.BloodDonationInputViewModel
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.BloodDonationRequestCreateUiStateMachine
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.BloodDonationRequestCreateViewModel
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestDisplayDataMapper
@@ -16,6 +18,8 @@ import com.workfort.pstuian.ui.changepassword.ChangePasswordViewModel
 import com.workfort.pstuian.ui.checkin.CheckInDisplayDataMapper
 import com.workfort.pstuian.ui.checkin.CheckInUiStateMachine
 import com.workfort.pstuian.ui.checkin.CheckInViewModel
+import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryUiStateMachine
+import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryViewModel
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.DeepLinkNavigator
 import com.workfort.pstuian.ui.cvdownload.CvDownloadUiStateMachine
@@ -34,10 +38,6 @@ import com.workfort.pstuian.ui.home.HomeUiStateMachine
 import com.workfort.pstuian.ui.home.HomeViewModel
 import com.workfort.pstuian.ui.imageupload.ImageUploadUiStateMachine
 import com.workfort.pstuian.ui.imageupload.ImageUploadViewModel
-import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryUiStateMachine
-import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryViewModel
-import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryUiStateMachine
-import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryViewModel
 import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
 import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileDisplayDataMapper
@@ -75,9 +75,18 @@ private val profileScreenStateModule = module {
     factoryOf(::ProfileScreenUiStateMachine)
 }
 
-private val bloodDonationCreateModule = module {
-    factoryOf(::BloodDonationCreateUiStateMachine)
-    factoryOf(::BloodDonationCreateViewModel)
+private val bloodDonationInputModule = module {
+    factoryOf(::BloodDonationInputUiStateMachine)
+    factory { (donationId: Int?) ->
+        BloodDonationInputViewModel(
+            donationId = donationId,
+            bloodDonationRepository = get(),
+            sharedScreenData = get(),
+            dateTimeUtil = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
 }
 
 private val bloodDonationRequestCreateModule = module {
@@ -333,7 +342,7 @@ private val teacherProfileEditModule = module {
 val featurePresentationModule = listOf(
     appCommonModule,
     profileScreenStateModule,
-    bloodDonationCreateModule,
+    bloodDonationInputModule,
     bloodDonationRequestCreateModule,
     bloodDonationRequestListModule,
     changePasswordModule,

@@ -59,7 +59,7 @@ internal fun BloodDonationHistoryScreenContent(
                 expanded = fabButtonExpanded,
                 text = { Text(text = stringResource(Res.string.txt_create_new)) },
                 onClick = {
-                    onUiEvent(BloodDonationHistoryUiEvent.CreateRequestClicked)
+                    onUiEvent(BloodDonationHistoryUiEvent.CreateDonationClicked)
                 },
                 icon = {
                     Icon(

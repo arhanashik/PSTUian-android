@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.blooddonation.blooddonationinput.BloodDonationInputScreen
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.BloodDonationRequestCreateScreen
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestListScreen
 import com.workfort.pstuian.ui.changepassword.ChangePasswordScreen
@@ -192,6 +193,10 @@ fun AppNavHost(
                 }
                 composable<AppScreen.BloodDonationRequestEdit> {
                     // TODO: Need Screen for BloodDonationRequestEdit
+                }
+                composable<AppScreen.BloodDonationInput> { backStackEntry ->
+                    val screen: AppScreen.BloodDonationInput = backStackEntry.toRoute()
+                    BloodDonationInputScreen(viewModel = koinViewModel { parametersOf(screen.donationId)})
                 }
                 composable<AppScreen.Profile>(typeMap = navTypeMap) { backStackEntry ->
                     val screen: AppScreen.Profile = backStackEntry.toRoute()

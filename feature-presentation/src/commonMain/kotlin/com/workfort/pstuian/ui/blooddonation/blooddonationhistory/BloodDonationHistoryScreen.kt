@@ -13,7 +13,6 @@ import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.common.navigation.AppScreen
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res
@@ -88,13 +87,11 @@ private fun HandleNavigationState(
         navigation?.let {
             when (it) {
                 is BloodDonationHistoryNavigationState.GoBack -> navigator?.goBack()
-                is BloodDonationHistoryNavigationState.GoToCreateBloodDonationRequest -> {
-                    navigator?.navigateTo(AppScreen.BloodDonationRequestCreate)
+                is BloodDonationHistoryNavigationState.GoToCreateBloodDonation -> {
+                    navigator?.navigateToBloodDonationInput(donationId = null)
                 }
-                is BloodDonationHistoryNavigationState.GoToEditBloodDonationRequest -> {
-                    navigator?.navigateTo(
-                        AppScreen.BloodDonationRequestEdit(it.donationId),
-                    )
+                is BloodDonationHistoryNavigationState.GoToEditBloodDonation -> {
+                    navigator?.navigateToBloodDonationInput(donationId = it.donationId)
                 }
             }
             onNavigationHandled()

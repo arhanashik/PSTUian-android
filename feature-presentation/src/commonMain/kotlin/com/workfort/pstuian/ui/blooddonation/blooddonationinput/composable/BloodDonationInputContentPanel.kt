@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.blooddonation.blooddonationcreate.composable
+package com.workfort.pstuian.ui.blooddonation.blooddonationinput.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -16,8 +16,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.ui.blooddonation.blooddonationcreate.state.BloodDonationCreateUiEvent
-import com.workfort.pstuian.ui.blooddonation.blooddonationcreate.state.BloodDonationCreateUiState
+import com.workfort.pstuian.ui.blooddonation.blooddonationinput.state.BloodDonationInputUiEvent
+import com.workfort.pstuian.ui.blooddonation.blooddonationinput.state.BloodDonationInputUiState
 import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
@@ -29,9 +29,9 @@ import pstuian.feature_presentation.generated.resources.hint_request_id
 import pstuian.feature_presentation.generated.resources.txt_send
 
 @Composable
-internal fun BloodDonationCreateContentPanel(
-    uiState: BloodDonationCreateUiState.Content,
-    onUiEvent: (BloodDonationCreateUiEvent) -> Unit,
+internal fun BloodDonationInputContentPanel(
+    uiState: BloodDonationInputUiState.Content,
+    onUiEvent: (BloodDonationInputUiEvent) -> Unit,
 ) {
     Column {
         OutlinedTextInput(
@@ -41,12 +41,12 @@ internal fun BloodDonationCreateContentPanel(
             supportingText = stringResource(Res.string.helper_text_blood_donation_request_id),
         ) {
             val requestId = it.toIntOrNull() ?: 0
-            onUiEvent(BloodDonationCreateUiEvent.RequestIdChanged(requestId))
+            onUiEvent(BloodDonationInputUiEvent.RequestIdChanged(requestId))
         }
         OutlinedTextInput(
             modifier = Modifier.onFocusChanged {
                 if (it.isFocused) {
-                    onUiEvent(BloodDonationCreateUiEvent.SelectDateClicked)
+                    onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
                 }
             },
             label = stringResource(Res.string.hint_donation_date),
@@ -54,7 +54,7 @@ internal fun BloodDonationCreateContentPanel(
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        onUiEvent(BloodDonationCreateUiEvent.SelectDateClicked)
+                        onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
                     },
                 ) { Icon(Icons.Default.DateRange, contentDescription = "") }
             },
@@ -62,7 +62,7 @@ internal fun BloodDonationCreateContentPanel(
 //            isError = validationError.date.isNotEmpty(),
 //            supportingText = validationError.date,
         ) {
-            onUiEvent(BloodDonationCreateUiEvent.SelectDateClicked)
+            onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
         }
         OutlinedTextInput(
             label = stringResource(Res.string.hint_message),
@@ -72,11 +72,11 @@ internal fun BloodDonationCreateContentPanel(
             maxLines = 10,
             supportingText = stringResource(Res.string.helper_text_help_message_max_length),
         ) {
-            onUiEvent(BloodDonationCreateUiEvent.InfoChanged(it))
+            onUiEvent(BloodDonationInputUiEvent.InfoChanged(it))
         }
         TextButton(
             enabled = uiState.enableSendButton,
-            onClick = { onUiEvent(BloodDonationCreateUiEvent.SendClicked) },
+            onClick = { onUiEvent(BloodDonationInputUiEvent.SendClicked) },
             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
         ) {
             Text(

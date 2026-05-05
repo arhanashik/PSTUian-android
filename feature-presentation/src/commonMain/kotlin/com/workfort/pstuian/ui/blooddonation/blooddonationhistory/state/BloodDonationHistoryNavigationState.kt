@@ -2,8 +2,8 @@ package com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state
 
 sealed interface BloodDonationHistoryNavigationState {
     data object GoBack : BloodDonationHistoryNavigationState
-    data object GoToCreateBloodDonationRequest : BloodDonationHistoryNavigationState
-    data class GoToEditBloodDonationRequest(
+    data object GoToCreateBloodDonation : BloodDonationHistoryNavigationState
+    data class GoToEditBloodDonation(
         val donationId: Int,
     ) : BloodDonationHistoryNavigationState
 }

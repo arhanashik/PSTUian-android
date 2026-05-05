@@ -1,7 +1,7 @@
-package com.workfort.pstuian.ui.blooddonation.blooddonationcreate.state
+package com.workfort.pstuian.ui.blooddonation.blooddonationinput.state
 
-sealed interface BloodDonationCreateUiState {
-    object None : BloodDonationCreateUiState
+sealed interface BloodDonationInputUiState {
+    object None : BloodDonationInputUiState
 
     data class Content(
         val requestId: Int = 0,
@@ -10,5 +10,5 @@ sealed interface BloodDonationCreateUiState {
         val info: String = "",
         val enableSendButton: Boolean = false,
         val isOperationLoading: Boolean = false,
-    ) : BloodDonationCreateUiState
+    ) : BloodDonationInputUiState
 }
