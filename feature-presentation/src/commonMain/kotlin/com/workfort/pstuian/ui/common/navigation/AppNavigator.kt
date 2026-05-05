@@ -40,7 +40,8 @@ class AppNavigator {
     suspend fun navigateToStudents(batchId: Int) = navigateTo(AppScreen.Students(batchId))
     suspend fun navigateToBloodDonationRequestList() = navigateTo(AppScreen.BloodDonationRequestList)
     suspend fun navigateToBloodDonationRequestCreate() = navigateTo(AppScreen.BloodDonationRequestCreate)
-    suspend fun navigateToBloodDonationInput(donationId: Int?) = navigateTo(AppScreen.BloodDonationInput(donationId))
+    suspend fun navigateToBloodDonationInput(donationId: Int?, userId: Int, userType: UserType) =
+        navigateTo(AppScreen.BloodDonationInput(donationId, userId, userType))
     suspend fun navigateToProfile(userId: Int, userType: UserType) = navigateTo(AppScreen.Profile(userId, userType))
     suspend fun navigateToBloodDonationHistory(userId: Int, userType: UserType) = navigateTo(AppScreen.BloodDonationHistory(userId, userType))
     suspend fun navigateToCheckInHistory(userId: Int, userType: UserType) = navigateTo(AppScreen.CheckInHistory(userId, userType))

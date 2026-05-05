@@ -48,7 +48,10 @@ private fun HandleMessageState(
                 DatePickerDialog(
                     selectableDates = selectableDates,
                     onDismissRequest = onMessageHandled,
-                    onSelect = { dateMills -> it.onSelect(dateMills) },
+                    onSelect = { dateMills ->
+                        onMessageHandled()
+                        it.onSelect(dateMills)
+                    },
                 )
             }
             is BloodDonationInputMessageState.Error -> {

@@ -77,11 +77,12 @@ private val profileScreenStateModule = module {
 
 private val bloodDonationInputModule = module {
     factoryOf(::BloodDonationInputUiStateMachine)
-    factory { (donationId: Int?) ->
+    factory { (donationId: Int?, userId: Int, userType: UserType) ->
         BloodDonationInputViewModel(
             donationId = donationId,
+            userId = userId,
+            userType = userType,
             bloodDonationRepository = get(),
-            sharedScreenData = get(),
             dateTimeUtil = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),

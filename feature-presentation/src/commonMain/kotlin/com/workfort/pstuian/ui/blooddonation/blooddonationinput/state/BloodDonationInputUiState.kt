@@ -7,11 +7,15 @@ sealed interface BloodDonationInputUiState {
 
     data class Content(
         override val title: String,
-        val requestId: Int = 0,
-        val date: Long? = null,
-        val formattedDate: String = "",
-        val info: String = "",
+        val inputData: BloodDonationInputData = BloodDonationInputData(),
         val enableSendButton: Boolean = false,
         val isOperationLoading: Boolean = false,
     ) : BloodDonationInputUiState
 }
+
+data class BloodDonationInputData(
+    val requestId: Int = 0,
+    val date: Long? = null,
+    val formattedDate: String = "",
+    val info: String = "",
+)

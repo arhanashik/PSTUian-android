@@ -5,5 +5,5 @@ sealed class BloodDonationInputUiEvent {
     data class RequestIdChanged(val requestId: Int) : BloodDonationInputUiEvent()
     data object SelectDateClicked : BloodDonationInputUiEvent()
     data class InfoChanged(val info: String) : BloodDonationInputUiEvent()
-    data object SendClicked : BloodDonationInputUiEvent()
+    data class SendClicked(val input: BloodDonationInputData) : BloodDonationInputUiEvent()
 }

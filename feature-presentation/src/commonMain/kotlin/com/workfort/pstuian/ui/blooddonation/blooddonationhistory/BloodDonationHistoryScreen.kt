@@ -26,6 +26,10 @@ fun BloodDonationHistoryScreen(viewModel: BloodDonationHistoryViewModel) {
     val navigation by viewModel.navigation.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    LaunchedEffect(Unit) {
+        viewModel.onUiReady()
+    }
+
     BloodDonationHistoryScreenContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
@@ -88,10 +92,10 @@ private fun HandleNavigationState(
             when (it) {
                 is BloodDonationHistoryNavigationState.GoBack -> navigator?.goBack()
                 is BloodDonationHistoryNavigationState.GoToCreateBloodDonation -> {
-                    navigator?.navigateToBloodDonationInput(donationId = null)
+                    navigator?.navigateToBloodDonationInput(donationId = null, it.userId, it.userType)
                 }
                 is BloodDonationHistoryNavigationState.GoToEditBloodDonation -> {
-                    navigator?.navigateToBloodDonationInput(donationId = it.donationId)
+                    navigator?.navigateToBloodDonationInput(it.donationId, it.userId, it.userType)
                 }
             }
             onNavigationHandled()

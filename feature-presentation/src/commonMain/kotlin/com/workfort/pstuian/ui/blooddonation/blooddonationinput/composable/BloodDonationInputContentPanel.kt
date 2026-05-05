@@ -1,24 +1,33 @@
 package com.workfort.pstuian.ui.blooddonation.blooddonationinput.composable
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.blooddonation.blooddonationinput.state.BloodDonationInputUiEvent
 import com.workfort.pstuian.ui.blooddonation.blooddonationinput.state.BloodDonationInputUiState
-import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
+import com.workfort.pstuian.ui.common.composable.ActionButton
+import com.workfort.pstuian.ui.signin.composable.AuthUnderlinedField
+import com.workfort.pstuian.ui.signin.screendata.AuthFormFieldSpacing
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.helper_text_blood_donation_request_id
@@ -33,56 +42,75 @@ internal fun BloodDonationInputContentPanel(
     uiState: BloodDonationInputUiState.Content,
     onUiEvent: (BloodDonationInputUiEvent) -> Unit,
 ) {
-    Column {
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_request_id),
-            value = uiState.requestId.toString(),
-            inputType = KeyboardType.Number,
-            supportingText = stringResource(Res.string.helper_text_blood_donation_request_id),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
         ) {
-            val requestId = it.toIntOrNull() ?: 0
-            onUiEvent(BloodDonationInputUiEvent.RequestIdChanged(requestId))
-        }
-        OutlinedTextInput(
-            modifier = Modifier.onFocusChanged {
-                if (it.isFocused) {
-                    onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
-                }
-            },
-            label = stringResource(Res.string.hint_donation_date),
-            value = uiState.formattedDate,
-            trailingIcon = {
-                IconButton(
-                    onClick = {
+            AuthUnderlinedField(
+                label = stringResource(Res.string.hint_request_id),
+                value = uiState.inputData.requestId.toString(),
+                onValueChange = {
+                    val requestId = it.toIntOrNull() ?: 0
+                    onUiEvent(BloodDonationInputUiEvent.RequestIdChanged(requestId))
+                },
+                supportingText = stringResource(Res.string.helper_text_blood_donation_request_id),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next,
+                ),
+                keyboardActions = KeyboardActions.Default,
+            )
+            Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+            AuthUnderlinedField(
+                modifier = Modifier.onFocusChanged {
+                    if (it.isFocused) {
                         onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
-                    },
-                ) { Icon(Icons.Default.DateRange, contentDescription = "") }
-            },
-            readOnly = true,
-//            isError = validationError.date.isNotEmpty(),
-//            supportingText = validationError.date,
-        ) {
-            onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
-        }
-        OutlinedTextInput(
-            label = stringResource(Res.string.hint_message),
-            value = uiState.info,
-            singleLine = false,
-            minLines = 8,
-            maxLines = 10,
-            supportingText = stringResource(Res.string.helper_text_help_message_max_length),
-        ) {
-            onUiEvent(BloodDonationInputUiEvent.InfoChanged(it))
-        }
-        TextButton(
-            enabled = uiState.enableSendButton,
-            onClick = { onUiEvent(BloodDonationInputUiEvent.SendClicked) },
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-        ) {
-            Text(
-                stringResource(Res.string.txt_send),
-                color = Color.White,
-                modifier = Modifier.padding(horizontal = 8.dp),
+                    }
+                },
+                label = stringResource(Res.string.hint_donation_date),
+                value = uiState.inputData.formattedDate,
+                onValueChange = { },
+                trailingContent = {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                        modifier = Modifier
+                            .size(22.dp)
+                            .clickable {
+                                onUiEvent(BloodDonationInputUiEvent.SelectDateClicked)
+                            },
+                    )
+                },
+                readOnly = true,
+            )
+            Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+            AuthUnderlinedField(
+                label = stringResource(Res.string.hint_message),
+                value = uiState.inputData.info,
+                onValueChange = { onUiEvent(BloodDonationInputUiEvent.InfoChanged(it)) },
+                singleLine = false,
+                minLines = 5,
+                maxLines = 10,
+                supportingText = stringResource(Res.string.helper_text_help_message_max_length),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Default,
+                ),
+                keyboardActions = KeyboardActions.Default,
+            )
+            Spacer(modifier = Modifier.height(28.dp))
+            ActionButton(
+                label = stringResource(Res.string.txt_send).uppercase(),
+                icon = Icons.AutoMirrored.Filled.ArrowForward,
+                enabled = uiState.enableSendButton,
+                onClick = { onUiEvent(BloodDonationInputUiEvent.SendClicked(uiState.inputData)) },
             )
         }
     }

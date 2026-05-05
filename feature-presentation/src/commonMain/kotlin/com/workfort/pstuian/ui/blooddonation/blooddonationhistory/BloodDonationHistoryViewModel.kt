@@ -13,6 +13,7 @@ import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDon
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryNavigationState
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
+import com.workfort.pstuian.ui.common.uistate.InitializationMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -23,7 +24,10 @@ class BloodDonationHistoryViewModel(
     private val donationRepo: BloodDonationRepository,
     private val uiStateMachine: BloodDonationHistoryUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-) : UiStateMachineViewModel<BloodDonationHistoryUiState>(uiStateMachine) {
+) : UiStateMachineViewModel<BloodDonationHistoryUiState>(
+    uiStateMachine = uiStateMachine,
+    initializationMode = InitializationMode.Manual,
+) {
 
     private val _message = MutableStateFlow<BloodDonationHistoryMessageState?>(null)
     val message = _message.asStateFlow()
@@ -36,7 +40,7 @@ class BloodDonationHistoryViewModel(
     private val donationsCache = mutableListOf<BloodDonationEntity>()
 
     override fun onUiReady() {
-        loadDonationList(forceRefresh = false)
+        loadDonationList(forceRefresh = true)
     }
 
     fun onUiEvent(event: BloodDonationHistoryUiEvent) {
@@ -56,12 +60,12 @@ class BloodDonationHistoryViewModel(
     private fun onClickBack() = _navigation.update { BloodDonationHistoryNavigationState.GoBack }
 
     private fun onClickCreateDonation() {
-        _navigation.update { BloodDonationHistoryNavigationState.GoToCreateBloodDonation }
+        _navigation.update { BloodDonationHistoryNavigationState.GoToCreateBloodDonation(userId, userType) }
     }
 
     private fun onClickEdit(item: BloodDonationEntity) {
         _navigation.update {
-            BloodDonationHistoryNavigationState.GoToEditBloodDonation(item.id)
+            BloodDonationHistoryNavigationState.GoToEditBloodDonation(item.id, userId, userType)
         }
     }
 

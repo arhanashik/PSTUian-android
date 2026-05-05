@@ -31,8 +31,7 @@ class BloodDonationInputUiStateMachine : UiStateMachine<BloodDonationInputUiStat
         when (this) {
             is BloodDonationInputUiState.None -> this
             is BloodDonationInputUiState.Content -> copy(
-                requestId = requestId,
-                enableSendButton = formattedDate.isNotEmpty(),
+                inputData = inputData.copy(requestId = requestId),
             )
         }
     }
@@ -41,8 +40,7 @@ class BloodDonationInputUiStateMachine : UiStateMachine<BloodDonationInputUiStat
         when (this) {
             is BloodDonationInputUiState.None -> this
             is BloodDonationInputUiState.Content -> copy(
-                date = date,
-                formattedDate = formattedDate,
+                inputData = inputData.copy(date = date, formattedDate = formattedDate),
                 enableSendButton = formattedDate.isNotEmpty(),
             )
         }
@@ -52,8 +50,7 @@ class BloodDonationInputUiStateMachine : UiStateMachine<BloodDonationInputUiStat
         when (this) {
             is BloodDonationInputUiState.None -> this
             is BloodDonationInputUiState.Content -> copy(
-                info = info,
-                enableSendButton = formattedDate.isNotEmpty(),
+                inputData = inputData.copy(info = info),
             )
         }
     }

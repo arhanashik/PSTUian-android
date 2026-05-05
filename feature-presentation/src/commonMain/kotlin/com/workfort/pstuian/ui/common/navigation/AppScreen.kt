@@ -28,7 +28,7 @@ sealed interface AppScreen {
     @Serializable
     object BloodDonationRequestCreate : AppScreen
     @Serializable
-    data class BloodDonationInput(val donationId: Int?) : AppScreen
+    data class BloodDonationInput(val donationId: Int?, val userId: Int, val userType: UserType) : AppScreen
     @Serializable
     data class BloodDonationRequestEdit(val donationId: Int) : AppScreen
     @Serializable
