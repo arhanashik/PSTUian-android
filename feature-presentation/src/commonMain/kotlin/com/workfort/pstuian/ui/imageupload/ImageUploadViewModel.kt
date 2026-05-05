@@ -56,7 +56,7 @@ class ImageUploadViewModel(
 
     private fun onClickBack() {
         if (uiStateMachine.isUploading()) return
-        _navigation.update { ImageUploadNavigationState.GoBack }
+        _navigation.update { ImageUploadNavigationState.GoBack() }
     }
 
     private fun onClickUpload(fileUri: String) {
@@ -111,7 +111,7 @@ class ImageUploadViewModel(
                 else -> return@launchOnMain
             }.onSuccess {
                 _message.update { ImageUploadMessageState.Snackbar("Profile photo changed successfully!") }
-                _navigation.update { ImageUploadNavigationState.GoBack }
+                _navigation.update { ImageUploadNavigationState.GoBack(invalidateImageCache = true) }
             }.onFailure {
                 val msg = it.message ?: "Failed. Please try again."
                 _message.update { ImageUploadMessageState.Error(msg) }

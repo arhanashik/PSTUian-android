@@ -6,10 +6,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import coil3.compose.LocalPlatformContext
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.clearSingletonCoilImageCaches
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.imageupload.composable.ImageUploadScreenContent
 import com.workfort.pstuian.ui.imageupload.state.ImageUploadMessageState
@@ -76,11 +78,15 @@ private fun HandleNavigationState(
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
+    val platformContext = LocalPlatformContext.current
 
-    LaunchedEffect(navigation) {
+    LaunchedEffect(navigation, platformContext) {
         navigation?.let {
             when (it) {
                 is ImageUploadNavigationState.GoBack -> {
+                    if (it.invalidateImageCache) {
+                        clearSingletonCoilImageCaches(platformContext)
+                    }
                     navigator?.goBack()
                 }
             }
