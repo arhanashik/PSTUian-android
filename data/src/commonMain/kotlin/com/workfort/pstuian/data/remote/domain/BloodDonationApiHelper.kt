@@ -18,9 +18,9 @@ abstract class BloodDonationApiHelper : ApiHelper<BloodDonationDto>()  {
     open suspend fun insert(
         userId: Int,
         userType: String,
-        requestId: Int?,
-        date: Long,
-        info: String?,
+        requestId: Int,
+        date: String,
+        info: String,
     ): NetworkResult<BloodDonationDto> =
         NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
 }

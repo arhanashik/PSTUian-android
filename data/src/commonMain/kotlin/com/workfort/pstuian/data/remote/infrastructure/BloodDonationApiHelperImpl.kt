@@ -36,9 +36,9 @@ class BloodDonationApiHelperImpl(
     override suspend fun insert(
         userId: Int,
         userType: String,
-        requestId: Int?,
-        date: Long,
-        info: String?
+        requestId: Int,
+        date: String,
+        info: String,
     ): NetworkResult<BloodDonationDto> {
         return runCatching {
             service.insert(userId, userType, requestId, date, info).toNetworkResult()

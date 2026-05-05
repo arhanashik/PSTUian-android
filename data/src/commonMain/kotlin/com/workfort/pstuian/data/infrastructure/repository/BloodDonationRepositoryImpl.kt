@@ -40,11 +40,11 @@ class BloodDonationRepositoryImpl(
     }
 
     override suspend fun insert(
-        requestId: Int?,
+        requestId: Int,
         userId: Int,
         userType: UserType,
-        date: Long,
-        info: String?,
+        date: String,
+        info: String,
     ): DomainResult<BloodDonationEntity> {
         return helper.insert(userId, userType.type, requestId, date, info)
             .toDomainResult(domainErrorMapper)

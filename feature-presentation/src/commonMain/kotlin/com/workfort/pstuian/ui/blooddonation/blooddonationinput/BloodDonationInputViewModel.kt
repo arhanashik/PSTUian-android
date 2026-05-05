@@ -60,9 +60,9 @@ class BloodDonationInputViewModel(
                 allowedDateTill = dateTimeUtil.getTimeInMillsUntilMidnight(),
             ) { dateMills ->
                 val formattedDate = if (dateMills == null) "" else {
-                    dateTimeUtil.formatDateDDMMMYYYY(dateMills)
+                    dateTimeUtil.formatDateYYYYMMDD(dateMills)
                 }
-                uiStateMachine.updateDate(dateMills, formattedDate)
+                uiStateMachine.updateDate(formattedDate)
             }
         }
     }
@@ -72,11 +72,14 @@ class BloodDonationInputViewModel(
     }
 
     private fun onSendClicked(input: BloodDonationInputData) {
-        val date = input.date ?: return
+        if (input.hasError()) {
+            _message.update { BloodDonationInputMessageState.Error("Please input valid data and try again") }
+            return
+        }
 
         uiStateMachine.showLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            bloodDonationRepository.insert(input.requestId, userId, userType, date, input.info)
+            bloodDonationRepository.insert(input.requestId, userId, userType, input.formattedDate, input.info)
                 .onSuccess {
                     uiStateMachine.showLoading(false)
                     _message.update { BloodDonationInputMessageState.Snackbar("Donation created successfully!") }

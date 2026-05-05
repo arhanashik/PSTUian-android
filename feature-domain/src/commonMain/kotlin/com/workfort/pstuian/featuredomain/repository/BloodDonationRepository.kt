@@ -16,11 +16,11 @@ interface BloodDonationRepository {
     suspend fun get(id: Int): DomainResult<BloodDonationEntity>
 
     suspend fun insert(
-        requestId: Int?,
+        requestId: Int,
         userId: Int,
         userType: UserType,
-        date: Long,
-        info: String?,
+        date: String,
+        info: String,
     ) : DomainResult<BloodDonationEntity>
 
     suspend fun update(item: BloodDonationEntity): DomainResult<Unit>

@@ -35,18 +35,18 @@ class BloodDonationApiService(private val client: HttpClient) {
     suspend fun insert(
         userId: Int,
         userType: String,
-        requestId: Int?,
-        date: Long,
-        info: String?,
+        requestId: Int,
+        date: String,
+        info: String,
     ): ApiResponse<BloodDonationDto> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.BloodDonation.INSERT,
             formParameters = parameters {
                 append(NetworkConst.Params.USER_ID, userId.toString())
                 append(NetworkConst.Params.USER_TYPE, userType)
-                if (requestId != null) append(NetworkConst.Params.REQUEST_ID, requestId.toString())
-                append(NetworkConst.Params.DATE, date.toString())
-                if (info != null) append(NetworkConst.Params.INFO, info)
+                append(NetworkConst.Params.REQUEST_ID, requestId.toString())
+                append(NetworkConst.Params.DATE, date)
+                append(NetworkConst.Params.INFO, info)
             }
         ).body()
     }

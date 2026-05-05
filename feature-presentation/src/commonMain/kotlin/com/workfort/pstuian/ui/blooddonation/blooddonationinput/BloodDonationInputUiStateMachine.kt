@@ -36,7 +36,7 @@ class BloodDonationInputUiStateMachine : UiStateMachine<BloodDonationInputUiStat
         }
     }
 
-    fun updateDate(date: Long?, formattedDate: String) = updateUiState {
+    fun updateDate(formattedDate: String) = updateUiState {
         when (this) {
             is BloodDonationInputUiState.None -> this
             is BloodDonationInputUiState.Content -> copy(

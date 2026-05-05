@@ -15,7 +15,8 @@ sealed interface BloodDonationInputUiState {
 
 data class BloodDonationInputData(
     val requestId: Int = 0,
-    val date: Long? = null,
     val formattedDate: String = "",
     val info: String = "",
-)
+) {
+    fun hasError() = formattedDate.isBlank() || info.isBlank()
+}
