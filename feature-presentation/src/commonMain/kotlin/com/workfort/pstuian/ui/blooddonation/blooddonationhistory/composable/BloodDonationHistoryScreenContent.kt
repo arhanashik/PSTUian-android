@@ -5,17 +5,14 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 import com.workfort.pstuian.featuredomain.model.ThemeMode
@@ -23,6 +20,7 @@ import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDon
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
+import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
 import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.theme.AppTheme
@@ -36,9 +34,9 @@ import pstuian.feature_presentation.generated.resources.txt_create_new
 @Composable
 internal fun BloodDonationHistoryScreenContent(
     uiState: BloodDonationHistoryUiState,
+    snackbarHostState: SnackbarHostState,
     onUiEvent: (BloodDonationHistoryUiEvent) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var fabButtonExpanded by remember { mutableStateOf(true) }
 
     LaunchedEffect(key1 = null) {
@@ -47,16 +45,15 @@ internal fun BloodDonationHistoryScreenContent(
     }
 
     AppScaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AppBar(
                 title = stringResource(Res.string.txt_blood_donation_history),
                 navigation = {
                     NavigationButton { onUiEvent(BloodDonationHistoryUiEvent.BackClicked) }
                 },
-                scrollBehavior = scrollBehavior,
             )
         },
+        snackbarHost = { AppSnackbarHost(snackbarHostState) },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 expanded = fabButtonExpanded,
@@ -116,6 +113,7 @@ private fun BloodDonationHistoryScreenContentPreview() {
             uiState = BloodDonationHistoryUiState.Content(
                 donations = mockDonations(),
             ),
+            snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
     }
@@ -130,6 +128,7 @@ private fun BloodDonationHistoryScreenContentLoadingPreview() {
                 donations = emptyList(),
                 isContentLoading = true,
             ),
+            snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
     }
@@ -143,6 +142,7 @@ private fun BloodDonationHistoryScreenContentDarkPreview() {
             uiState = BloodDonationHistoryUiState.Content(
                 donations = mockDonations(),
             ),
+            snackbarHostState = remember { SnackbarHostState() },
             onUiEvent = {},
         )
     }

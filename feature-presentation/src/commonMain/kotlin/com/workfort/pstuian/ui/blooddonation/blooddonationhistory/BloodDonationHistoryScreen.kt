@@ -1,12 +1,15 @@
 package com.workfort.pstuian.ui.blooddonation.blooddonationhistory
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.composable.BloodDonationHistoryScreenContent
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryMessageState
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryNavigationState
+import com.workfort.pstuian.ui.common.composable.HandleSnackbar
 import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
@@ -22,16 +25,26 @@ fun BloodDonationHistoryScreen(viewModel: BloodDonationHistoryViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    BloodDonationHistoryScreenContent(uiState, viewModel::onUiEvent)
+    BloodDonationHistoryScreenContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onUiEvent = viewModel::onUiEvent,
+    )
 
-    HandleMessageState(message, viewModel::onMessageHandled)
+    HandleMessageState(
+        message = message,
+        snackbarHostState = snackbarHostState,
+        onMessageHandled = viewModel::onMessageHandled,
+    )
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
 }
 
 @Composable
 private fun HandleMessageState(
     message: BloodDonationHistoryMessageState?,
+    snackbarHostState: SnackbarHostState,
     onMessageHandled: () -> Unit,
 ) {
     message?.let {
@@ -47,9 +60,10 @@ private fun HandleMessageState(
                 )
             }
             is BloodDonationHistoryMessageState.Success -> {
-                ShowInfoDialog(
+                HandleSnackbar(
                     message = it.message,
-                    onDismiss = { onMessageHandled() }
+                    snackbarHostState = snackbarHostState,
+                    onSnackbarShown = onMessageHandled,
                 )
             }
             is BloodDonationHistoryMessageState.Error -> {

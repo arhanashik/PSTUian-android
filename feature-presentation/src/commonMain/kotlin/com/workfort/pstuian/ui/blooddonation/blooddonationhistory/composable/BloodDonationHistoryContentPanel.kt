@@ -203,7 +203,11 @@ private fun DonationItemView(
     onClickDelete: () -> Unit,
 ) {
     val hasRegisteredRequest = item.requestId != null && item.requestId != 0
-    val requestId = if (hasRegisteredRequest) item.requestId.toString() else "Unregistered"
+    val requestLabel = if (hasRegisteredRequest) {
+        "Request Id #${item.requestId}"
+    } else {
+        "Unregistered"
+    }
     val date = item.date.split(" ")[0]
     val cardShape = RoundedCornerShape(16.dp)
     ElevatedCard(
@@ -225,38 +229,6 @@ private fun DonationItemView(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Request #$requestId",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = onClickEdit) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(Res.string.txt_edit),
-                        modifier = Modifier.size(AssistChipDefaults.IconSize),
-                    )
-                }
-                IconButton(onClick = onClickDelete) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(Res.string.txt_delete),
-                        modifier = Modifier.size(AssistChipDefaults.IconSize),
-                    )
-                }
-            }
-            Text(
-                text = item.info.orEmpty().ifBlank { "No notes provided" },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Surface(
@@ -268,7 +240,7 @@ private fun DonationItemView(
                     },
                 ) {
                     Text(
-                        text = if (hasRegisteredRequest) "Registered" else "Unregistered",
+                        text = requestLabel,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
                         color = if (hasRegisteredRequest) {
@@ -300,7 +272,29 @@ private fun DonationItemView(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = onClickEdit) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(Res.string.txt_edit),
+                        modifier = Modifier.size(AssistChipDefaults.IconSize),
+                    )
+                }
+                IconButton(onClick = onClickDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.txt_delete),
+                        modifier = Modifier.size(AssistChipDefaults.IconSize),
+                    )
+                }
             }
+            Text(
+                text = item.info.orEmpty().ifBlank { "No notes provided" },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
