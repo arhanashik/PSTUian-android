@@ -6,67 +6,76 @@ import androidx.compose.ui.uikit.LocalUIViewController
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSData
+import platform.Foundation.NSError
 import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.NSURL
 import platform.Foundation.NSUUID
 import platform.Foundation.data
 import platform.Foundation.writeToURL
+import platform.PhotosUI.PHPickerConfiguration
+import platform.PhotosUI.PHPickerFilter
+import platform.PhotosUI.PHPickerResult
+import platform.PhotosUI.PHPickerViewController
+import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
 import platform.UIKit.UIDocumentPickerDelegateProtocol
 import platform.UIKit.UIDocumentPickerViewController
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
-import platform.UIKit.UIImagePickerController
-import platform.UIKit.UIImagePickerControllerDelegateProtocol
-import platform.UIKit.UIImagePickerControllerOriginalImage
-import platform.UIKit.UIImagePickerControllerSourceType
-import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.UIKit.UIViewController
+import platform.UniformTypeIdentifiers.UTTypeImage
 import platform.UniformTypeIdentifiers.UTTypePDF
 import platform.darwin.NSObject
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 @Composable
 actual fun rememberImagePickerLauncher(onImageSelected: (String) -> Unit): () -> Unit {
     val rootController = LocalUIViewController.current
     val delegate = remember(onImageSelected) {
-        object : NSObject(), UIImagePickerControllerDelegateProtocol,
-            UINavigationControllerDelegateProtocol {
-            override fun imagePickerController(
-                picker: UIImagePickerController,
-                didFinishPickingMediaWithInfo: Map<Any?, *>,
-            ) {
-                try {
-                    val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
-                        ?: return@imagePickerController
-                    val path = tempFilePath(suffix = ".jpg")
-                    val fileUrl = NSURL.fileURLWithPath(path)
-                    val jpeg = UIImageJPEGRepresentation(image, 0.92) ?: return@imagePickerController
-                    if (!jpeg.writeToURL(fileUrl, true)) return@imagePickerController
-                    fileUrl.absoluteString?.let { onImageSelected(it) }
-                } finally {
-                    picker.dismissViewControllerAnimated(true, null)
-                }
-            }
-
-            override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        object : NSObject(), PHPickerViewControllerDelegateProtocol {
+            override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
                 picker.dismissViewControllerAnimated(true, null)
+                val result = didFinishPicking.firstOrNull() as? PHPickerResult ?: return
+                val itemProvider = result.itemProvider
+                val typeId = UTTypeImage.identifier
+                itemProvider.loadDataRepresentationForTypeIdentifier(
+                    typeIdentifier = typeId,
+                    completionHandler = { data: NSData?, error: NSError? ->
+                        if (data == null) return@loadDataRepresentationForTypeIdentifier
+                        val image = UIImage.imageWithData(data)
+                            ?: return@loadDataRepresentationForTypeIdentifier
+                        val path = tempFilePath(suffix = ".jpg")
+                        val fileUrl = NSURL.fileURLWithPath(path)
+                        val jpeg = UIImageJPEGRepresentation(image, 0.92)
+                            ?: return@loadDataRepresentationForTypeIdentifier
+                        if (!jpeg.writeToURL(fileUrl, true)) {
+                            return@loadDataRepresentationForTypeIdentifier
+                        }
+                        val urlString = fileUrl.absoluteString
+                            ?: return@loadDataRepresentationForTypeIdentifier
+                        dispatch_async(dispatch_get_main_queue()) {
+                            onImageSelected(urlString)
+                        }
+                    },
+                )
             }
         }
     }
 
     return remember(rootController, delegate) {
         {
-            val sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
-            if (UIImagePickerController.isSourceTypeAvailable(sourceType)) {
-                val picker = UIImagePickerController()
-                picker.sourceType = sourceType
-                picker.allowsEditing = false
-                picker.delegate = delegate
-                rootController.topMostPresented().presentViewController(
-                    picker,
-                    animated = true,
-                    completion = null,
-                )
+            val configuration = PHPickerConfiguration().apply {
+                filter = PHPickerFilter.imagesFilter
+                selectionLimit = 1L
             }
+            val picker = PHPickerViewController(configuration = configuration)
+            picker.delegate = delegate
+            rootController.topMostPresented().presentViewController(
+                picker,
+                animated = true,
+                completion = null,
+            )
         }
     }
 }
