@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.donate.composable
+package com.workfort.pstuian.ui.donation.donate.composable
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.common.theme.btnBgDefault
-import com.workfort.pstuian.ui.donate.state.DonateUiEvent
-import com.workfort.pstuian.ui.donate.state.DonateUiState
+import com.workfort.pstuian.ui.donation.donate.state.DonateUiEvent
+import com.workfort.pstuian.ui.donation.donate.state.DonateUiState
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.helper_txt_max_length_donation_message

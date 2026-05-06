@@ -1,9 +1,9 @@
-package com.workfort.pstuian.ui.donate
+package com.workfort.pstuian.ui.donation.donate
 
 import com.workfort.pstuian.featuredomain.model.DonationInput
 import com.workfort.pstuian.featuredomain.model.DonationInputValidationError
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
-import com.workfort.pstuian.ui.donate.state.DonateUiState
+import com.workfort.pstuian.ui.donation.donate.state.DonateUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

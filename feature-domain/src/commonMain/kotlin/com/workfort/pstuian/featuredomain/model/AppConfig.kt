@@ -11,4 +11,5 @@ data class AppConfig(
     val termsAndConditionsUrl: String,
     val contactUrl: String,
     val deleteAccountUrl: String,
+    val donationOptions: String,
 )

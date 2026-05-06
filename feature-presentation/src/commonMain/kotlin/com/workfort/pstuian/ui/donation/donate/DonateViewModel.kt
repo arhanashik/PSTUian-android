@@ -1,28 +1,28 @@
-package com.workfort.pstuian.ui.donate
+package com.workfort.pstuian.ui.donation.donate
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.DonationInput
 import com.workfort.pstuian.featuredomain.model.DonationInputValidationError
-import com.workfort.pstuian.featuredomain.model.SharedPrefKey
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
-import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
-import com.workfort.pstuian.ui.donate.state.DonateMessageState
-import com.workfort.pstuian.ui.donate.state.DonateNavigationState
-import com.workfort.pstuian.ui.donate.state.DonateUiEvent
-import com.workfort.pstuian.ui.donate.state.DonateUiState
+import com.workfort.pstuian.ui.donation.donate.state.DonateMessageState
+import com.workfort.pstuian.ui.donation.donate.state.DonateNavigationState
+import com.workfort.pstuian.ui.donation.donate.state.DonateUiEvent
+import com.workfort.pstuian.ui.donation.donate.state.DonateUiState
 import com.workfort.pstuian.util.isValidEmail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class DonateViewModel(
-    private val donationRepo: DonationRepository,
-    private val sharedPrefRepository: SharedPrefRepository,
+    private val donationRepository: DonationRepository,
+    private val screenData: SharedScreenData,
     private val uiStateMachine: DonateUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<DonateUiState>(uiStateMachine) {
@@ -34,7 +34,12 @@ class DonateViewModel(
     val navigation: StateFlow<DonateNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {
-        loadDonationOptions()
+        val donationOptions = screenData.getAppConfig()?.donationOptions ?: run {
+            val message = "Could not get donation data. Please try again."
+            _message.update { DonateMessageState.Error(message) }
+            return
+        }
+        uiStateMachine.setDonationOption(donationOptions)
     }
 
     fun onUiEvent(event: DonateUiEvent) {
@@ -48,21 +53,6 @@ class DonateViewModel(
     fun onMessageHandled() = _message.update { null}
 
     fun onNavigationHandled() = _navigation.update { null }
-
-    private fun loadDonationOptions() {
-        uiStateMachine.showLoading(true)
-        viewModelScope.launch {
-            runCatching {
-                val option = donationRepo.getDonationOption()
-                uiStateMachine.showLoading(false)
-                uiStateMachine.setDonationOption(option)
-            }.onFailure {
-                uiStateMachine.showLoading(false)
-                val message = it.message ?: "Could not get donation data. Please try again."
-                _message.update { DonateMessageState.Error(message) }
-            }
-        }
-    }
 
     private fun onClickBack() = _navigation.update { DonateNavigationState.GoBack }
 
@@ -80,14 +70,12 @@ class DonateViewModel(
 
         uiStateMachine.showLoading(true)
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            runCatching {
-                val response = donationRepo.saveDonation(
-                    name = input.name,
-                    email = input.email,
-                    reference = input.reference,
-                    info = input.message,
-                )
-                sharedPrefRepository.putInt(SharedPrefKey.DONATION_ID, response)
+            donationRepository.saveDonation(
+                name = input.name,
+                email = input.email,
+                reference = input.reference,
+                info = input.message,
+            ).onSuccess {
                 uiStateMachine.showLoading(false)
                 _message.update {
                     DonateMessageState.ShowAlert(

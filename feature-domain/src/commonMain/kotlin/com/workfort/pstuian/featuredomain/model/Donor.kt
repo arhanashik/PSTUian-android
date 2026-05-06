@@ -3,7 +3,7 @@ package com.workfort.pstuian.featuredomain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DonorEntity (
+data class Donor (
     val id: Int,
     val name: String?,
     val info: String?,

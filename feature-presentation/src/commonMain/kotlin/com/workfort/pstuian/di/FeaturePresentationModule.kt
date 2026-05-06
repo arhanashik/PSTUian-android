@@ -28,10 +28,10 @@ import com.workfort.pstuian.ui.cvupload.CvUploadUiStateMachine
 import com.workfort.pstuian.ui.cvupload.CvUploadViewModel
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountUiStateMachine
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountViewModel
-import com.workfort.pstuian.ui.donate.DonateUiStateMachine
-import com.workfort.pstuian.ui.donate.DonateViewModel
-import com.workfort.pstuian.ui.donors.DonorsUiStateMachine
-import com.workfort.pstuian.ui.donors.DonorsViewModel
+import com.workfort.pstuian.ui.donation.donate.DonateUiStateMachine
+import com.workfort.pstuian.ui.donation.donate.DonateViewModel
+import com.workfort.pstuian.ui.donation.donors.DonorsUiStateMachine
+import com.workfort.pstuian.ui.donation.donors.DonorsViewModel
 import com.workfort.pstuian.ui.faculty.FacultyUiStateMachine
 import com.workfort.pstuian.ui.faculty.FacultyViewModel
 import com.workfort.pstuian.ui.home.HomeUiStateMachine

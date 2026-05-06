@@ -1,6 +1,6 @@
 package com.workfort.pstuian.data.model
 
-import com.workfort.pstuian.featuredomain.model.DonorEntity
+import com.workfort.pstuian.featuredomain.model.Donor
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +11,7 @@ data class DonorDto (
     val email: String?,
     val reference: String
 ) {
-    fun toEntity() = DonorEntity(
+    fun toModel() = Donor(
         id = id,
         name = name,
         info = info,
@@ -20,7 +20,7 @@ data class DonorDto (
     )
 }
 
-fun DonorEntity.toDto() = DonorDto(
+fun Donor.toDto() = DonorDto(
     id = id,
     name = name,
     info = info,

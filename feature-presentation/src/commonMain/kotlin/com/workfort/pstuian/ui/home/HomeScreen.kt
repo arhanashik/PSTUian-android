@@ -130,7 +130,7 @@ private fun HandleNavigationState(
                     navigator?.navigateToImagePreview(it.url)
                 }
                 is HomeNavigationState.DonorsScreen -> {
-                    navigator?.navigateToBloodDonationRequestList()
+                    navigator?.navigateToDonors()
                 }
                 is HomeNavigationState.BloodDonationScreen -> {
                     navigator?.navigateToBloodDonationRequestList()

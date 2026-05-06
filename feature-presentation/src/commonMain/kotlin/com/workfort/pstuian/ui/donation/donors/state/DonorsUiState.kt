@@ -1,12 +1,12 @@
-package com.workfort.pstuian.ui.donors.state
+package com.workfort.pstuian.ui.donation.donors.state
 
-import com.workfort.pstuian.featuredomain.model.DonorEntity
+import com.workfort.pstuian.featuredomain.model.Donor
 
 sealed interface DonorsUiState {
     data object None : DonorsUiState
     data object Loading : DonorsUiState
     data class Content(
-        val donorList: List<DonorEntity>,
+        val donorList: List<Donor>,
         val showLoadingMore: Boolean = false,
     ) : DonorsUiState
 }

@@ -1,22 +1,26 @@
-package com.workfort.pstuian.ui.donors
+package com.workfort.pstuian.ui.donation.donors
 
 import androidx.lifecycle.viewModelScope
-import com.workfort.pstuian.featuredomain.model.DonorEntity
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
+import com.workfort.pstuian.featuredomain.model.Donor
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
-import com.workfort.pstuian.ui.donors.state.DonorsMessageState
-import com.workfort.pstuian.ui.donors.state.DonorsNavigationState
-import com.workfort.pstuian.ui.donors.state.DonorsUiEvent
-import com.workfort.pstuian.ui.donors.state.DonorsUiState
+import com.workfort.pstuian.ui.donation.donors.state.DonorsMessageState
+import com.workfort.pstuian.ui.donation.donors.state.DonorsNavigationState
+import com.workfort.pstuian.ui.donation.donors.state.DonorsUiEvent
+import com.workfort.pstuian.ui.donation.donors.state.DonorsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class DonorsViewModel(
-    private val donationRepo: DonationRepository,
+    private val donationRepository: DonationRepository,
     private val uiStateMachine: DonorsUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<DonorsUiState>(uiStateMachine) {
 
     private val _message = MutableStateFlow<DonorsMessageState?>(null)
@@ -51,21 +55,21 @@ class DonorsViewModel(
     }
 
     private fun loadDonors() {
-        viewModelScope.launch {
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showLoading()
-            runCatching {
-                donationRepo.getDonors()
-            }.onSuccess {
-                uiStateMachine.showContent(it)
-            }.onFailure {
-                uiStateMachine.showContent(emptyList())
-                val message = it.message ?: "Failed to load donors"
-                _message.update { DonorsMessageState.Error(message) }
-            }
+            donationRepository.getDonors()
+                .onSuccess {
+                    uiStateMachine.showContent(it)
+                }
+                .onFailure {
+                    uiStateMachine.showContent(emptyList())
+                    val message = it.message ?: "Failed to load donors"
+                    _message.update { DonorsMessageState.Error(message) }
+                }
         }
     }
 
-    private fun onDonorClicked(donor: DonorEntity) {
+    private fun onDonorClicked(donor: Donor) {
         _message.update { DonorsMessageState.ShowDonorDetails(donor) }
     }
 }

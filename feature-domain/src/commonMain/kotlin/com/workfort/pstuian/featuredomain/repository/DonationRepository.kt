@@ -1,11 +1,15 @@
 package com.workfort.pstuian.featuredomain.repository
 
-import com.workfort.pstuian.featuredomain.model.DonorEntity
+import com.workfort.pstuian.featuredomain.model.DomainResult
+import com.workfort.pstuian.featuredomain.model.Donor
 
 interface DonationRepository {
-    suspend fun getDonationOption(): String
+    suspend fun saveDonation(
+        name: String,
+        info: String,
+        email: String,
+        reference: String,
+    ): DomainResult<Unit>
 
-    suspend fun saveDonation(name: String, info: String, email: String, reference: String): Int
-
-    suspend fun getDonors(): List<DonorEntity>
+    suspend fun getDonors(): DomainResult<List<Donor>>
 }

@@ -1,8 +1,8 @@
-package com.workfort.pstuian.ui.donors
+package com.workfort.pstuian.ui.donation.donors
 
-import com.workfort.pstuian.featuredomain.model.DonorEntity
+import com.workfort.pstuian.featuredomain.model.Donor
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
-import com.workfort.pstuian.ui.donors.state.DonorsUiState
+import com.workfort.pstuian.ui.donation.donors.state.DonorsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +16,7 @@ class DonorsUiStateMachine : UiStateMachine<DonorsUiState> {
         _uiState.update { DonorsUiState.Loading }
     }
 
-    fun showContent(donorList: List<DonorEntity>) {
+    fun showContent(donorList: List<Donor>) {
         _uiState.update { DonorsUiState.Content(donorList) }
     }
 }

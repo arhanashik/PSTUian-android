@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.donate
+package com.workfort.pstuian.ui.donation.donate
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -21,11 +21,11 @@ import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.dialog.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.donate.composable.DonateContentPanel
-import com.workfort.pstuian.ui.donate.state.DonateMessageState
-import com.workfort.pstuian.ui.donate.state.DonateNavigationState
-import com.workfort.pstuian.ui.donate.state.DonateUiEvent
-import com.workfort.pstuian.ui.donate.state.DonateUiState
+import com.workfort.pstuian.ui.donation.donate.composable.DonateContentPanel
+import com.workfort.pstuian.ui.donation.donate.state.DonateMessageState
+import com.workfort.pstuian.ui.donation.donate.state.DonateNavigationState
+import com.workfort.pstuian.ui.donation.donate.state.DonateUiEvent
+import com.workfort.pstuian.ui.donation.donate.state.DonateUiState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import pstuian.feature_presentation.generated.resources.Res

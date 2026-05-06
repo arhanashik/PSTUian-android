@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.donate.state
+package com.workfort.pstuian.ui.donation.donate.state
 
 import com.workfort.pstuian.featuredomain.model.DonationInput
 

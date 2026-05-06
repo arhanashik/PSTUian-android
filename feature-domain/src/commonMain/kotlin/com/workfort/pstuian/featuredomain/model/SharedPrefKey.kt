@@ -20,7 +20,6 @@ data class SharedPrefKey(
         // clear on sign out keys
         val AUTH_TOKEN = create("auth_token", true)
         val FIRESTORE_CACHE_CLEARED = create("firestore_cache_cleared", true)
-        val DONATION_ID = create("donation_id", true)
         val SELECTED_USER_TYPE = create("selected_user_type", true)
 
         fun create(name: String, clearOnSignOut: Boolean): SharedPrefKey {

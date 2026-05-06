@@ -16,6 +16,7 @@ data class AppConfigDto(
     val termsAndConditionsUrl: String = "",
     val contactUrl: String = "",
     val deleteAccountUrl: String = "",
+    val donationOptions: String = "",
 ) {
     fun toModel(id: String, remainingMaintenance: Double = 0.0) = AppConfig(
         id = id,
@@ -28,7 +29,9 @@ data class AppConfigDto(
         termsAndConditionsUrl = termsAndConditionsUrl,
         contactUrl = contactUrl,
         deleteAccountUrl = deleteAccountUrl,
+        donationOptions = donationOptions,
     )
+
 }
 
 fun AppConfig.toDto() = AppConfigDto(
@@ -41,4 +44,5 @@ fun AppConfig.toDto() = AppConfigDto(
     termsAndConditionsUrl = termsAndConditionsUrl,
     contactUrl = contactUrl,
     deleteAccountUrl = deleteAccountUrl,
+    donationOptions = donationOptions,
 )

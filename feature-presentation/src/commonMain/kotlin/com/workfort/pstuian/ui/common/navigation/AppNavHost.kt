@@ -25,8 +25,8 @@ import com.workfort.pstuian.ui.checkin.CheckInScreen
 import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
-import com.workfort.pstuian.ui.donate.DonateScreen
-import com.workfort.pstuian.ui.donors.DonorsScreen
+import com.workfort.pstuian.ui.donation.donate.DonateScreen
+import com.workfort.pstuian.ui.donation.donors.DonorsScreen
 import com.workfort.pstuian.ui.faculty.FacultyScreen
 import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
