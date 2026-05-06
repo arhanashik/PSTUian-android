@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.theme.TextStyle
 
 @Composable
-internal fun InfoBox(
+internal fun WarningBox(
     text: String,
     modifier: Modifier = Modifier,
 ) {
@@ -42,5 +42,34 @@ internal fun InfoBox(
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(text = text, style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.onErrorContainer))
+    }
+}
+
+@Composable
+internal fun InfoBox(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                RoundedCornerShape(8.dp),
+            )
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.Start,
+    ) {
+        Icon(
+            Icons.Default.Info,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp),
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = text,
+            style = TextStyle.label1.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+        )
     }
 }

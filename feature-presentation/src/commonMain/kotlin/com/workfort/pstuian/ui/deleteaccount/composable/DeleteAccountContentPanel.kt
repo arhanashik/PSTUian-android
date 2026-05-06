@@ -31,7 +31,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.ActionButton
-import com.workfort.pstuian.ui.common.composable.InfoBox
+import com.workfort.pstuian.ui.common.composable.WarningBox
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountUiEvent
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountUiState
 import com.workfort.pstuian.ui.signin.composable.AuthUnderlinedField
@@ -48,7 +48,7 @@ fun DeleteAccountContentPanel(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        InfoBox("Deleting your account will result in the permanent loss of all your data. We recommend deactivating your account instead to keep your information safe. You can activate it by signing in anytime.")
+        WarningBox("Deleting your account will result in the permanent loss of all your data. We recommend deactivating your account instead to keep your information safe. You can activate it by signing in anytime.")
         
         Spacer(modifier = Modifier.padding(top = 16.dp))
         
@@ -67,7 +67,7 @@ fun DeleteAccountContentPanel(
         
         Spacer(modifier = Modifier.padding(top = 24.dp))
         
-        InfoBox("Note that deleting an account might take some time once the request is placed. In the meantime you can deactivate your account if you don't want your profile to be visible.")
+        WarningBox("Note that deleting an account might take some time once the request is placed. In the meantime you can deactivate your account if you don't want your profile to be visible.")
 
         Spacer(modifier = Modifier.padding(top = 16.dp))
         

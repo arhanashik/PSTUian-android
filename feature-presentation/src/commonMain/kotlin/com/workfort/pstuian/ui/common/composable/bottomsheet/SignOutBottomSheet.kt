@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.ui.common.composable.InfoBox
+import com.workfort.pstuian.ui.common.composable.WarningBox
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import org.jetbrains.compose.resources.stringResource
@@ -89,7 +89,7 @@ fun ShowSignOutBottomSheet(
                 )
             }
             if (signOutFromAllDevices) {
-                InfoBox(stringResource(Res.string.msg_sign_out_from_all))
+                WarningBox(stringResource(Res.string.msg_sign_out_from_all))
             }
             Button(
                 modifier = Modifier.fillMaxWidth(),
