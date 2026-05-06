@@ -4,7 +4,7 @@ import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.DonationApiHelper
 import com.workfort.pstuian.featuredomain.model.DomainResult
-import com.workfort.pstuian.featuredomain.model.Donor
+import com.workfort.pstuian.featuredomain.model.Donation
 import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
@@ -14,18 +14,19 @@ class DonationRepositoryImpl(
     private val domainErrorMapper: DomainErrorMapper,
 ) : DonationRepository {
 
-    private val donorsCache = mutableMapOf<Int, List<Donor>>()
+    private val donorsCache = mutableMapOf<Int, List<Donation>>()
 
     override suspend fun saveDonation(
         name: String,
-        info: String,
         email: String,
         reference: String,
+        amount: String,
+        message: String,
     ): DomainResult<Unit> {
-        return helper.saveDonation(name, info, email, reference).toDomainResult(domainErrorMapper)
+        return helper.saveDonation(name, email, reference, amount, message).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun getDonors(page: Int, forceRefresh: Boolean): DomainResult<List<Donor>> {
+    override suspend fun getDonors(page: Int, forceRefresh: Boolean): DomainResult<List<Donation>> {
         if (forceRefresh) donorsCache.clear()
 
         val cache = donorsCache[page]

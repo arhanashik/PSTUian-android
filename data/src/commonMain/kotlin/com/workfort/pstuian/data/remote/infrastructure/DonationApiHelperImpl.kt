@@ -2,7 +2,7 @@ package com.workfort.pstuian.data.remote.infrastructure
 
 import com.workfort.pstuian.data.mapper.toNetworkResult
 import com.workfort.pstuian.data.model.CommonNetworkError
-import com.workfort.pstuian.data.model.DonorDto
+import com.workfort.pstuian.data.model.DonationDto
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.DonationApiHelper
 import com.workfort.pstuian.data.remote.service.DonationApiService
@@ -11,12 +11,13 @@ class DonationApiHelperImpl(private val service: DonationApiService) : DonationA
 
     override suspend fun saveDonation(
         name: String,
-        info: String,
         email: String,
-        reference: String
+        reference: String,
+        amount: String,
+        message: String,
     ): NetworkResult<Unit> {
         return runCatching {
-            service.saveDonation(name, info, email, reference).toNetworkResult()
+            service.saveDonation(name, email, reference, amount, message).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.UNKNOWN)
         }
@@ -25,7 +26,7 @@ class DonationApiHelperImpl(private val service: DonationApiService) : DonationA
     override suspend fun getDonors(
         page: Int,
         limit: Int,
-    ): NetworkResult<List<DonorDto>> {
+    ): NetworkResult<List<DonationDto>> {
         return runCatching {
             service.getDonors(page, limit).toNetworkResult()
         }.getOrElse {

@@ -36,10 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.Donor
+import com.workfort.pstuian.featuredomain.model.Donation
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
-import com.workfort.pstuian.ui.common.composable.LabelText
-import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
@@ -52,9 +50,9 @@ fun DonorsContentPanel(
     onUiEvent: (DonorsUiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        if (uiState.donors.isEmpty() && uiState.isLoading) {
+        if (uiState.donations.isEmpty() && uiState.isLoading) {
             DonorsListShimmer()
-        } else if (uiState.donors.isEmpty()) {
+        } else if (uiState.donations.isEmpty()) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -63,7 +61,7 @@ fun DonorsContentPanel(
             }
         } else {
             DonorListView(
-                donorList = uiState.donors,
+                donationList = uiState.donations,
                 isLoading = uiState.isLoading,
                 onUiEvent = onUiEvent,
             )
@@ -73,7 +71,7 @@ fun DonorsContentPanel(
 
 @Composable
 private fun DonorListView(
-    donorList: List<Donor>,
+    donationList: List<Donation>,
     isLoading: Boolean,
     onUiEvent: (DonorsUiEvent) -> Unit,
 ) {
@@ -88,10 +86,10 @@ private fun DonorListView(
         }
     }
 
-    LaunchedEffect(shouldLoadMore, isLoading, donorList.size) {
-        val canRequestMore = shouldLoadMore && !isLoading && donorList.isNotEmpty()
-        if (canRequestMore && lastLoadMoreRequestedAtSize != donorList.size) {
-            lastLoadMoreRequestedAtSize = donorList.size
+    LaunchedEffect(shouldLoadMore, isLoading, donationList.size) {
+        val canRequestMore = shouldLoadMore && !isLoading && donationList.isNotEmpty()
+        if (canRequestMore && lastLoadMoreRequestedAtSize != donationList.size) {
+            lastLoadMoreRequestedAtSize = donationList.size
             onUiEvent(DonorsUiEvent.LoadMore)
         }
     }
@@ -102,7 +100,7 @@ private fun DonorListView(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(donorList) { item ->
+        items(donationList) { item ->
             DonorListItemView(
                 item = item,
                 onClickItem = {
@@ -183,8 +181,8 @@ private fun DonorListItemShimmer() {
 
 @Composable
 private fun DonorListItemView(
-    item: Donor,
-    onClickItem: (Donor) -> Unit,
+    item: Donation,
+    onClickItem: (Donation) -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -225,7 +223,10 @@ private fun DonorListItemView(
                 ) {
                     Text(
                         text = item.name ?: "Anonymous",
-                        style = TextStyle.title3.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                        style = TextStyle.body1.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.Medium,
+                        ),
                     )
                     Text(
                         text = item.email ?: "No email",
@@ -234,7 +235,7 @@ private fun DonorListItemView(
                 }
             }
 
-            item.info?.takeIf { it.isNotBlank() }?.let {
+            item.message?.takeIf { it.isNotBlank() }?.let {
                 Text(
                     text = it,
                     style = TextStyle.body2.copy(color = AppColors.textPrimary),

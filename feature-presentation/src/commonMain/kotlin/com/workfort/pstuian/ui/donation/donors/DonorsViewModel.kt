@@ -3,7 +3,7 @@ package com.workfort.pstuian.ui.donation.donors
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.Donor
+import com.workfort.pstuian.featuredomain.model.Donation
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
@@ -30,7 +30,7 @@ class DonorsViewModel(
     val navigation: StateFlow<DonorsNavigationState?> = _navigation.asStateFlow()
 
     private var page = 1
-    private val donorsCache = mutableListOf<Donor>()
+    private val donorsCache = mutableListOf<Donation>()
     private var hasMoreData = true
 
     override fun onUiReady() {
@@ -41,7 +41,7 @@ class DonorsViewModel(
         when (event) {
             is DonorsUiEvent.BackClicked -> _navigation.update { DonorsNavigationState.GoBack }
             is DonorsUiEvent.DonateClicked -> onClickDonate()
-            is DonorsUiEvent.DonorClicked -> onDonorClicked(event.donor)
+            is DonorsUiEvent.DonorClicked -> onDonorClicked(event.donation)
             is DonorsUiEvent.LoadMore -> loadDonors()
         }
     }
@@ -72,7 +72,7 @@ class DonorsViewModel(
                         page++
                         donorsCache.addAll(list)
                     }
-                    uiStateMachine.showDoners(donors = donorsCache)
+                    uiStateMachine.showDoners(donations = donorsCache)
                 }
                 .onFailure {
                     uiStateMachine.showLoading(isLoading = false)
@@ -82,7 +82,7 @@ class DonorsViewModel(
         }
     }
 
-    private fun onDonorClicked(donor: Donor) {
-        _message.update { DonorsMessageState.ShowDonorDetails(donor) }
+    private fun onDonorClicked(donation: Donation) {
+        _message.update { DonorsMessageState.ShowDonorDetails(donation) }
     }
 }

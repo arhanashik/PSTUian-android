@@ -18,8 +18,8 @@ class DonateUiStateMachine : UiStateMachine<DonateUiState> {
         _uiState.update { it.copy(isLoading = isLoading) }
     }
 
-    fun setDonationOption(option: String) {
-        _uiState.update { it.copy(donationOption = option) }
+    fun setDonationOption(donationOptions: String) {
+        _uiState.update { it.copy(donationOptions = donationOptions) }
     }
 
     fun setDonationInput(input: DonationInput) {

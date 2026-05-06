@@ -25,6 +25,7 @@ import com.workfort.pstuian.ui.signin.screendata.AuthFormFieldSpacing
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.helper_txt_max_length_donation_message
+import pstuian.feature_presentation.generated.resources.hint_amount
 import pstuian.feature_presentation.generated.resources.hint_email
 import pstuian.feature_presentation.generated.resources.hint_message
 import pstuian.feature_presentation.generated.resources.hint_name
@@ -51,7 +52,7 @@ private fun DonateFormContent(
     val (changedInput, onChangeInput) = remember(uiState.donationInput) {
         mutableStateOf(uiState.donationInput)
     }
-    val donationOptionInfo = "You can send a donation to:\n${uiState.donationOption}\nAfter that, please save the information."
+    val donationOptionInfo = "You can send a donation to:\n${uiState.donationOptions}\nAfter that, please save the information."
 
     LaunchedEffect(changedInput) {
         onUiEvent(DonateUiEvent.ChangeInput(changedInput))
@@ -93,6 +94,16 @@ private fun DonateFormContent(
             supportingText = uiState.validationError.reference,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
         )
+        Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
+        AuthUnderlinedField(
+            label = stringResource(Res.string.hint_amount),
+            value = changedInput.amount,
+            onValueChange = { onChangeInput(changedInput.copy(amount = it)) },
+            isError = uiState.validationError.amount.isNotEmpty(),
+            supportingText = uiState.validationError.amount,
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+        )
+        InfoBox(text = "This information will not be shown in public")
         Spacer(modifier = Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_message),

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 
 class AppViewModel(
     private val sharedScreenData: SharedScreenData,
+    private val appConfigRepository: AppConfigRepository,
     private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
     private val getSignedInUserUseCase: GetSignedInUserUseCase,
@@ -41,6 +43,7 @@ class AppViewModel(
             )
 
     init {
+        observeAppConfig()
         observeSignedInUser()
     }
 
@@ -54,6 +57,14 @@ class AppViewModel(
         if (deepLinkAction == null) return
         viewModelScope.launch {
             deepLinkNavigator.navigate(deepLinkAction, appNavigator)
+        }
+    }
+
+    private fun observeAppConfig() {
+        viewModelScope.launch (coroutineDispatcherProvider.io) {
+            appConfigRepository.observeAppConfig().collectLatest {
+                sharedScreenData.setAppConfig(it)
+            }
         }
     }
 

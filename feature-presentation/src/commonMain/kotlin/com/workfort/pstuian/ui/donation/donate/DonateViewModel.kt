@@ -73,7 +73,8 @@ class DonateViewModel(
                 name = input.name,
                 email = input.email,
                 reference = input.reference,
-                info = input.message,
+                amount = input.amount,
+                message = input.message,
             ).onSuccess {
                 uiStateMachine.showLoading(false)
                 _message.update {
@@ -103,6 +104,7 @@ class DonateViewModel(
                 ""
             },
             reference = if (reference.isEmpty()) "*Required" else "",
+            amount = if (amount.isEmpty()) "*Required" else "",
             message = if (message.isEmpty()) {
                 "*Required"
             } else if (message.length > 500) {

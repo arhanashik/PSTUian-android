@@ -6,6 +6,7 @@ data class DonationInput(
     val name: String,
     val email: String,
     val reference: String,
+    val amount: String,
     val message: String,
 ) {
     companion object {
@@ -13,6 +14,7 @@ data class DonationInput(
             name = "",
             email = "",
             reference = "",
+            amount = "",
             message = "",
         )
     }
@@ -23,6 +25,7 @@ data class DonationInputValidationError(
     val name: String,
     val email: String,
     val reference: String,
+    val amount: String,
     val message: String,
 ) {
     companion object {
@@ -30,6 +33,7 @@ data class DonationInputValidationError(
             name = "",
             email = "",
             reference = "",
+            amount = "",
             message = "",
         )
     }
@@ -37,5 +41,6 @@ data class DonationInputValidationError(
     fun isNotEmpty() = name.isNotEmpty() ||
             email.isNotEmpty() ||
             reference.isNotEmpty() ||
+            amount.isNotEmpty() ||
             message.isNotEmpty()
 }

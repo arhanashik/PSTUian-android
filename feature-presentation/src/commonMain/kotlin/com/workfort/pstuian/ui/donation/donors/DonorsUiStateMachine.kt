@@ -1,6 +1,6 @@
 package com.workfort.pstuian.ui.donation.donors
 
-import com.workfort.pstuian.featuredomain.model.Donor
+import com.workfort.pstuian.featuredomain.model.Donation
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.donation.donors.state.DonorsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,11 +21,11 @@ class DonorsUiStateMachine : UiStateMachine<DonorsUiState> {
         }
     }
 
-    fun showDoners(donors: List<Donor>) {
+    fun showDoners(donations: List<Donation>) {
         _uiState.update { current ->
             when (current) {
-                DonorsUiState.None -> DonorsUiState.Content(donors = donors, isLoading = false)
-                is DonorsUiState.Content -> current.copy(donors = donors, isLoading = false)
+                DonorsUiState.None -> DonorsUiState.Content(donations = donations, isLoading = false)
+                is DonorsUiState.Content -> current.copy(donations = donations, isLoading = false)
             }
         }
     }

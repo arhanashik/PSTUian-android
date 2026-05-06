@@ -3,10 +3,10 @@ package com.workfort.pstuian.featuredomain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Donor (
+data class Donation (
     val id: Int,
     val name: String?,
-    val info: String?,
     val email: String?,
-    val reference: String
+    val reference: String,
+    val message: String?,
 )
