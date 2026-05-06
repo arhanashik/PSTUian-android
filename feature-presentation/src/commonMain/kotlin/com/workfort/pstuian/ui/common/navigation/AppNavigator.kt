@@ -56,6 +56,6 @@ class AppNavigator {
     suspend fun navigateToSettings() = navigateTo(AppScreen.Settings)
     suspend fun navigateToFaculty(facultyId: Int) = navigateTo(AppScreen.Faculty(facultyId))
     suspend fun navigateToCheckIn() = navigateTo(AppScreen.CheckIn)
-    suspend fun navigateToDonors() = navigateTo(AppScreen.Donors)
+    suspend fun navigateToDonationHistory() = navigateTo(AppScreen.DonationHistory)
     suspend fun navigateToNotification() = navigateTo(AppScreen.Notification)
 }

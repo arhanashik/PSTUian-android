@@ -30,8 +30,8 @@ import com.workfort.pstuian.ui.deleteaccount.DeleteAccountUiStateMachine
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountViewModel
 import com.workfort.pstuian.ui.donation.donate.DonateUiStateMachine
 import com.workfort.pstuian.ui.donation.donate.DonateViewModel
-import com.workfort.pstuian.ui.donation.donors.DonorsUiStateMachine
-import com.workfort.pstuian.ui.donation.donors.DonorsViewModel
+import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryUiStateMachine
+import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryViewModel
 import com.workfort.pstuian.ui.faculty.FacultyUiStateMachine
 import com.workfort.pstuian.ui.faculty.FacultyViewModel
 import com.workfort.pstuian.ui.home.HomeUiStateMachine
@@ -169,9 +169,9 @@ private val cvUploadModule = module {
     }
 }
 
-private val donorsModule = module {
-    factoryOf(::DonorsUiStateMachine)
-    factoryOf(::DonorsViewModel)
+private val donationHistoryModule = module {
+    factoryOf(::DonationHistoryUiStateMachine)
+    factoryOf(::DonationHistoryViewModel)
 }
 
 private val donateModule = module {
@@ -354,7 +354,7 @@ val featurePresentationModule = listOf(
     imageUploadModule,
     cvDownloadModule,
     cvUploadModule,
-    donorsModule,
+    donationHistoryModule,
     donateModule,
     facultyModule,
     homeModule,

@@ -66,7 +66,7 @@ sealed interface AppScreen {
     @Serializable
     data object CheckIn : AppScreen
     @Serializable
-    object Donors : AppScreen
+    object DonationHistory : AppScreen
     @Serializable
     object Notification : AppScreen
 }

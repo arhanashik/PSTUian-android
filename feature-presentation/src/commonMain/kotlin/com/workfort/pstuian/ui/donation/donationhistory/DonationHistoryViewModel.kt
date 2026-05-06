@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.donation.donors
+package com.workfort.pstuian.ui.donation.donationhistory
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
@@ -8,26 +8,26 @@ import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
-import com.workfort.pstuian.ui.donation.donors.state.DonorsMessageState
-import com.workfort.pstuian.ui.donation.donors.state.DonorsNavigationState
-import com.workfort.pstuian.ui.donation.donors.state.DonorsUiEvent
-import com.workfort.pstuian.ui.donation.donors.state.DonorsUiState
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryMessageState
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryNavigationState
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryUiEvent
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class DonorsViewModel(
+class DonationHistoryViewModel(
     private val donationRepository: DonationRepository,
-    private val uiStateMachine: DonorsUiStateMachine,
+    private val uiStateMachine: DonationHistoryUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-) : UiStateMachineViewModel<DonorsUiState>(uiStateMachine) {
+) : UiStateMachineViewModel<DonationHistoryUiState>(uiStateMachine) {
 
-    private val _message = MutableStateFlow<DonorsMessageState?>(null)
-    val message: StateFlow<DonorsMessageState?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<DonationHistoryMessageState?>(null)
+    val message: StateFlow<DonationHistoryMessageState?> = _message.asStateFlow()
 
-    private val _navigation = MutableStateFlow<DonorsNavigationState?>(null)
-    val navigation: StateFlow<DonorsNavigationState?> = _navigation.asStateFlow()
+    private val _navigation = MutableStateFlow<DonationHistoryNavigationState?>(null)
+    val navigation: StateFlow<DonationHistoryNavigationState?> = _navigation.asStateFlow()
 
     private var page = 1
     private val donorsCache = mutableListOf<Donation>()
@@ -37,12 +37,12 @@ class DonorsViewModel(
         loadDonors()
     }
 
-    fun onUiEvent(event: DonorsUiEvent) {
+    fun onUiEvent(event: DonationHistoryUiEvent) {
         when (event) {
-            is DonorsUiEvent.BackClicked -> _navigation.update { DonorsNavigationState.GoBack }
-            is DonorsUiEvent.DonateClicked -> onClickDonate()
-            is DonorsUiEvent.DonorClicked -> onDonorClicked(event.donation)
-            is DonorsUiEvent.LoadMore -> loadDonors()
+            is DonationHistoryUiEvent.BackClicked -> _navigation.update { DonationHistoryNavigationState.GoBack }
+            is DonationHistoryUiEvent.DonateClicked -> onClickDonate()
+            is DonationHistoryUiEvent.DonorClicked -> onDonorClicked(event.donation)
+            is DonationHistoryUiEvent.LoadMore -> loadDonors()
         }
     }
 
@@ -51,7 +51,7 @@ class DonorsViewModel(
     fun onNavigationHandled() = _navigation.update { null }
 
     private fun onClickDonate() {
-        _navigation.update { DonorsNavigationState.DonateScreen }
+        _navigation.update { DonationHistoryNavigationState.DonateScreen }
     }
 
     private fun loadDonors(forceRefresh: Boolean = false) {
@@ -77,12 +77,12 @@ class DonorsViewModel(
                 .onFailure {
                     uiStateMachine.showLoading(isLoading = false)
                     val message = it.message ?: "Failed to load donors ${it.code}"
-                    _message.update { DonorsMessageState.Error(message) }
+                    _message.update { DonationHistoryMessageState.Error(message) }
                 }
         }
     }
 
     private fun onDonorClicked(donation: Donation) {
-        _message.update { DonorsMessageState.ShowDonorDetails(donation) }
+        _message.update { DonationHistoryMessageState.ShowDonorDetails(donation) }
     }
 }

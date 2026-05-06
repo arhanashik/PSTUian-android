@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.donation.donors
+package com.workfort.pstuian.ui.donation.donationhistory
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -9,19 +9,19 @@ import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.dialog.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
-import com.workfort.pstuian.ui.donation.donors.composable.DonorsScreenContent
-import com.workfort.pstuian.ui.donation.donors.state.DonorsMessageState
-import com.workfort.pstuian.ui.donation.donors.state.DonorsNavigationState
+import com.workfort.pstuian.ui.donation.donationhistory.composable.DonationHistoryScreenContent
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryMessageState
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryNavigationState
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DonorsScreen(viewModel: DonorsViewModel) {
+fun DonationHistoryScreen(viewModel: DonationHistoryViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val message by viewModel.message.collectAsState()
     val navigation by viewModel.navigation.collectAsState()
 
-    DonorsScreenContent(uiState, viewModel::onUiEvent)
+    DonationHistoryScreenContent(uiState, viewModel::onUiEvent)
 
     HandleMessageState(message, viewModel::onMessageHandled)
     HandleNavigationState(navigation, viewModel::onNavigationHandled)
@@ -29,12 +29,12 @@ fun DonorsScreen(viewModel: DonorsViewModel) {
 
 @Composable
 private fun HandleMessageState(
-    message: DonorsMessageState?,
+    message: DonationHistoryMessageState?,
     onMessageHandled: () -> Unit,
 ) {
     message?.let {
         when (it) {
-            is DonorsMessageState.ShowDonorDetails -> {
+            is DonationHistoryMessageState.ShowDonorDetails -> {
                 val item = it.donation
                 val message = "Email: ${item.email}\n${item.message}\nReference: ${item.reference}"
                 ShowInfoDialog(
@@ -43,7 +43,7 @@ private fun HandleMessageState(
                     onDismiss = onMessageHandled,
                 )
             }
-            is DonorsMessageState.Error -> {
+            is DonationHistoryMessageState.Error -> {
                 ShowErrorDialog(
                     message = it.message,
                     onConfirm = onMessageHandled,
@@ -56,7 +56,7 @@ private fun HandleMessageState(
 
 @Composable
 private fun HandleNavigationState(
-    navigation: DonorsNavigationState?,
+    navigation: DonationHistoryNavigationState?,
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
@@ -64,8 +64,8 @@ private fun HandleNavigationState(
     LaunchedEffect(navigation) {
         navigation?.let {
             when (it) {
-                DonorsNavigationState.GoBack -> navigator?.goBack()
-                DonorsNavigationState.DonateScreen -> navigator?.navigateTo(AppScreen.Donate)
+                DonationHistoryNavigationState.GoBack -> navigator?.goBack()
+                DonationHistoryNavigationState.DonateScreen -> navigator?.navigateTo(AppScreen.Donate)
             }
             onNavigationHandled()
         }

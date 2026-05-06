@@ -26,7 +26,7 @@ import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
 import com.workfort.pstuian.ui.donation.donate.DonateScreen
-import com.workfort.pstuian.ui.donation.donors.DonorsScreen
+import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryScreen
 import com.workfort.pstuian.ui.faculty.FacultyScreen
 import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
@@ -280,8 +280,8 @@ fun AppNavHost(
                 composable<AppScreen.CheckIn> {
                     CheckInScreen(viewModel = koinViewModel())
                 }
-                composable<AppScreen.Donors> {
-                    DonorsScreen(viewModel = koinViewModel())
+                composable<AppScreen.DonationHistory> {
+                    DonationHistoryScreen(viewModel = koinViewModel())
                 }
                 composable<AppScreen.Notification> {
                     // TODO: Need Screen for Notification

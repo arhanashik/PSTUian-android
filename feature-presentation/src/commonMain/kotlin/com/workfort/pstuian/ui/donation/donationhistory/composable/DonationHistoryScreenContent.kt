@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.donation.donors.composable
+package com.workfort.pstuian.ui.donation.donationhistory.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.NavigationButton
-import com.workfort.pstuian.ui.donation.donors.state.DonorsUiEvent
-import com.workfort.pstuian.ui.donation.donors.state.DonorsUiState
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryUiEvent
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryUiState
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
@@ -30,9 +30,9 @@ import pstuian.feature_presentation.generated.resources.txt_donate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun DonorsScreenContent(
-    uiState: DonorsUiState,
-    onUiEvent: (DonorsUiEvent) -> Unit,
+internal fun DonationHistoryScreenContent(
+    uiState: DonationHistoryUiState,
+    onUiEvent: (DonationHistoryUiEvent) -> Unit,
 ) {
     var fabButtonExpanded by remember { mutableStateOf(true) }
 
@@ -46,7 +46,7 @@ internal fun DonorsScreenContent(
             AppBar(
                 title = stringResource(Res.string.label_donation_list),
                 navigation = {
-                    NavigationButton { onUiEvent(DonorsUiEvent.BackClicked) }
+                    NavigationButton { onUiEvent(DonationHistoryUiEvent.BackClicked) }
                 },
             )
         },
@@ -58,7 +58,7 @@ internal fun DonorsScreenContent(
                 ExtendedFloatingActionButton(
                     expanded = fabButtonExpanded,
                     text = { Text(text = stringResource(Res.string.txt_donate)) },
-                    onClick = { onUiEvent(DonorsUiEvent.DonateClicked) },
+                    onClick = { onUiEvent(DonationHistoryUiEvent.DonateClicked) },
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Favorite,
@@ -71,9 +71,9 @@ internal fun DonorsScreenContent(
         },
     ) {
         when (uiState) {
-            DonorsUiState.None -> Unit
-            is DonorsUiState.Content -> {
-                DonorsContentPanel(
+            DonationHistoryUiState.None -> Unit
+            is DonationHistoryUiState.Content -> {
+                DonationHistoryContentPanel(
                     uiState = uiState,
                     onUiEvent = onUiEvent,
                 )

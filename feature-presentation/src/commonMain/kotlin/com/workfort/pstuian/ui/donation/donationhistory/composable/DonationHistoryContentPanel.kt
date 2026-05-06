@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.donation.donors.composable
+package com.workfort.pstuian.ui.donation.donationhistory.composable
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,17 +41,17 @@ import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
-import com.workfort.pstuian.ui.donation.donors.state.DonorsUiEvent
-import com.workfort.pstuian.ui.donation.donors.state.DonorsUiState
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryUiEvent
+import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryUiState
 
 @Composable
-fun DonorsContentPanel(
-    uiState: DonorsUiState.Content,
-    onUiEvent: (DonorsUiEvent) -> Unit,
+internal fun DonationHistoryContentPanel(
+    uiState: DonationHistoryUiState.Content,
+    onUiEvent: (DonationHistoryUiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (uiState.donations.isEmpty() && uiState.isLoading) {
-            DonorsListShimmer()
+            DonationHistoryListShimmer()
         } else if (uiState.donations.isEmpty()) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -60,7 +60,7 @@ fun DonorsContentPanel(
                 AnimatedEmptyView()
             }
         } else {
-            DonorListView(
+            DonationHistoryListView(
                 donationList = uiState.donations,
                 isLoading = uiState.isLoading,
                 onUiEvent = onUiEvent,
@@ -70,10 +70,10 @@ fun DonorsContentPanel(
 }
 
 @Composable
-private fun DonorListView(
+private fun DonationHistoryListView(
     donationList: List<Donation>,
     isLoading: Boolean,
-    onUiEvent: (DonorsUiEvent) -> Unit,
+    onUiEvent: (DonationHistoryUiEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
     var lastLoadMoreRequestedAtSize by remember { mutableIntStateOf(-1) }
@@ -90,7 +90,7 @@ private fun DonorListView(
         val canRequestMore = shouldLoadMore && !isLoading && donationList.isNotEmpty()
         if (canRequestMore && lastLoadMoreRequestedAtSize != donationList.size) {
             lastLoadMoreRequestedAtSize = donationList.size
-            onUiEvent(DonorsUiEvent.LoadMore)
+            onUiEvent(DonationHistoryUiEvent.LoadMore)
         }
     }
 
@@ -101,36 +101,36 @@ private fun DonorListView(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(donationList) { item ->
-            DonorListItemView(
+            DonationHistoryListItemView(
                 item = item,
                 onClickItem = {
-                    onUiEvent(DonorsUiEvent.DonorClicked(it))
+                    onUiEvent(DonationHistoryUiEvent.DonorClicked(it))
                 },
             )
         }
         if (isLoading) {
             item {
-                DonorListItemShimmer()
+                DonationHistoryListItemShimmer()
             }
         }
     }
 }
 
 @Composable
-internal fun DonorsListShimmer() {
+internal fun DonationHistoryListShimmer() {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(6) {
-            DonorListItemShimmer()
+            DonationHistoryListItemShimmer()
         }
     }
 }
 
 @Composable
-private fun DonorListItemShimmer() {
+private fun DonationHistoryListItemShimmer() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,7 +180,7 @@ private fun DonorListItemShimmer() {
 }
 
 @Composable
-private fun DonorListItemView(
+private fun DonationHistoryListItemView(
     item: Donation,
     onClickItem: (Donation) -> Unit,
 ) {
