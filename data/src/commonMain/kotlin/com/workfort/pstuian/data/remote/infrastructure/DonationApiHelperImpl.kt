@@ -22,9 +22,12 @@ class DonationApiHelperImpl(private val service: DonationApiService) : DonationA
         }
     }
 
-    override suspend fun getDonors(): NetworkResult<List<DonorDto>> {
+    override suspend fun getDonors(
+        page: Int,
+        limit: Int,
+    ): NetworkResult<List<DonorDto>> {
         return runCatching {
-            service.getDonors().toNetworkResult()
+            service.getDonors(page, limit).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.UNKNOWN)
         }

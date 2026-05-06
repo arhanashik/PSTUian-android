@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppBarIconButton
 import com.workfort.pstuian.ui.common.composable.AppScaffold
-import com.workfort.pstuian.ui.common.composable.LoadingOverlay
 import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.donation.donors.state.DonorsUiEvent
 import com.workfort.pstuian.ui.donation.donors.state.DonorsUiState
@@ -86,7 +85,7 @@ internal fun DonorsScreenContent(
         when (uiState) {
             DonorsUiState.None -> Unit
             DonorsUiState.Loading -> {
-                LoadingOverlay()
+                DonorsListShimmer()
             }
             is DonorsUiState.Content -> {
                 DonorsContentPanel(

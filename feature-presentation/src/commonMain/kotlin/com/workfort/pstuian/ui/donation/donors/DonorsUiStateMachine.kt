@@ -16,7 +16,10 @@ class DonorsUiStateMachine : UiStateMachine<DonorsUiState> {
         _uiState.update { DonorsUiState.Loading }
     }
 
-    fun showContent(donorList: List<Donor>) {
-        _uiState.update { DonorsUiState.Content(donorList) }
+    fun showContent(
+        donorList: List<Donor>,
+        isLoading: Boolean = false,
+    ) {
+        _uiState.update { DonorsUiState.Content(donorList, isLoading) }
     }
 }

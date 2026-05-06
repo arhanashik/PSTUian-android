@@ -11,5 +11,5 @@ interface DonationRepository {
         reference: String,
     ): DomainResult<Unit>
 
-    suspend fun getDonors(): DomainResult<List<Donor>>
+    suspend fun getDonors(page: Int, forceRefresh: Boolean = false): DomainResult<List<Donor>>
 }

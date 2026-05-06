@@ -7,6 +7,6 @@ sealed interface DonorsUiState {
     data object Loading : DonorsUiState
     data class Content(
         val donorList: List<Donor>,
-        val showLoadingMore: Boolean = false,
+        val isLoading: Boolean = false,
     ) : DonorsUiState
 }

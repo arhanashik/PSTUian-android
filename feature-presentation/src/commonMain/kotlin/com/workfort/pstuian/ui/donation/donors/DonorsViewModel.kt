@@ -29,16 +29,20 @@ class DonorsViewModel(
     private val _navigation = MutableStateFlow<DonorsNavigationState?>(null)
     val navigation: StateFlow<DonorsNavigationState?> = _navigation.asStateFlow()
 
+    private var page = 1
+    private val donorsCache = mutableListOf<Donor>()
+    private var hasMoreData = true
+
     override fun onUiReady() {
         loadDonors()
     }
 
     fun onUiEvent(event: DonorsUiEvent) {
         when (event) {
-            is DonorsUiEvent.BackClicked -> onClickBack()
-            is DonorsUiEvent.Refresh -> loadDonors()
+            is DonorsUiEvent.BackClicked -> _navigation.update { DonorsNavigationState.GoBack }
             is DonorsUiEvent.DonateClicked -> onClickDonate()
             is DonorsUiEvent.DonorClicked -> onDonorClicked(event.donor)
+            is DonorsUiEvent.LoadMore -> loadDonors()
         }
     }
 
@@ -46,24 +50,35 @@ class DonorsViewModel(
 
     fun onNavigationHandled() = _navigation.update { null }
 
-    private fun onClickBack() {
-        _navigation.update { DonorsNavigationState.GoBack }
-    }
-
     private fun onClickDonate() {
         _navigation.update { DonorsNavigationState.DonateScreen }
     }
 
-    private fun loadDonors() {
+    private fun loadDonors(forceRefresh: Boolean = false) {
+        if (forceRefresh) {
+            page = 1
+            donorsCache.clear()
+            hasMoreData = true
+        }
+        if (!hasMoreData) return
+
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showLoading()
-            donationRepository.getDonors()
-                .onSuccess {
-                    uiStateMachine.showContent(it)
+            donationRepository.getDonors(page, forceRefresh)
+                .onSuccess { list ->
+                    if (list.isEmpty()) {
+                        hasMoreData = false
+                    } else {
+                        page++
+                        donorsCache.addAll(list)
+                    }
+                    uiStateMachine.showContent(
+                        donorList = donorsCache,
+                        isLoading = false,
+                    )
                 }
                 .onFailure {
-                    uiStateMachine.showContent(emptyList())
-                    val message = it.message ?: "Failed to load donors"
+                    val message = it.message ?: "Failed to load donors ${it.code}"
                     _message.update { DonorsMessageState.Error(message) }
                 }
         }
