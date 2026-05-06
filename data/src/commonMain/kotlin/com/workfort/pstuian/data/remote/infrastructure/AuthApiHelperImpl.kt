@@ -74,9 +74,25 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         }
     }
 
-    override suspend fun deleteAccount(userType: String): NetworkResult<Unit> {
+    override suspend fun activateAccount(userType: String): NetworkResult<Unit> {
         return runCatching {
-            service.deleteAccount(userType).toNetworkResult()
+            service.activateAccount(userType).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
+    }
+
+    override suspend fun deactivateAccount(userType: String): NetworkResult<Unit> {
+        return runCatching {
+            service.deactivateAccount(userType).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
+    }
+
+    override suspend fun signOut(userType: String, clearAllSession: Boolean): NetworkResult<Unit> {
+        return runCatching {
+            service.signOut(userType, clearAllSession).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

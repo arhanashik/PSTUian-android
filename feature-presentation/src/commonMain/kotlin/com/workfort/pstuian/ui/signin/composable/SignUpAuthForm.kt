@@ -32,7 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.ActionButton
 import com.workfort.pstuian.ui.common.composable.UnderlineSelectorField
-import com.workfort.pstuian.ui.common.composable.batchDisplayLabel
+import com.workfort.pstuian.ui.common.composable.bottomsheet.batchDisplayLabel
 import com.workfort.pstuian.ui.signin.screendata.AuthFormFieldSpacing
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.SignUpFormData

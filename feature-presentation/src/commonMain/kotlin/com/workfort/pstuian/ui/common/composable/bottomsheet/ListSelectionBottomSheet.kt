@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.common.composable
+package com.workfort.pstuian.ui.common.composable.bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +34,8 @@ import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
 import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.common.composable.ActionButton
+import com.workfort.pstuian.ui.common.composable.localizedLabel
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import org.jetbrains.compose.resources.stringResource
@@ -42,7 +44,7 @@ import pstuian.feature_presentation.generated.resources.txt_visitor
 
 /**
  * One selectable row in [ListSelectionBottomSheet]. [value] may be null when the sheet should offer
- * an explicit “none” / default choice (e.g. visitor with no [com.workfort.pstuian.featuredomain.model.UserType]).
+ * an explicit “none” / default choice (e.g. visitor with no [UserType]).
  */
 internal data class ListSelectionOption<T>(
     val value: T?,

@@ -38,10 +38,7 @@ class DomainErrorMapper {
 
     private fun ApiResponseCode.mapToAppErrorCode(): DomainErrorCode {
         return when (this) {
-            ApiResponseCode.Success -> {
-                // success case shouldn't be coming in error mapper
-                DomainErrorCode.Auth.InternalError
-            }
+            ApiResponseCode.Success -> DomainErrorCode.None // success case shouldn't be coming in error mapper
             ApiResponseCode.MissingParam -> DomainErrorCode.Auth.MissingParam
             ApiResponseCode.InvalidParam -> DomainErrorCode.Auth.InvalidParam
             ApiResponseCode.ReadFailed -> DomainErrorCode.Auth.ReadFailed
@@ -54,11 +51,12 @@ class DomainErrorMapper {
             ApiResponseCode.DeviceRegistrationFailed -> DomainErrorCode.Auth.DeviceRegistrationFailed
             ApiResponseCode.DeviceBlockListed -> DomainErrorCode.Auth.DeviceBlockListed
             ApiResponseCode.DeviceAlreadyExist -> DomainErrorCode.Auth.DeviceAlreadyExist
-            ApiResponseCode.UserIdInvalid -> DomainErrorCode.Auth.UserIdInvalid
+            ApiResponseCode.UserAuthUnregistered -> DomainErrorCode.Auth.UserAuthUnregistered
             ApiResponseCode.UserNotFound -> DomainErrorCode.Auth.UserNotFound
             ApiResponseCode.UserRegistrationFailed -> DomainErrorCode.Auth.UserRegistrationFailed
             ApiResponseCode.UserBlockListed -> DomainErrorCode.Auth.UserBlockListed
             ApiResponseCode.UserAlreadyExist -> DomainErrorCode.Auth.UserAlreadyExist
+            ApiResponseCode.UserDeactivated -> DomainErrorCode.Auth.UserDeactivated
         }
     }
 }

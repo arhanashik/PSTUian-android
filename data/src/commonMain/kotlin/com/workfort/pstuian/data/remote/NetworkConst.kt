@@ -53,6 +53,7 @@ object NetworkConst {
         const val CONTACT = "contact"
         const val INFO = "info"
         const val PRIVACY = "privacy"
+        const val CLEAR_ALL_SESSION = "clear_all_session"
 
         const val CREATED_AT = "created_at"
         const val UPDATED_AT = "updated_at"
@@ -128,6 +129,8 @@ object NetworkConst {
                 const val FORGOT_PASSWORD = "${AUTH_API_PATH}forgotPassword"
                 const val EMAIL_VERIFICATION = "${AUTH_API_PATH}resendVerificationEmail"
                 const val DELETE_ACCOUNT = "${AUTH_API_PATH}deleteAccount"
+                const val ACTIVATE_ACCOUNT = "${AUTH_API_PATH}activateAccount"
+                const val DEACTIVATE_ACCOUNT = "${AUTH_API_PATH}deactivateAccount"
             }
 
             object Faculty {

@@ -93,7 +93,7 @@
     <string name="msg_sign_out">Are you surely want to sign out?</string>
     <string name="txt_sign_out">Sign Out</string>
     <string name="txt_sign_out_from_all">Sign out from all</string>
-    <string name="msg_sign_out_from_all">Are you surely want to sign out from all devices? You will have to sign in again.</string>
+    <string name="msg_sign_out_from_all">Are you surely want to sign out from all devices? All sessions will be removed from any other device.</string>
 
     <string name="txt_name">Name</string>
     <string name="txt_id">Id</string>

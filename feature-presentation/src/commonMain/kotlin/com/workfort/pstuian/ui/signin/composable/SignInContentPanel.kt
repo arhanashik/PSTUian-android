@@ -16,7 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowLoaderDialog
 import com.workfort.pstuian.ui.signin.screendata.AuthPanel
 import com.workfort.pstuian.ui.signin.screendata.CompactHeaderHeight
 import com.workfort.pstuian.ui.signin.screendata.ExpandedGreenHeightFraction

@@ -7,8 +7,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.checkinhistory.composable.CheckInHistoryScreenContent
 import com.workfort.pstuian.ui.checkinhistory.composable.MyCheckInItemBottomSheet

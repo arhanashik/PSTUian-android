@@ -1,8 +1,12 @@
 package com.workfort.pstuian.ui.deleteaccount
 
 import androidx.lifecycle.viewModelScope
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
-import com.workfort.pstuian.featuredomain.repository.SettingsRepository
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountMessageState
 import com.workfort.pstuian.ui.deleteaccount.state.DeleteAccountNavigationState
@@ -16,8 +20,9 @@ import kotlinx.coroutines.launch
 
 class DeleteAccountViewModel(
     private val authRepo: AuthRepository,
-    private val settingsRepository: SettingsRepository,
+    private val sharedScreenData: SharedScreenData,
     private val stateMachine: DeleteAccountUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<DeleteAccountUiState>(stateMachine) {
 
     private val _message = MutableStateFlow<DeleteAccountMessageState?>(null)
@@ -31,14 +36,10 @@ class DeleteAccountViewModel(
     fun onUiEvent(event: DeleteAccountUiEvent) {
         viewModelScope.launch {
             when (event) {
-                is DeleteAccountUiEvent.OnClickBack -> onClickBack()
-                is DeleteAccountUiEvent.OnClickDeleteAccountBtn -> onClickDeleteAccountBtn()
+                is DeleteAccountUiEvent.BackClicked -> _navigation.update { DeleteAccountNavigationState.GoBack }
                 is DeleteAccountUiEvent.OnChangeInput -> stateMachine.onChangeInput(event.input)
-                is DeleteAccountUiEvent.OnDeleteAccount -> deleteAccount()
-                is DeleteAccountUiEvent.OnRequestRecovery -> onRequestRecovery()
-                is DeleteAccountUiEvent.OnResetToHomeScreen -> onResetToHomeScreen()
-                is DeleteAccountUiEvent.MessageConsumed -> onMessageHandled()
-                is DeleteAccountUiEvent.NavigationConsumed -> onNavigationConsumed()
+                is DeleteAccountUiEvent.DeactivateAccountClicked -> onClickDeactivateAccount(event.password)
+                is DeleteAccountUiEvent.DeleteAccountClicked -> onClickRequestDeleteAccount()
             }
         }
     }
@@ -47,41 +48,52 @@ class DeleteAccountViewModel(
 
     fun onNavigationConsumed() = _navigation.update { null }
 
-    private fun onClickBack() = _navigation.update { DeleteAccountNavigationState.GoBack }
+    private fun onClickDeactivateAccount(password: String) {
+        val validation = validate(password)
+        stateMachine.showValidationError(validation)
+        if (!validation.isBlank()) return
 
-    private fun onClickDeleteAccountBtn() {
-        _message.update { DeleteAccountMessageState.ConfirmAccountDelete }
+        _message.update {
+            DeleteAccountMessageState.ConfirmAction("Are you surely want to deactivate your account?") {
+                deactivateAccount(password)
+            }
+        }
     }
 
-    private fun onRequestRecovery() {
-        _message.update { null }
-        _navigation.update { DeleteAccountNavigationState.ResetToContactUsScreen }
+    private fun onClickRequestDeleteAccount() {
+        _message.update {
+            DeleteAccountMessageState.ConfirmAction("Are you surely want to delete your account?") {
+                sharedScreenData.getAppConfig()?.deleteAccountUrl?.let { url ->
+                    _navigation.update { DeleteAccountNavigationState.OpenUrl(url) }
+                }
+            }
+        }
     }
 
-    private fun onResetToHomeScreen() {
-        _message.update { null }
-        _navigation.update { DeleteAccountNavigationState.ResetToHomeScreen }
-    }
-
-    private suspend fun deleteAccount() {
-        val currentState = stateMachine.uiState.value
-        if (currentState.validationError.isNotEmpty()) return
-
-        val userType = settingsRepository.getUserType() ?: return
+    private fun deactivateAccount(password: String) {
+        val email = sharedScreenData.getCurrentUser()?.email ?: return
+        val userType = sharedScreenData.getCurrentUserType() ?: return
 
         _message.update { DeleteAccountMessageState.Loading(cancelable = false) }
-
-        runCatching {
-            authRepo.deleteAccount(userType, password = currentState.input)
-        }.onSuccess {
-            _message.update {
-                DeleteAccountMessageState.Success(
-                    "Account deleted successfully!",
-                )
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            authRepo.deactivateAccount(userType, email, password).onSuccess {
+                onMessageHandled()
+                _navigation.update { DeleteAccountNavigationState.ResetToHomeScreen }
+            }.onFailure {
+                onMessageHandled()
+                val message = it.message ?: "Failed to deactivate account. Please try again."
+                _message.update { DeleteAccountMessageState.Error(message) }
             }
-        }.onFailure {
-            val message = it.message ?: "Failed to delete account. Please try again."
-            _message.update { DeleteAccountMessageState.Error(message) }
+        }
+    }
+
+    private fun validate(password: String): String {
+        return if (password.isEmpty()) {
+            "*Required"
+        } else if (password.length < 6) {
+            "*Too short"
+        } else {
+            ""
         }
     }
 }

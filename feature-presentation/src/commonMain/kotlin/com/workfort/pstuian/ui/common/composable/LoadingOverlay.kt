@@ -23,6 +23,6 @@ fun LoadingOverlay(
             .pointerInput(Unit) {},
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = AppColors.primary)
+        DraggableAdaptiveLoader()
     }
 }

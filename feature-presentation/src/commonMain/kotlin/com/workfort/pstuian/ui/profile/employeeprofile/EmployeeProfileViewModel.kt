@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -217,7 +218,7 @@ class EmployeeProfileViewModel(
         viewModelScope.launch {
             runCatching {
                 messageHandled()
-                authRepo.signOut(fromAllDevice = fromAllDevice)
+                authRepo.signOut(UserType.EMPLOYEE, clearAllSession = fromAllDevice)
                 _navigation.update { EmployeeProfileNavigationState.ResetToHome }
             }.onFailure {
                 val message = it.message ?: "Signing out failed. Please try again."

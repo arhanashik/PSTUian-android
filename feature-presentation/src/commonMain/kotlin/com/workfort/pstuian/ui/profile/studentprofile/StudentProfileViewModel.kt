@@ -5,6 +5,7 @@ import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -293,7 +294,7 @@ class StudentProfileViewModel(
         cancelUserPresenceObservation()
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            authRepo.signOut(fromAllDevice = fromAllDevice)
+            authRepo.signOut(UserType.STUDENT, clearAllSession = fromAllDevice)
                 .onSuccess {
                     messageHandled()
                     _navigation.update { StudentProfileNavigationState.ResetToHome }

@@ -18,8 +18,8 @@ import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.LoadingOverlay
 import com.workfort.pstuian.ui.common.composable.NavigationButton
-import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.donate.composable.DonateContentPanel
 import com.workfort.pstuian.ui.donate.state.DonateMessageState

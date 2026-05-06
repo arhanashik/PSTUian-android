@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.common.composable
+package com.workfort.pstuian.ui.home.composable
 
 import androidx.compose.animation.core.EaseInOutQuart
 import androidx.compose.animation.core.tween

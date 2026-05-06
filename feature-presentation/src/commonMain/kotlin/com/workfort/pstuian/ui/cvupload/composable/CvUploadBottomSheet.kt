@@ -13,9 +13,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.cvupload.CvUploadViewModel
 import com.workfort.pstuian.ui.cvupload.state.CvUploadMessageState

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.common.composable
+package com.workfort.pstuian.ui.home.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -35,6 +35,8 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.workfort.pstuian.featuredomain.model.Faculty
+import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
+import com.workfort.pstuian.ui.common.composable.extractBackdropTintFromImage
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.common.theme.bgCircle

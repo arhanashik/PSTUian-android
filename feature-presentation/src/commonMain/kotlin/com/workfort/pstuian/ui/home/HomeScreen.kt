@@ -6,10 +6,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalUriHandler
-import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.userTypeListSelectionOptions
+import com.workfort.pstuian.ui.common.composable.bottomsheet.ListSelectionBottomSheet
+import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.bottomsheet.userTypeListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.home.composable.HomeScreenContent
 import com.workfort.pstuian.ui.home.state.HomeMessageState

@@ -48,9 +48,9 @@ import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerNavigationState
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerUiEvent

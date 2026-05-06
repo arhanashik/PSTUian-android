@@ -12,21 +12,10 @@ class DeleteAccountUiStateMachine : UiStateMachine<DeleteAccountUiState> {
     override val uiState: StateFlow<DeleteAccountUiState> = _uiState.asStateFlow()
 
     fun onChangeInput(input: String) {
-        _uiState.update {
-            it.copy(
-                input = input,
-                validationError = validate(input),
-            )
-        }
+        _uiState.update { it.copy(input = input) }
     }
 
-    private fun validate(password: String): String {
-        return if (password.isEmpty()) {
-            "*Required"
-        } else if (password.length < 4) {
-            "*Too short"
-        } else {
-            ""
-        }
+    fun showValidationError(validationError: String) {
+        _uiState.update { it.copy(validationError = validationError) }
     }
 }

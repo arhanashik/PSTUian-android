@@ -39,10 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ErrorText
-import com.workfort.pstuian.ui.common.composable.FacultyShimmer
-import com.workfort.pstuian.ui.common.composable.FacultyView
-import com.workfort.pstuian.ui.common.composable.SliderShimmer
-import com.workfort.pstuian.ui.common.composable.SliderView
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.home.ActionItem

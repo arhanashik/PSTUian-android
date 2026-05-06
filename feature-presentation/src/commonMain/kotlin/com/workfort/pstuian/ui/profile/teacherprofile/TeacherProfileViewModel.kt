@@ -5,6 +5,7 @@ import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -242,7 +243,7 @@ class TeacherProfileViewModel(
         viewModelScope.launch {
             runCatching {
                 messageHandled()
-                authRepo.signOut(fromAllDevice = fromAllDevice)
+                authRepo.signOut(UserType.TEACHER, clearAllSession = fromAllDevice)
                 _navigation.update { TeacherProfileNavigationState.ResetToHome }
             }.onFailure {
                 val message = it.message ?: "Signing out failed. Please try again."

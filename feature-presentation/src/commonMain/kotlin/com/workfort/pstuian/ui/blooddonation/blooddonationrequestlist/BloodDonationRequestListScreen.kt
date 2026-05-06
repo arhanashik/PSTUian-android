@@ -12,8 +12,8 @@ import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.composable
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListMessageState
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListNavigationState
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
 import org.jetbrains.compose.resources.stringResource

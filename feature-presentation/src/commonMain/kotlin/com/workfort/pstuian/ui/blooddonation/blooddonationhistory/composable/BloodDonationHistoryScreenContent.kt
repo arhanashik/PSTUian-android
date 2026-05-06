@@ -22,7 +22,7 @@ import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
 import com.workfort.pstuian.ui.common.composable.NavigationButton
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource

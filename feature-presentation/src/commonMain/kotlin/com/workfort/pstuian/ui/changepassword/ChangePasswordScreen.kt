@@ -10,8 +10,8 @@ import com.workfort.pstuian.ui.changepassword.composable.ChangePasswordScreenCon
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordMessageState
 import com.workfort.pstuian.ui.changepassword.state.ChangePasswordNavigationState
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
-import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowLoaderDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import org.koin.compose.koinInject
 

@@ -5,6 +5,7 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.DomainError
+import com.workfort.pstuian.featuredomain.model.DomainErrorCode
 import com.workfort.pstuian.featuredomain.model.Faculty
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.UserType
@@ -282,7 +283,7 @@ class SignInViewModel(
         }
     }
 
-    private fun signIn(formData: SignInFormData) {
+    private fun signIn(formData: SignInFormData, isRetryFlow: Boolean = false) {
         val userType = settingsRepository.getUserType() ?: return
 
         if (formData.isInvalid()) {
@@ -299,24 +300,60 @@ class SignInViewModel(
                     sharedPrefRepository.putString(SharedPrefKey.SIGN_IN_EMAIL, savedEmail)
                     _message.update { SignInMessageState.Success(message = "Welcome Back!") }
                     _navigation.update { SignInNavigationState.GoBack }
-                }
-                .onFailure { error ->
-                    if (error.isLegacyUserAccountError) {
-                        // create legacy user's auth account
-                        authRepository.creatLegacyUserAuth(userType, formData.email, formData.password)
-                            .onSuccess { signIn(formData) }
-                            .onFailure(::handleSignInFailure)
+                }.onFailure { error ->
+                    if (isRetryFlow) {
+                        stateMachine.showLoading(false)
+                        val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
+                        _message.update { SignInMessageState.Error(msg) }
                     } else {
-                        handleSignInFailure(error)
+                        handleSignInFailure(formData, error)
                     }
                 }
         }
     }
 
-    private fun handleSignInFailure(error: DomainError) {
-        stateMachine.showLoading(false)
-        val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
-        _message.update { SignInMessageState.Error(msg) }
+    private fun handleSignInFailure(
+        formData: SignInFormData,
+        error: DomainError,
+    ) {
+        when (error.code) {
+            DomainErrorCode.Auth.UserDeactivated -> {
+                activateAccountAndContinueSignIn(formData)
+            }
+            DomainErrorCode.Auth.UserAuthUnregistered -> {
+                createLegacyUserAuthAndContinueSignIn(formData) // create legacy user's auth account
+            } else -> {
+                stateMachine.showLoading(false)
+                val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
+                _message.update { SignInMessageState.Error(msg) }
+            }
+        }
+    }
+
+    private fun activateAccountAndContinueSignIn(formData: SignInFormData) {
+        val userType = settingsRepository.getUserType() ?: return
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            authRepository.activateAccount(userType, formData.email, formData.password)
+                .onSuccess { signIn(formData, isRetryFlow = true) }
+                .onFailure { error ->
+                    stateMachine.showLoading(false)
+                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
+                    _message.update { SignInMessageState.Error(msg) }
+                }
+        }
+    }
+
+    private fun createLegacyUserAuthAndContinueSignIn(formData: SignInFormData) {
+        val userType = settingsRepository.getUserType() ?: return
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            authRepository.createLegacyUserAuth(userType, formData.email, formData.password)
+                .onSuccess { signIn(formData, isRetryFlow = true) }
+                .onFailure { error ->
+                    stateMachine.showLoading(false)
+                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
+                    _message.update { SignInMessageState.Error(msg) }
+                }
+        }
     }
 
     private fun studentSignUp(formData: SignUpFormData.StudentSignUpFormData) {

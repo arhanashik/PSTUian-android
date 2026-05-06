@@ -150,6 +150,7 @@ class SettingsViewModel(
     }
 
     private fun onForceSignOut() {
+        val userType = settingsRepository.getUserType() ?: return
         _message.update {
             SettingsMessageState.ConfirmAction(
                 title = "Force Sign Out",
@@ -157,7 +158,7 @@ class SettingsViewModel(
             ) {
                 onMessageHandled()
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-                    authRepository.signOut()
+                    authRepository.signOut(userType)
                         .onSuccess { _navigation.update { SettingsNavigationState.ResetToRoot } }
                         .onFailure { err ->
                             _message.update {

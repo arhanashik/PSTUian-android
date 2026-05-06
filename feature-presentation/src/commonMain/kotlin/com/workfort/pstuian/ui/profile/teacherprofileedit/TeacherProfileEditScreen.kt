@@ -7,11 +7,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
-import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
-import com.workfort.pstuian.ui.common.composable.facultiesToListSelectionOptions
+import com.workfort.pstuian.ui.common.composable.bottomsheet.ListSelectionBottomSheet
+import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.bottomsheet.facultiesToListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.profile.teacherprofileedit.composable.TeacherProfileScreenContent
 import com.workfort.pstuian.ui.profile.teacherprofileedit.state.TeacherProfileEditMessageState

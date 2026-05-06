@@ -20,11 +20,12 @@ enum class ApiResponseCode(val code: String): NetworkErrorCode {
     DeviceAlreadyExist("SD004"),
 
     // User
-    UserIdInvalid("SU000"), // legacy user without valid user id
+    UserAuthUnregistered("SU000"), // legacy user without valid user id
     UserNotFound("SU001"),
     UserRegistrationFailed("SU002"),
     UserBlockListed("SU003"),
     UserAlreadyExist("SU004"),
+    UserDeactivated("SU005"),
     ;
 
     fun isSuccess() = this == Success

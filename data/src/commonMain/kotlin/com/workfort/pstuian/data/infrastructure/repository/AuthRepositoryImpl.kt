@@ -10,6 +10,7 @@ import com.workfort.pstuian.featuredomain.model.DomainErrorCode
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.getOrElse
 import com.workfort.pstuian.featuredomain.model.map
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
@@ -134,7 +135,7 @@ class AuthRepositoryImpl(
         return completeFirebaseSignUp(UserType.TEACHER.type, email, password).map { }
     }
 
-    override suspend fun creatLegacyUserAuth(
+    override suspend fun createLegacyUserAuth(
         userType: UserType,
         email: String,
         password: String
@@ -143,10 +144,14 @@ class AuthRepositoryImpl(
 //        return authSignIn(userType, email, password).map { } // for debug process if account already exists
     }
 
-    override suspend fun signOut(fromAllDevice: Boolean): DomainResult<Unit> {
+    override suspend fun signOut(userType: UserType, clearAllSession: Boolean): DomainResult<Unit> {
         val userId = getAuthUser()?.userId ?: return DomainResult.failure(invalidAuthUser)
+        userPresenceRepository.removeUserPresence(userId) // clear user presence
 
-        userPresenceRepository.removeUserPresence(userId)
+        helper.signOut(userType.type, clearAllSession).toDomainResult(domainErrorMapper).getOrElse {
+            return DomainResult.failure(it)
+        }
+
         return firebaseAuthDataSource.signOut()
             .toDomainResult(domainErrorMapper)
             .onSuccess { removeAuthPrefs() }
@@ -175,13 +180,29 @@ class AuthRepositoryImpl(
         return firebaseAuthDataSource.sendVerificationEmail(email, password).toDomainResult(domainErrorMapper)
     }
 
-    override suspend fun deleteAccount(userType: UserType, password: String): DomainResult<Unit> {
-        return helper.deleteAccount(userType.type)
+    override suspend fun activateAccount(
+        userType: UserType,
+        email: String,
+        password: String
+    ): DomainResult<Unit> {
+        // authenticate the user first
+        authSignIn(userType, email, password).getOrElse {
+            return DomainResult.failure(it)
+        }
+
+        return helper.activateAccount(userType.type)
             .toDomainResult(domainErrorMapper)
-            .onSuccess {
-                removeAuthPrefs()
-                firebaseAuthDataSource.signOut()
-            }
+            .onSuccess { signOut(userType) } // should sign in again after activating
+    }
+
+    override suspend fun deactivateAccount(
+        userType: UserType,
+        email: String,
+        password: String,
+    ): DomainResult<Unit> {
+        return helper.deactivateAccount(userType.type)
+            .toDomainResult(domainErrorMapper)
+            .onSuccess { signOut(userType) }
     }
 
     override suspend fun removeAuthPrefs() {

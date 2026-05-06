@@ -6,11 +6,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalUriHandler
-import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
-import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
-import com.workfort.pstuian.ui.common.composable.batchesToListSelectionOptions
-import com.workfort.pstuian.ui.common.composable.facultiesToListSelectionOptions
+import com.workfort.pstuian.ui.common.composable.bottomsheet.ListSelectionBottomSheet
+import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowSuccessDialog
+import com.workfort.pstuian.ui.common.composable.bottomsheet.batchesToListSelectionOptions
+import com.workfort.pstuian.ui.common.composable.bottomsheet.facultiesToListSelectionOptions
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.signin.composable.SignInScreenContent
 import com.workfort.pstuian.ui.signin.state.SignInMessageState

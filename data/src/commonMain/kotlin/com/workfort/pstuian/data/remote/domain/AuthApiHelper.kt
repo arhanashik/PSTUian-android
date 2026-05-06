@@ -28,5 +28,9 @@ interface AuthApiHelper {
 
     suspend fun updateAuthUserId(userType: String): NetworkResult<Unit>
 
-    suspend fun deleteAccount(userType: String): NetworkResult<Unit>
+    suspend fun activateAccount(userType: String): NetworkResult<Unit>
+
+    suspend fun deactivateAccount(userType: String): NetworkResult<Unit>
+
+    suspend fun signOut(userType: String, clearAllSession: Boolean): NetworkResult<Unit>
 }

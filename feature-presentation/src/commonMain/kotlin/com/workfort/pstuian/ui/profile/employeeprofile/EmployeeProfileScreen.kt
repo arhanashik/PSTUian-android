@@ -8,12 +8,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowErrorDialog
-import com.workfort.pstuian.ui.common.composable.ShowInputDialog
-import com.workfort.pstuian.ui.common.composable.ShowLoaderDialog
-import com.workfort.pstuian.ui.common.composable.ShowSignOutBottomSheet
-import com.workfort.pstuian.ui.common.composable.ShowSuccessDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowInputDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowLoaderDialog
+import com.workfort.pstuian.ui.common.composable.bottomsheet.ShowSignOutBottomSheet
+import com.workfort.pstuian.ui.common.composable.dialog.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.profile.employeeprofile.composable.EmployeeProfileScreenContent
@@ -28,7 +28,6 @@ import pstuian.feature_presentation.generated.resources.txt_change_bio
 import pstuian.feature_presentation.generated.resources.txt_email
 import pstuian.feature_presentation.generated.resources.txt_msg_call
 import pstuian.feature_presentation.generated.resources.txt_msg_email
-import pstuian.feature_presentation.generated.resources.txt_sign_out
 import pstuian.feature_presentation.generated.resources.txt_title_call
 import pstuian.feature_presentation.generated.resources.txt_title_email
 import pstuian.feature_presentation.generated.resources.txt_update

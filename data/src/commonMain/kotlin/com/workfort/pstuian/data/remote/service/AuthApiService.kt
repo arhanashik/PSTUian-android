@@ -79,11 +79,30 @@ class AuthApiService(private val client: HttpClient) {
         ).body()
     }
 
-    suspend fun deleteAccount(userType: String): ApiResponse<Unit> {
+    suspend fun activateAccount(userType: String): ApiResponse<Unit> {
         return client.submitForm(
-            url = NetworkConst.Remote.Api.Auth.DELETE_ACCOUNT,
+            url = NetworkConst.Remote.Api.Auth.ACTIVATE_ACCOUNT,
             formParameters = parameters {
                 append(NetworkConst.Params.USER_TYPE, userType)
+            }
+        ).body()
+    }
+
+    suspend fun deactivateAccount(userType: String): ApiResponse<Unit> {
+        return client.submitForm(
+            url = NetworkConst.Remote.Api.Auth.DEACTIVATE_ACCOUNT,
+            formParameters = parameters {
+                append(NetworkConst.Params.USER_TYPE, userType)
+            }
+        ).body()
+    }
+
+    suspend fun signOut(userType: String, clearAllSession: Boolean): ApiResponse<Unit> {
+        return client.submitForm(
+            url = NetworkConst.Remote.Api.Auth.SIGN_OUT,
+            formParameters = parameters {
+                append(NetworkConst.Params.USER_TYPE, userType)
+                append(NetworkConst.Params.CLEAR_ALL_SESSION, clearAllSession.toString())
             }
         ).body()
     }

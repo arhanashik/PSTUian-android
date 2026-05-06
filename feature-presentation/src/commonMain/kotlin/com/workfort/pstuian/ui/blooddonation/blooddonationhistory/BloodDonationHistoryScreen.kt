@@ -10,8 +10,8 @@ import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.composable.Blo
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryMessageState
 import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryNavigationState
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
-import com.workfort.pstuian.ui.common.composable.ShowConfirmationDialog
-import com.workfort.pstuian.ui.common.composable.ShowInfoDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
+import com.workfort.pstuian.ui.common.composable.dialog.ShowInfoDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.common.composable
+package com.workfort.pstuian.ui.common.composable.dialog
 
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults

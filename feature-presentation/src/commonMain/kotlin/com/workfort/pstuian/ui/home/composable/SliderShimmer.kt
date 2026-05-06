@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.common.composable
+package com.workfort.pstuian.ui.home.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 
 @Composable
 fun SliderShimmer() {

@@ -5,7 +5,7 @@ import com.workfort.pstuian.featuredomain.model.DomainErrorCode
 internal fun DomainErrorCode.mapToErrorMessageForSignInScreen(): String? = when (this) {
     is DomainErrorCode.Auth -> mapToMessage()
     is DomainErrorCode.Validation -> mapToMessage()
-    is DomainErrorCode.File -> null
+    else -> null
 }
 
 private fun DomainErrorCode.Auth.mapToMessage(): String? = when (this) {
@@ -29,7 +29,7 @@ private fun DomainErrorCode.Auth.mapToMessage(): String? = when (this) {
         "Could not register auth account. Please try again."
     DomainErrorCode.Auth.UserAuthAlreadyRegistered ->
         "An auth account with this email already exists. Try signing in instead. Or contact support."
-    DomainErrorCode.Auth.UserIdInvalid ->
+    DomainErrorCode.Auth.UserAuthUnregistered ->
         "Legacy User Account. Please contact support."
     DomainErrorCode.Auth.UserNotFound ->
         "Your profile could not be found. Please check email and password and retry."
@@ -43,6 +43,8 @@ private fun DomainErrorCode.Auth.mapToMessage(): String? = when (this) {
         "Your account is not allowed to access the app. Please contact support."
     DomainErrorCode.Auth.UserAlreadyExist ->
         "An account with this email already exists. Try signing in instead."
+    DomainErrorCode.Auth.UserDeactivated ->
+        "Your account seems to be deactivated. Do you want to activate it and login?"
     DomainErrorCode.Auth.DeviceNotFound ->
         "This device is not registered. Please try again or contact support."
     DomainErrorCode.Auth.DeviceRegistrationFailed ->

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.common.composable
+package com.workfort.pstuian.ui.common.composable.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.workfort.pstuian.ui.common.composable.OutlinedTextInput
 import pstuian.feature_presentation.generated.resources.Res
 import pstuian.feature_presentation.generated.resources.txt_please_wait
 import pstuian.feature_presentation.generated.resources.txt_confirmation
