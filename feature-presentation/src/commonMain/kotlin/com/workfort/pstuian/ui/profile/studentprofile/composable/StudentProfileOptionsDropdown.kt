@@ -5,10 +5,10 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -55,7 +55,7 @@ fun StudentProfileOptionsDropdown(
             )
             DropdownMenuItem(
                 text = { Text(uploadCvLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
-                leadingIcon = { Icon(Icons.Filled.KeyboardArrowUp, contentDescription = null) },
+                leadingIcon = { Icon(Icons.Filled.Upload, contentDescription = null) },
                 onClick = {
                     onDismiss()
                     onUiEvent(ProfileUiEvent.UploadCvClicked)
@@ -64,7 +64,7 @@ fun StudentProfileOptionsDropdown(
             HorizontalDivider()
             DropdownMenuItem(
                 text = { Text(bloodDonationLabel, style = TextStyle.body2, color = AppColors.textPrimary) },
-                leadingIcon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+                leadingIcon = { Icon(Icons.Filled.WaterDrop, contentDescription = null) },
                 onClick = {
                     onDismiss()
                     onUiEvent(ProfileUiEvent.BloodDonationHistoryClicked)
