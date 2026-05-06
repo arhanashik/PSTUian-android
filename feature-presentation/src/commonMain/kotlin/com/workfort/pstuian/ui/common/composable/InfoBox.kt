@@ -54,7 +54,7 @@ internal fun InfoBox(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
                 RoundedCornerShape(8.dp),
             )
             .padding(12.dp),
@@ -63,8 +63,8 @@ internal fun InfoBox(
         Icon(
             Icons.Default.Info,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
+            modifier = Modifier.size(20.dp),
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(

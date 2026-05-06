@@ -46,7 +46,7 @@ class DonateViewModel(
         when (event) {
             is DonateUiEvent.BackClicked -> onClickBack()
             is DonateUiEvent.ChangeInput -> onChangeInput(event.input)
-            is DonateUiEvent.SendDonationInfo -> sendDonationInfo()
+            is DonateUiEvent.SendDonationClicked -> sendDonationInfo(event.input)
         }
     }
 
@@ -60,8 +60,7 @@ class DonateViewModel(
         uiStateMachine.setDonationInput(input)
     }
 
-    fun sendDonationInfo() {
-        val input = uiState.value.donationInput
+    fun sendDonationInfo(input: DonationInput) {
         val validationError = input.validate()
         uiStateMachine.setValidationError(validationError)
         if (validationError.isNotEmpty()) {
@@ -78,10 +77,12 @@ class DonateViewModel(
             ).onSuccess {
                 uiStateMachine.showLoading(false)
                 _message.update {
-                    DonateMessageState.ShowAlert(
-                        title = "Success",
+                    DonateMessageState.Success(
+                        cancelable = false,
                         message = "Donation is under review! Thanks for your help.",
-                    )
+                    ) {
+                        _navigation.update { DonateNavigationState.GoBack }
+                    }
                 }
             }.onFailure {
                 uiStateMachine.showLoading(false)

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -78,7 +77,6 @@ private fun DonateFormContent(
             label = stringResource(Res.string.hint_email),
             value = changedInput.email,
             onValueChange = { onChangeInput(changedInput.copy(email = it)) },
-            leadingIcon = Icons.Default.Email,
             isError = uiState.validationError.email.isNotEmpty(),
             supportingText = uiState.validationError.email,
             keyboardOptions = KeyboardOptions(
@@ -116,7 +114,7 @@ private fun DonateFormContent(
         ActionButton(
             label = stringResource(Res.string.txt_send).uppercase(),
             icon = Icons.AutoMirrored.Filled.ArrowForward,
-            onClick = { onUiEvent(DonateUiEvent.SendDonationInfo) },
+            onClick = { onUiEvent(DonateUiEvent.SendDonationClicked(uiState.donationInput)) },
         )
         Spacer(modifier = Modifier.height(20.dp))
         InfoBox(text = stringResource(Res.string.message_donation_thanks))

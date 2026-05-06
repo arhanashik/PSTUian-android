@@ -5,5 +5,5 @@ import com.workfort.pstuian.featuredomain.model.DonationInput
 sealed interface DonateUiEvent {
     data object BackClicked : DonateUiEvent
     data class ChangeInput(val input: DonationInput) : DonateUiEvent
-    data object SendDonationInfo : DonateUiEvent
+    data class SendDonationClicked(val input: DonationInput) : DonateUiEvent
 }
