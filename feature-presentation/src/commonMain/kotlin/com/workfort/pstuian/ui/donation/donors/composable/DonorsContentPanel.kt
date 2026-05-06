@@ -1,16 +1,16 @@
 package com.workfort.pstuian.ui.donation.donors.composable
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +41,8 @@ import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.LabelText
 import com.workfort.pstuian.ui.common.composable.TitleTextSmall
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.donation.donors.state.DonorsUiEvent
 import com.workfort.pstuian.ui.donation.donors.state.DonorsUiState
 
@@ -51,41 +52,22 @@ fun DonorsContentPanel(
     onUiEvent: (DonorsUiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        if (uiState.donorList.isEmpty() && uiState.isLoading) {
+        if (uiState.donors.isEmpty() && uiState.isLoading) {
             DonorsListShimmer()
-        } else if (uiState.donorList.isEmpty()) {
-            EmptyView()
+        } else if (uiState.donors.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                AnimatedEmptyView()
+            }
         } else {
             DonorListView(
-                donorList = uiState.donorList,
+                donorList = uiState.donors,
                 isLoading = uiState.isLoading,
                 onUiEvent = onUiEvent,
             )
         }
-    }
-}
-
-@Composable
-private fun LoadingView(isShimmer: Boolean = false) {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        if (isShimmer) {
-            DonorListItemShimmer()
-        } else {
-            CircularProgressIndicator()
-        }
-    }
-}
-
-@Composable
-private fun EmptyView() {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        AnimatedEmptyView()
     }
 }
 
@@ -130,7 +112,7 @@ private fun DonorListView(
         }
         if (isLoading) {
             item {
-                LoadingView(isShimmer = true)
+                DonorListItemShimmer()
             }
         }
     }
@@ -175,14 +157,14 @@ private fun DonorListItemShimmer() {
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.45f)
+                        .fillMaxWidth()
                         .height(15.dp)
                         .clip(RoundedCornerShape(6.dp))
                         .shimmerAnimation(),
                 )
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.3f)
+                        .fillMaxWidth()
                         .height(12.dp)
                         .clip(RoundedCornerShape(5.dp))
                         .shimmerAnimation(),
@@ -191,7 +173,7 @@ private fun DonorListItemShimmer() {
         }
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.55f)
+                .fillMaxWidth()
                 .height(32.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .shimmerAnimation(),
@@ -228,12 +210,12 @@ private fun DonorListItemView(
             ) {
                 Surface(
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.75f),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
                 ) {
                     Icon(
                         imageVector = Icons.Default.FavoriteBorder,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(10.dp),
                     )
                 }
@@ -241,11 +223,13 @@ private fun DonorListItemView(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
-                    TitleTextSmall(text = item.name ?: "Donation Info")
+                    Text(
+                        text = item.name ?: "Anonymous",
+                        style = TextStyle.title3.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                    )
                     Text(
                         text = item.email ?: "No email",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = TextStyle.body2.copy(color = AppColors.textSecondary),
                     )
                 }
             }
@@ -253,8 +237,7 @@ private fun DonorListItemView(
             item.info?.takeIf { it.isNotBlank() }?.let {
                 Text(
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = TextStyle.body2.copy(color = AppColors.textPrimary),
                 )
             }
 
@@ -267,12 +250,13 @@ private fun DonorListItemView(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    LabelText(text = "Ref")
+                    Text(
+                        text = "Reference",
+                        style = TextStyle.label2.copy(color = AppColors.textSecondary),
+                    )
                     Text(
                         text = item.reference,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = TextStyle.label2.copy(color = AppColors.textSecondary),
                     )
                 }
             }

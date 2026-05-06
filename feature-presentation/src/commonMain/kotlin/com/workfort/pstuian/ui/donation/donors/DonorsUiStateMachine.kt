@@ -12,14 +12,21 @@ class DonorsUiStateMachine : UiStateMachine<DonorsUiState> {
     private val _uiState = MutableStateFlow<DonorsUiState>(DonorsUiState.None)
     override val uiState: StateFlow<DonorsUiState> = _uiState.asStateFlow()
 
-    fun showLoading() {
-        _uiState.update { DonorsUiState.Loading }
+    fun showLoading(isLoading: Boolean) {
+        _uiState.update { current ->
+            when (current) {
+                DonorsUiState.None -> DonorsUiState.Content(isLoading = isLoading)
+                is DonorsUiState.Content -> current.copy(isLoading = isLoading)
+            }
+        }
     }
 
-    fun showContent(
-        donorList: List<Donor>,
-        isLoading: Boolean = false,
-    ) {
-        _uiState.update { DonorsUiState.Content(donorList, isLoading) }
+    fun showDoners(donors: List<Donor>) {
+        _uiState.update { current ->
+            when (current) {
+                DonorsUiState.None -> DonorsUiState.Content(donors = donors, isLoading = false)
+                is DonorsUiState.Content -> current.copy(donors = donors, isLoading = false)
+            }
+        }
     }
 }

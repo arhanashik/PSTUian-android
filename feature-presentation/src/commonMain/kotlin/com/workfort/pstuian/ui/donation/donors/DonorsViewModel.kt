@@ -63,7 +63,7 @@ class DonorsViewModel(
         if (!hasMoreData) return
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            uiStateMachine.showLoading()
+            uiStateMachine.showLoading(isLoading = true)
             donationRepository.getDonors(page, forceRefresh)
                 .onSuccess { list ->
                     if (list.isEmpty()) {
@@ -72,12 +72,10 @@ class DonorsViewModel(
                         page++
                         donorsCache.addAll(list)
                     }
-                    uiStateMachine.showContent(
-                        donorList = donorsCache,
-                        isLoading = false,
-                    )
+                    uiStateMachine.showDoners(donors = donorsCache)
                 }
                 .onFailure {
+                    uiStateMachine.showLoading(isLoading = false)
                     val message = it.message ?: "Failed to load donors ${it.code}"
                     _message.update { DonorsMessageState.Error(message) }
                 }
