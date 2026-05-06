@@ -11,21 +11,21 @@ private const val SAMPLE_WIDTH_PX = 72
  * Defaults for tiny remote assets (e.g. faculty icons): heavier wash toward neutral so thumbnails
  * stay calm. Raise blend for subtler hue; lower for bolder backdrops.
  */
-internal const val DEFAULT_BACKDROP_NEUTRAL_BLEND = 0.74f
+internal const val DEFAULT_BACKDROP_NEUTRAL_BLEND = 0.76f
 
 /** Default chroma amplification before blending toward neutral for small raster/icon sources. */
-internal const val DEFAULT_BACKDROP_CHROMA_AMPLIFY = 1.18f
+internal const val DEFAULT_BACKDROP_CHROMA_AMPLIFY = 1.16f
 
 /** Fullscreen image preview: keep dominant photo hues visible. */
-internal const val IMAGE_PREVIEW_NEUTRAL_BLEND = 0.36f
-internal const val IMAGE_PREVIEW_CHROMA_AMPLIFY = 1.34f
+internal const val IMAGE_PREVIEW_NEUTRAL_BLEND = 0.35f
+internal const val IMAGE_PREVIEW_CHROMA_AMPLIFY = 1.33f
 
 /**
  * Profile header from avatars: more saturation than defaults; tweak [PROFILE_HEADER_NEUTRAL_BLEND] /
  * [PROFILE_HEADER_CHROMA_AMPLIFY] for liveliness vs calm.
  */
-internal const val PROFILE_HEADER_NEUTRAL_BLEND = 0.38f
-internal const val PROFILE_HEADER_CHROMA_AMPLIFY = 1.36f
+internal const val PROFILE_HEADER_NEUTRAL_BLEND = 0.39f
+internal const val PROFILE_HEADER_CHROMA_AMPLIFY = 1.34f
 
 private val BACKDROP_BLEND_NEUTRAL = Color(red = 1f, green = 252f / 255f, blue = 251f / 255f)
 

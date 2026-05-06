@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalUriHandler
 import coil3.compose.LocalPlatformContext
 import com.workfort.pstuian.ui.common.composable.clearSingletonCoilImageCaches
 import com.workfort.pstuian.ui.common.composable.ListSelectionBottomSheet
@@ -72,6 +73,7 @@ private fun HandleNavigationState(
     val navigator = koinInject<AppNavigator?>()
     val deepLinkNavigator = koinInject<DeepLinkNavigator>()
     val launchDeepLinkController = koinInject<AppLaunchDeepLinkController>()
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(navigationState) {
         navigationState?.let {
@@ -81,6 +83,9 @@ private fun HandleNavigationState(
                     launchDeepLinkController.consumePendingDeepLink()?.let { action ->
                         deepLinkNavigator.navigate(action, navigator)
                     }
+                }
+                is SplashNavigationState.OpenUrl -> {
+                    uriHandler.openUri(it.url)
                 }
             }
             onNavigationHandled()

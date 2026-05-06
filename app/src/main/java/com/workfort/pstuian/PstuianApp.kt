@@ -6,6 +6,7 @@ import com.workfort.pstuian.app.di.appModule
 import com.workfort.pstuian.data.di.dataModule
 import com.workfort.pstuian.di.featurePresentationModule
 import com.workfort.pstuian.featuredomain.di.featureDomainModule
+import com.workfort.pstuian.util.Logger
 import com.workfort.pstuian.util.di.utilModule
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -31,8 +32,9 @@ class PstuianApp  : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        // Initialize Logger
         if (BuildConfig.DEBUG) {
-            Napier.base(DebugAntilog())
+            Logger.init()
         }
 
         triggerKoin()

@@ -12,16 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.DraggableAdaptiveLoader
 import com.workfort.pstuian.ui.common.theme.AppColors
-import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
 import com.workfort.pstuian.ui.common.theme.AppTheme
+import com.workfort.pstuian.ui.common.theme.ApplySystemBarColors
 import com.workfort.pstuian.ui.common.theme.TextStyle
 import com.workfort.pstuian.ui.splash.state.SplashUiEvent
 import com.workfort.pstuian.ui.splash.state.SplashUiState
@@ -95,6 +93,22 @@ private fun SplashContentPanelLoadingPreview() {
         SplashContentPanel(
             state = SplashUiState(
                 statusText = "Checking for updates..."
+            ),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SplashContentPanelDeviceRegistrationFailedPreview() {
+    AppTheme {
+        SplashContentPanel(
+            state = SplashUiState(
+                screenState = InitialScreenState.MissingDeviceInfo,
+                statusText = "Device Not Recognized",
+                descriptionText = "Device is not recognized by server",
+                showContinueAnyway = true,
             ),
             onEvent = {}
         )

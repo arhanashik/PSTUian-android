@@ -7,8 +7,10 @@ import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.usecase.GetInitialScreenUseCase
+import com.workfort.pstuian.featuredomain.usecase.GetSignedInUserUseCase
 import com.workfort.pstuian.featuredomain.usecase.InitialScreenState
 import com.workfort.pstuian.featuredomain.usecase.RegisterDeviceUseCase
+import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.splash.state.SplashMessageState
 import com.workfort.pstuian.ui.splash.state.SplashNavigationState
@@ -24,8 +26,10 @@ class SplashViewModel(
     private val appConfigRepository: AppConfigRepository,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val getInitialScreenUseCase: GetInitialScreenUseCase,
+    private val getSignedInUserUseCase: GetSignedInUserUseCase,
     private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
+    private val sharedScreenData: SharedScreenData,
     private val platformInfo: PlatformInfo,
     private val stateMachine: SplashUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -45,13 +49,12 @@ class SplashViewModel(
         when (event) {
             is SplashUiEvent.ActionBtnClicked -> {
                 if (event.isForceUpdateAction) {
-                    // Navigate to app/play store
+                    _navigation.update { SplashNavigationState.OpenUrl(platformInfo.storeUrl) }
                 } else {
                     refreshConfig()
                 }
             }
             SplashUiEvent.ContinueAnywayClicked -> {
-                if (!uiState.value.showContinueAnyway) return
                 _navigation.update { SplashNavigationState.HomeScreen }
             }
         }
@@ -135,6 +138,12 @@ class SplashViewModel(
                 )
             }
             is InitialScreenState.Home -> {
+                // Syncing user info in sharedScreenData even though it's done from AppViewModel as well.
+                // Because, sometimes, it might take some time to load the data.
+                // In that case home screen is already shown with incorrect user data.
+                val signInUser = getSignedInUserUseCase()
+                sharedScreenData.setCurrentUser(signInUser)
+
                 authRepository.syncAuthTokenToPreferences()
                 applyScreenState(
                     screenState,

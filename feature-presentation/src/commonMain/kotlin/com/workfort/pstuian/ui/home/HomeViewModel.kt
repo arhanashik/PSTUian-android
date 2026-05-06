@@ -19,7 +19,6 @@ import com.workfort.pstuian.ui.home.state.HomeMessageState
 import com.workfort.pstuian.ui.home.state.HomeNavigationState
 import com.workfort.pstuian.ui.home.state.HomeUiEvent
 import com.workfort.pstuian.ui.home.state.HomeUiState
-import com.workfort.pstuian.util.PlatformInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +32,6 @@ class HomeViewModel(
     private val facultyRepo: FacultyRepository,
     private val settingsRepository: SettingsRepository,
     private val sharedScreenData: SharedScreenData,
-    private val platformInfo: PlatformInfo,
     private val uiStateMachine: HomeUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<HomeUiState>(uiStateMachine) {
@@ -127,9 +125,7 @@ class HomeViewModel(
 
     private fun onClickSignIn() {
         when (settingsRepository.getUserType()) {
-            UserType.STUDENT, UserType.TEACHER -> {
-                _navigation.update { HomeNavigationState.SignInScreen }
-            }
+            UserType.STUDENT, UserType.TEACHER -> _navigation.update { HomeNavigationState.SignInScreen }
             else -> {
                 _message.update {
                     HomeMessageState.UserTypeSelectionForSignIn(
@@ -162,13 +158,13 @@ class HomeViewModel(
     }
 
     private fun onClickUserProfile() {
-        val user = sharedScreenData.getCurrentUser()
+        val userId = sharedScreenData.getCurrentUser()?.userId
         val userType = sharedScreenData.getCurrentUserType()
 
-        if (user == null || userType == null) {
+        if (userId == null || userType == null) {
             _message.update { HomeMessageState.SignInNecessary }
         } else {
-            _navigation.update { HomeNavigationState.GoToProfileScreen(user.userId, userType) }
+            _navigation.update { HomeNavigationState.GoToProfileScreen(userId, userType) }
         }
     }
 

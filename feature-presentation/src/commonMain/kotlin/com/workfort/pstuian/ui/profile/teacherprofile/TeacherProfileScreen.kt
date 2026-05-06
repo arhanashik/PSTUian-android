@@ -28,7 +28,6 @@ import pstuian.feature_presentation.generated.resources.txt_change_bio
 import pstuian.feature_presentation.generated.resources.txt_email
 import pstuian.feature_presentation.generated.resources.txt_msg_call
 import pstuian.feature_presentation.generated.resources.txt_msg_email
-import pstuian.feature_presentation.generated.resources.txt_sign_out
 import pstuian.feature_presentation.generated.resources.txt_title_call
 import pstuian.feature_presentation.generated.resources.txt_title_email
 import pstuian.feature_presentation.generated.resources.txt_update
