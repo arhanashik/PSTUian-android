@@ -25,7 +25,7 @@ import com.workfort.pstuian.ui.donation.donationhistory.state.DonationHistoryUiS
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import pstuian.feature_presentation.generated.resources.Res
-import pstuian.feature_presentation.generated.resources.label_donation_list
+import pstuian.feature_presentation.generated.resources.label_donation_history
 import pstuian.feature_presentation.generated.resources.txt_donate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +44,7 @@ internal fun DonationHistoryScreenContent(
     AppScaffold (
         topBar = {
             AppBar(
-                title = stringResource(Res.string.label_donation_list),
+                title = stringResource(Res.string.label_donation_history),
                 navigation = {
                     NavigationButton { onUiEvent(DonationHistoryUiEvent.BackClicked) }
                 },
