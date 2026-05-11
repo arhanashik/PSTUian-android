@@ -61,7 +61,7 @@ kotlin {
 dependencies {
     // sdk
     implementation(project(":domain"))
-    implementation(project(":feature-presentation"))
+    implementation(project(":presentation"))
     implementation(project(":util"))
 
     // Compose

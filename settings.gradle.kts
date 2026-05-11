@@ -16,7 +16,7 @@ include(
     ":app",
     ":data",
     ":domain",
-    ":feature-presentation",
+    ":presentation",
     ":util",
 )
 rootProject.name = "PSTUian"

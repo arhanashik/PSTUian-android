@@ -4,7 +4,7 @@ target 'pstuian' do
   use_frameworks!
 
   # The shared Kotlin module
-  pod 'feature_presentation', :path => '../../feature-presentation'
+  pod 'presentation', :path => '../../presentation'
 
   # Firebase pods
   pod 'FirebaseCore'
