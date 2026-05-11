@@ -1,6 +1,6 @@
 import FirebaseCore
 import FirebaseMessaging
-import feature_presentation
+import presentation
 import SwiftUI
 import UserNotifications
 
