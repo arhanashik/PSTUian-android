@@ -33,9 +33,7 @@ class AuthRepositoryImpl(
     private val invalidAuthUser = DomainError(DomainErrorCode.Auth.UserAuthNotFound)
 
     override fun getAuthUser(): AuthUser? {
-        return firebaseAuthDataSource.getCurrentUser()?.let { (userId, dto) ->
-            dto.toAuthUser(userId)
-        }
+        return firebaseAuthDataSource.getCurrentUser()?.toAuthUser()
     }
 
     override fun isUserSignedIn(): Boolean {
@@ -52,9 +50,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun observeSignedInAuthUser(): Flow<AuthUser?> {
-        return firebaseAuthDataSource.observeCurrentUser().map { result ->
-            result?.let { (id, dto) -> dto.toAuthUser(id) }
-        }
+        return firebaseAuthDataSource.observeCurrentUser().map { it?.toAuthUser() }
     }
 
     override suspend fun signIn(userType: UserType, email: String, password: String): DomainResult<Unit> {

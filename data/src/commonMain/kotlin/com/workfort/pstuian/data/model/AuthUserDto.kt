@@ -5,14 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AuthUserDto(
+    val userId: String,
     val email: String,
-    val displayName: String,
-    val photoUrl: String?,
 ) {
-    fun toAuthUser(userId: String) = AuthUser(
+    fun toAuthUser() = AuthUser(
         userId = userId,
         email = email,
-        displayName = displayName,
-        photoUrl = photoUrl,
     )
 }

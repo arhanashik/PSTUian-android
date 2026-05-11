@@ -19,7 +19,7 @@ class FirebaseAuthDataSource(
     private val platformInfo: PlatformInfo,
 ) {
 
-    suspend fun signIn(email: String, password: String): NetworkResult<Pair<String, AuthUserDto>> {
+    suspend fun signIn(email: String, password: String): NetworkResult<AuthUserDto> {
         try {
             // firebase sign-in and validation
             val firebaseUser = auth.signInWithEmailAndPassword(email, password).user
@@ -49,7 +49,7 @@ class FirebaseAuthDataSource(
     suspend fun signUp(
         email: String,
         password: String,
-    ): NetworkResult<Pair<String, AuthUserDto>> {
+    ): NetworkResult<AuthUserDto> {
         try {
             // Create firebase user. Firebase throw errors if account already exists.
             val firebaseUser = auth.createUserWithEmailAndPassword(email, password).user
@@ -163,11 +163,11 @@ class FirebaseAuthDataSource(
         }
     }
 
-    fun getCurrentUser(): Pair<String, AuthUserDto>? {
+    fun getCurrentUser(): AuthUserDto? {
         return auth.currentUser?.toAuthUserDto()
     }
 
-    fun observeCurrentUser(): Flow<Pair<String, AuthUserDto>?> {
+    fun observeCurrentUser(): Flow<AuthUserDto?> {
         return auth.authStateChanged.map { firebaseUser ->
             firebaseUser?.toAuthUserDto()
         }
@@ -208,11 +208,10 @@ class FirebaseAuthDataSource(
         }
     }
 
-    private fun FirebaseUser.toAuthUserDto(): Pair<String, AuthUserDto> {
-        return uid to AuthUserDto(
+    private fun FirebaseUser.toAuthUserDto(): AuthUserDto {
+        return AuthUserDto(
+            userId = uid,
             email = email.orEmpty(),
-            displayName = displayName.orEmpty(),
-            photoUrl = photoURL,
         )
     }
 }
