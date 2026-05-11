@@ -34,7 +34,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":feature-domain"))
+                api(project(":domain"))
                 implementation(project(":util"))
                 implementation(libs.jetbrains.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)

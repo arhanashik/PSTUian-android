@@ -37,7 +37,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":data"))
-                api(project(":feature-domain"))
+                api(project(":domain"))
                 implementation(project(":util"))
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.serialization.json)

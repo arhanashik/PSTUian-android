@@ -11,7 +11,7 @@ kotlin {
         }
     }
 
-    val xcfName = "feature-domainKit"
+    val xcfName = "domainKit"
 
     iosX64 {
         binaries.framework {

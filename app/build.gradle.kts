@@ -60,7 +60,7 @@ kotlin {
 
 dependencies {
     // sdk
-    implementation(project(":feature-domain"))
+    implementation(project(":domain"))
     implementation(project(":feature-presentation"))
     implementation(project(":util"))
 
