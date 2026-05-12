@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.faculty
+package com.workfort.pstuian.ui.faculty.faculty
 
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
@@ -7,10 +7,10 @@ import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
-import com.workfort.pstuian.ui.faculty.state.FacultyMessageState
-import com.workfort.pstuian.ui.faculty.state.FacultyNavigationState
-import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
-import com.workfort.pstuian.ui.faculty.state.FacultyUiState
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyMessageState
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyNavigationState
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyUiEvent
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +30,7 @@ class FacultyViewModel(
     val navigation: StateFlow<FacultyNavigationState?> = _navigation.asStateFlow()
 
     override fun onUiReady() {
-        setInitialContent()
+        loadData()
     }
 
     fun onUiEvent(event: FacultyUiEvent) {
@@ -44,8 +44,8 @@ class FacultyViewModel(
 
     fun onNavigationConsumed() = _navigation.update { null }
 
-    private fun setInitialContent() {
-        uiStateMachine.showLoadingOverlay()
+    private fun loadData() {
+        uiStateMachine.showLoading()
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             facultyRepo.getFaculty(facultyId).onSuccess { faculty ->
                 uiStateMachine.setContent(
@@ -58,7 +58,7 @@ class FacultyViewModel(
                 _message.update {
                     FacultyMessageState.ShowError(message = error.message ?: "Failed to load data") {
                         onMessageHandled()
-                        setInitialContent()
+                        _navigation.update { FacultyNavigationState.GoBack }
                     }
                 }
             }

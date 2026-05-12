@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
-import com.workfort.pstuian.ui.faculty.composable.EmployeeListItemView
+import com.workfort.pstuian.ui.faculty.faculty.composable.EmployeeListItemView
 import com.workfort.pstuian.ui.faculty.employee.state.EmployeeUiEvent
 import com.workfort.pstuian.ui.faculty.employee.state.EmployeeUiState
 

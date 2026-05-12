@@ -1,7 +1,7 @@
-package com.workfort.pstuian.ui.faculty
+package com.workfort.pstuian.ui.faculty.faculty
 
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
-import com.workfort.pstuian.ui.faculty.state.FacultyUiState
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,7 +11,7 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
     private val _uiState = MutableStateFlow<FacultyUiState>(FacultyUiState.None)
     override val uiState: StateFlow<FacultyUiState> = _uiState.asStateFlow()
 
-    fun showLoadingOverlay() {
+    fun showLoading() {
         _uiState.update { FacultyUiState.Loading }
     }
 

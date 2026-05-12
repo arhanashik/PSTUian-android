@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.faculty.composable
+package com.workfort.pstuian.ui.faculty.faculty.composable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -22,8 +22,8 @@ import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.faculty.batch.BatchScreen
 import com.workfort.pstuian.ui.faculty.course.CourseScreen
 import com.workfort.pstuian.ui.faculty.employee.EmployeeScreen
-import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
-import com.workfort.pstuian.ui.faculty.state.FacultyUiState
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyUiEvent
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyUiState
 import com.workfort.pstuian.ui.faculty.teacher.TeacherScreen
 import kotlinx.coroutines.launch
 

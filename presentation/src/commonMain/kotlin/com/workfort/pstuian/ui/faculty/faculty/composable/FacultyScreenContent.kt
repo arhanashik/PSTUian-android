@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.faculty.composable
+package com.workfort.pstuian.ui.faculty.faculty.composable
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -8,8 +8,8 @@ import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.NavigationButton
 import com.workfort.pstuian.ui.common.theme.AppTheme
-import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
-import com.workfort.pstuian.ui.faculty.state.FacultyUiState
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyUiEvent
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

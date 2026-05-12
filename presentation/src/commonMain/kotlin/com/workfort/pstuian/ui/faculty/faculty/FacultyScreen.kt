@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.faculty
+package com.workfort.pstuian.ui.faculty.faculty
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -6,9 +6,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.faculty.composable.FacultyScreenContent
-import com.workfort.pstuian.ui.faculty.state.FacultyMessageState
-import com.workfort.pstuian.ui.faculty.state.FacultyNavigationState
+import com.workfort.pstuian.ui.faculty.faculty.composable.FacultyScreenContent
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyMessageState
+import com.workfort.pstuian.ui.faculty.faculty.state.FacultyNavigationState
 import org.koin.compose.koinInject
 
 @Composable
@@ -34,6 +34,7 @@ private fun HandleMessageState(
                 ShowErrorDialog(
                     title = it.title,
                     message = it.message,
+                    cancelable = false,
                     onConfirm = it.onRetry,
                     onDismiss = onMessageHandled,
                 )

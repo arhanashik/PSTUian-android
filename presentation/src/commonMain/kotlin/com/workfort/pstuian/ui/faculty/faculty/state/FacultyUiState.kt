@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.faculty.state
+package com.workfort.pstuian.ui.faculty.faculty.state
 
 sealed interface FacultyUiState {
 

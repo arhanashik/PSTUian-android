@@ -30,7 +30,7 @@ import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.faculty.batch.state.BatchUiEvent
 import com.workfort.pstuian.ui.faculty.batch.state.BatchUiState
-import com.workfort.pstuian.ui.faculty.composable.BatchListItemView
+import com.workfort.pstuian.ui.faculty.faculty.composable.BatchListItemView
 
 @Composable
 internal fun BatchContentPanel(

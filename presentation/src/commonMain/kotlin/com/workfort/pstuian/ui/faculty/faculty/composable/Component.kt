@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.faculty.composable
+package com.workfort.pstuian.ui.faculty.faculty.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

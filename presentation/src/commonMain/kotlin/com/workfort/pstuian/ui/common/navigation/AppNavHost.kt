@@ -27,7 +27,7 @@ import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
 import com.workfort.pstuian.ui.donation.donate.DonateScreen
 import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryScreen
-import com.workfort.pstuian.ui.faculty.FacultyScreen
+import com.workfort.pstuian.ui.faculty.faculty.FacultyScreen
 import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
 import com.workfort.pstuian.ui.imageupload.ImageUploadScreen

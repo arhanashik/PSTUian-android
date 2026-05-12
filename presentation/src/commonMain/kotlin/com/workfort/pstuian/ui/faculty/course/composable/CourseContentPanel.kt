@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
-import com.workfort.pstuian.ui.faculty.composable.CourseListItemView
+import com.workfort.pstuian.ui.faculty.faculty.composable.CourseListItemView
 import com.workfort.pstuian.ui.faculty.course.state.CourseUiEvent
 import com.workfort.pstuian.ui.faculty.course.state.CourseUiState
 

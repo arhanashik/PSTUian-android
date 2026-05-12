@@ -32,8 +32,8 @@ import com.workfort.pstuian.ui.donation.donate.DonateUiStateMachine
 import com.workfort.pstuian.ui.donation.donate.DonateViewModel
 import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryUiStateMachine
 import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryViewModel
-import com.workfort.pstuian.ui.faculty.FacultyUiStateMachine
-import com.workfort.pstuian.ui.faculty.FacultyViewModel
+import com.workfort.pstuian.ui.faculty.faculty.FacultyUiStateMachine
+import com.workfort.pstuian.ui.faculty.faculty.FacultyViewModel
 import com.workfort.pstuian.ui.faculty.batch.BatchUiStateMachine
 import com.workfort.pstuian.ui.faculty.batch.BatchViewModel
 import com.workfort.pstuian.ui.faculty.course.CourseUiStateMachine
