@@ -56,10 +56,10 @@ class StudentProfileEditViewModel(
                     stateMachine.updateProfileContent(event.profile)
                 }
                 is StudentProfileEditUiEvent.FacultySelectionClicked -> newProfileCache?.let {
-                    selectFaculty(selectedFacultyId = it.student.facultyId, needFacultySelection = true)
+                    selectFaculty(selectedFacultyId = it.user.facultyId, needFacultySelection = true)
                 }
                 is StudentProfileEditUiEvent.BatchSelectionClicked -> newProfileCache?.let {
-                    selectFaculty(it.student.facultyId, needFacultySelection = false)
+                    selectFaculty(it.user.facultyId, needFacultySelection = false)
                 }
                 is StudentProfileEditUiEvent.AcademicInfoSaveClicked -> updateAcademicInfo()
                 is StudentProfileEditUiEvent.ConnectInfoSaveClicked -> updateConnectInfo()
@@ -70,17 +70,20 @@ class StudentProfileEditViewModel(
     private fun loadProfile() {
         _message.update { StudentProfileEditMessageState.Loading() }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            getStudentProfileUserUseCase(userId)
-                .onSuccess { profile ->
-                    onMessageHandled()
-                    currentProfileCache = profile
-                    newProfileCache = profile
-                    stateMachine.updateProfileContent(profile)
+            getStudentProfileUserUseCase(userId).onSuccess { profile ->
+                onMessageHandled()
+                if (!profile.isSignedIn) {
+                    _message.update { StudentProfileEditMessageState.Error("Sign in required") }
+                    _navigation.update { StudentProfileEditNavigationState.GoBack }
+                    return@launchOnMain
                 }
-                .onFailure {
-                    val message = it.message ?: "Failed to load profile"
-                    _message.update { StudentProfileEditMessageState.Error(message) }
-                }
+                currentProfileCache = profile
+                newProfileCache = profile
+                stateMachine.updateProfileContent(profile)
+            }.onFailure {
+                val message = it.message ?: "Failed to load profile"
+                _message.update { StudentProfileEditMessageState.Error(message) }
+            }
         }
     }
 
@@ -136,12 +139,12 @@ class StudentProfileEditViewModel(
             _message.update {
                 StudentProfileEditMessageState.BatchSelection(
                     batches = batches,
-                    selectedBatchId = profile.student.batchId,
+                    selectedBatchId = profile.user.batchId,
                     onSaveAndContinue = { batch ->
                         onMessageHandled()
                         batch?.let { batch ->
                             newProfileCache = profile.copy(
-                                student = profile.student.copy(facultyId = faculty.id, batchId = batch.id),
+                                user = profile.user.copy(facultyId = faculty.id, batchId = batch.id),
                                 faculty = faculty,
                                 batch = batch,
                             )
@@ -171,25 +174,22 @@ class StudentProfileEditViewModel(
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     stateMachine.showLoading(isLoading = true)
                     studentRepo.changeAcademicInfo(
-                        authUserId = currentProfile.student.authUserId,
-                        name = newProfile.student.name,
-                        studentOldId = currentProfile.student.userId,
-                        studentId = newProfile.student.userId,
-                        reg = newProfile.student.reg,
-                        blood = newProfile.student.blood.orEmpty(),
-                        facultyId = newProfile.student.facultyId,
-                        session = newProfile.student.session,
-                        batchId = newProfile.student.batchId,
-                    )
-                        .onSuccess {
-                            stateMachine.showLoading(isLoading = false)
-                            _message.update { StudentProfileEditMessageState.ShowSnackBar("Updated successfully") }
-                        }
-                        .onFailure {
-                            stateMachine.showLoading(isLoading = false)
-                            val message = it.message ?: "Failed to update. Please try again."
-                            _message.update { StudentProfileEditMessageState.Error(message) }
-                        }
+                        name = newProfile.user.name,
+                        studentOldId = currentProfile.user.userId,
+                        studentId = newProfile.user.userId,
+                        reg = newProfile.user.reg,
+                        blood = newProfile.user.blood.orEmpty(),
+                        facultyId = newProfile.user.facultyId,
+                        session = newProfile.user.session,
+                        batchId = newProfile.user.batchId,
+                    ).onSuccess {
+                        stateMachine.showLoading(isLoading = false)
+                        _message.update { StudentProfileEditMessageState.ShowSnackBar("Updated successfully") }
+                    }.onFailure {
+                        stateMachine.showLoading(isLoading = false)
+                        val message = it.message ?: "Failed to update. Please try again."
+                        _message.update { StudentProfileEditMessageState.Error(message) }
+                    }
                 }
             }
         }
@@ -213,40 +213,38 @@ class StudentProfileEditViewModel(
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     stateMachine.showLoading(isLoading = true)
                     studentRepo.changeConnectInfo(
-                        authUserId = currentProfile.student.authUserId,
-                        address = newProfile.student.address.orEmpty(),
-                        phone = newProfile.student.phone.orEmpty(),
-                        oldEmail = currentProfile.student.email,
-                        newEmail = newProfile.student.email,
-                        cvLink = newProfile.student.cvLink.orEmpty(),
-                        linkedIn = newProfile.student.linkedIn.orEmpty(),
-                        facebook = newProfile.student.fbLink.orEmpty(),
-                    )
-                        .onSuccess {
-                            stateMachine.showLoading(isLoading = false)
-                            _message.update { StudentProfileEditMessageState.ShowSnackBar("Updated successfully") }
-                        }
-                        .onFailure {
-                            stateMachine.showLoading(isLoading = false)
-                            val message = it.message ?: "Failed to update. Please try again."
-                            _message.update { StudentProfileEditMessageState.Error(message) }
-                        }
+                        userId = currentProfile.user.userId,
+                        address = newProfile.user.address.orEmpty(),
+                        phone = newProfile.user.phone.orEmpty(),
+                        oldEmail = currentProfile.user.email,
+                        newEmail = newProfile.user.email,
+                        cvLink = newProfile.user.cvLink.orEmpty(),
+                        linkedIn = newProfile.user.linkedIn.orEmpty(),
+                        facebook = newProfile.user.fbLink.orEmpty(),
+                    ).onSuccess {
+                        stateMachine.showLoading(isLoading = false)
+                        _message.update { StudentProfileEditMessageState.ShowSnackBar("Updated successfully") }
+                    }.onFailure {
+                        stateMachine.showLoading(isLoading = false)
+                        val message = it.message ?: "Failed to update. Please try again."
+                        _message.update { StudentProfileEditMessageState.Error(message) }
+                    }
                 }
             }
         }
     }
 
     fun validateAcademic(profile: UserProfile.StudentProfile) = StudentAcademicInfoInputError.INITIAL.copy(
-        name = if (profile.student.name.isEmpty()) "*Required" else "",
-        id = if (profile.student.userId == 0) "*Required" else "",
-        reg = if (profile.student.reg.isEmpty()) "*Required" else "",
-        session = if (profile.student.session.isEmpty()) "*Required" else "",
+        name = if (profile.user.name.isEmpty()) "*Required" else "",
+        id = if (profile.user.userId == 0) "*Required" else "",
+        reg = if (profile.user.reg.isEmpty()) "*Required" else "",
+        session = if (profile.user.session.isEmpty()) "*Required" else "",
     )
 
     fun validateConnect(profile: UserProfile.StudentProfile) = StudentConnectInfoInputError.INITIAL.copy(
-        email = if (profile.student.email.isEmpty()) {
+        email = if (profile.user.email.isEmpty()) {
             "*Required"
-        } else if (!profile.student.email.isValidEmail()) {
+        } else if (!profile.user.email.isValidEmail()) {
             "*Invalid email"
         } else {
             ""

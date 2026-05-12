@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -15,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
@@ -49,7 +47,6 @@ import pstuian.presentation.generated.resources.hint_address
 import pstuian.presentation.generated.resources.hint_blood_group
 import pstuian.presentation.generated.resources.hint_department
 import pstuian.presentation.generated.resources.hint_designation
-import pstuian.presentation.generated.resources.hint_email
 import pstuian.presentation.generated.resources.hint_facebook
 import pstuian.presentation.generated.resources.hint_faculty
 import pstuian.presentation.generated.resources.hint_linked_in
@@ -137,9 +134,9 @@ private fun AcademicInfoEditPanel(
     Column {
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_name),
-            value = profile.teacher.name,
+            value = profile.user.name,
             onValueChange = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(name = it))
+                val newProfile = profile.copy(user = profile.user.copy(name = it))
                 onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.name.isNotEmpty(),
@@ -152,9 +149,9 @@ private fun AcademicInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_designation),
-            value = profile.teacher.designation,
+            value = profile.user.designation,
             onValueChange = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(designation = it))
+                val newProfile = profile.copy(user = profile.user.copy(designation = it))
                 onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.designation.isNotEmpty(),
@@ -167,9 +164,9 @@ private fun AcademicInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_department),
-            value = profile.teacher.department,
+            value = profile.user.department,
             onValueChange = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(department = it))
+                val newProfile = profile.copy(user = profile.user.copy(department = it))
                 onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.department.isNotEmpty(),
@@ -198,10 +195,10 @@ private fun AcademicInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedExposedDropdown(
             label = stringResource(Res.string.hint_blood_group),
-            value = profile.teacher.blood.orEmpty(),
+            value = profile.user.blood.orEmpty(),
             items = stringArrayResource(Res.array.blood_group).toTypedArray(),
             onItemSelected = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(blood = it))
+                val newProfile = profile.copy(user = profile.user.copy(blood = it))
                 onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.bloodGroup.isNotEmpty(),
@@ -225,9 +222,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(4.dp))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_address),
-            value = profile.teacher.address.orEmpty(),
+            value = profile.user.address.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(address = it))
+                val newProfile = profile.copy(user = profile.user.copy(address = it))
                 onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             leadingIcon = Icons.Default.LocationOn,
@@ -238,9 +235,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_phone),
-            value = profile.teacher.phone.orEmpty(),
+            value = profile.user.phone.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(phone = it))
+                val newProfile = profile.copy(user = profile.user.copy(phone = it))
                 onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             leadingIcon = Icons.Default.Phone,
@@ -254,9 +251,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_linked_in),
-            value = profile.teacher.linkedIn.orEmpty(),
+            value = profile.user.linkedIn.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(linkedIn = it))
+                val newProfile = profile.copy(user = profile.user.copy(linkedIn = it))
                 onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             leadingIcon = Icons.Default.Public,
@@ -270,9 +267,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_facebook),
-            value = profile.teacher.fbLink.orEmpty(),
+            value = profile.user.fbLink.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(teacher = profile.teacher.copy(fbLink = it))
+                val newProfile = profile.copy(user = profile.user.copy(fbLink = it))
                 onUiEvent(TeacherProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             leadingIcon = Icons.Default.Public,

@@ -132,9 +132,9 @@ private fun AcademicInfoEditPanel(
     Column{
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_name),
-            value = profile.student.name,
+            value = profile.user.name,
             onValueChange = {
-                val newProfile = profile.copy(student = profile.student.copy(name = it))
+                val newProfile = profile.copy(user = profile.user.copy(name = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.name.isNotEmpty(),
@@ -152,10 +152,10 @@ private fun AcademicInfoEditPanel(
             AuthUnderlinedField(
                 modifier = Modifier.weight(1f),
                 label = stringResource(Res.string.hint_id),
-                value = profile.student.userId.toString(),
+                value = profile.user.userId.toString(),
                 onValueChange = { raw ->
                     raw.ifEmpty { "0" }.toIntOrNull()?.let { newId ->
-                        val newProfile = profile.copy(student = profile.student.copy(userId = newId))
+                        val newProfile = profile.copy(user = profile.user.copy(userId = newId))
                         onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
                     }
                 },
@@ -170,9 +170,9 @@ private fun AcademicInfoEditPanel(
             AuthUnderlinedField(
                 modifier = Modifier.weight(1f),
                 label = stringResource(Res.string.hint_session),
-                value = profile.student.session,
+                value = profile.user.session,
                 onValueChange = {
-                    val newProfile = profile.copy(student = profile.student.copy(session = it))
+                    val newProfile = profile.copy(user = profile.user.copy(session = it))
                     onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
                 },
                 isError = validationError.session.isNotEmpty(),
@@ -186,10 +186,10 @@ private fun AcademicInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_reg),
-            value = profile.student.reg.removePrefix("0"),
+            value = profile.user.reg.removePrefix("0"),
             leadingPrefix = "0",
             onValueChange = {
-                val newProfile = profile.copy(student = profile.student.copy(reg = it))
+                val newProfile = profile.copy(user = profile.user.copy(reg = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.reg.isNotEmpty(),
@@ -202,10 +202,10 @@ private fun AcademicInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedExposedDropdown(
             label = stringResource(Res.string.hint_blood_group),
-            value = profile.student.blood.orEmpty(),
+            value = profile.user.blood.orEmpty(),
             items = stringArrayResource(Res.array.blood_group).toTypedArray(),
             onItemSelected = {
-                val newProfile = profile.copy(student = profile.student.copy(blood = it))
+                val newProfile = profile.copy(user = profile.user.copy(blood = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.bloodGroup.isNotEmpty(),
@@ -262,9 +262,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(4.dp))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_address),
-            value = profile.student.address.orEmpty(),
+            value = profile.user.address.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(student = profile.student.copy(address = it))
+                val newProfile = profile.copy(user = profile.user.copy(address = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             leadingIcon = Icons.Default.LocationOn,
@@ -275,9 +275,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_phone),
-            value = profile.student.phone.orEmpty(),
+            value = profile.user.phone.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(student = profile.student.copy(phone = it))
+                val newProfile = profile.copy(user = profile.user.copy(phone = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             leadingIcon = Icons.Default.Phone,
@@ -291,9 +291,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.txt_cv),
-            value = profile.student.cvLink.orEmpty(),
+            value = profile.user.cvLink.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(student = profile.student.copy(cvLink = it))
+                val newProfile = profile.copy(user = profile.user.copy(cvLink = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.cvLink.isNotEmpty(),
@@ -306,9 +306,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_linked_in),
-            value = profile.student.linkedIn.orEmpty(),
+            value = profile.user.linkedIn.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(student = profile.student.copy(linkedIn = it))
+                val newProfile = profile.copy(user = profile.user.copy(linkedIn = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.linkedIn.isNotEmpty(),
@@ -321,9 +321,9 @@ private fun ConnectInfoEditPanel(
         Spacer(Modifier.height(AuthFormFieldSpacing))
         AuthUnderlinedField(
             label = stringResource(Res.string.hint_facebook),
-            value = profile.student.fbLink.orEmpty(),
+            value = profile.user.fbLink.orEmpty(),
             onValueChange = {
-                val newProfile = profile.copy(student = profile.student.copy(fbLink = it))
+                val newProfile = profile.copy(user = profile.user.copy(fbLink = it))
                 onUiEvent(StudentProfileEditUiEvent.ProfileInfoChanged(newProfile))
             },
             isError = validationError.facebook.isNotEmpty(),

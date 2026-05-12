@@ -11,12 +11,12 @@ interface TeacherRepository {
 
     suspend fun changeProfileImage(userId: Int, imageUrl: String): DomainResult<Unit>
 
-    suspend fun changeName(teacher: User.Teacher, name: String): Boolean
+    suspend fun changeName(userId: Int, name: String): DomainResult<Unit>
 
-    suspend fun changeBio(teacher: User.Teacher, bio: String): Boolean
+    suspend fun changeBio(userId: Int, bio: String): DomainResult<Unit>
 
     suspend fun changeAcademicInfo(
-        authUserId: String,
+        userId: Int,
         name: String,
         designation: String,
         department: String,
@@ -25,7 +25,7 @@ interface TeacherRepository {
     ): DomainResult<User.Teacher>
 
     suspend fun changeConnectInfo(
-        authUserId: String,
+        userId: Int,
         address: String,
         phone: String,
         oldEmail: String,

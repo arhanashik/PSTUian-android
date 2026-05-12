@@ -9,51 +9,51 @@ class TeacherProfileDisplayDataMapper {
 
     fun mapHeaderData(profile: UserProfile.TeacherProfile): ProfileHeaderDisplayData {
         return ProfileHeaderDisplayData(
-            imageUrl = profile.teacher.imageUrl,
-            name = profile.teacher.name,
+            imageUrl = profile.user.imageUrl,
+            name = profile.user.name,
             infoItem1 = profile.faculty.title,
-            infoItem2 = profile.teacher.designation,
-            bio = profile.teacher.bio,
+            infoItem2 = profile.user.designation,
+            bio = profile.user.bio,
         )
     }
 
     fun mapAcademicContents(profile: UserProfile.TeacherProfile): List<ProfileInfoItem> {
         return listOf(
-            ProfileInfoItem("Name", profile.teacher.name),
-            ProfileInfoItem("Designation", profile.teacher.designation),
+            ProfileInfoItem("Name", profile.user.name),
+            ProfileInfoItem("Designation", profile.user.designation),
             ProfileInfoItem("Faculty", profile.faculty.title),
-            ProfileInfoItem("Department", profile.teacher.department),
-            ProfileInfoItem("Blood Group", profile.teacher.blood ?: "~"),
-            ProfileInfoItem("Description", profile.teacher.description ?: "~"),
+            ProfileInfoItem("Department", profile.user.department),
+            ProfileInfoItem("Blood Group", profile.user.blood ?: "~"),
+            ProfileInfoItem("Description", profile.user.description ?: "~"),
         )
     }
 
     fun mapConnectContents(profile: UserProfile.TeacherProfile): List<ProfileInfoItem> {
         return listOf(
-            ProfileInfoItem("Address", profile.teacher.address ?: "~"),
+            ProfileInfoItem("Address", profile.user.address ?: "~"),
             ProfileInfoItem(
                 "Phone",
-                profile.teacher.phone ?: "~",
-                if (profile.teacher.phone.isNullOrEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.Call(profile.teacher.phone.orEmpty()),
+                profile.user.phone ?: "~",
+                if (profile.user.phone.isNullOrEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.Call(profile.user.phone.orEmpty()),
             ),
             ProfileInfoItem(
                 "Email",
-                profile.teacher.email.ifEmpty { "~" },
-                if (profile.teacher.email.isEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.Email(profile.teacher.email),
+                profile.user.email.ifEmpty { "~" },
+                if (profile.user.email.isEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.Email(profile.user.email),
             ),
             ProfileInfoItem(
                 "LinkedIn",
-                profile.teacher.linkedIn ?: "~",
-                if (profile.teacher.linkedIn.isNullOrEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.Link(profile.teacher.linkedIn.orEmpty()),
+                profile.user.linkedIn ?: "~",
+                if (profile.user.linkedIn.isNullOrEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.Link(profile.user.linkedIn.orEmpty()),
             ),
             ProfileInfoItem(
                 "Facebook",
-                profile.teacher.fbLink ?: "~",
-                if (profile.teacher.fbLink.isNullOrEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.Link(profile.teacher.fbLink.orEmpty()),
+                profile.user.fbLink ?: "~",
+                if (profile.user.fbLink.isNullOrEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.Link(profile.user.fbLink.orEmpty()),
             ),
         )
     }

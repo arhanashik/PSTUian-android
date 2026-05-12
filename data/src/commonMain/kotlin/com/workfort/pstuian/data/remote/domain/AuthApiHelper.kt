@@ -1,10 +1,14 @@
 package com.workfort.pstuian.data.remote.domain
 
 import com.workfort.pstuian.data.model.NetworkResult
+import com.workfort.pstuian.data.model.StudentDto
+import com.workfort.pstuian.data.model.TeacherDto
 
 interface AuthApiHelper {
 
-    suspend fun validateSignIn(userType: String, email: String, deviceId: String): NetworkResult<Unit>
+    suspend fun validateStudentSignIn(deviceId: String): NetworkResult<StudentDto>
+
+    suspend fun validateTeacherSignIn(deviceId: String): NetworkResult<TeacherDto>
 
     suspend fun signUpStudent(
         name: String,
@@ -13,7 +17,6 @@ interface AuthApiHelper {
         facultyId: Int,
         batchId: Int,
         session: String,
-        email: String,
         deviceId: String,
     ): NetworkResult<Unit>
 
@@ -22,11 +25,8 @@ interface AuthApiHelper {
         facultyId: Int,
         designation: String,
         department: String,
-        email: String,
         deviceId: String,
     ): NetworkResult<Unit>
-
-    suspend fun updateAuthUserId(userType: String): NetworkResult<Unit>
 
     suspend fun activateAccount(userType: String): NetworkResult<Unit>
 

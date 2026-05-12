@@ -4,13 +4,13 @@ import com.workfort.pstuian.featuredomain.model.UserPresence
 import kotlinx.coroutines.flow.Flow
 
 interface UserPresenceRepository {
-    suspend fun observeAndSyncUserPresence(userId: String)
+    suspend fun observeAndSyncUserPresence(presenceId: String)
 
-    fun observeUserPresence(userId: String): Flow<UserPresence?>
+    fun observeUserPresence(presenceId: String): Flow<UserPresence?>
 
-    suspend fun removeUserPresence(userId: String)
+    suspend fun removeUserPresence(presenceId: String)
 
-    suspend fun getUserPresence(userId: String): UserPresence?
+    suspend fun getUserPresence(presenceId: String): UserPresence?
 
     fun observeActiveUsersPresence(): Flow<List<UserPresence>>
 }

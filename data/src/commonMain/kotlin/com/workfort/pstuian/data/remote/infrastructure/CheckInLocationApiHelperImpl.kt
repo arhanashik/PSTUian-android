@@ -12,7 +12,10 @@ class CheckInLocationApiHelperImpl(
     private val service: CheckInLocationApiService,
 ) : CheckInLocationApiHelper() {
 
-    override suspend fun getAll(page: Int, limit: Int): NetworkResult<List<CheckInLocationDto>> {
+    override suspend fun getAll(
+        page: Int,
+        limit: Int,
+    ): NetworkResult<List<CheckInLocationDto>> {
         return runCatching {
             service.getAll(page, limit).toNetworkResult()
         }.getOrElse {
@@ -31,7 +34,7 @@ class CheckInLocationApiHelperImpl(
     override suspend fun search(
         query: String,
         page: Int,
-        limit: Int
+        limit: Int,
     ): NetworkResult<List<CheckInLocationDto>> {
         return runCatching {
             service.search(query, page, limit).toNetworkResult()
@@ -41,15 +44,14 @@ class CheckInLocationApiHelperImpl(
     }
 
     override suspend fun insert(
-        userId: String,
         userType: String,
         name: String,
         details: String?,
         imageUrl: String?,
-        link: String?
-    ): NetworkResult<CheckInLocationDto> {
+        link: String?,
+    ): NetworkResult<Unit> {
         return runCatching {
-            service.insert(userId, userType, name, details, imageUrl, link).toNetworkResult()
+            service.insert(userType, name, details, imageUrl, link).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

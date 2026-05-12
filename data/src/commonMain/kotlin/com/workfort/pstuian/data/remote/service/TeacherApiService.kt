@@ -33,34 +33,25 @@ class TeacherApiService(private val client: HttpClient) {
         ).body()
     }
 
-    suspend fun changeName(
-        authUserId: String,
-        name: String
-    ): ApiResponse<String> {
+    suspend fun changeName(name: String): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_NAME,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.NAME, name)
             }
         ).body()
     }
 
-    suspend fun changeBio(
-        authUserId: String,
-        bio: String
-    ): ApiResponse<String> {
+    suspend fun changeBio(bio: String): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_BIO,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.BIO, bio)
             }
         ).body()
     }
 
     suspend fun changeAcademicInfo(
-        authUserId: String,
         name: String,
         designation: String,
         department: String,
@@ -70,7 +61,6 @@ class TeacherApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_ACADEMIC_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.NAME, name)
                 append(NetworkConst.Params.DESIGNATION, designation)
                 append(NetworkConst.Params.DEPARTMENT, department)
@@ -81,7 +71,6 @@ class TeacherApiService(private val client: HttpClient) {
     }
 
     suspend fun changeConnectInfo(
-        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
@@ -92,7 +81,6 @@ class TeacherApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Teacher.UPDATE_CONNECT_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.ADDRESS, address)
                 append(NetworkConst.Params.PHONE, phone)
                 append(NetworkConst.Params.OLD_EMAIL, oldEmail)

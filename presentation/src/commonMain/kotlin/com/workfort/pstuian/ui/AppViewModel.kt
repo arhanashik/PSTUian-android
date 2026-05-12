@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.getUserPresenceId
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
@@ -75,8 +76,8 @@ class AppViewModel(
                 sharedScreenData.setCurrentUser(signInUser)
 
                 // update user status as online
-                signInUser?.authUserId?.let { userId ->
-                    userPresenceRepository.observeAndSyncUserPresence(userId)
+                signInUser?.getUserPresenceId()?.let { presenceId ->
+                    userPresenceRepository.observeAndSyncUserPresence(presenceId)
                 }
             }
         }

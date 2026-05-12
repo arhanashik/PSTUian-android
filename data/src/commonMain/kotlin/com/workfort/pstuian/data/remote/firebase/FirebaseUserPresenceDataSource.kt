@@ -18,15 +18,15 @@ class FirebaseUserPresenceDataSource(database: FirebaseDatabase) {
     private val userPresenceRef = database.reference("presence")
     private val connectedRef = database.reference(".info/connected")
 
-    suspend fun observeAndSyncUserPresence(userId: String) {
-        val userRef = userPresenceRef.child(userId)
+    suspend fun observeAndSyncUserPresence(presenceId: String) {
+        val userRef = userPresenceRef.child(presenceId)
         try {
             connectedRef.valueEvents.collectLatest { snapshot ->
                 runCatching {
                     val isConnected = snapshot.value<Boolean?>() ?: false
                     if (isConnected) {
                         userRef.onDisconnect().removeValue()
-                        userRef.setValue(mapOf("lastSeenAt" to ServerValue.TIMESTAMP))
+                        userRef.setValue(mapOf("sessionStartedAt" to ServerValue.TIMESTAMP))
                     }
                 }
             }
@@ -37,9 +37,9 @@ class FirebaseUserPresenceDataSource(database: FirebaseDatabase) {
         }
     }
 
-    fun observeUserPresence(userId: String): Flow<UserPresenceDto?> {
+    fun observeUserPresence(presenceId: String): Flow<UserPresenceDto?> {
         return try {
-            userPresenceRef.child(userId)
+            userPresenceRef.child(presenceId)
                 .valueEvents
                 .map { snapshot -> snapshot.value<UserPresenceDto?>() }
                 .distinctUntilChanged()
@@ -48,14 +48,14 @@ class FirebaseUserPresenceDataSource(database: FirebaseDatabase) {
         }
     }
 
-    suspend fun removeUserPresence(userId: String) {
+    suspend fun removeUserPresence(presenceId: String) {
         runCatching {
-            userPresenceRef.child(userId).removeValue()
+            userPresenceRef.child(presenceId).removeValue()
         }
     }
 
-    suspend fun getUserPresence(userId: String): UserPresenceDto? {
-        val snapshot = userPresenceRef.child(userId)
+    suspend fun getUserPresence(presenceId: String): UserPresenceDto? {
+        val snapshot = userPresenceRef.child(presenceId)
             .valueEvents
             .filterNotNull()
             .first()
@@ -68,9 +68,9 @@ class FirebaseUserPresenceDataSource(database: FirebaseDatabase) {
             userPresenceRef.valueEvents.map { snapshot ->
                 snapshot.children
                     .mapNotNull { child ->
-                        val userId = child.key
+                        val presenceId = child.key
                         val presence = child.value<UserPresenceDto?>() ?: return@mapNotNull null
-                        userId?.let { it to presence }
+                        presenceId?.let { it to presence }
                     }
             }
         } catch (_ : Throwable) {

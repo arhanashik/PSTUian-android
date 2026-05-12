@@ -30,8 +30,7 @@ internal fun EmployeeProfileScreenContent(
 }
 
 private fun mockEmployeeProfile(withBio: Boolean = true) = UserProfile.EmployeeProfile(
-    employee = User.Employee(
-        authUserId = "12",
+    user = User.Employee(
         name = "Md. Anisur Rahman",
         email = "anisur.rahman@pstu.ac.bd",
         facultyId = 1,

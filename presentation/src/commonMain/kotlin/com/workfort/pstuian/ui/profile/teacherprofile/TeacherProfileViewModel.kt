@@ -6,6 +6,7 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.getUserPresenceId
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -69,7 +70,7 @@ class TeacherProfileViewModel(
             is ProfileUiEvent.RefreshClicked -> onClickRefresh()
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
-                is ProfileUiEvent.EditClicked -> onClickEdit()
+            is ProfileUiEvent.EditClicked -> onClickEdit()
             is ProfileUiEvent.BloodDonationHistoryClicked -> Unit
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> Unit
@@ -105,7 +106,7 @@ class TeacherProfileViewModel(
                         connectContents = teacherProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
                     )
-                    observeUserPresence(profile.teacher.authUserId, profile.isSignedIn)
+                    observeUserPresence(profile.user.getUserPresenceId(), profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load teacher profile"
@@ -118,10 +119,6 @@ class TeacherProfileViewModel(
         cancelUserPresenceObservation()
         if (isSignedIn) {
             uiStateMachine.updateUserPresenceData(UserPresenceDisplayData(isOnline = true))
-            return
-        }
-        if (!authRepo.isUserSignedIn()) {
-            uiStateMachine.updateUserPresenceData(userPresenceDisplayDataMapper.map(null))
             return
         }
         userPresenceCollectionJob = viewModelScope.launchOnMain(coroutineDispatcherProvider) {
@@ -140,7 +137,7 @@ class TeacherProfileViewModel(
         _navigation.update { TeacherProfileNavigationState.ImagePreviewScreen(url) }
     }
 
-    private fun onClickCall() = profileCache?.teacher?.phone?.let { phoneNumber ->
+    private fun onClickCall() = profileCache?.user?.phone?.let { phoneNumber ->
         _message.update {
             TeacherProfileMessageState.CallConfirmation(phoneNumber) {
                 // call here
@@ -148,7 +145,7 @@ class TeacherProfileViewModel(
         }
     }
 
-    private fun onClickEmail() = profileCache?.teacher?.email?.let { email ->
+    private fun onClickEmail() = profileCache?.user?.email?.let { email ->
         if (email.isEmpty()) return@let
         _message.update {
             TeacherProfileMessageState.EmailConfirmation(email) {
@@ -171,7 +168,7 @@ class TeacherProfileViewModel(
     private fun onClickChangeImage() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.teacher?.let { teacher ->
+        profileCache?.user?.let { teacher ->
             _navigation.update {
                 TeacherProfileNavigationState.ImageUploadScreen(userId = teacher.userId)
             }
@@ -181,7 +178,7 @@ class TeacherProfileViewModel(
     private fun onClickEditBio() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.teacher?.let { teacher ->
+        profileCache?.user?.let { teacher ->
             _message.update {
                 TeacherProfileMessageState.InputBio(teacher.bio.orEmpty(), ::changeBio)
             }
@@ -191,7 +188,7 @@ class TeacherProfileViewModel(
     private fun onClickEdit() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.teacher?.let { teacher ->
+        profileCache?.user?.let { teacher ->
             _navigation.update {
                 TeacherProfileNavigationState.TeacherProfileEditScreen(userId = teacher.userId)
             }
@@ -207,7 +204,7 @@ class TeacherProfileViewModel(
     private fun onClickCheckInHistory() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.teacher?.let { student ->
+        profileCache?.user?.let { student ->
             _navigation.update {
                 TeacherProfileNavigationState.CheckInHistoryScreen(userId = student.userId)
             }
@@ -221,11 +218,11 @@ class TeacherProfileViewModel(
     }
 
     fun changeBio(newBio: String) {
-        val teacher = profileCache?.teacher ?: return
+        val teacher = profileCache?.user ?: return
         _message.update { TeacherProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                teacherRepo.changeBio(teacher, newBio)
+                teacherRepo.changeBio(teacher.userId, newBio)
             }.onSuccess {
                 val message = "Bio updated successfully"
                 _message.update { TeacherProfileMessageState.Success(message) }

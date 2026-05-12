@@ -4,15 +4,25 @@ import com.workfort.pstuian.data.mapper.toNetworkResult
 import com.workfort.pstuian.data.model.ApiResponseCode
 import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.NetworkResult
+import com.workfort.pstuian.data.model.StudentDto
+import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.service.AuthApiService
 
 
 class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
 
-    override suspend fun validateSignIn(userType: String, email: String, deviceId: String): NetworkResult<Unit> {
+    override suspend fun validateStudentSignIn(deviceId: String): NetworkResult<StudentDto> {
         return runCatching {
-            service.validateSignIn(userType, email, deviceId).toNetworkResult()
+            service.validateStudentSignIn(deviceId).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
+    }
+
+    override suspend fun validateTeacherSignIn(deviceId: String): NetworkResult<TeacherDto> {
+        return runCatching {
+            service.validateTeacherSignIn(deviceId).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
@@ -25,7 +35,6 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         facultyId: Int,
         batchId: Int,
         session: String,
-        email: String,
         deviceId: String,
     ): NetworkResult<Unit> {
         return runCatching {
@@ -36,7 +45,6 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
                 facultyId,
                 batchId,
                 session,
-                email,
                 deviceId,
             ).toNetworkResult()
         }.getOrElse {
@@ -49,7 +57,6 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
         facultyId: Int,
         designation: String,
         department: String,
-        email: String,
         deviceId: String,
     ): NetworkResult<Unit> {
         return runCatching {
@@ -58,17 +65,8 @@ class AuthApiHelperImpl(private val service: AuthApiService) : AuthApiHelper {
                 facultyId,
                 designation,
                 department,
-                email,
                 deviceId,
             ).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
-    }
-
-    override suspend fun updateAuthUserId(userType: String): NetworkResult<Unit> {
-        return runCatching {
-            service.updateAuthUserId(userType).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

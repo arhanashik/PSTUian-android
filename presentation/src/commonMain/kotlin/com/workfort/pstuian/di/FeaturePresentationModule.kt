@@ -269,10 +269,8 @@ private val profileModule = module {
         EmployeeProfileViewModel(
             userId = userId,
             authRepo = get(),
-            userPresenceRepository = get(),
             getEmployeeProfileUserUseCase = get(),
             employeeProfileDisplayDataMapper = get(),
-            userPresenceDisplayDataMapper = get(),
             uiStateMachine = get(),
             coroutineDispatcherProvider = get(),
         )

@@ -56,8 +56,6 @@ class FirebaseAuthDataSource(
                 ?: return NetworkResult.failure(
                     error = NetworkError(code = NetworkErrorCode.FirebaseAuth.UserRegistrationFailed),
                 )
-            firebaseUser.sendEmailVerification()
-
             return NetworkResult.success(firebaseUser.toAuthUserDto())
         } catch (exception: Throwable) {
             Napier.e("testR", exception)

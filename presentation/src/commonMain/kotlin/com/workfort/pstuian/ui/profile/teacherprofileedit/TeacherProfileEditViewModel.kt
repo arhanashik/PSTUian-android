@@ -55,7 +55,7 @@ class TeacherProfileEditViewModel(
                     stateMachine.updateProfileContent(event.profile)
                 }
                 is TeacherProfileEditUiEvent.FacultySelectionClicked -> newProfileCache?.let {
-                    selectFaculty(selectedFacultyId = it.teacher.facultyId)
+                    selectFaculty(selectedFacultyId = it.user.facultyId)
                 }
                 is TeacherProfileEditUiEvent.AcademicInfoSaveClicked -> updateAcademicInfo()
                 is TeacherProfileEditUiEvent.ConnectInfoSaveClicked -> updateConnectInfo()
@@ -66,17 +66,20 @@ class TeacherProfileEditViewModel(
     private fun loadProfile() {
         _message.update { TeacherProfileEditMessageState.Loading() }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            getTeacherProfileUserUseCase(userId)
-                .onSuccess { profile ->
-                    onMessageHandled()
-                    currentProfileCache = profile
-                    newProfileCache = profile
-                    stateMachine.updateProfileContent(profile)
+            getTeacherProfileUserUseCase(userId).onSuccess { profile ->
+                onMessageHandled()
+                if (!profile.isSignedIn) {
+                    _message.update { TeacherProfileEditMessageState.Error("Sign in required") }
+                    _navigation.update { TeacherProfileEditNavigationState.GoBack }
+                    return@launchOnMain
                 }
-                .onFailure {
-                    val message = it.message ?: "Failed to load profile"
-                    _message.update { TeacherProfileEditMessageState.Error(message) }
-                }
+                currentProfileCache = profile
+                newProfileCache = profile
+                stateMachine.updateProfileContent(profile)
+            }.onFailure {
+                val message = it.message ?: "Failed to load profile"
+                _message.update { TeacherProfileEditMessageState.Error(message) }
+            }
         }
     }
 
@@ -104,10 +107,10 @@ class TeacherProfileEditViewModel(
                     selectedFacultyId = selectedFacultyId,
                     onSaveAndContinue = { faculty ->
                         onMessageHandled()
-                        faculty?.let { f ->
+                        faculty?.let { faculty ->
                             newProfileCache = profile.copy(
-                                teacher = profile.teacher.copy(facultyId = f.id),
-                                faculty = f,
+                                user = profile.user.copy(facultyId = faculty.id),
+                                faculty = faculty,
                             )
                             newProfileCache?.let { stateMachine.updateProfileContent(it) }
                         }
@@ -135,12 +138,12 @@ class TeacherProfileEditViewModel(
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     stateMachine.showLoading(isLoading = true)
                     teacherRepository.changeAcademicInfo(
-                        authUserId = currentProfile.teacher.authUserId,
-                        name = newProfile.teacher.name,
-                        designation = newProfile.teacher.designation,
-                        department = newProfile.teacher.department,
-                        blood = newProfile.teacher.blood.orEmpty(),
-                        facultyId = newProfile.teacher.facultyId,
+                        userId = newProfile.user.userId,
+                        name = newProfile.user.name,
+                        designation = newProfile.user.designation,
+                        department = newProfile.user.department,
+                        blood = newProfile.user.blood.orEmpty(),
+                        facultyId = newProfile.user.facultyId,
                     ).onSuccess {
                         stateMachine.showLoading(isLoading = false)
                         _message.update { TeacherProfileEditMessageState.ShowSnackBar("Updated successfully") }
@@ -172,13 +175,13 @@ class TeacherProfileEditViewModel(
                 viewModelScope.launchOnMain(coroutineDispatcherProvider) {
                     stateMachine.showLoading(isLoading = true)
                     teacherRepository.changeConnectInfo(
-                        authUserId = currentProfile.teacher.authUserId,
-                        address = newProfile.teacher.address.orEmpty(),
-                        phone = newProfile.teacher.phone.orEmpty(),
-                        oldEmail = currentProfile.teacher.email,
-                        email = newProfile.teacher.email,
-                        linkedIn = newProfile.teacher.linkedIn.orEmpty(),
-                        fbLink = newProfile.teacher.fbLink.orEmpty(),
+                        userId = newProfile.user.userId,
+                        address = newProfile.user.address.orEmpty(),
+                        phone = newProfile.user.phone.orEmpty(),
+                        oldEmail = currentProfile.user.email,
+                        email = newProfile.user.email,
+                        linkedIn = newProfile.user.linkedIn.orEmpty(),
+                        fbLink = newProfile.user.fbLink.orEmpty(),
                     ).onSuccess {
                         stateMachine.showLoading(isLoading = false)
                         _message.update { TeacherProfileEditMessageState.ShowSnackBar("Updated successfully") }
@@ -193,15 +196,15 @@ class TeacherProfileEditViewModel(
     }
 
     fun validateAcademic(profile: UserProfile.TeacherProfile) = TeacherAcademicInfoInputError.INITIAL.copy(
-        name = if (profile.teacher.name.isEmpty()) "*Required" else "",
-        designation = if (profile.teacher.designation.isEmpty()) "*Required" else "",
-        department = if (profile.teacher.department.isEmpty()) "*Required" else "",
+        name = if (profile.user.name.isEmpty()) "*Required" else "",
+        designation = if (profile.user.designation.isEmpty()) "*Required" else "",
+        department = if (profile.user.department.isEmpty()) "*Required" else "",
     )
 
     fun validateConnect(profile: UserProfile.TeacherProfile) = TeacherConnectInfoInputError.INITIAL.copy(
-        email = if (profile.teacher.email.isEmpty()) {
+        email = if (profile.user.email.isEmpty()) {
             "*Required"
-        } else if (!profile.teacher.email.isValidEmail()) {
+        } else if (!profile.user.email.isValidEmail()) {
             "*Invalid email"
         } else {
             ""

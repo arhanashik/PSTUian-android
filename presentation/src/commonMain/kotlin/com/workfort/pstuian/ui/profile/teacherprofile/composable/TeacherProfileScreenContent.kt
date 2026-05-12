@@ -30,8 +30,7 @@ internal fun TeacherProfileScreenContent(
 }
 
 private fun mockTeacherProfile(withBio: Boolean = true) = UserProfile.TeacherProfile(
-    teacher = User.Teacher(
-        authUserId = "7",
+    user = User.Teacher(
         name = "Dr. Mahmud Rahman",
         email = "mahmud.rahman@pstu.ac.bd",
         facultyId = 1,

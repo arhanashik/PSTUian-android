@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserPresenceDto(
-    val lastSeenAt: Long = 0L,
+    val sessionStartedAt: Long = 0L,
 ) {
 
     fun toModel(userId: String): UserPresence = UserPresence(
-        userId = userId,
-        lastSeenAt = lastSeenAt,
+        presenceId = userId,
+        sessionStartedAt = sessionStartedAt,
     )
 }

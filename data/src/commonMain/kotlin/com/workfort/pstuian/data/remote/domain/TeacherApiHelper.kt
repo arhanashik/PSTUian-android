@@ -2,6 +2,7 @@ package com.workfort.pstuian.data.remote.domain
 
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.TeacherDto
+import com.workfort.pstuian.featuredomain.model.DomainResult
 
 interface TeacherApiHelper {
     suspend fun get(id: Int): NetworkResult<TeacherDto>
@@ -10,12 +11,11 @@ interface TeacherApiHelper {
 
     suspend fun changeProfileImage(imageUrl: String): NetworkResult<Unit>
 
-    suspend fun changeName(authUserId: String, name: String): Boolean
+    suspend fun changeName(name: String): NetworkResult<Unit>
 
-    suspend fun changeBio(authUserId: String, bio: String): Boolean
+    suspend fun changeBio(bio: String): NetworkResult<Unit>
 
     suspend fun changeAcademicInfo(
-        authUserId: String,
         name: String,
         designation: String,
         department: String,
@@ -24,7 +24,6 @@ interface TeacherApiHelper {
     ): NetworkResult<TeacherDto>
 
     suspend fun changeConnectInfo(
-        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,

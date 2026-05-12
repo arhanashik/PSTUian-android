@@ -293,22 +293,24 @@ class SignInViewModel(
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
-            authRepository.signIn(userType, formData.email, formData.password)
-                .onSuccess {
+            authRepository.signIn(userType, formData.email, formData.password).onSuccess { user ->
+                stateMachine.showLoading(false)
+                _message.update { SignInMessageState.Success(message = "Welcome Back!") }
+
+                sharedScreenData.setCurrentUser(user)
+                val savedEmail = if (formData.rememberMe) formData.email else ""
+                sharedPrefRepository.putString(SharedPrefKey.SIGN_IN_EMAIL, savedEmail)
+
+                _navigation.update { SignInNavigationState.GoBack }
+            }.onFailure { error ->
+                if (isRetryFlow) {
                     stateMachine.showLoading(false)
-                    val savedEmail = if (formData.rememberMe) formData.email else ""
-                    sharedPrefRepository.putString(SharedPrefKey.SIGN_IN_EMAIL, savedEmail)
-                    _message.update { SignInMessageState.Success(message = "Welcome Back!") }
-                    _navigation.update { SignInNavigationState.GoBack }
-                }.onFailure { error ->
-                    if (isRetryFlow) {
-                        stateMachine.showLoading(false)
-                        val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
-                        _message.update { SignInMessageState.Error(msg) }
-                    } else {
-                        handleSignInFailure(formData, error)
-                    }
+                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
+                    _message.update { SignInMessageState.Error(msg) }
+                } else {
+                    handleSignInFailure(formData, error)
                 }
+            }
         }
     }
 
@@ -320,9 +322,7 @@ class SignInViewModel(
             DomainErrorCode.Auth.UserDeactivated -> {
                 activateAccountAndContinueSignIn(formData)
             }
-            DomainErrorCode.Auth.UserAuthUnregistered -> {
-                createLegacyUserAuthAndContinueSignIn(formData) // create legacy user's auth account
-            } else -> {
+            else -> {
                 stateMachine.showLoading(false)
                 val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
                 _message.update { SignInMessageState.Error(msg) }
@@ -334,19 +334,6 @@ class SignInViewModel(
         val userType = settingsRepository.getUserType() ?: return
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             authRepository.activateAccount(userType, formData.email, formData.password)
-                .onSuccess { signIn(formData, isRetryFlow = true) }
-                .onFailure { error ->
-                    stateMachine.showLoading(false)
-                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign in. Please try again."
-                    _message.update { SignInMessageState.Error(msg) }
-                }
-        }
-    }
-
-    private fun createLegacyUserAuthAndContinueSignIn(formData: SignInFormData) {
-        val userType = settingsRepository.getUserType() ?: return
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            authRepository.createLegacyUserAuth(userType, formData.email, formData.password)
                 .onSuccess { signIn(formData, isRetryFlow = true) }
                 .onFailure { error ->
                     stateMachine.showLoading(false)
@@ -374,22 +361,20 @@ class SignInViewModel(
                 formData.session,
                 formData.email,
                 formData.password,
-            )
-                .onSuccess {
-                    stateMachine.showLoading(false)
-                    _message.update {
-                        SignInMessageState.Success(
-                            message = "A verification email has been sent to ${formData.email}. " +
-                                    "Please check spam folder if you can't find it in inbox.",
-                        )
-                    }
-                    stateMachine.setAuthPanel(AuthPanel.SignIn)
+            ).onSuccess {
+                stateMachine.showLoading(false)
+                _message.update {
+                    SignInMessageState.Success(
+                        message = "A verification email has been sent to ${formData.email}. " +
+                                "Please check spam folder if you can't find it in inbox.",
+                    )
                 }
-                .onFailure { error ->
-                    stateMachine.showLoading(false)
-                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign up. Please try again."
-                    _message.update { SignInMessageState.Error(msg) }
-                }
+                stateMachine.setAuthPanel(AuthPanel.SignIn)
+            }.onFailure { error ->
+                stateMachine.showLoading(false)
+                val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign up. Please try again."
+                _message.update { SignInMessageState.Error(msg) }
+            }
         }
     }
 
@@ -409,22 +394,20 @@ class SignInViewModel(
                 formData.department,
                 formData.email,
                 formData.password,
-            )
-                .onSuccess {
-                    stateMachine.showLoading(false)
-                    _message.update {
-                        SignInMessageState.Success(
-                            message = "A verification email has been sent to ${formData.email}. " +
-                                    "Please check spam folder if you can't find it in inbox.",
-                        )
-                    }
-                    stateMachine.setAuthPanel(AuthPanel.SignIn)
+            ).onSuccess {
+                stateMachine.showLoading(false)
+                _message.update {
+                    SignInMessageState.Success(
+                        message = "A verification email has been sent to ${formData.email}. " +
+                                "Please check spam folder if you can't find it in inbox.",
+                    )
                 }
-                .onFailure { error ->
-                    stateMachine.showLoading(false)
-                    val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign up. Please try again."
-                    _message.update { SignInMessageState.Error(msg) }
-                }
+                stateMachine.setAuthPanel(AuthPanel.SignIn)
+            }.onFailure { error ->
+                stateMachine.showLoading(false)
+                val msg = error.code.mapToErrorMessageForSignInScreen() ?: "Failed to Sign up. Please try again."
+                _message.update { SignInMessageState.Error(msg) }
+            }
         }
     }
 }

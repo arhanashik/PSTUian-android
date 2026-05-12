@@ -14,10 +14,10 @@ class GetEmployeeProfileUserUseCase(
     suspend operator fun invoke(userId: Int): DomainResult<UserProfile.EmployeeProfile> {
         val authUser = authRepository.getAuthUser()
 
-        val employee = facultyRepository.getEmployee(userId).getOrElse { return DomainResult.failure(it) }
-        val faculty = facultyRepository.getFaculty(employee.facultyId).getOrElse { return DomainResult.failure(it) }
-        val isSignedIn = employee.authUserId == authUser?.userId
+        val user = facultyRepository.getEmployee(userId).getOrElse { return DomainResult.failure(it) }
+        val faculty = facultyRepository.getFaculty(user.facultyId).getOrElse { return DomainResult.failure(it) }
+        val isSignedIn = user.email == authUser?.email
 
-        return DomainResult.success(UserProfile.EmployeeProfile(employee, faculty, isSignedIn))
+        return DomainResult.success(UserProfile.EmployeeProfile(user, faculty, isSignedIn))
     }
 }

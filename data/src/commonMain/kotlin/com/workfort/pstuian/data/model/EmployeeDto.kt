@@ -18,7 +18,6 @@ data class EmployeeDto(
     val imageUrl: String?,
 ) {
     fun toModel() = User.Employee(
-        authUserId = id.toString(),
         userId = id,
         name = name,
         email = "",

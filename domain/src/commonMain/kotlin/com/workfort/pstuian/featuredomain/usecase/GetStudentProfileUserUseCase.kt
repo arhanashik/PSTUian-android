@@ -16,13 +16,11 @@ class GetStudentProfileUserUseCase(
     suspend operator fun invoke(studentId: Int): DomainResult<UserProfile.StudentProfile> {
         val authUser = authRepository.getAuthUser()
 
-        val student = studentRepository.getUser(studentId).getOrElse { return DomainResult.failure(it) }
-        val faculty = facultyRepository.getFaculty(student.facultyId).getOrElse { return DomainResult.failure(it) }
-        val batch = facultyRepository.getBatch(student.batchId).getOrElse { return DomainResult.failure(it) }
-        val isSignedIn = student.authUserId == authUser?.userId
+        val user = studentRepository.getUser(studentId).getOrElse { return DomainResult.failure(it) }
+        val faculty = facultyRepository.getFaculty(user.facultyId).getOrElse { return DomainResult.failure(it) }
+        val batch = facultyRepository.getBatch(user.batchId).getOrElse { return DomainResult.failure(it) }
+        val isSignedIn = user.email == authUser?.email
 
-        return DomainResult.success(
-            UserProfile.StudentProfile(student, faculty, batch, isSignedIn),
-        )
+        return DomainResult.success(UserProfile.StudentProfile(user, faculty, isSignedIn, batch))
     }
 }

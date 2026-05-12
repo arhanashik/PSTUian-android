@@ -13,8 +13,8 @@ import io.ktor.http.parameters
 class CheckInLocationApiService(private val client: HttpClient) {
 
     suspend fun getAll(
-        page: Int = 1,
-        limit: Int = 20,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<CheckInLocationDto>> {
         return client.get(NetworkConst.Remote.Api.CheckInLocation.GET_ALL) {
             parameter(NetworkConst.Params.PAGE, page)
@@ -30,8 +30,8 @@ class CheckInLocationApiService(private val client: HttpClient) {
 
     suspend fun search(
         query: String,
-        page: Int = 1,
-        limit: Int = 20,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<CheckInLocationDto>> {
         return client.get(NetworkConst.Remote.Api.CheckInLocation.SEARCH) {
             parameter(NetworkConst.Params.QUERY, query)
@@ -41,17 +41,15 @@ class CheckInLocationApiService(private val client: HttpClient) {
     }
 
     suspend fun insert(
-        userId: String,
         userType: String,
         name: String,
         details: String?,
         imageUrl: String?,
         link: String?,
-    ): ApiResponse<CheckInLocationDto> {
+    ): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.CheckInLocation.INSERT,
             formParameters = parameters {
-                append(NetworkConst.Params.USER_ID, userId)
                 append(NetworkConst.Params.USER_TYPE, userType)
                 append(NetworkConst.Params.NAME, name)
                 append(NetworkConst.Params.DETAILS, details ?: "")

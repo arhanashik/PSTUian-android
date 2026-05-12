@@ -11,14 +11,13 @@ interface StudentRepository {
 
     suspend fun changeProfileImage(userId: Int, imageUrl: String): DomainResult<Unit>
 
-    suspend fun changeName(authUserId: String, name: String): DomainResult<Unit>
+    suspend fun changeName(userId: Int, name: String): DomainResult<Unit>
 
-    suspend fun changeBio(authUserId: String, bio: String): DomainResult<Unit>
+    suspend fun changeBio(userId: Int, bio: String): DomainResult<Unit>
 
     suspend fun changeCvUrl(userId: Int, fileUrl: String): DomainResult<Unit>
 
     suspend fun changeAcademicInfo(
-        authUserId: String,
         name: String,
         studentOldId: Int,
         studentId: Int,
@@ -30,7 +29,7 @@ interface StudentRepository {
     ): DomainResult<User.Student>
 
     suspend fun changeConnectInfo(
-        authUserId: String,
+        userId: Int,
         address: String,
         phone: String,
         oldEmail: String,

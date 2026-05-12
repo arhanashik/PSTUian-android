@@ -1,20 +1,27 @@
 package com.workfort.pstuian.ui.locationpicker
 
 import androidx.lifecycle.viewModelScope
+import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
+import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
+import com.workfort.pstuian.featuredomain.model.onFailure
+import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerNavigationState
 import com.workfort.pstuian.ui.locationpicker.state.LocationPickerUiState
-import kotlinx.coroutines.launch
 
 class LocationPickerViewModel(
-    private val isCheckInMode: Boolean,
     private val checkInLocationRepo: CheckInLocationRepository,
     private val sharedScreenData: SharedScreenData,
     private val stateMachine: LocationPickerUiStateMachine,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<LocationPickerUiState>(stateMachine) {
+
+    private var checkInLocationPage = 0
+    private var queryCache: String = ""
+    private val locationListCache = arrayListOf<CheckInLocation>()
 
     override fun onUiReady() {
         search(query = "", refresh = true)
@@ -64,9 +71,6 @@ class LocationPickerViewModel(
         }
     }
 
-    private var checkInLocationPage = 0
-    private var queryCache: String = ""
-    private val locationListCache = arrayListOf<CheckInLocation>()
     fun search(query: String, refresh: Boolean) {
         if (isLocationListLoading()) {
             return
@@ -83,10 +87,9 @@ class LocationPickerViewModel(
                 isLoading = true,
             ),
         )
-        viewModelScope.launch {
-            runCatching {
-                val locations = checkInLocationRepo.search(queryCache, checkInLocationPage)
-                locationListCache.addAll(locations)
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            checkInLocationRepo.search(queryCache, checkInLocationPage).onSuccess { list ->
+                locationListCache.addAll(list)
                 stateMachine.updateLocationListState(
                     LocationPickerUiState.LocationListState.Available(
                         locations = ArrayList(locationListCache),
@@ -95,30 +98,22 @@ class LocationPickerViewModel(
                 )
             }.onFailure {
                 val message = it.message ?: "Failed to search"
-                stateMachine.updateLocationListState(
-                    LocationPickerUiState.LocationListState.Error(message),
-                )
+                stateMachine.updateLocationListState(LocationPickerUiState.LocationListState.Error(message))
             }
         }
     }
 
     fun createNewLocation(name: String) {
-        val userId = sharedScreenData.getCurrentUser()?.authUserId ?: return
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
-        viewModelScope.launch {
-            runCatching {
-                checkInLocationRepo.insert(userId, userType, name)
+        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
+            checkInLocationRepo.insert(userType, name).onSuccess {
                 val message = "Location create request is successful. Please wait for an admin to approve it!"
                 search(query = "", refresh = true)
-                stateMachine.updateMessageState(
-                    LocationPickerUiState.MessageState.Success(message),
-                )
+                stateMachine.updateMessageState(LocationPickerUiState.MessageState.Success(message))
             }.onFailure {
                 val message = it.message ?: "Failed to create new location"
-                stateMachine.updateMessageState(
-                    LocationPickerUiState.MessageState.Error(message),
-                )
+                stateMachine.updateMessageState(LocationPickerUiState.MessageState.Error(message))
             }
         }
     }

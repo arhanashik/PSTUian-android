@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserPresence(
-    val userId: String,
-    val lastSeenAt: Long = 0L,
+    val presenceId: String,
+    val sessionStartedAt: Long = 0L,
 )

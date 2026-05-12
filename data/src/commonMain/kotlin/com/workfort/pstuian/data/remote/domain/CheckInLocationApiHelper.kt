@@ -8,12 +8,11 @@ import com.workfort.pstuian.data.model.NetworkResult
 abstract class CheckInLocationApiHelper : ApiHelper<CheckInLocationDto>() {
 
     open suspend fun insert(
-        userId: String,
         userType: String,
         name: String,
         details: String?,
         imageUrl: String?,
         link: String?,
-    ): NetworkResult<CheckInLocationDto> =
+    ): NetworkResult<Unit> =
         NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
 }

@@ -33,21 +33,19 @@ class StudentApiService(private val client: HttpClient) {
         ).body()
     }
 
-    suspend fun changeName(authUserId: String, name: String): ApiResponse<Unit> {
+    suspend fun changeName(name: String): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Student.UPDATE_NAME,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.NAME, name)
             }
         ).body()
     }
 
-    suspend fun changeBio(authUserId: String, bio: String): ApiResponse<Unit> {
+    suspend fun changeBio(bio: String): ApiResponse<Unit> {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Student.UPDATE_BIO,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.BIO, bio)
             }
         ).body()
@@ -63,7 +61,6 @@ class StudentApiService(private val client: HttpClient) {
     }
 
     suspend fun changeAcademicInfo(
-        authUserId: String,
         name: String,
         studentOldId: Int,
         studentId: Int,
@@ -76,7 +73,6 @@ class StudentApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Student.UPDATE_ACADEMIC_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.NAME, name)
                 append(NetworkConst.Params.OLD_ID, studentOldId.toString())
                 append(NetworkConst.Params.ID, studentId.toString())
@@ -90,7 +86,6 @@ class StudentApiService(private val client: HttpClient) {
     }
 
     suspend fun changeConnectInfo(
-        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
@@ -102,7 +97,6 @@ class StudentApiService(private val client: HttpClient) {
         return client.submitForm(
             url = NetworkConst.Remote.Api.Student.UPDATE_CONNECT_INFO,
             formParameters = parameters {
-                append(NetworkConst.Params.AUTH_USER_ID, authUserId)
                 append(NetworkConst.Params.ADDRESS, address)
                 append(NetworkConst.Params.PHONE, phone)
                 append(NetworkConst.Params.OLD_EMAIL, oldEmail)

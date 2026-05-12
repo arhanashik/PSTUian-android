@@ -3,7 +3,6 @@ package com.workfort.pstuian.featuredomain.model
 import kotlinx.serialization.Serializable
 
 sealed interface User {
-    val authUserId: String
     val userId: Int
     val name: String
     val email: String
@@ -16,7 +15,6 @@ sealed interface User {
 
     @Serializable
     data class Student(
-        override val authUserId: String,
         override val userId: Int, // studentId
         override val name: String,
         override val email: String,
@@ -36,7 +34,6 @@ sealed interface User {
 
     @Serializable
     data class Teacher(
-        override val authUserId: String,
         override val userId: Int,
         override val name: String,
         override val email: String,
@@ -55,7 +52,6 @@ sealed interface User {
 
     @Serializable
     data class Employee(
-        override val authUserId: String,
         override val userId: Int,
         override val name: String,
         override val email: String,
@@ -68,4 +64,14 @@ sealed interface User {
         val designation: String,
         val department: String?,
     ) : User
+}
+
+fun User.getUserPresenceId(): String {
+    val prefix = when (this) {
+        is User.Student -> UserType.STUDENT.type
+        is User.Teacher -> UserType.TEACHER.type
+        is User.Employee -> UserType.EMPLOYEE.type
+    }
+
+    return "$prefix-$userId"
 }

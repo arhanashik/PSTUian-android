@@ -45,7 +45,6 @@ class NotificationViewModel(
     private val notificationsCache = ArrayList<NotificationEntity>()
 
     private fun getAll(isRefresh: Boolean = true) {
-        val userId = sharedScreenData.getCurrentUser()?.authUserId ?: return
         val userType = sharedScreenData.getCurrentUserType() ?: return
 
         if (isRefresh) {
@@ -62,7 +61,7 @@ class NotificationViewModel(
             )
             runCatching {
                 currentDataPage += 1
-                val notifications = repo.getAll(userId, userType, currentDataPage)
+                val notifications = repo.getAll(userType, currentDataPage)
                 if (notifications.isEmpty()) {
                     hasMoreData = false
                 } else {

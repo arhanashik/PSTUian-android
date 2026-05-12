@@ -6,6 +6,7 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.featuredomain.model.getUserPresenceId
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -108,7 +109,7 @@ class StudentProfileViewModel(
                         connectContents = studentProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
                     )
-                    observeUserPresence(profile.student.authUserId, profile.isSignedIn)
+                    observeUserPresence(profile.user.getUserPresenceId(), profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load student profile"
@@ -121,10 +122,6 @@ class StudentProfileViewModel(
         cancelUserPresenceObservation()
         if (isSignedIn) {
             uiStateMachine.updateUserPresenceData(UserPresenceDisplayData(isOnline = true))
-            return
-        }
-        if (!authRepo.isUserSignedIn()) {
-            uiStateMachine.updateUserPresenceData(userPresenceDisplayDataMapper.map(null))
             return
         }
         userPresenceCollectionJob = viewModelScope.launchOnMain(coroutineDispatcherProvider) {
@@ -143,7 +140,7 @@ class StudentProfileViewModel(
         _navigation.update { StudentProfileNavigationState.ImagePreviewScreen(url) }
     }
 
-    private fun onClickCall() = profileCache?.student?.phone?.let { phoneNumber ->
+    private fun onClickCall() = profileCache?.user?.phone?.let { phoneNumber ->
         _message.update {
             StudentProfileMessageState.CallConfirmation(phoneNumber) {
                 // call here
@@ -151,7 +148,7 @@ class StudentProfileViewModel(
         }
     }
 
-    private fun onClickEmail() = profileCache?.student?.email?.let { email ->
+    private fun onClickEmail() = profileCache?.user?.email?.let { email ->
         _message.update {
             StudentProfileMessageState.EmailConfirmation(email) {
                 // send email here
@@ -178,7 +175,7 @@ class StudentProfileViewModel(
     private fun onClickChangeImage() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.student?.let { student ->
+        profileCache?.user?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.ImageUploadScreen(userId = student.userId)
             }
@@ -188,7 +185,7 @@ class StudentProfileViewModel(
     private fun onClickEditBio() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.student?.let { student ->
+        profileCache?.user?.let { student ->
             val currentBio = student.bio.orEmpty()
             _message.update {
                 StudentProfileMessageState.InputBio(currentBio, ::changeBio)
@@ -199,7 +196,7 @@ class StudentProfileViewModel(
     private fun onClickEdit() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.student?.let { student ->
+        profileCache?.user?.let { student ->
             _navigation.update { StudentProfileNavigationState.StudentProfileEditScreen(student.userId) }
         }
     }
@@ -207,7 +204,7 @@ class StudentProfileViewModel(
     private fun onClickMyBloodDonationHistory() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.student?.let { student ->
+        profileCache?.user?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.BloodDonationHistoryScreen(userId = student.userId)
             }
@@ -221,7 +218,7 @@ class StudentProfileViewModel(
     }
 
     private fun onClickDownloadCv(url: String) {
-        profileCache?.student?.let { student ->
+        profileCache?.user?.let { student ->
             cvDownloadSheetOpenId += 1
             _message.update {
                 StudentProfileMessageState.CvDownloadSheet(
@@ -242,7 +239,7 @@ class StudentProfileViewModel(
     private fun onClickUploadCv() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.student?.let { student ->
+        profileCache?.user?.let { student ->
             cvUploadSheetOpenId += 1
             _message.update {
                 StudentProfileMessageState.CvUploadSheet(
@@ -260,7 +257,7 @@ class StudentProfileViewModel(
     private fun onClickCheckInHistory() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.student?.let { student ->
+        profileCache?.user?.let { student ->
             _navigation.update {
                 StudentProfileNavigationState.CheckInHistoryScreen(userId = student.userId)
             }
@@ -274,11 +271,11 @@ class StudentProfileViewModel(
     }
 
     fun changeBio(newBio: String) {
-        val student = profileCache?.student ?: return
+        val student = profileCache?.user ?: return
         _message.update { StudentProfileMessageState.Loading(cancelable = false) }
         viewModelScope.launch {
             runCatching {
-                studentRepo.changeBio(student.authUserId, newBio)
+                studentRepo.changeBio(student.userId, newBio)
             }.onSuccess {
                 val message = "Bio updated successfully"
                 _message.update { StudentProfileMessageState.Success(message) }

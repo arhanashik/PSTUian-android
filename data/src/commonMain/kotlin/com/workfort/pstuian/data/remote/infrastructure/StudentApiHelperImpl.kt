@@ -34,12 +34,12 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         }
     }
 
-    override suspend fun changeName(authUserId: String, name: String): NetworkResult<Unit> {
-        return service.changeName(authUserId, name).toNetworkResult()
+    override suspend fun changeName(name: String): NetworkResult<Unit> {
+        return service.changeName(name).toNetworkResult()
     }
 
-    override suspend fun changeBio(authUserId: String, bio: String): NetworkResult<Unit> {
-        return service.changeBio(authUserId, bio).toNetworkResult()
+    override suspend fun changeBio(bio: String): NetworkResult<Unit> {
+        return service.changeBio(bio).toNetworkResult()
     }
 
     override suspend fun changeCvUrl(fileUrl: String): NetworkResult<Unit> {
@@ -51,7 +51,6 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     }
 
     override suspend fun changeAcademicInfo(
-        authUserId: String,
         name: String,
         studentOldId: Int,
         studentId: Int,
@@ -63,7 +62,6 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     ): NetworkResult<StudentDto> {
         return runCatching {
             service.changeAcademicInfo(
-                authUserId = authUserId,
                 name = name,
                 studentOldId = studentOldId,
                 studentId = studentId,
@@ -79,7 +77,6 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     }
 
     override suspend fun changeConnectInfo(
-        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
@@ -90,7 +87,6 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
     ): NetworkResult<StudentDto> {
         return runCatching {
             service.changeConnectInfo(
-                authUserId = authUserId,
                 address = address,
                 phone = phone,
                 oldEmail = oldEmail,

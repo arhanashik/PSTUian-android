@@ -34,20 +34,23 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
         }
     }
 
-    override suspend fun changeName(authUserId: String, name: String): Boolean {
-        val response = service.changeName(authUserId, name)
-        if(!response.isSuccess) throw Exception(response.message)
-        return response.isSuccess
+    override suspend fun changeName(name: String): NetworkResult<Unit> {
+        return runCatching {
+            service.changeName(name).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
-    override suspend fun changeBio(authUserId: String, bio: String): Boolean {
-        val response = service.changeBio(authUserId, bio)
-        if(!response.isSuccess) throw Exception(response.message)
-        return response.isSuccess
+    override suspend fun changeBio(bio: String): NetworkResult<Unit> {
+        return runCatching {
+            service.changeBio(bio).toNetworkResult()
+        }.getOrElse {
+            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+        }
     }
 
     override suspend fun changeAcademicInfo(
-        authUserId: String,
         name: String,
         designation: String,
         department: String,
@@ -56,7 +59,6 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     ): NetworkResult<TeacherDto> {
         return runCatching {
             service.changeAcademicInfo(
-                authUserId,
                 name,
                 designation,
                 department,
@@ -69,7 +71,6 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     }
 
     override suspend fun changeConnectInfo(
-        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,
@@ -79,7 +80,6 @@ class TeacherApiHelperImpl(private val service: TeacherApiService) : TeacherApiH
     ): NetworkResult<TeacherDto> {
         return runCatching {
             service.changeConnectInfo(
-                authUserId,
                 address,
                 phone,
                 oldEmail,

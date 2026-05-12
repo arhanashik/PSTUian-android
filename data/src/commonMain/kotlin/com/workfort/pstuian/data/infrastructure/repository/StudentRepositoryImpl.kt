@@ -43,17 +43,21 @@ class StudentRepositoryImpl(
     }
 
     override suspend fun changeName(
-        authUserId: String,
+        userId: Int,
         name: String
     ): DomainResult<Unit> {
-        return helper.changeName(authUserId, name).toDomainResult(domainErrorMapper)
+        return helper.changeName(name).toDomainResult(domainErrorMapper).onSuccess {
+            cache.removeAll { it.userId == userId }
+        }
     }
 
     override suspend fun changeBio(
-        authUserId: String,
+        userId: Int,
         bio: String
     ): DomainResult<Unit> {
-        return helper.changeBio(authUserId, bio).toDomainResult(domainErrorMapper)
+        return helper.changeBio(bio).toDomainResult(domainErrorMapper).onSuccess {
+            cache.removeAll { it.userId == userId }
+        }
     }
 
     override suspend fun changeCvUrl(
@@ -66,7 +70,6 @@ class StudentRepositoryImpl(
     }
 
     override suspend fun changeAcademicInfo(
-        authUserId: String,
         name: String,
         studentOldId: Int,
         studentId: Int,
@@ -77,7 +80,6 @@ class StudentRepositoryImpl(
         batchId: Int
     ): DomainResult<User.Student> {
         return helper.changeAcademicInfo(
-            authUserId = authUserId,
             name = name,
             studentOldId = studentOldId,
             studentId = studentId,
@@ -90,13 +92,13 @@ class StudentRepositoryImpl(
             .toDomainResult(domainErrorMapper)
             .map { it.toModel() }
             .onSuccess { student ->
-                cache.removeAll { it.authUserId == authUserId }
+                cache.removeAll { it.userId == studentOldId }
                 cache.add(student)
             }
     }
 
     override suspend fun changeConnectInfo(
-        authUserId: String,
+        userId: Int,
         address: String,
         phone: String,
         oldEmail: String,
@@ -106,7 +108,6 @@ class StudentRepositoryImpl(
         facebook: String
     ): DomainResult<User.Student> {
         return helper.changeConnectInfo(
-            authUserId = authUserId,
             address = address,
             phone = phone,
             oldEmail = oldEmail,
@@ -118,7 +119,7 @@ class StudentRepositoryImpl(
             .toDomainResult(domainErrorMapper)
             .map { it.toModel() }
             .onSuccess { student ->
-                cache.removeAll { it.authUserId == authUserId }
+                cache.removeAll { it.userId == userId }
                 cache.add(student)
             }
     }

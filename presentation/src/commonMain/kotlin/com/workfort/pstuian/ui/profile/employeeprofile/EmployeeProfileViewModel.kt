@@ -8,11 +8,8 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
-import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.featuredomain.usecase.GetEmployeeProfileUserUseCase
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
-import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
-import com.workfort.pstuian.ui.profile.common.displaydata.UserPresenceDisplayData
 import com.workfort.pstuian.ui.profile.common.state.ProfileScreenUiStateMachine
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiEvent
 import com.workfort.pstuian.ui.profile.common.state.ProfileUiState
@@ -22,17 +19,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class EmployeeProfileViewModel(
     private val userId: Int,
     private val authRepo: AuthRepository,
-    private val userPresenceRepository: UserPresenceRepository,
     private val getEmployeeProfileUserUseCase: GetEmployeeProfileUserUseCase,
     private val employeeProfileDisplayDataMapper: EmployeeProfileDisplayDataMapper,
-    private val userPresenceDisplayDataMapper: UserPresenceDisplayDataMapper,
     private val uiStateMachine: ProfileScreenUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<ProfileUiState>(uiStateMachine) {
@@ -63,7 +57,7 @@ class EmployeeProfileViewModel(
             is ProfileUiEvent.RefreshClicked -> onClickRefresh()
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
-                is ProfileUiEvent.EditClicked -> onClickEdit()
+            is ProfileUiEvent.EditClicked -> onClickEdit()
             is ProfileUiEvent.BloodDonationHistoryClicked -> Unit
             is ProfileUiEvent.ChangePasswordClicked -> onClickChangePassword()
             is ProfileUiEvent.DownloadCvClicked -> Unit
@@ -99,30 +93,11 @@ class EmployeeProfileViewModel(
                         connectContents = employeeProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
                     )
-                    observeUserPresence(profile.employee.authUserId, profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load employee profile"
                     uiStateMachine.showProfileError(message)
                 }
-        }
-    }
-
-    private fun observeUserPresence(userId: String, isSignedIn: Boolean) {
-        cancelUserPresenceObservation()
-        if (isSignedIn) {
-            uiStateMachine.updateUserPresenceData(UserPresenceDisplayData(isOnline = true))
-            return
-        }
-        if (!authRepo.isUserSignedIn()) {
-            uiStateMachine.updateUserPresenceData(userPresenceDisplayDataMapper.map(null))
-            return
-        }
-        userPresenceCollectionJob = viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            userPresenceRepository.observeUserPresence(userId).collectLatest {
-                val userPresenceDisplayData = userPresenceDisplayDataMapper.map(it)
-                uiStateMachine.updateUserPresenceData(userPresenceDisplayData)
-            }
         }
     }
 
@@ -134,7 +109,7 @@ class EmployeeProfileViewModel(
         _navigation.update { EmployeeProfileNavigationState.ImagePreviewScreen(url) }
     }
 
-    private fun onClickCall() = profileCache?.employee?.phone?.let { phoneNumber ->
+    private fun onClickCall() = profileCache?.user?.phone?.let { phoneNumber ->
         if (phoneNumber.isNotEmpty()) {
             _message.update {
                 EmployeeProfileMessageState.CallConfirmation(phoneNumber) {
@@ -144,7 +119,7 @@ class EmployeeProfileViewModel(
         }
     }
 
-    private fun onClickEmail() = profileCache?.employee?.email?.let { email ->
+    private fun onClickEmail() = profileCache?.user?.email?.let { email ->
         if (email.isEmpty()) return@let
         _message.update {
             EmployeeProfileMessageState.EmailConfirmation(email) {
@@ -167,7 +142,7 @@ class EmployeeProfileViewModel(
     private fun onClickChangeImage() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.employee?.let { employee ->
+        profileCache?.user?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.ImageUploadScreen(userId = employee.userId)
             }
@@ -177,7 +152,7 @@ class EmployeeProfileViewModel(
     private fun onClickEditBio() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.employee?.let { employee ->
+        profileCache?.user?.let { employee ->
             _message.update {
                 EmployeeProfileMessageState.InputBio(employee.bio.orEmpty(), ::changeBio)
             }
@@ -187,7 +162,7 @@ class EmployeeProfileViewModel(
     private fun onClickEdit() {
         if (profileCache?.isSignedIn != true) return
 
-        profileCache?.employee?.let { employee ->
+        profileCache?.user?.let { employee ->
             _navigation.update {
                 EmployeeProfileNavigationState.EmployeeProfileEditScreen(userId = employee.userId)
             }

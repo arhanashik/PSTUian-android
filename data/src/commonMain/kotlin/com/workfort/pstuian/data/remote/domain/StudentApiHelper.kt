@@ -11,14 +11,13 @@ interface StudentApiHelper {
 
     suspend fun changeProfileImage(imageUrl: String): NetworkResult<Unit>
 
-    suspend fun changeName(authUserId: String, name: String): NetworkResult<Unit>
+    suspend fun changeName(name: String): NetworkResult<Unit>
 
-    suspend fun changeBio(authUserId: String, bio: String): NetworkResult<Unit>
+    suspend fun changeBio(bio: String): NetworkResult<Unit>
 
     suspend fun changeCvUrl(fileUrl: String): NetworkResult<Unit>
 
     suspend fun changeAcademicInfo(
-        authUserId: String,
         name: String,
         studentOldId: Int,
         studentId: Int,
@@ -30,7 +29,6 @@ interface StudentApiHelper {
     ): NetworkResult<StudentDto>
 
     suspend fun changeConnectInfo(
-        authUserId: String,
         address: String,
         phone: String,
         oldEmail: String,

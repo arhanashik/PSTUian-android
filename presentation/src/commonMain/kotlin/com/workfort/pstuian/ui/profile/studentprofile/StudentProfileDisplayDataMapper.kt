@@ -10,58 +10,58 @@ class StudentProfileDisplayDataMapper {
 
     fun mapHeaderData(profile: UserProfile.StudentProfile): ProfileHeaderDisplayData {
         return ProfileHeaderDisplayData(
-            imageUrl = profile.student.imageUrl,
-            name = profile.student.name,
+            imageUrl = profile.user.imageUrl,
+            name = profile.user.name,
             infoItem1 = profile.faculty.title,
-            infoItem2 = "${profile.batch.title} - ${profile.student.session}",
-            bio = profile.student.bio,
+            infoItem2 = "${profile.batch.title} - ${profile.user.session}",
+            bio = profile.user.bio,
         )
     }
 
     fun mapAcademicContents(profile: UserProfile.StudentProfile): List<ProfileInfoItem> {
         return listOf(
-            ProfileInfoItem("Name", profile.student.name),
-            ProfileInfoItem("Id", profile.student.userId.toString()),
-            ProfileInfoItem("Registration Number", profile.student.reg),
-            ProfileInfoItem("Blood Group", profile.student.blood ?: "~"),
+            ProfileInfoItem("Name", profile.user.name),
+            ProfileInfoItem("Id", profile.user.userId.toString()),
+            ProfileInfoItem("Registration Number", profile.user.reg),
+            ProfileInfoItem("Blood Group", profile.user.blood ?: "~"),
             ProfileInfoItem("Faculty", profile.faculty.title),
             ProfileInfoItem("Batch", profile.batch.name),
-            ProfileInfoItem("Session", profile.student.session),
+            ProfileInfoItem("Session", profile.user.session),
         )
     }
 
     fun mapConnectContents(profile: UserProfile.StudentProfile): List<ProfileInfoItem> {
         return listOf(
-            ProfileInfoItem("Address", profile.student.address ?: "~"),
+            ProfileInfoItem("Address", profile.user.address ?: "~"),
             ProfileInfoItem(
                 "Phone",
-                profile.student.phone ?: "~",
-                if (profile.student.phone.isNullOrEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.Call(profile.student.phone.orEmpty()),
+                profile.user.phone ?: "~",
+                if (profile.user.phone.isNullOrEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.Call(profile.user.phone.orEmpty()),
             ),
             ProfileInfoItem(
                 "Email",
-                profile.student.email,
-                if (profile.student.email.isEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.Email(profile.student.email),
+                profile.user.email,
+                if (profile.user.email.isEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.Email(profile.user.email),
             ),
             ProfileInfoItem(
                 "CV",
-                profile.student.cvLink ?: "~",
-                if (profile.student.cvLink.isNullOrEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.DownloadCv(profile.student.cvLink.orEmpty()),
+                profile.user.cvLink ?: "~",
+                if (profile.user.cvLink.isNullOrEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.DownloadCv(profile.user.cvLink.orEmpty()),
             ),
             ProfileInfoItem(
                 "LinkedIn",
-                profile.student.linkedIn ?: "~",
-                if (profile.student.linkedIn.isNullOrEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.Link(profile.student.linkedIn.orEmpty()),
+                profile.user.linkedIn ?: "~",
+                if (profile.user.linkedIn.isNullOrEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.Link(profile.user.linkedIn.orEmpty()),
             ),
             ProfileInfoItem(
                 "Facebook",
-                profile.student.fbLink ?: "~",
-                if (profile.student.fbLink.isNullOrEmpty()) ProfileInfoItemAction.None
-                else ProfileInfoItemAction.Link(profile.student.fbLink.orEmpty()),
+                profile.user.fbLink ?: "~",
+                if (profile.user.fbLink.isNullOrEmpty()) ProfileInfoItemAction.None
+                else ProfileInfoItemAction.Link(profile.user.fbLink.orEmpty()),
             ),
         )
     }

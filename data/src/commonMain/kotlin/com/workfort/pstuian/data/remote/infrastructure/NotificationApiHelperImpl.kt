@@ -9,12 +9,11 @@ class NotificationApiHelperImpl(
 ) : NotificationApiHelper {
 
     override suspend fun getAll(
-        userId: String,
         userType: String,
         page: Int,
         limit: Int,
     ): List<NotificationDto> {
-        val response = service.getAll(userId, userType, page, limit)
+        val response = service.getAll(userType, page, limit)
         return response.data?: emptyList()
     }
 }

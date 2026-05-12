@@ -82,12 +82,12 @@ object NetworkConst {
 
     object Remote {
         const val PSTU_WEBSITE = "https://www.pstu.ac.bd/"
-        private const val LOCAL_SERVER = "http://192.168.1.3:8888/pstuian-api/"
+        private const val LOCAL_SERVER = "http://192.168.1.3:8888/pstuian/"
         const val DEV_SERVER = "https://dev.pstuian.com/"
         const val LIVE_SERVER = "https://pstuian.com/"
-        const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/v2/"
-        const val DEV_API_SERVER = "https://api-dev.pstuian.com/v2/"
-        const val PROD_API_SERVER = "https://api.pstuian.com/v2/"
+        const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/v1/"
+        const val DEV_API_SERVER = "https://api-dev.pstuian.com/v1/"
+        const val PROD_API_SERVER = "https://api.pstuian.com/v1/"
 
         private const val CONFIG_API_PATH = "config.php?call="
         private const val DEVICE_API_PATH = "device.php?call="
@@ -122,7 +122,6 @@ object NetworkConst {
                 const val VALIDATE_SIGN_IN = "${AUTH_API_PATH}signIn"
                 const val SIGN_UP_STUDENT = "${AUTH_API_PATH}signUpStudent"
                 const val SIGN_UP_TEACHER = "${AUTH_API_PATH}signUpTeacher"
-                const val UPDATE_AUTH_USER_ID = "${AUTH_API_PATH}updateAuthUserId"
                 const val SIGN_OUT = "${AUTH_API_PATH}signOut"
                 const val SIGN_OUT_FROM_ALL_DEVICE = "${AUTH_API_PATH}signOutFromAllDevice"
                 const val CHANGE_PASSWORD = "${AUTH_API_PATH}changePassword"

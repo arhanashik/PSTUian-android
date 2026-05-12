@@ -6,8 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StudentDto(
-    @SerialName("auth_user_id")
-    val authUserId: String,
     @SerialName("id")
     val userId: Int,
     val name: String,
@@ -33,7 +31,6 @@ data class StudentDto(
 ) {
 
     fun toModel() = User.Student(
-        authUserId = authUserId,
         userId = userId,
         name = name,
         email = email,
@@ -53,7 +50,6 @@ data class StudentDto(
 }
 
 fun User.Student.toDto() = StudentDto(
-    authUserId = authUserId,
     userId = userId,
     name = name,
     email = email,
