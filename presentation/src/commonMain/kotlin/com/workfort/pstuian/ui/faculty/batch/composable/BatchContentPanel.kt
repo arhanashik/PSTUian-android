@@ -13,16 +13,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,19 +44,12 @@ internal fun BatchContentPanel(
         }
 
         if (uiState.batches.isEmpty()) {
-            BatchPullToRefreshBox(
-                isContentLoading = uiState.isLoading,
-                onRefresh = { onUiEvent(BatchUiEvent.Refresh) },
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    AnimatedEmptyView()
-                }
+                AnimatedEmptyView()
             }
         } else {
             BatchListView(
@@ -69,28 +58,6 @@ internal fun BatchContentPanel(
                 onUiEvent = onUiEvent,
             )
         }
-    }
-}
-
-@Composable
-private fun BatchPullToRefreshBox(
-    isContentLoading: Boolean,
-    onRefresh: () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    var refreshFromPull by remember { mutableStateOf(false) }
-    LaunchedEffect(isContentLoading) {
-        if (!isContentLoading) refreshFromPull = false
-    }
-    PullToRefreshBox(
-        modifier = Modifier.fillMaxSize(),
-        isRefreshing = isContentLoading && refreshFromPull,
-        onRefresh = {
-            refreshFromPull = true
-            onRefresh()
-        },
-    ) {
-        content()
     }
 }
 
@@ -120,22 +87,17 @@ private fun BatchListView(
         }
     }
 
-    BatchPullToRefreshBox(
-        isContentLoading = isContentLoading,
-        onRefresh = { onUiEvent(BatchUiEvent.Refresh) },
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            items(batches) { batch ->
-                BatchListItemView(batch) { onUiEvent(BatchUiEvent.BatchClicked(batch)) }
-            }
-            if (isContentLoading) {
-                item { BatchListItemShimmer() }
-            }
+        items(batches) { batch ->
+            BatchListItemView(batch) { onUiEvent(BatchUiEvent.BatchClicked(batch)) }
+        }
+        if (isContentLoading) {
+            item { BatchListItemShimmer() }
         }
     }
 }

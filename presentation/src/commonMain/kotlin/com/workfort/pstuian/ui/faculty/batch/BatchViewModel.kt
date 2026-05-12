@@ -31,12 +31,11 @@ class BatchViewModel(
     private var hasMoreData = true
 
     override fun onUiReady() {
-        loadData()
+        getBatches(forceRefresh = true)
     }
 
     fun onUiEvent(event: BatchUiEvent) {
         when (event) {
-            is BatchUiEvent.Refresh -> getBatches(forceRefresh = true)
             is BatchUiEvent.LoadMore -> getBatches(forceRefresh = false)
             is BatchUiEvent.BatchClicked -> onClickBatch(event.batch)
         }
@@ -46,11 +45,6 @@ class BatchViewModel(
 
     private fun onClickBatch(batch: Batch) {
         _navigation.update { BatchNavigationState.GoToStudents(batch.id) }
-    }
-
-    private fun loadData() {
-        uiStateMachine.showInitialContent()
-        getBatches(forceRefresh = false)
     }
 
     private fun getBatches(forceRefresh: Boolean) {

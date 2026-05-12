@@ -13,19 +13,11 @@ class BatchUiStateMachine : UiStateMachine<BatchUiState> {
     private val _uiState = MutableStateFlow<BatchUiState>(BatchUiState.None)
     override val uiState: StateFlow<BatchUiState> = _uiState.asStateFlow()
 
-    fun showInitialContent() {
-        _uiState.update { BatchUiState.Content() }
-    }
-
-    fun showOperationLoading() {
-        _uiState.update { BatchUiState.Loading }
-    }
-
     fun showContentLoading(isLoading: Boolean) {
         _uiState.update { current ->
             when (current) {
                 is BatchUiState.Content -> current.copy(isLoading = isLoading)
-                else -> current
+                else -> BatchUiState.Content(isLoading = isLoading)
             }
         }
     }
