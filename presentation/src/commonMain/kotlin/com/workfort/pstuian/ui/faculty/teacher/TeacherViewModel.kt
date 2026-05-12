@@ -35,7 +35,7 @@ class TeacherViewModel(
     private var hasMoreData = true
 
     override fun onUiReady() {
-        getTeachers(forceRefresh = false)
+        getTeachers(forceRefresh = true)
     }
 
     fun onUiEvent(event: TeacherUiEvent) {
@@ -73,23 +73,21 @@ class TeacherViewModel(
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showContentLoading(isLoading = true)
-            facultyRepo.getTeachers(facultyId, currentPage, forceRefresh)
-                .onSuccess { teachers ->
-                    if (teachers.isEmpty()) {
-                        hasMoreData = false
-                    } else {
-                        currentPage++
-                    }
-                    teacherListCache.addAll(teachers)
-                    uiStateMachine.showTeachers(teacherListCache.toList())
+            facultyRepo.getTeachers(facultyId, currentPage, forceRefresh).onSuccess { teachers ->
+                if (teachers.isEmpty()) {
+                    hasMoreData = false
+                } else {
+                    currentPage++
                 }
-                .onFailure {
-                    uiStateMachine.showContentLoading(isLoading = false)
-                    if (teacherListCache.isEmpty()) {
-                        val message = it.message ?: "Failed to load teachers"
-                        uiStateMachine.showError(message)
-                    }
+                teacherListCache.addAll(teachers)
+                uiStateMachine.showTeachers(teacherListCache.toList())
+            }.onFailure {
+                uiStateMachine.showContentLoading(isLoading = false)
+                if (teacherListCache.isEmpty()) {
+                    val message = it.message ?: "Failed to load teachers"
+                    uiStateMachine.showError(message)
                 }
+            }
         }
     }
 }

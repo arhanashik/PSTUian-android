@@ -35,7 +35,7 @@ class EmployeeViewModel(
     private var hasMoreData = true
 
     override fun onUiReady() {
-        getEmployees(forceRefresh = false)
+        getEmployees(forceRefresh = true)
     }
 
     fun onUiEvent(event: EmployeeUiEvent) {
@@ -73,23 +73,21 @@ class EmployeeViewModel(
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showContentLoading(isLoading = true)
-            facultyRepo.getEmployees(facultyId, currentPage, forceRefresh)
-                .onSuccess { employees ->
-                    if (employees.isEmpty()) {
-                        hasMoreData = false
-                    } else {
-                        currentPage++
-                    }
-                    employeeListCache.addAll(employees)
-                    uiStateMachine.showEmployees(employeeListCache.toList())
+            facultyRepo.getEmployees(facultyId, currentPage, forceRefresh).onSuccess { employees ->
+                if (employees.isEmpty()) {
+                    hasMoreData = false
+                } else {
+                    currentPage++
                 }
-                .onFailure {
-                    uiStateMachine.showContentLoading(isLoading = false)
-                    if (employeeListCache.isEmpty()) {
-                        val message = it.message ?: "Failed to load employees"
-                        uiStateMachine.showError(message)
-                    }
+                employeeListCache.addAll(employees)
+                uiStateMachine.showEmployees(employeeListCache.toList())
+            }.onFailure {
+                uiStateMachine.showContentLoading(isLoading = false)
+                if (employeeListCache.isEmpty()) {
+                    val message = it.message ?: "Failed to load employees"
+                    uiStateMachine.showError(message)
                 }
+            }
         }
     }
 }

@@ -58,23 +58,21 @@ class BatchViewModel(
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showContentLoading(isLoading = true)
-            facultyRepo.getBatches(facultyId, currentPage, forceRefresh)
-                .onSuccess { batches ->
-                    if (batches.isEmpty()) {
-                        hasMoreData = false
-                    } else {
-                        currentPage++
-                    }
-                    batchListCache.addAll(batches)
-                    uiStateMachine.showBatches(batchListCache.toList())
+            facultyRepo.getBatches(facultyId, currentPage, forceRefresh).onSuccess { batches ->
+                if (batches.isEmpty()) {
+                    hasMoreData = false
+                } else {
+                    currentPage++
                 }
-                .onFailure {
-                    uiStateMachine.showContentLoading(isLoading = false)
-                    if (batchListCache.isEmpty()) {
-                        val message = it.message ?: "Failed to load batches"
-                        uiStateMachine.showError(message)
-                    }
+                batchListCache.addAll(batches)
+                uiStateMachine.showBatches(batchListCache.toList())
+            }.onFailure {
+                uiStateMachine.showContentLoading(isLoading = false)
+                if (batchListCache.isEmpty()) {
+                    val message = it.message ?: "Failed to load batches"
+                    uiStateMachine.showError(message)
                 }
+            }
         }
     }
 }

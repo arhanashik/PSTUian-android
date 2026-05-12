@@ -23,7 +23,7 @@ class CourseViewModel(
     private var hasMoreData = true
 
     override fun onUiReady() {
-        getCourses(forceRefresh = false)
+        getCourses(forceRefresh = true)
     }
 
     fun onUiEvent(event: CourseUiEvent) {
@@ -44,23 +44,21 @@ class CourseViewModel(
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showContentLoading(isLoading = true)
-            facultyRepo.getCourses(facultyId, currentPage, forceRefresh)
-                .onSuccess { courses ->
-                    if (courses.isEmpty()) {
-                        hasMoreData = false
-                    } else {
-                        currentPage++
-                    }
-                    courseListCache.addAll(courses)
-                    uiStateMachine.showCourses(courseListCache.toList())
+            facultyRepo.getCourses(facultyId, currentPage, forceRefresh).onSuccess { courses ->
+                if (courses.isEmpty()) {
+                    hasMoreData = false
+                } else {
+                    currentPage++
                 }
-                .onFailure {
-                    uiStateMachine.showContentLoading(isLoading = false)
-                    if (courseListCache.isEmpty()) {
-                        val message = it.message ?: "Failed to load courses"
-                        uiStateMachine.showError(message)
-                    }
+                courseListCache.addAll(courses)
+                uiStateMachine.showCourses(courseListCache.toList())
+            }.onFailure {
+                uiStateMachine.showContentLoading(isLoading = false)
+                if (courseListCache.isEmpty()) {
+                    val message = it.message ?: "Failed to load courses"
+                    uiStateMachine.showError(message)
                 }
+            }
         }
     }
 }
