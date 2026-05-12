@@ -45,10 +45,10 @@ class FacultyViewModel(
     fun onNavigationConsumed() = _navigation.update { null }
 
     private fun setInitialContent() {
-        uiStateMachine.showLoadingOverlay(true)
+        uiStateMachine.showLoadingOverlay()
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             facultyRepo.getFaculty(facultyId).onSuccess { faculty ->
-                uiStateMachine.setInitialContent(
+                uiStateMachine.setContent(
                     facultyId = facultyId,
                     title = faculty.title,
                     tabs = listOf("Batch", "Teacher", "Course", "Employee"),

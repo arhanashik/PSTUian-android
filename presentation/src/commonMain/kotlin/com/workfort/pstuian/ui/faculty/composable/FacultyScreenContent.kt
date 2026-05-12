@@ -20,7 +20,7 @@ internal fun FacultyScreenContent(
     AppScaffold(
         topBar = {
             AppBar(
-                title = uiState.title,
+                title = (uiState as? FacultyUiState.Content)?.title,
                 navigation = {
                     NavigationButton { onUiEvent(FacultyUiEvent.BackClicked) }
                 },
@@ -29,22 +29,15 @@ internal fun FacultyScreenContent(
     ) {
         when (uiState) {
             is FacultyUiState.None -> Unit
+            is FacultyUiState.Loading -> FacultyScreenShimmer()
             is FacultyUiState.Content -> FacultyContentPanel(uiState, onUiEvent)
-        }
-
-        if (uiState.showOperationLoading) {
-            FacultyScreenShimmer()
         }
     }
 }
 
-private fun mockUiState(
-    selectedTab: Int = 0,
-    showLoadingOverlay: Boolean = false,
-): FacultyUiState.Content {
+private fun mockUiState(selectedTab: Int = 0): FacultyUiState.Content {
     return FacultyUiState.Content(
         title = "Faculty of CSE",
-        showOperationLoading = showLoadingOverlay,
         facultyId = 1,
         tabs = listOf("Batch", "Teacher", "Course", "Employee"),
         selectedTab = selectedTab,
@@ -83,23 +76,12 @@ fun FacultyScreenContentEmployeePreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Overlay Loading")
-@Composable
-fun FacultyScreenContentLoadingOverlayPreview() {
-    AppTheme {
-        FacultyScreenContent(
-            uiState = mockUiState(showLoadingOverlay = true),
-            onUiEvent = {},
-        )
-    }
-}
-
 @Preview(showBackground = true, name = "Initial None")
 @Composable
 fun FacultyScreenContentNonePreview() {
     AppTheme {
         FacultyScreenContent(
-            uiState = FacultyUiState.None(showOperationLoading = true),
+            uiState = FacultyUiState.None,
             onUiEvent = {},
         )
     }
@@ -110,7 +92,7 @@ fun FacultyScreenContentNonePreview() {
 fun FacultyScreenContentScreenShimmerPreview() {
     AppTheme {
         FacultyScreenContent(
-            uiState = FacultyUiState.None(),
+            uiState = FacultyUiState.Loading,
             onUiEvent = {},
         )
     }
