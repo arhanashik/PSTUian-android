@@ -1,7 +1,5 @@
 package com.workfort.pstuian.ui.faculty
 
-import com.workfort.pstuian.featuredomain.model.Course
-import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
 import com.workfort.pstuian.ui.faculty.state.FacultyUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,51 +41,6 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
         _uiState.update { current ->
             when (current) {
                 is FacultyUiState.Content -> current.copy(selectedTab = index)
-                else -> current
-            }
-        }
-    }
-
-    fun updateTeacherList(
-        isLoading: Boolean = false,
-        teachers: List<User.Teacher> = emptyList(),
-        error: String? = null,
-    ) {
-        _uiState.update { current ->
-            when (current) {
-                is FacultyUiState.Content -> current.copy(
-                    teacherListState = FacultyUiState.TeacherListState(isLoading, teachers, error),
-                )
-                else -> current
-            }
-        }
-    }
-
-    fun updateCourseList(
-        isLoading: Boolean = false,
-        courses: List<Course> = emptyList(),
-        error: String? = null,
-    ) {
-        _uiState.update { current ->
-            when (current) {
-                is FacultyUiState.Content -> current.copy(
-                    courseListState = FacultyUiState.CourseListState(isLoading, courses, error),
-                )
-                else -> current
-            }
-        }
-    }
-
-    fun updateEmployeeList(
-        isLoading: Boolean = false,
-        employees: List<User.Employee> = emptyList(),
-        error: String? = null,
-    ) {
-        _uiState.update { current ->
-            when (current) {
-                is FacultyUiState.Content -> current.copy(
-                    employeeListState = FacultyUiState.EmployeeListState(isLoading, employees, error),
-                )
                 else -> current
             }
         }

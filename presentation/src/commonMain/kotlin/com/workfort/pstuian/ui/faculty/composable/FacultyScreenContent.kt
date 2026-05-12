@@ -3,9 +3,7 @@ package com.workfort.pstuian.ui.faculty.composable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.ThemeMode
-import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AppBar
 import com.workfort.pstuian.ui.common.composable.AppScaffold
 import com.workfort.pstuian.ui.common.composable.NavigationButton
@@ -40,58 +38,9 @@ internal fun FacultyScreenContent(
     }
 }
 
-private fun mockTeachers() = listOf(
-    User.Teacher(
-        name = "Dr. Farhan Ahmed",
-        email = "farhan.ahmed@pstu.ac.bd",
-        facultyId = 1,
-        phone = "+8801711000001",
-        address = "Patuakhali",
-        bio = null,
-        blood = "A+",
-        imageUrl = null,
-        userId = 11,
-        designation = "Professor",
-        linkedIn = null,
-        fbLink = null,
-        department = "CSE",
-        description = "Data science researcher",
-    ),
-)
-
-private fun mockCourses() = listOf(
-    Course(
-        id = 101,
-        courseCode = "CSE-311",
-        courseTitle = "Operating Systems",
-        creditHour = "3.0",
-        facultyId = 1,
-        status = 1,
-    ),
-)
-
-private fun mockEmployees() = listOf(
-    User.Employee(
-        name = "Mizanur Rahman",
-        email = "mizanur@pstu.ac.bd",
-        facultyId = 1,
-        phone = "+8801711000002",
-        address = "Patuakhali",
-        bio = null,
-        blood = "B+",
-        imageUrl = null,
-        userId = 7,
-        designation = "Office Assistant",
-        department = "Admin",
-    ),
-)
-
 private fun mockUiState(
     selectedTab: Int = 0,
     showLoadingOverlay: Boolean = false,
-    showTeacherShimmer: Boolean = false,
-    showCourseShimmer: Boolean = false,
-    showEmployeeShimmer: Boolean = false,
 ): FacultyUiState.Content {
     return FacultyUiState.Content(
         title = "Faculty of CSE",
@@ -99,21 +48,6 @@ private fun mockUiState(
         facultyId = 1,
         tabs = listOf("Batch", "Teacher", "Course", "Employee"),
         selectedTab = selectedTab,
-        teacherListState = FacultyUiState.TeacherListState(
-            isLoading = showTeacherShimmer,
-            teachers = if (showTeacherShimmer) emptyList() else mockTeachers(),
-            error = null,
-        ),
-        courseListState = FacultyUiState.CourseListState(
-            isLoading = showCourseShimmer,
-            courses = if (showCourseShimmer) emptyList() else mockCourses(),
-            error = null,
-        ),
-        employeeListState = FacultyUiState.EmployeeListState(
-            isLoading = showEmployeeShimmer,
-            employees = if (showEmployeeShimmer) emptyList() else mockEmployees(),
-            error = null,
-        ),
     )
 }
 
@@ -177,39 +111,6 @@ fun FacultyScreenContentScreenShimmerPreview() {
     AppTheme {
         FacultyScreenContent(
             uiState = FacultyUiState.None(),
-            onUiEvent = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Teacher List Shimmer")
-@Composable
-fun FacultyScreenContentTeacherShimmerPreview() {
-    AppTheme {
-        FacultyScreenContent(
-            uiState = mockUiState(selectedTab = 1, showTeacherShimmer = true),
-            onUiEvent = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Course List Shimmer")
-@Composable
-fun FacultyScreenContentCourseShimmerPreview() {
-    AppTheme {
-        FacultyScreenContent(
-            uiState = mockUiState(selectedTab = 2, showCourseShimmer = true),
-            onUiEvent = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Employee List Shimmer")
-@Composable
-fun FacultyScreenContentEmployeeShimmerPreview() {
-    AppTheme {
-        FacultyScreenContent(
-            uiState = mockUiState(selectedTab = 3, showEmployeeShimmer = true),
             onUiEvent = {},
         )
     }

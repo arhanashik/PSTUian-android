@@ -36,6 +36,12 @@ import com.workfort.pstuian.ui.faculty.FacultyUiStateMachine
 import com.workfort.pstuian.ui.faculty.FacultyViewModel
 import com.workfort.pstuian.ui.faculty.batch.BatchUiStateMachine
 import com.workfort.pstuian.ui.faculty.batch.BatchViewModel
+import com.workfort.pstuian.ui.faculty.course.CourseUiStateMachine
+import com.workfort.pstuian.ui.faculty.course.CourseViewModel
+import com.workfort.pstuian.ui.faculty.employee.EmployeeUiStateMachine
+import com.workfort.pstuian.ui.faculty.employee.EmployeeViewModel
+import com.workfort.pstuian.ui.faculty.teacher.TeacherUiStateMachine
+import com.workfort.pstuian.ui.faculty.teacher.TeacherViewModel
 import com.workfort.pstuian.ui.home.HomeUiStateMachine
 import com.workfort.pstuian.ui.home.HomeViewModel
 import com.workfort.pstuian.ui.imageupload.ImageUploadUiStateMachine
@@ -182,9 +188,20 @@ private val donateModule = module {
 }
 
 private val facultyModule = module {
-    factoryOf(::BatchUiStateMachine)
     factoryOf(::FacultyUiStateMachine)
+    factoryOf(::BatchUiStateMachine)
+    factoryOf(::TeacherUiStateMachine)
+    factoryOf(::CourseUiStateMachine)
+    factoryOf(::EmployeeUiStateMachine)
 
+    factory { (facultyId: Int) ->
+        FacultyViewModel(
+            facultyId = facultyId,
+            facultyRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
     factory { (facultyId: Int) ->
         BatchViewModel(
             facultyId = facultyId,
@@ -194,7 +211,23 @@ private val facultyModule = module {
         )
     }
     factory { (facultyId: Int) ->
-        FacultyViewModel(
+        TeacherViewModel(
+            facultyId = facultyId,
+            facultyRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
+    factory { (facultyId: Int) ->
+        CourseViewModel(
+            facultyId = facultyId,
+            facultyRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
+    factory { (facultyId: Int) ->
+        EmployeeViewModel(
             facultyId = facultyId,
             facultyRepo = get(),
             uiStateMachine = get(),

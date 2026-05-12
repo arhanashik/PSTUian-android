@@ -1,8 +1,5 @@
 package com.workfort.pstuian.ui.faculty.state
 
-import com.workfort.pstuian.featuredomain.model.Course
-import com.workfort.pstuian.featuredomain.model.User
-
 sealed interface FacultyUiState {
 
     val title: String
@@ -19,26 +16,5 @@ sealed interface FacultyUiState {
         val facultyId: Int,
         val tabs: List<String> = mutableListOf(),
         val selectedTab: Int = 0,
-        val teacherListState: TeacherListState = TeacherListState(),
-        val courseListState: CourseListState = CourseListState(),
-        val employeeListState: EmployeeListState = EmployeeListState(),
     ) : FacultyUiState
-
-    data class TeacherListState(
-        val isLoading: Boolean = false,
-        val teachers: List<User.Teacher> = emptyList(),
-        val error: String? = null,
-    )
-
-    data class CourseListState(
-        val isLoading: Boolean = false,
-        val courses: List<Course> = emptyList(),
-        val error: String? = null,
-    )
-
-    data class EmployeeListState(
-        val isLoading: Boolean = false,
-        val employees: List<User.Employee> = emptyList(),
-        val error: String? = null,
-    )
 }
