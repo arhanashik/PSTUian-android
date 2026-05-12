@@ -7,12 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalUriHandler
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.common.composable.bottomsheet.ShowSignOutBottomSheet
 import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
 import com.workfort.pstuian.ui.common.composable.dialog.ShowInputDialog
 import com.workfort.pstuian.ui.common.composable.dialog.ShowLoaderDialog
-import com.workfort.pstuian.ui.common.composable.bottomsheet.ShowSignOutBottomSheet
 import com.workfort.pstuian.ui.common.composable.dialog.ShowSuccessDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
 import com.workfort.pstuian.ui.common.navigation.AppScreen
@@ -136,6 +137,7 @@ private fun HandleNavigationState(
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(key1 = navigation) {
         navigation?.let {
@@ -144,6 +146,9 @@ private fun HandleNavigationState(
                 is TeacherProfileNavigationState.ResetToHome -> navigator?.resetTo(AppScreen.Home)
                 is TeacherProfileNavigationState.ImagePreviewScreen -> {
                     navigator?.navigateToImagePreview(it.encodedImageUrl)
+                }
+                is TeacherProfileNavigationState.OpenUrl -> {
+                    uriHandler.openUri(it.url)
                 }
                 is TeacherProfileNavigationState.ImageUploadScreen -> {
                     navigator?.navigateTo(AppScreen.ImageUpload(it.userId, UserType.TEACHER))

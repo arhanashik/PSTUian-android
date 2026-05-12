@@ -66,11 +66,11 @@ class StudentProfileViewModel(
             is ProfileUiEvent.BackClicked -> _navigation.update { StudentProfileNavigationState.GoBack }
             is ProfileUiEvent.FollowClicked -> onClickFollow()
             is ProfileUiEvent.ImageClicked -> onClickImage(event.url)
+            is ProfileUiEvent.LinkClicked -> onClickLink(event.url)
             is ProfileUiEvent.CallClicked -> onClickCall()
             is ProfileUiEvent.EmailClicked -> onClickEmail()
             is ProfileUiEvent.SignOutClicked -> onClickSignOut()
             is ProfileUiEvent.TabClicked -> onClickTab(event.index)
-            is ProfileUiEvent.RefreshClicked -> onClickRefresh()
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
             is ProfileUiEvent.EditClicked -> onClickEdit()
@@ -140,6 +140,10 @@ class StudentProfileViewModel(
         _navigation.update { StudentProfileNavigationState.ImagePreviewScreen(url) }
     }
 
+    private fun onClickLink(url: String) {
+        _navigation.update { StudentProfileNavigationState.OpenUrl(url) }
+    }
+
     private fun onClickCall() = profileCache?.user?.phone?.let { phoneNumber ->
         _message.update {
             StudentProfileMessageState.CallConfirmation(phoneNumber) {
@@ -169,8 +173,6 @@ class StudentProfileViewModel(
     private fun onClickTab(index: Int) {
         uiStateMachine.updateSelectedTab(index)
     }
-
-    private fun onClickRefresh() = loadProfile()
 
     private fun onClickChangeImage() {
         if (profileCache?.isSignedIn != true) return

@@ -50,11 +50,11 @@ class EmployeeProfileViewModel(
             is ProfileUiEvent.BackClicked -> _navigation.update { EmployeeProfileNavigationState.GoBack }
             is ProfileUiEvent.FollowClicked -> onClickFollow()
             is ProfileUiEvent.ImageClicked -> onClickImage(event.url)
+            is ProfileUiEvent.LinkClicked -> onClickLink(event.url)
             is ProfileUiEvent.CallClicked -> onClickCall()
             is ProfileUiEvent.EmailClicked -> onClickEmail()
             is ProfileUiEvent.SignOutClicked -> onClickSignOut()
             is ProfileUiEvent.TabClicked -> onClickTab(event.index)
-            is ProfileUiEvent.RefreshClicked -> onClickRefresh()
             is ProfileUiEvent.ChangeImageClicked -> onClickChangeImage()
             is ProfileUiEvent.EditBioClicked -> onClickEditBio()
             is ProfileUiEvent.EditClicked -> onClickEdit()
@@ -109,6 +109,10 @@ class EmployeeProfileViewModel(
         _navigation.update { EmployeeProfileNavigationState.ImagePreviewScreen(url) }
     }
 
+    private fun onClickLink(url: String) {
+        _navigation.update { EmployeeProfileNavigationState.OpenUrl(url) }
+    }
+
     private fun onClickCall() = profileCache?.user?.phone?.let { phoneNumber ->
         if (phoneNumber.isNotEmpty()) {
             _message.update {
@@ -136,8 +140,6 @@ class EmployeeProfileViewModel(
     private fun onClickTab(index: Int) {
         uiStateMachine.updateSelectedTab(index)
     }
-
-    private fun onClickRefresh() = loadProfile()
 
     private fun onClickChangeImage() {
         if (profileCache?.isSignedIn != true) return

@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalUriHandler
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.AppSnackbarHost
 import com.workfort.pstuian.ui.common.composable.HandleSnackbar
@@ -178,6 +179,7 @@ private fun HandleNavigationState(
     onNavigationHandled: () -> Unit,
 ) {
     val navigator = koinInject<AppNavigator?>()
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(key1 = navigation) {
         navigation?.let {
@@ -186,6 +188,9 @@ private fun HandleNavigationState(
                 is StudentProfileNavigationState.ResetToHome -> navigator?.resetTo(AppScreen.Home)
                 is StudentProfileNavigationState.ImagePreviewScreen -> {
                     navigator?.navigateToImagePreview(it.encodedImageUrl)
+                }
+                is StudentProfileNavigationState.OpenUrl -> {
+                    uriHandler.openUri(it.url)
                 }
                 is StudentProfileNavigationState.ImageUploadScreen -> {
                     navigator?.navigateTo(AppScreen.ImageUpload(it.userId, UserType.STUDENT))

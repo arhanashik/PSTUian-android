@@ -239,7 +239,7 @@ private fun handleProfileInfoItemAction(
         is ProfileInfoItemAction.Call -> onUiEvent(ProfileUiEvent.CallClicked)
         is ProfileInfoItemAction.Email -> onUiEvent(ProfileUiEvent.EmailClicked)
         is ProfileInfoItemAction.DownloadCv -> onUiEvent(ProfileUiEvent.DownloadCvClicked(action.url))
-        is ProfileInfoItemAction.Link -> onUiEvent(ProfileUiEvent.ImageClicked(action.url))
+        is ProfileInfoItemAction.Link -> onUiEvent(ProfileUiEvent.LinkClicked(action.url))
         is ProfileInfoItemAction.Password -> onUiEvent(ProfileUiEvent.ChangePasswordClicked)
         is ProfileInfoItemAction.UploadCv -> onUiEvent(ProfileUiEvent.UploadCvClicked)
         is ProfileInfoItemAction.BloodDonationList -> onUiEvent(ProfileUiEvent.BloodDonationHistoryClicked)
