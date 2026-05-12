@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
-import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.onFailure
@@ -32,9 +31,16 @@ class FacultyViewModel(
     private val _navigation = MutableStateFlow<FacultyNavigationState?>(null)
     val navigation: StateFlow<FacultyNavigationState?> = _navigation.asStateFlow()
 
-    private val batchListCache = arrayListOf<Batch>()
+    private var currentTeacherDataPage = 1
+    private var hasMoreTeacherData = true
     private val teacherListCache = arrayListOf<User.Teacher>()
+
+    private var currentCourseDataPage = 1
+    private var hasMoreCourseData = true
     private val courseListCache = arrayListOf<Course>()
+
+    private var currentEmployeeDataPage = 1
+    private var hasMoreEmployeeData = true
     private val employeeListCache = arrayListOf<User.Employee>()
 
     override fun onUiReady() {
@@ -45,7 +51,6 @@ class FacultyViewModel(
         when (event) {
             is FacultyUiEvent.BackClicked -> _navigation.update { FacultyNavigationState.GoBack }
             is FacultyUiEvent.SelectTab -> uiStateMachine.selectTab(event.index)
-            is FacultyUiEvent.BatchClicked -> onClickBatch(event.batch)
             is FacultyUiEvent.TeacherClicked -> onClickTeacher(event.teacher)
             is FacultyUiEvent.CourseClicked -> Unit
             is FacultyUiEvent.EmployeeClicked -> onClickEmployee(event.employee)
@@ -56,10 +61,6 @@ class FacultyViewModel(
     fun onMessageHandled() = _message.update { null }
 
     fun onNavigationConsumed() = _navigation.update { null }
-
-    private fun onClickBatch(batch: Batch) {
-        _navigation.update { FacultyNavigationState.GoToStudentsScreen(batch.id) }
-    }
 
     private fun onClickTeacher(teacher: User.Teacher) {
         _navigation.update { FacultyNavigationState.GoToTeacherProfileScreen(teacher.userId) }
@@ -83,11 +84,11 @@ class FacultyViewModel(
             facultyRepo.getFaculty(facultyId)
                 .onSuccess { faculty ->
                     uiStateMachine.setInitialContent(
+                        facultyId = facultyId,
                         title = faculty.title,
                         tabs = listOf("Batch", "Teacher", "Course", "Employee"),
                         selectedTab = 0,
                     )
-                    getBatches(facultyId)
                     getTeachers(facultyId)
                     getCourses(facultyId)
                     getEmployees(facultyId)
@@ -103,29 +104,25 @@ class FacultyViewModel(
         }
     }
 
-    private fun getBatches(facultyId: Int) {
-        viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-            uiStateMachine.updateBatchList(isLoading = true)
-            facultyRepo.getBatches(facultyId)
-                .onSuccess {
-                    batchListCache.clear()
-                    batchListCache.addAll(it)
-                    uiStateMachine.updateBatchList(batches = batchListCache)
-                }
-                .onFailure {
-                    val message = it.message ?: "Failed to load data"
-                    uiStateMachine.updateBatchList(error = message)
-                }
+    private fun getTeachers(facultyId: Int, forceRefresh: Boolean = false) {
+        if (forceRefresh) {
+            teacherListCache.clear()
+            currentTeacherDataPage = 1
+            hasMoreTeacherData = true
+        } else if (!hasMoreTeacherData) {
+            return
         }
-    }
 
-    private fun getTeachers(facultyId: Int) {
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.updateTeacherList(isLoading = true)
-            facultyRepo.getTeachers(facultyId)
-                .onSuccess {
-                    teacherListCache.clear()
-                    teacherListCache.addAll(it)
+            facultyRepo.getTeachers(facultyId, currentTeacherDataPage, forceRefresh)
+                .onSuccess { list ->
+                    if (list.isEmpty()) {
+                        hasMoreTeacherData = false
+                    } else {
+                        currentTeacherDataPage++
+                        teacherListCache.addAll(list)
+                    }
                     uiStateMachine.updateTeacherList(teachers = teacherListCache)
                 }
                 .onFailure {
@@ -135,13 +132,25 @@ class FacultyViewModel(
         }
     }
 
-    private fun getCourses(facultyId: Int) {
+    private fun getCourses(facultyId: Int, forceRefresh: Boolean = false) {
+        if (forceRefresh) {
+            courseListCache.clear()
+            currentCourseDataPage = 1
+            hasMoreCourseData = true
+        } else if (!hasMoreCourseData) {
+            return
+        }
+
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.updateCourseList(isLoading = true)
-            facultyRepo.getCourses(facultyId)
-                .onSuccess {
-                    courseListCache.clear()
-                    courseListCache.addAll(it)
+            facultyRepo.getCourses(facultyId, currentCourseDataPage, forceRefresh)
+                .onSuccess { list ->
+                    if (list.isEmpty()) {
+                        hasMoreCourseData = false
+                    } else {
+                        currentCourseDataPage++
+                        courseListCache.addAll(list)
+                    }
                     uiStateMachine.updateCourseList(courses = courseListCache)
                 }
                 .onFailure {
@@ -151,13 +160,25 @@ class FacultyViewModel(
         }
     }
 
-    private fun getEmployees(facultyId: Int) {
+    private fun getEmployees(facultyId: Int, forceRefresh: Boolean = false) {
+        if (forceRefresh) {
+            employeeListCache.clear()
+            currentEmployeeDataPage = 1
+            hasMoreEmployeeData = true
+        } else if (!hasMoreEmployeeData) {
+            return
+        }
+
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.updateEmployeeList(isLoading = true)
-            facultyRepo.getEmployees(facultyId)
-                .onSuccess {
-                    employeeListCache.clear()
-                    employeeListCache.addAll(it)
+            facultyRepo.getEmployees(facultyId, currentEmployeeDataPage, forceRefresh)
+                .onSuccess { list ->
+                    if (list.isEmpty()) {
+                        hasMoreEmployeeData = false
+                    } else {
+                        currentEmployeeDataPage++
+                        employeeListCache.addAll(list)
+                    }
                     uiStateMachine.updateEmployeeList(employees = employeeListCache)
                 }
                 .onFailure {

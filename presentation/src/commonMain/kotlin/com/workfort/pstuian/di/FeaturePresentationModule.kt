@@ -34,6 +34,8 @@ import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryUiStateMa
 import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryViewModel
 import com.workfort.pstuian.ui.faculty.FacultyUiStateMachine
 import com.workfort.pstuian.ui.faculty.FacultyViewModel
+import com.workfort.pstuian.ui.faculty.batch.BatchUiStateMachine
+import com.workfort.pstuian.ui.faculty.batch.BatchViewModel
 import com.workfort.pstuian.ui.home.HomeUiStateMachine
 import com.workfort.pstuian.ui.home.HomeViewModel
 import com.workfort.pstuian.ui.imageupload.ImageUploadUiStateMachine
@@ -180,7 +182,17 @@ private val donateModule = module {
 }
 
 private val facultyModule = module {
+    factoryOf(::BatchUiStateMachine)
     factoryOf(::FacultyUiStateMachine)
+
+    factory { (facultyId: Int) ->
+        BatchViewModel(
+            facultyId = facultyId,
+            facultyRepo = get(),
+            uiStateMachine = get(),
+            coroutineDispatcherProvider = get(),
+        )
+    }
     factory { (facultyId: Int) ->
         FacultyViewModel(
             facultyId = facultyId,

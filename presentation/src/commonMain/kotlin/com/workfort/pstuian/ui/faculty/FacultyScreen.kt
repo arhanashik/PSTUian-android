@@ -11,7 +11,6 @@ import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.dialog.ShowConfirmationDialog
 import com.workfort.pstuian.ui.common.composable.dialog.ShowErrorDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavigator
-import com.workfort.pstuian.ui.common.navigation.AppScreen
 import com.workfort.pstuian.ui.common.theme.bgCircle
 import com.workfort.pstuian.ui.faculty.composable.FacultyScreenContent
 import com.workfort.pstuian.ui.faculty.state.FacultyMessageState
@@ -79,9 +78,6 @@ private fun HandleNavigationState(
         navigation?.let {
             when (it) {
                 is FacultyNavigationState.GoBack -> navigator?.goBack()
-                is FacultyNavigationState.GoToStudentsScreen -> {
-                    navigator?.navigateTo(AppScreen.Students(it.batchId))
-                }
                 is FacultyNavigationState.GoToTeacherProfileScreen -> {
                     navigator?.navigateToProfile(it.userId, UserType.TEACHER)
                 }

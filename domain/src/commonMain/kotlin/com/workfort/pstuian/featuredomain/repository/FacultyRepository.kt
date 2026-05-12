@@ -11,22 +11,38 @@ interface FacultyRepository {
 
     suspend fun getFaculty(id: Int): DomainResult<Faculty>
 
-    suspend fun getBatches(facultyId: Int, forceRefresh: Boolean = false): DomainResult<List<Batch>>
+    suspend fun getBatches(
+        facultyId: Int,
+        page: Int,
+        forceRefresh: Boolean = false,
+    ): DomainResult<List<Batch>>
 
     suspend fun getBatch(batchId: Int): DomainResult<Batch>
 
     suspend fun getStudents(
         facultyId: Int,
         batchId: Int,
-        page: Int = 1,
-        useCache: Boolean = true,
+        page: Int,
+        forceRefresh: Boolean = true,
     ): DomainResult<List<User.Student>>
 
-    suspend fun getTeachers(facultyId: Int, forceRefresh: Boolean = false): DomainResult<List<User.Teacher>>
+    suspend fun getTeachers(
+        facultyId: Int,
+        page: Int,
+        forceRefresh: Boolean = false,
+    ): DomainResult<List<User.Teacher>>
 
-    suspend fun getCourses(facultyId: Int, forceRefresh: Boolean = false): DomainResult<List<Course>>
+    suspend fun getCourses(
+        facultyId: Int,
+        page: Int,
+        forceRefresh: Boolean = false,
+    ): DomainResult<List<Course>>
 
-    suspend fun getEmployees(facultyId: Int, forceRefresh: Boolean = false): DomainResult<List<User.Employee>>
+    suspend fun getEmployees(
+        facultyId: Int,
+        page: Int,
+        forceRefresh: Boolean = false,
+    ): DomainResult<List<User.Employee>>
 
     suspend fun getEmployee(id: Int): DomainResult<User.Employee>
 

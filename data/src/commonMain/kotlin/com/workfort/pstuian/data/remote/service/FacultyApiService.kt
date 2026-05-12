@@ -25,9 +25,15 @@ class FacultyApiService(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getBatches(facultyId: Int): ApiResponse<List<BatchDto>> {
+    suspend fun getBatches(
+        facultyId: Int,
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<BatchDto>> {
         return client.get(NetworkConst.Remote.Api.BATCH.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
+            parameter(NetworkConst.Params.PAGE, page)
+            parameter(NetworkConst.Params.LIMIT, limit)
         }.body()
     }
 
@@ -51,21 +57,39 @@ class FacultyApiService(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getTeachers(facultyId: Int): ApiResponse<List<TeacherDto>> {
+    suspend fun getTeachers(
+        facultyId: Int,
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<TeacherDto>> {
         return client.get(NetworkConst.Remote.Api.Teacher.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
+            parameter(NetworkConst.Params.PAGE, page)
+            parameter(NetworkConst.Params.LIMIT, limit)
         }.body()
     }
 
-    suspend fun getCourseSchedules(facultyId: Int): ApiResponse<List<CourseDto>> {
+    suspend fun getCourseSchedules(
+        facultyId: Int,
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<CourseDto>> {
         return client.get(NetworkConst.Remote.Api.Course.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
+            parameter(NetworkConst.Params.PAGE, page)
+            parameter(NetworkConst.Params.LIMIT, limit)
         }.body()
     }
 
-    suspend fun getEmployees(facultyId: Int): ApiResponse<List<EmployeeDto>> {
+    suspend fun getEmployees(
+        facultyId: Int,
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<EmployeeDto>> {
         return client.get(NetworkConst.Remote.Api.Employee.GET_ALL) {
             parameter(NetworkConst.Params.FACULTY_ID, facultyId)
+            parameter(NetworkConst.Params.PAGE, page)
+            parameter(NetworkConst.Params.LIMIT, limit)
         }.body()
     }
 }

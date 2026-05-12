@@ -1,6 +1,5 @@
 package com.workfort.pstuian.ui.faculty
 
-import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
@@ -15,6 +14,7 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
     override val uiState: StateFlow<FacultyUiState> = _uiState.asStateFlow()
 
     fun setInitialContent(
+        facultyId: Int,
         title: String,
         tabs: List<String>,
         selectedTab: Int,
@@ -22,6 +22,7 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
         _uiState.update {
             FacultyUiState.Content(
                 showOperationLoading = false,
+                facultyId = facultyId,
                 title = title,
                 tabs = tabs,
                 selectedTab = selectedTab,
@@ -42,21 +43,6 @@ class FacultyUiStateMachine : UiStateMachine<FacultyUiState> {
         _uiState.update { current ->
             when (current) {
                 is FacultyUiState.Content -> current.copy(selectedTab = index)
-                else -> current
-            }
-        }
-    }
-
-    fun updateBatchList(
-        isLoading: Boolean = false,
-        batches: List<Batch> = emptyList(),
-        error: String? = null,
-    ) {
-        _uiState.update { current ->
-            when (current) {
-                is FacultyUiState.Content -> current.copy(
-                    batchListState = FacultyUiState.BatchListState(isLoading, batches, error),
-                )
                 else -> current
             }
         }

@@ -126,7 +126,7 @@ class StudentProfileEditViewModel(
         val profile = newProfileCache ?: return
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
-            val result = facultyRepository.getBatches(faculty.id)
+            val result = facultyRepository.getBatches(faculty.id, page = 1)
             stateMachine.showLoading(false)
 
             val batches = result.getOrNull()

@@ -19,11 +19,11 @@ class FacultyRepositoryImpl(
     private val domainErrorMapper: DomainErrorMapper,
 ) : FacultyRepository {
     private val facultiesCache = mutableSetOf<Faculty>()
-    private val batchesCache = mutableMapOf<Int, List<Batch>>()
+    private val batchesCache = mutableMapOf<String, List<Batch>>()
     private val studentsCache = mutableMapOf<String, List<User.Student>>()
-    private val teachersCache = mutableMapOf<Int, List<User.Teacher>>()
-    private val coursesCache = mutableMapOf<Int, List<Course>>()
-    private val employeesCache = mutableMapOf<Int, List<User.Employee>>()
+    private val teachersCache = mutableMapOf<String, List<User.Teacher>>()
+    private val coursesCache = mutableMapOf<String, List<Course>>()
+    private val employeesCache = mutableMapOf<String, List<User.Employee>>()
 
     override suspend fun getFaculties(forceRefresh: Boolean): DomainResult<List<Faculty>> {
         if (forceRefresh) facultiesCache.clear()
@@ -49,16 +49,21 @@ class FacultyRepositoryImpl(
             .onSuccess { facultiesCache.add(it) }
     }
 
-    override suspend fun getBatches(facultyId: Int, forceRefresh: Boolean): DomainResult<List<Batch>> {
-        val cache = batchesCache[facultyId]
-        if (!forceRefresh && !cache.isNullOrEmpty()) {
-            return DomainResult.success(cache)
-        }
+    override suspend fun getBatches(
+        facultyId: Int,
+        page: Int,
+        forceRefresh: Boolean,
+    ): DomainResult<List<Batch>> {
+        if (forceRefresh) batchesCache.clear()
 
-        return helper.getBatches(facultyId)
+        val key = "$facultyId-$page"
+        val cache = batchesCache[key]
+        if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
+
+        return helper.getBatches(facultyId, page)
             .toDomainResult(domainErrorMapper)
             .map { dtos -> dtos.map { it.toModel() } }
-            .onSuccess { batchesCache[facultyId] = it }
+            .onSuccess { batchesCache[key] = it }
     }
 
     override suspend fun getBatch(batchId: Int): DomainResult<Batch> {
@@ -73,13 +78,12 @@ class FacultyRepositoryImpl(
         facultyId: Int,
         batchId: Int,
         page: Int,
-        useCache: Boolean,
+        forceRefresh: Boolean,
     ): DomainResult<List<User.Student>> {
-        if (!useCache) studentsCache.clear()
+        if (forceRefresh) studentsCache.clear()
 
-        val key = "${facultyId}_${batchId}_${page}"
+        val key = "$facultyId-$batchId-$page"
         val cache = studentsCache[key]
-
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getStudents(facultyId, batchId, page)
@@ -88,40 +92,55 @@ class FacultyRepositoryImpl(
             .onSuccess { studentsCache[key] = it }
     }
 
-    override suspend fun getTeachers(facultyId: Int, forceRefresh: Boolean): DomainResult<List<User.Teacher>> {
-        val cache = teachersCache[facultyId]
-        if (!forceRefresh && !cache.isNullOrEmpty()) {
-            return DomainResult.success(cache)
-        }
+    override suspend fun getTeachers(
+        facultyId: Int,
+        page: Int,
+        forceRefresh: Boolean,
+    ): DomainResult<List<User.Teacher>> {
+        if (forceRefresh) teachersCache.clear()
 
-        return helper.getTeachers(facultyId)
+        val key = "$facultyId-$page"
+        val cache = teachersCache[key]
+        if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
+
+        return helper.getTeachers(facultyId, page)
             .toDomainResult(domainErrorMapper)
             .map { dtos -> dtos.map { it.toModel() } }
-            .onSuccess { teachersCache[facultyId] = it }
+            .onSuccess { teachersCache[key] = it }
     }
 
-    override suspend fun getCourses(facultyId: Int, forceRefresh: Boolean): DomainResult<List<Course>> {
-        val cache = coursesCache[facultyId]
-        if (!forceRefresh && !cache.isNullOrEmpty()) {
-            return DomainResult.success(cache)
-        }
+    override suspend fun getCourses(
+        facultyId: Int,
+        page: Int,
+        forceRefresh: Boolean,
+    ): DomainResult<List<Course>> {
+        if (forceRefresh) coursesCache.clear()
 
-        return helper.getCourses(facultyId)
+        val key = "$facultyId-$page"
+        val cache = coursesCache[key]
+        if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
+
+        return helper.getCourses(facultyId, page)
             .toDomainResult(domainErrorMapper)
             .map { dtos -> dtos.map { it.toModel() } }
-            .onSuccess { coursesCache[facultyId] = it }
+            .onSuccess { coursesCache[key] = it }
     }
 
-    override suspend fun getEmployees(facultyId: Int, forceRefresh: Boolean): DomainResult<List<User.Employee>> {
-        val cache = employeesCache[facultyId]
-        if (!forceRefresh && !cache.isNullOrEmpty()) {
-            return DomainResult.success(cache)
-        }
+    override suspend fun getEmployees(
+        facultyId: Int,
+        page: Int,
+        forceRefresh: Boolean,
+    ): DomainResult<List<User.Employee>> {
+        if (forceRefresh) employeesCache.clear()
 
-        return helper.getEmployees(facultyId)
+        val key = "$facultyId-$page"
+        val cache = employeesCache[key]
+        if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
+
+        return helper.getEmployees(facultyId, page)
             .toDomainResult(domainErrorMapper)
             .map { dtos -> dtos.map { it.toModel() } }
-            .onSuccess { employeesCache[facultyId] = it }
+            .onSuccess { employeesCache[key] = it }
     }
 
     override suspend fun getEmployee(id: Int): DomainResult<User.Employee> {

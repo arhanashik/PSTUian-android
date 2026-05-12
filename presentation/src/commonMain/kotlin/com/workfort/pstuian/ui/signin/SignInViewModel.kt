@@ -160,7 +160,7 @@ class SignInViewModel(
         }
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             stateMachine.showLoading(true)
-            facultyRepository.getBatches(facultyId)
+            facultyRepository.getBatches(facultyId, page = 1)
                 .onSuccess { batches ->
                     stateMachine.showLoading(false)
                     if (batches.isEmpty()) {

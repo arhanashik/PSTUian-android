@@ -31,9 +31,13 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         }
     }
 
-    override suspend fun getBatches(facultyId: Int): NetworkResult<List<BatchDto>> {
+    override suspend fun getBatches(
+        facultyId: Int,
+        page: Int,
+        limit: Int,
+    ): NetworkResult<List<BatchDto>> {
         return runCatching {
-            service.getBatches(facultyId).toNetworkResult()
+            service.getBatches(facultyId, page, limit).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
@@ -60,25 +64,37 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         }
     }
 
-    override suspend fun getTeachers(facultyId: Int): NetworkResult<List<TeacherDto>> {
+    override suspend fun getTeachers(
+        facultyId: Int,
+        page: Int,
+        limit: Int,
+    ): NetworkResult<List<TeacherDto>> {
         return runCatching {
-            service.getTeachers(facultyId).toNetworkResult()
+            service.getTeachers(facultyId, page, limit).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
-    override suspend fun getCourses(facultyId: Int): NetworkResult<List<CourseDto>> {
+    override suspend fun getCourses(
+        facultyId: Int,
+        page: Int,
+        limit: Int,
+    ): NetworkResult<List<CourseDto>> {
         return runCatching {
-            service.getCourseSchedules(facultyId).toNetworkResult()
+            service.getCourseSchedules(facultyId, page, limit).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }
     }
 
-    override suspend fun getEmployees(facultyId: Int): NetworkResult<List<EmployeeDto>> {
+    override suspend fun getEmployees(
+        facultyId: Int,
+        page: Int,
+        limit: Int,
+    ): NetworkResult<List<EmployeeDto>> {
         return runCatching {
-            service.getEmployees(facultyId).toNetworkResult()
+            service.getEmployees(facultyId, page, limit).toNetworkResult()
         }.getOrElse {
             NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
         }

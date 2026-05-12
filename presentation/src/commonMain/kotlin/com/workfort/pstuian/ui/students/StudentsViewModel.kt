@@ -44,10 +44,10 @@ class StudentsViewModel(
         when (event) {
             is StudentsUiEvent.BackClicked -> _navigation.update { StudentsNavigationState.GoBack }
             is StudentsUiEvent.Refresh -> batchCache?.let {
-                getStudents(it.facultyId, batchId, refresh = true)
+                getStudents(it.facultyId, batchId, forceRefresh = true)
             }
             is StudentsUiEvent.LoadMore -> batchCache?.let {
-                getStudents(it.facultyId, batchId, refresh = false)
+                getStudents(it.facultyId, batchId, forceRefresh = false)
             }
             is StudentsUiEvent.StudentClicked -> onClickStudent(event.student)
             is StudentsUiEvent.CallClicked -> onClickCall(event.phoneNumber)
@@ -77,7 +77,7 @@ class StudentsViewModel(
                 .onSuccess { batch ->
                     batchCache = batch
                     uiStateMachine.showInitialState(title = batch.title ?: batch.name)
-                    getStudents(batch.facultyId, batchId, refresh = false)
+                    getStudents(batch.facultyId, batchId, forceRefresh = false)
                 }
                 .onFailure {
                     uiStateMachine.showError(it.message ?: "Failed to load data")
@@ -85,8 +85,8 @@ class StudentsViewModel(
         }
     }
 
-    private fun getStudents(facultyId: Int, batchId: Int, refresh: Boolean) {
-        if (refresh) {
+    private fun getStudents(facultyId: Int, batchId: Int, forceRefresh: Boolean) {
+        if (forceRefresh) {
             studentListCache.clear()
             currentPage = 1
             hasMoreData = true
@@ -96,7 +96,7 @@ class StudentsViewModel(
 
         viewModelScope.launchOnMain(coroutineDispatcherProvider) {
             uiStateMachine.showContentLoading(isLoading = true)
-            facultyRepo.getStudents(facultyId, batchId, currentPage, useCache = !refresh)
+            facultyRepo.getStudents(facultyId, batchId, currentPage, forceRefresh)
                 .onSuccess { students ->
                     if (students.isEmpty()) {
                         hasMoreData = false

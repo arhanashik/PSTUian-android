@@ -12,16 +12,39 @@ import com.workfort.pstuian.data.remote.NetworkConst
 
 interface FacultyApiHelper {
     suspend fun getFaculties(): NetworkResult<List<FacultyDto>>
+
     suspend fun getFaculty(id: Int): NetworkResult<FacultyDto>
-    suspend fun getBatches(facultyId: Int): NetworkResult<List<BatchDto>>
+
+    suspend fun getBatches(
+        facultyId: Int,
+        page: Int,
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<BatchDto>>
+
     suspend fun getBatch(id: Int): NetworkResult<BatchDto>
+
     suspend fun getStudents(
         facultyId: Int,
         batchId: Int,
         page: Int,
-        limit: Int = NetworkConst.Params.Default.PAGE_SIZE
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
     ): NetworkResult<List<StudentDto>>
-    suspend fun getTeachers(facultyId: Int): NetworkResult<List<TeacherDto>>
-    suspend fun getCourses(facultyId: Int): NetworkResult<List<CourseDto>>
-    suspend fun getEmployees(facultyId: Int): NetworkResult<List<EmployeeDto>>
+
+    suspend fun getTeachers(
+        facultyId: Int,
+        page: Int,
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<TeacherDto>>
+
+    suspend fun getCourses(
+        facultyId: Int,
+        page: Int,
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<CourseDto>>
+
+    suspend fun getEmployees(
+        facultyId: Int,
+        page: Int,
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<EmployeeDto>>
 }

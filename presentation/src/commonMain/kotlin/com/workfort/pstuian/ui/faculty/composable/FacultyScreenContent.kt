@@ -3,7 +3,6 @@ package com.workfort.pstuian.ui.faculty.composable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.User
@@ -40,27 +39,6 @@ internal fun FacultyScreenContent(
         }
     }
 }
-
-private fun mockBatches() = listOf(
-    Batch(
-        id = 1,
-        name = "14th Batch",
-        title = "Batch 14",
-        session = "2022-23",
-        facultyId = 1,
-        totalStudent = 120,
-        registeredStudent = 102,
-    ),
-    Batch(
-        id = 2,
-        name = "15th Batch",
-        title = "Batch 15",
-        session = "2023-24",
-        facultyId = 1,
-        totalStudent = 130,
-        registeredStudent = 98,
-    ),
-)
 
 private fun mockTeachers() = listOf(
     User.Teacher(
@@ -111,7 +89,6 @@ private fun mockEmployees() = listOf(
 private fun mockUiState(
     selectedTab: Int = 0,
     showLoadingOverlay: Boolean = false,
-    showBatchShimmer: Boolean = false,
     showTeacherShimmer: Boolean = false,
     showCourseShimmer: Boolean = false,
     showEmployeeShimmer: Boolean = false,
@@ -119,13 +96,9 @@ private fun mockUiState(
     return FacultyUiState.Content(
         title = "Faculty of CSE",
         showOperationLoading = showLoadingOverlay,
+        facultyId = 1,
         tabs = listOf("Batch", "Teacher", "Course", "Employee"),
         selectedTab = selectedTab,
-        batchListState = FacultyUiState.BatchListState(
-            isLoading = showBatchShimmer,
-            batches = if (showBatchShimmer) emptyList() else mockBatches(),
-            error = null,
-        ),
         teacherListState = FacultyUiState.TeacherListState(
             isLoading = showTeacherShimmer,
             teachers = if (showTeacherShimmer) emptyList() else mockTeachers(),
@@ -204,17 +177,6 @@ fun FacultyScreenContentScreenShimmerPreview() {
     AppTheme {
         FacultyScreenContent(
             uiState = FacultyUiState.None(),
-            onUiEvent = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Batch List Shimmer")
-@Composable
-fun FacultyScreenContentBatchShimmerPreview() {
-    AppTheme {
-        FacultyScreenContent(
-            uiState = mockUiState(selectedTab = 0, showBatchShimmer = true),
             onUiEvent = {},
         )
     }

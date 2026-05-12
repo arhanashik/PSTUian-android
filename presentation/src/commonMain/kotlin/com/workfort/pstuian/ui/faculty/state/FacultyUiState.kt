@@ -1,6 +1,5 @@
 package com.workfort.pstuian.ui.faculty.state
 
-import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
 
@@ -17,19 +16,13 @@ sealed interface FacultyUiState {
     data class Content(
         override val title: String,
         override val showOperationLoading: Boolean = false,
+        val facultyId: Int,
         val tabs: List<String> = mutableListOf(),
         val selectedTab: Int = 0,
-        val batchListState: BatchListState = BatchListState(),
         val teacherListState: TeacherListState = TeacherListState(),
         val courseListState: CourseListState = CourseListState(),
         val employeeListState: EmployeeListState = EmployeeListState(),
     ) : FacultyUiState
-
-    data class BatchListState(
-        val isLoading: Boolean = false,
-        val batches: List<Batch> = emptyList(),
-        val error: String? = null,
-    )
 
     data class TeacherListState(
         val isLoading: Boolean = false,

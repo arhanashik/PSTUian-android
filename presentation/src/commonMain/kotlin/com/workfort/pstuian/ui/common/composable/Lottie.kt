@@ -38,10 +38,10 @@ fun AnimatedImagePlaceholderView(modifier: Modifier = Modifier.size(200.dp)) {
 }
 
 @Composable
-fun AnimatedErrorView(modifier: Modifier = Modifier.size(200.dp)) {
+fun AnimatedErrorView(modifier: Modifier = Modifier.size(250.dp)) {
     LottieAnimationView(
         modifier = modifier,
-        resourcePath = "files/error_cat.json",
+        resourcePath = "files/something_went_wrong.json",
     )
 }
 

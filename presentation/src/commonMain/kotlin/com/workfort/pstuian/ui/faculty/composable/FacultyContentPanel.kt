@@ -26,13 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.Batch
 import com.workfort.pstuian.featuredomain.model.Course
 import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.ToggleSwitch
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
+import com.workfort.pstuian.ui.faculty.batch.BatchScreen
 import com.workfort.pstuian.ui.faculty.state.FacultyUiEvent
 import com.workfort.pstuian.ui.faculty.state.FacultyUiState
 import kotlinx.coroutines.launch
@@ -72,13 +72,7 @@ fun FacultyContentPanel(
         )
         HorizontalPager(state = pagerState) { page ->
             when (page) {
-                0 -> uiState.batchListState.Handle {
-                    onUiEvent(FacultyUiEvent.BatchClicked(it))
-                }
-                1 -> uiState.teacherListState.Handle(
-                    onClickTeacher = { onUiEvent(FacultyUiEvent.TeacherClicked(it)) },
-                    onClickCall = { onUiEvent(FacultyUiEvent.CallClicked(it)) },
-                )
+                0 -> BatchScreen(facultyId = uiState.facultyId)
                 2 -> uiState.courseListState.Handle {
                     onUiEvent(FacultyUiEvent.CourseClicked(it))
                 }
@@ -88,38 +82,6 @@ fun FacultyContentPanel(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun FacultyUiState.BatchListState.Handle(
-    onClickBatch: (Batch) -> Unit,
-) {
-    if (error != null) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            AnimatedErrorView()
-        }
-        return
-    }
-
-    if (batches.isEmpty()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            if (isLoading) {
-                BatchListShimmer()
-            } else {
-                AnimatedEmptyView()
-            }
-        }
-    } else {
-        batches.BatchListView(isLoading, onClickBatch)
     }
 }
 
@@ -230,25 +192,6 @@ private fun FacultyUiState.EmployeeListState.Handle(
 }
 
 @Composable
-private fun List<Batch>.BatchListView(
-    isLoading: Boolean,
-    onClickBatch: (batch: Batch) -> Unit,
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        items(this@BatchListView) { batch ->
-            BatchListItemView(batch) { onClickBatch(batch) }
-        }
-        if (isLoading) {
-            item { CircularProgressIndicator() }
-        }
-    }
-}
-
-@Composable
 private fun List<User.Teacher>.TeacherListView(
     isLoading: Boolean,
     onClickTeacher: (User.Teacher) -> Unit,
@@ -330,12 +273,9 @@ internal fun FacultyScreenShimmer() {
                 .clip(RoundedCornerShape(20.dp))
                 .shimmerAnimation(),
         )
-        BatchListShimmer()
+        TeacherListShimmer()
     }
 }
-
-@Composable
-private fun BatchListShimmer() = FacultyListShimmer { FacultyBatchCardShimmer() }
 
 @Composable
 private fun TeacherListShimmer() = FacultyListShimmer { FacultyTeacherEmployeeCardShimmer() }
@@ -356,57 +296,6 @@ private fun FacultyListShimmer(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(5) { item() }
-    }
-}
-
-@Composable
-private fun FacultyBatchCardShimmer() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.56f)
-                    .height(18.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .shimmerAnimation(),
-            )
-            Box(
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(26.dp)
-                    .clip(RoundedCornerShape(99.dp))
-                    .shimmerAnimation(),
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(34.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .shimmerAnimation(),
-            )
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(34.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .shimmerAnimation(),
-            )
-        }
     }
 }
 
