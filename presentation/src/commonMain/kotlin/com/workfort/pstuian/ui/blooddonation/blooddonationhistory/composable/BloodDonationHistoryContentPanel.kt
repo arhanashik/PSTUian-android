@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,15 +39,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
-import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiEvent
-import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.state.BloodDonationHistoryUiState
+import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.common.theme.TextStyle
 import org.jetbrains.compose.resources.stringResource
 import pstuian.presentation.generated.resources.Res
 import pstuian.presentation.generated.resources.txt_delete
@@ -210,6 +210,7 @@ private fun DonationItemView(
     }
     val date = item.date.split(" ")[0]
     val cardShape = RoundedCornerShape(16.dp)
+
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -223,11 +224,12 @@ private fun DonationItemView(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(top = 8.dp, bottom = 16.dp),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -242,12 +244,13 @@ private fun DonationItemView(
                     Text(
                         text = requestLabel,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = if (hasRegisteredRequest) {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
+                        style = TextStyle.label2.copy(
+                            color = if (hasRegisteredRequest) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        ),
                     )
                 }
                 Surface(
@@ -267,8 +270,7 @@ private fun DonationItemView(
                         Spacer(modifier = Modifier.padding(start = 4.dp))
                         Text(
                             text = date,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = TextStyle.label2.copy(color = AppColors.textSecondary),
                         )
                     }
                 }
@@ -289,11 +291,11 @@ private fun DonationItemView(
                 }
             }
             Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 text = item.info.orEmpty().ifBlank { "No notes provided" },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
+                style = TextStyle.body2.copy(color = AppColors.textPrimary),
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.workfort.pstuian.ui.blooddonation.blooddonationhistory.composable
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -67,6 +68,7 @@ internal fun BloodDonationHistoryScreenContent(
                         contentDescription = "",
                     )
                 },
+                shape = CircleShape,
             )
         },
     ) {
