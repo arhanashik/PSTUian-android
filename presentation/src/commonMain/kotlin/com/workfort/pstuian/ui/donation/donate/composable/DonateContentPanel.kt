@@ -114,8 +114,8 @@ private fun DonateFormContent(
                 stringResource(Res.string.helper_txt_max_length_donation_message)
             },
             singleLine = false,
-            minLines = 5,
-            maxLines = 8,
+            minLines = 3,
+            maxLines = 3,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Default,

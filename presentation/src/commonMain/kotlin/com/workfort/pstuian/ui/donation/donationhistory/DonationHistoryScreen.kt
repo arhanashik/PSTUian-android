@@ -36,7 +36,7 @@ private fun HandleMessageState(
         when (it) {
             is DonationHistoryMessageState.ShowDonorDetails -> {
                 val item = it.donation
-                val message = "Email: ${item.email}\n${item.message}\nReference: ${item.reference}"
+                val message = "Email: ${item.email}\n${item.message}"
                 ShowInfoDialog(
                     title = item.name ?: "Donation Info",
                     message = message,

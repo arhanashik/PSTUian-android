@@ -204,7 +204,7 @@ private fun DonationHistoryListItemView(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Top,
             ) {
                 Surface(
                     shape = CircleShape,
@@ -232,33 +232,12 @@ private fun DonationHistoryListItemView(
                         text = item.email ?: "No email",
                         style = TextStyle.body2.copy(color = AppColors.textSecondary),
                     )
-                }
-            }
-
-            item.message?.takeIf { it.isNotBlank() }?.let {
-                Text(
-                    text = it,
-                    style = TextStyle.body2.copy(color = AppColors.textPrimary),
-                )
-            }
-
-            Surface(
-                shape = RoundedCornerShape(10.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Reference",
-                        style = TextStyle.label2.copy(color = AppColors.textSecondary),
-                    )
-                    Text(
-                        text = item.reference,
-                        style = TextStyle.label2.copy(color = AppColors.textSecondary),
-                    )
+                    item.message?.takeIf { it.isNotBlank() }?.let {
+                        Text(
+                            text = it,
+                            style = TextStyle.body2.copy(color = AppColors.textPrimary),
+                        )
+                    }
                 }
             }
         }

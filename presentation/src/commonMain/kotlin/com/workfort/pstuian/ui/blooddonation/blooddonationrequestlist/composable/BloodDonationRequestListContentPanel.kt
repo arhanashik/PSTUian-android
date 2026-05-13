@@ -401,11 +401,13 @@ private fun BloodDonationRequestStatusRow(
                 )
             }
         } else {
-            BloodDonationRequestStatusBadge(
-                text = stringResource(Res.string.blood_donation_request_status_active),
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (isConfirmed) {
+                BloodDonationRequestStatusBadge(
+                    text = stringResource(Res.string.blood_donation_request_status_active),
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
         if (isConfirmed && !isCompleted) {
             Surface(

@@ -2,6 +2,7 @@ package com.workfort.pstuian.ui.common.composable.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -202,7 +203,14 @@ fun ShowAlertDialog(
     AlertDialog(
         icon = { icon?.let { Icon(it, contentDescription = null, modifier = iconModifier) } },
         title = { Text(text = title) },
-        text = { Text(text = message, textAlign = TextAlign.Center) },
+        text = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(text = message, textAlign = TextAlign.Center)
+            }
+        },
         properties = properties,
         containerColor = MaterialTheme.colorScheme.surface,
         onDismissRequest = { onDismiss() },
