@@ -10,7 +10,6 @@ import dev.gitlive.firebase.auth.ActionCodeSettings
 import dev.gitlive.firebase.auth.AndroidPackageName
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.FirebaseUser
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -51,14 +50,13 @@ class FirebaseAuthDataSource(
         password: String,
     ): NetworkResult<AuthUserDto> {
         try {
-            // Create firebase user. Firebase throw errors if account already exists.
+            // Create firebase user. Firebase throw errors if account already exists
             val firebaseUser = auth.createUserWithEmailAndPassword(email, password).user
                 ?: return NetworkResult.failure(
                     error = NetworkError(code = NetworkErrorCode.FirebaseAuth.UserRegistrationFailed),
                 )
             return NetworkResult.success(firebaseUser.toAuthUserDto())
         } catch (exception: Throwable) {
-            Napier.e("testR", exception)
             return NetworkResult.failure(error = CommonNetworkError.firebaseInternalError(exception))
         }
     }

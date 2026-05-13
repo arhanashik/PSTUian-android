@@ -48,7 +48,6 @@ import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.Bloo
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.state.BloodDonationRequestListUiState
 import com.workfort.pstuian.ui.common.composable.AnimatedEmptyView
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
-import com.workfort.pstuian.ui.common.composable.LabelText
 import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.common.theme.AppColors
@@ -57,8 +56,6 @@ import org.jetbrains.compose.resources.stringResource
 import pstuian.presentation.generated.resources.Res
 import pstuian.presentation.generated.resources.blood_donation_request_mark_as_complete
 import pstuian.presentation.generated.resources.blood_donation_request_status_active
-import pstuian.presentation.generated.resources.blood_donation_request_status_approved
-import pstuian.presentation.generated.resources.blood_donation_request_status_complete
 import pstuian.presentation.generated.resources.blood_donation_request_status_pending
 import pstuian.presentation.generated.resources.txt_call
 import pstuian.presentation.generated.resources.txt_donate
@@ -334,10 +331,6 @@ private fun RequestListItemView(
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
-                    LabelText(
-                        text = "Request #${item.bloodDonationRequest.id}",
-                        color = AppColors.textTertiary,
-                    )
                 }
             }
 
@@ -347,6 +340,16 @@ private fun RequestListItemView(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                    ) {
+                        Text(
+                            text = "Request ID #${item.bloodDonationRequest.id}",
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                            style = TextStyle.label2.copy(MaterialTheme.colorScheme.onSurfaceVariant),
+                        )
+                    }
                     item.contacts.forEach { raw ->
                         BloodDonationContactRow(
                             rawNumber = raw,
@@ -369,41 +372,41 @@ private fun BloodDonationRequestStatusRow(
     onClickDonate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val approvalText = stringResource(
-        if (isConfirmed) {
-            Res.string.blood_donation_request_status_approved
-        } else {
-            Res.string.blood_donation_request_status_pending
-        },
-    )
-    val completionText = stringResource(
-        if (isCompleted) {
-            Res.string.blood_donation_request_status_complete
-        } else {
-            Res.string.blood_donation_request_status_active
-        },
-    )
-    val (approvalBg, approvalFg) = if (isConfirmed) {
-        MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
-    } else {
-        MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    val (completionBg, completionFg) = if (isCompleted) {
-        MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
-    } else {
-        MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
-    }
     val shouldShowMarkAsCompleteAction = isOwnItem && isConfirmed && !isCompleted
     FlowRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        BloodDonationRequestStatusBadge(
-            text = approvalText,
-            containerColor = approvalBg,
-            contentColor = approvalFg,
-        )
+        if (!isConfirmed) {
+            BloodDonationRequestStatusBadge(
+                text = stringResource(Res.string.blood_donation_request_status_pending),
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (shouldShowMarkAsCompleteAction) {
+            Surface(
+                modifier = Modifier.clickable(onClick = onClickMarkAsComplete),
+                shape = RoundedCornerShape(8.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+            ) {
+                Text(
+                    text = stringResource(Res.string.blood_donation_request_mark_as_complete),
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                    style = TextStyle.label2.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                )
+            }
+        } else {
+            BloodDonationRequestStatusBadge(
+                text = stringResource(Res.string.blood_donation_request_status_active),
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         if (isConfirmed && !isCompleted) {
             Surface(
                 modifier = Modifier.clickable(onClick = onClickDonate),
@@ -419,28 +422,6 @@ private fun BloodDonationRequestStatusRow(
                     ),
                 )
             }
-        }
-        if (shouldShowMarkAsCompleteAction) {
-            Surface(
-                modifier = Modifier.clickable(onClick = onClickMarkAsComplete),
-                shape = RoundedCornerShape(8.dp),
-                color = MaterialTheme.colorScheme.tertiaryContainer,
-            ) {
-                Text(
-                    text = stringResource(Res.string.blood_donation_request_mark_as_complete),
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                    style = TextStyle.label2.copy(
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                )
-            }
-        } else {
-            BloodDonationRequestStatusBadge(
-                text = completionText,
-                containerColor = completionBg,
-                contentColor = completionFg,
-            )
         }
     }
 }
@@ -475,12 +456,12 @@ private fun BloodDonationContactRow(
     Surface(
         modifier = Modifier.clip(RoundedCornerShape(10.dp)),
         shape = RoundedCornerShape(10.dp),
-        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f),
+        color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         Row(
             modifier = Modifier
                 .clickable(onClick = onClick)
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                .padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
@@ -488,12 +469,12 @@ private fun BloodDonationContactRow(
                 imageVector = Icons.Default.Call,
                 contentDescription = stringResource(Res.string.txt_call),
                 modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
                 text = display,
                 style = TextStyle.label2.copy(
-                    color = AppColors.textPrimary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium,
                 ),
             )
@@ -504,12 +485,12 @@ private fun BloodDonationContactRow(
 private fun formatPhoneForDisplay(raw: String): String {
     val trimmed = raw.trim()
     val digits = trimmed.filter { it.isDigit() }
-    return when {
-        digits.length == 11 && digits.startsWith("0") ->
+    return when (digits.length) {
+        11 if digits.startsWith("0") ->
             "${digits.substring(0, 4)} ${digits.substring(4, 7)} ${digits.substring(7)}"
-        digits.length == 13 && digits.startsWith("880") ->
+        13 if digits.startsWith("880") ->
             "+880 ${digits.substring(3, 6)} ${digits.substring(6, 9)} ${digits.substring(9)}"
-        digits.length == 10 ->
+        10 ->
             "${digits.substring(0, 3)} ${digits.substring(3, 6)} ${digits.substring(6)}"
         else -> trimmed
     }
