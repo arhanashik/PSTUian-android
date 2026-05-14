@@ -17,11 +17,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.UserType
+import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryScreen
 import com.workfort.pstuian.ui.blooddonation.blooddonationinput.BloodDonationInputScreen
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestcreate.BloodDonationRequestCreateScreen
 import com.workfort.pstuian.ui.blooddonation.blooddonationrequestlist.BloodDonationRequestListScreen
 import com.workfort.pstuian.ui.changepassword.ChangePasswordScreen
 import com.workfort.pstuian.ui.checkin.CheckInScreen
+import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryScreen
 import com.workfort.pstuian.ui.common.composable.ProvideCoilImageLoader
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.deleteaccount.DeleteAccountScreen
@@ -32,8 +34,6 @@ import com.workfort.pstuian.ui.home.HomeScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
 import com.workfort.pstuian.ui.imageupload.ImageUploadScreen
 import com.workfort.pstuian.ui.locationpicker.LocationPickerScreen
-import com.workfort.pstuian.ui.blooddonation.blooddonationhistory.BloodDonationHistoryScreen
-import com.workfort.pstuian.ui.checkinhistory.CheckInHistoryScreen
 import com.workfort.pstuian.ui.profile.employeeprofile.EmployeeProfileScreen
 import com.workfort.pstuian.ui.profile.studentprofile.StudentProfileScreen
 import com.workfort.pstuian.ui.profile.studentprofileedit.StudentProfileEditScreen
@@ -51,9 +51,10 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
-    theme: ThemeMode = ThemeMode.System,
+    themeMode: ThemeMode = ThemeMode.System,
     navController: NavHostController = rememberNavController(),
     navigator: AppNavigator = koinInject(),
+    overlayContent: @Composable () -> Unit = {},
 ) {
     ProvideCoilImageLoader()
 
@@ -70,7 +71,7 @@ fun AppNavHost(
     val useSchemeBackgroundForStatusBar =
         onSplashDestination || currentAppScreen is AppScreen.Profile
     AppTheme(
-        theme = theme,
+        themeMode = themeMode,
         systemBarSyncKey = navBackStackEntry?.id,
         useSchemeBackgroundForStatusBar = useSchemeBackgroundForStatusBar,
     ) {
@@ -287,6 +288,7 @@ fun AppNavHost(
                     // TODO: Need Screen for Notification
                 }
             }
+            overlayContent()
         }
     }
 }

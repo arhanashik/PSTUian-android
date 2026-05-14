@@ -78,7 +78,7 @@ fun TeacherProfileScreenContentPreview() {
 @Preview(showBackground = true, name = "Dark - Not Signed In")
 @Composable
 fun TeacherProfileScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         TeacherProfileScreenContent(uiState = mockUiState(), onUiEvent = {})
     }
 }

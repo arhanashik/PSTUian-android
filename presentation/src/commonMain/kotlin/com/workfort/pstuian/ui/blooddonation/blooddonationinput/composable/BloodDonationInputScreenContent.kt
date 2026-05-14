@@ -71,7 +71,7 @@ private fun BloodDonationInputScreenContentPreview() {
 @Preview
 @Composable
 private fun BloodDonationInputScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         BloodDonationInputScreenContent(
             uiState = BloodDonationInputUiState.Content(
                 title = "Blood Donation Input",

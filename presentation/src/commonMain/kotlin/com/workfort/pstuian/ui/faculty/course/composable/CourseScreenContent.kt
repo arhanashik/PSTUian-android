@@ -60,7 +60,7 @@ private fun CourseScreenContentPreview() {
 @Preview(showBackground = true, name = "Course - Dark Content")
 @Composable
 private fun CourseScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         CourseScreenContent(
             uiState = CourseUiState.Content(courses = mockCourses()),
             onUiEvent = {},

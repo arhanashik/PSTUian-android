@@ -68,7 +68,7 @@ private fun TeacherScreenContentPreview() {
 @Preview(showBackground = true, name = "Teacher - Dark Content")
 @Composable
 private fun TeacherScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         TeacherScreenContent(
             uiState = TeacherUiState.Content(teachers = mockTeachers()),
             onUiEvent = {},

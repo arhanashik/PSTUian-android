@@ -107,7 +107,7 @@ private fun StudentsScreenContentPreview() {
 @Preview(showBackground = true, name = "Students - Dark Content")
 @Composable
 private fun StudentsScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         StudentsScreenContent(
             uiState = StudentsUiState.Content(
                 title = "Students",
@@ -121,7 +121,7 @@ private fun StudentsScreenContentDarkPreview() {
 @Preview(showBackground = true, name = "Students - Loading")
 @Composable
 private fun StudentsScreenContentLoadingPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         StudentsScreenContent(
             uiState = StudentsUiState.Content(
                 title = "Students",
@@ -136,7 +136,7 @@ private fun StudentsScreenContentLoadingPreview() {
 @Preview(showBackground = true, name = "Students - Loading More")
 @Composable
 private fun StudentsScreenContentLoadingMorePreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         StudentsScreenContent(
             uiState = StudentsUiState.Content(
                 title = "Students",

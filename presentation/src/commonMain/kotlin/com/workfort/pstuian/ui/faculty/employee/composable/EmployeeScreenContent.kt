@@ -65,7 +65,7 @@ private fun EmployeeScreenContentPreview() {
 @Preview(showBackground = true, name = "Employee - Dark Content")
 @Composable
 private fun EmployeeScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         EmployeeScreenContent(
             uiState = EmployeeUiState.Content(employees = mockEmployees()),
             onUiEvent = {},

@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.workfort.pstuian.ui.AppViewModel
+import com.workfort.pstuian.ui.common.composable.dialog.NotificationAlertDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavHost
 import com.workfort.pstuian.util.deeplink.DeepLinkParser
 import org.koin.android.ext.android.inject
@@ -26,9 +27,18 @@ class MainActivity : ComponentActivity() {
         )
         enableEdgeToEdge()
         setContent {
-            val appTheme by appViewModel.appTheme.collectAsState()
+            val themeMode by appViewModel.themeMode.collectAsState()
+            val newNotification by appViewModel.newSystemNotificationForAlert.collectAsState()
 
-            AppNavHost(theme = appTheme)
+            AppNavHost(themeMode = themeMode) {
+                newNotification?.let { notification ->
+                    NotificationAlertDialog(
+                        notification = notification,
+                        showDontShowAgain = true,
+                        onDismiss = { dontShowAgain -> appViewModel.dismissNotificationAlert(dontShowAgain) },
+                    )
+                }
+            }
         }
     }
 

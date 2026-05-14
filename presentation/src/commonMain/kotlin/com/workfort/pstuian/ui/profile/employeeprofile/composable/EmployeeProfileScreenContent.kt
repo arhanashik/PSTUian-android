@@ -75,7 +75,7 @@ fun EmployeeProfileScreenContentPreview() {
 @Preview(showBackground = true, name = "Dark - Not Signed In")
 @Composable
 fun EmployeeProfileScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         EmployeeProfileScreenContent(uiState = mockUiState(), onUiEvent = {})
     }
 }

@@ -76,7 +76,7 @@ fun StudentProfileContentPanelPreview() {
 @Preview(showBackground = true, name = "Dark – Not Signed In")
 @Composable
 fun StudentProfileContentPanelDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         StudentProfileContentPanel(uiState = mockUiState(), onUiEvent = {})
     }
 }

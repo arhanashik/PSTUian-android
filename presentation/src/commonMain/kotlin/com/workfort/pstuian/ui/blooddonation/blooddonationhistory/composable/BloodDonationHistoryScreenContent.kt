@@ -139,7 +139,7 @@ private fun BloodDonationHistoryScreenContentLoadingPreview() {
 @Preview(showBackground = true, name = "Dark - Content")
 @Composable
 private fun BloodDonationHistoryScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         BloodDonationHistoryScreenContent(
             uiState = BloodDonationHistoryUiState.Content(
                 donations = mockDonations(),

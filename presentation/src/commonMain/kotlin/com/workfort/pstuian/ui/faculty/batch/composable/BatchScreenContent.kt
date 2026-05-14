@@ -74,7 +74,7 @@ private fun BatchScreenContentPreview() {
 @Preview(showBackground = true, name = "Batch - Dark Content")
 @Composable
 private fun BatchScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         BatchScreenContent(
             uiState = BatchUiState.Content(batches = mockBatches()),
             onUiEvent = {},

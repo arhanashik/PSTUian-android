@@ -9,6 +9,7 @@ import com.workfort.pstuian.featuredomain.di.featureDomainModule
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.ui.AppViewModel
+import com.workfort.pstuian.ui.common.composable.dialog.NotificationAlertDialog
 import com.workfort.pstuian.ui.common.navigation.AppNavHost
 import com.workfort.pstuian.util.IOSPlatformInfo
 import com.workfort.pstuian.util.PlatformInfo
@@ -56,8 +57,17 @@ class IOSBridge : KoinComponent {
     fun mainViewController(): UIViewController = ComposeUIViewController(
         configure = { enforceStrictPlistSanityCheck = false }
     ) {
-        val appTheme by appViewModel.appTheme.collectAsState()
+        val themeMode by appViewModel.themeMode.collectAsState()
+        val newNotification by appViewModel.newSystemNotificationForAlert.collectAsState()
 
-        AppNavHost(theme = appTheme)
+        AppNavHost(themeMode = themeMode) {
+            newNotification?.let { notification ->
+                NotificationAlertDialog(
+                    notification = notification,
+                    showDontShowAgain = true,
+                    onDismiss = { dontShowAgain -> appViewModel.dismissNotificationAlert(dontShowAgain) },
+                )
+            }
+        }
     }
 }

@@ -8,14 +8,15 @@ import com.workfort.pstuian.data.infrastructure.repository.CheckInLocationReposi
 import com.workfort.pstuian.data.infrastructure.repository.CheckInRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.DeviceRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.DonationRepositoryImpl
-import com.workfort.pstuian.data.infrastructure.repository.FileHandlerRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
+import com.workfort.pstuian.data.infrastructure.repository.FileHandlerRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.NotificationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SettingsRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SharedPrefRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SliderRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.StudentRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SupportRepositoryImpl
+import com.workfort.pstuian.data.infrastructure.repository.SystemNotificationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.UserPresenceRepositoryImpl
 import com.workfort.pstuian.data.mapper.DomainErrorMapper
@@ -37,16 +38,17 @@ import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
 import com.workfort.pstuian.data.remote.firebase.FirebaseUserPresenceDataSource
 import com.workfort.pstuian.data.remote.firestore.FirestoreAppConfigDataSource
+import com.workfort.pstuian.data.remote.firestore.FirestoreSystemNotificationDataSource
 import com.workfort.pstuian.data.remote.infrastructure.AuthApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.BloodDonationApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.BloodDonationRequestApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.CheckInApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.CheckInLocationApiHelperImpl
+import com.workfort.pstuian.data.remote.infrastructure.FileRemoteFetcherImpl
 import com.workfort.pstuian.data.remote.infrastructure.DeviceApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.DonationApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.FacultyApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.NotificationApiHelperImpl
-import com.workfort.pstuian.data.remote.infrastructure.CvPdfRemoteFetcherImpl
 import com.workfort.pstuian.data.remote.infrastructure.StudentApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.SupportApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.TeacherApiHelperImpl
@@ -65,8 +67,8 @@ import com.workfort.pstuian.data.remote.service.StudentApiService
 import com.workfort.pstuian.data.remote.service.SupportApiService
 import com.workfort.pstuian.data.remote.service.TeacherApiService
 import com.workfort.pstuian.featuredomain.model.DebugApiEnvironment
-import com.workfort.pstuian.featuredomain.network.CvPdfRemoteFetcher
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
+import com.workfort.pstuian.featuredomain.network.FileRemoteFetcher
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
@@ -83,6 +85,7 @@ import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
 import com.workfort.pstuian.featuredomain.repository.StudentRepository
 import com.workfort.pstuian.featuredomain.repository.SupportRepository
+import com.workfort.pstuian.featuredomain.repository.SystemNotificationRepository
 import com.workfort.pstuian.featuredomain.repository.TeacherRepository
 import com.workfort.pstuian.featuredomain.repository.UserPresenceRepository
 import com.workfort.pstuian.util.PlatformInfo
@@ -91,9 +94,9 @@ import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.database
 import dev.gitlive.firebase.firestore.firestore
 import org.koin.core.module.Module
-import org.koin.core.qualifier.named
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -109,6 +112,7 @@ private val firebaseModule = module {
     singleOf(::FirebaseAuthDataSource)
     singleOf(::FirestoreAppConfigDataSource)
     singleOf(::FirebaseUserPresenceDataSource)
+    singleOf(::FirestoreSystemNotificationDataSource)
 }
 
 private val plainHttpClientQualifier = named("plainHttpClient")
@@ -117,8 +121,8 @@ private val networkModule = module {
     single(qualifier = plainHttpClientQualifier) {
         KtorClientFactory.createPlainHttpClient(platformInfo = get())
     }
-    single<CvPdfRemoteFetcher> {
-        CvPdfRemoteFetcherImpl(httpClient = get(qualifier = plainHttpClientQualifier))
+    single<FileRemoteFetcher> {
+        FileRemoteFetcherImpl(httpClient = get(qualifier = plainHttpClientQualifier))
     }
 
     single {
@@ -185,55 +189,43 @@ private val networkModule = module {
 }
 
 val repositoryModule = module {
-    // app config
     factoryOf(::AppConfigRepositoryImpl) bind AppConfigRepository::class
 
     singleOf(::UserPresenceRepositoryImpl) bind UserPresenceRepository::class
 
-    // auth repository
     singleOf(::AuthRepositoryImpl) bind AuthRepository::class
 
-    // device repo
     factoryOf(::DeviceRepositoryImpl) bind DeviceRepository::class
 
-    // slider repository injections
     singleOf(::SliderRepositoryImpl) bind SliderRepository::class
 
-    // faculty repository injections
     singleOf(::FacultyRepositoryImpl) bind FacultyRepository::class
 
-    // student repository injections
     singleOf(::StudentRepositoryImpl) bind StudentRepository::class
 
-    // teacher repository injections
     factoryOf(::TeacherRepositoryImpl) bind TeacherRepository::class
 
-    // donation repository injections
     factoryOf(::DonationRepositoryImpl) bind DonationRepository::class
 
     factoryOf(::FileHandlerRepositoryImpl) bind FileHandlerRepository::class
 
-    // support repository injections
     factoryOf(::SupportRepositoryImpl) bind SupportRepository::class
 
-    // notification repository injections
     factoryOf(::NotificationRepositoryImpl) bind NotificationRepository::class
 
     singleOf(::SettingsRepositoryImpl) bind SettingsRepository::class
 
-    // blood donation repository injections
     factoryOf(::BloodDonationRepositoryImpl) bind BloodDonationRepository::class
 
-    // blood donation request repository injections
     factoryOf(::BloodDonationRequestRepositoryImpl) bind BloodDonationRequestRepository::class
 
-    // check in repository injections
     factoryOf(::CheckInRepositoryImpl) bind CheckInRepository::class
 
-    // check in location repository injections
     factoryOf(::CheckInLocationRepositoryImpl) bind CheckInLocationRepository::class
 
     factoryOf(::SharedPrefRepositoryImpl) bind SharedPrefRepository::class
+
+    factoryOf(::SystemNotificationRepositoryImpl) bind SystemNotificationRepository::class
 }
 
 private val mapperModule = module {

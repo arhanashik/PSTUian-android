@@ -97,7 +97,7 @@ fun HomeScreenContentPreview() {
 @Preview
 @Composable
 fun HomeScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         HomeScreenContent(
             uiState = mockUiState(),
             onUiEvent = {},

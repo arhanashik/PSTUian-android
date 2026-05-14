@@ -7,7 +7,7 @@ import com.workfort.pstuian.featuredomain.model.DomainError
 import com.workfort.pstuian.featuredomain.model.DomainErrorCode
 import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.featuredomain.model.getOrElse
-import com.workfort.pstuian.featuredomain.network.CvPdfRemoteFetcher
+import com.workfort.pstuian.featuredomain.network.FileRemoteFetcher
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadMessageState
 import com.workfort.pstuian.ui.cvdownload.state.CvDownloadUiEvent
@@ -25,7 +25,7 @@ class CvDownloadViewModel(
     private val userType: UserType,
     private val urlToDownload: String,
     private val fileUtil: FileUtil,
-    private val cvPdfRemoteFetcher: CvPdfRemoteFetcher,
+    private val fileRemoteFetcher: FileRemoteFetcher,
     private val uiStateMachine: CvDownloadUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
 ) : UiStateMachineViewModel<CvDownloadUiState>(uiStateMachine) {
@@ -78,7 +78,7 @@ class CvDownloadViewModel(
                 uiStateMachine.updateDownloadProgress(5)
 
                 val bytes =
-                    cvPdfRemoteFetcher.fetchPdfBytes(urlToDownload).getOrElse { err ->
+                    fileRemoteFetcher.fetchFileBytes(urlToDownload).getOrElse { err ->
                         failDownload(messageForFetchFailure(err))
                         return@launchOnMain
                     }

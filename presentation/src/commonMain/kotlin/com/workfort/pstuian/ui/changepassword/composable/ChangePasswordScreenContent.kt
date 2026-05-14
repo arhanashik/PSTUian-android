@@ -88,7 +88,7 @@ private fun ChangePasswordPanelPreview() {
 @Preview
 @Composable
 private fun ChangePasswordPanelDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         ChangePasswordScreenContent(
             uiState = ChangePasswordUiState.ChangePassword(
                 input = ChangePasswordInput.INITIAL,

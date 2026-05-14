@@ -75,7 +75,7 @@ private fun BloodDonationRequestCreateScreenContentPreview() {
 @Preview
 @Composable
 private fun BloodDonationRequestCreateScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         BloodDonationRequestCreateScreenContent(
             uiState = BloodDonationRequestCreateUiState.Content(
                 input = BloodDonationRequestInput.INITIAL,

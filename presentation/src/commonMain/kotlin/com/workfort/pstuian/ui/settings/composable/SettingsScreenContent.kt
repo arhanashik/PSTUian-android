@@ -53,7 +53,7 @@ fun SettingsScreenContentPreview() {
 @Preview
 @Composable
 fun SettingsScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         SettingsScreenContent(
             uiState = mockUiSate,
             onUiEvent = {},

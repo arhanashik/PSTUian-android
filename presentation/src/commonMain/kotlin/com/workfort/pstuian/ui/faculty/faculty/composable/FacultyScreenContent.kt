@@ -63,7 +63,7 @@ fun FacultyScreenContentTeacherPreview() {
 @Preview(showBackground = true, name = "Dark - Course Tab")
 @Composable
 fun FacultyScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         FacultyScreenContent(uiState = mockUiState(selectedTab = 2), onUiEvent = {})
     }
 }

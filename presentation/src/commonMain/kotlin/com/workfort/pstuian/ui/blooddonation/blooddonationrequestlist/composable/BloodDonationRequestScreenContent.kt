@@ -205,7 +205,7 @@ fun BloodDonationRequestScreenContentEmptyPreview() {
 @Preview(showBackground = true, name = "Dark – list")
 @Composable
 fun BloodDonationRequestScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         BloodDonationRequestScreenContent(
             uiState = mockContent(
                 requestList = listOf(

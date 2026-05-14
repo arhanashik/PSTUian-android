@@ -167,7 +167,7 @@ private fun CheckInScreenContentGridPreview() {
 @Preview(showBackground = true, name = "Content - Dark")
 @Composable
 private fun CheckInScreenContentGridDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         CheckInScreenContent(
             uiState = mockCheckInContentUiState(),
             snackbarHostState = remember { SnackbarHostState() },

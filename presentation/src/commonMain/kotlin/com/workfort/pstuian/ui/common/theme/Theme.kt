@@ -7,14 +7,14 @@ import com.workfort.pstuian.featuredomain.model.ThemeMode
 
 @Composable
 fun AppTheme(
-    theme: ThemeMode = ThemeMode.System,
+    themeMode: ThemeMode = ThemeMode.System,
     /** When non-null and changes (e.g. nav back stack entry id), Android reapplies the themed status bar for in-app navigation. */
     systemBarSyncKey: Any? = null,
     /** When true, [AppThemeSideEffect] uses the theme's background color for the status bar (Splash, Profile). */
     useSchemeBackgroundForStatusBar: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val isDark = when (theme) {
+    val isDark = when (themeMode) {
         ThemeMode.Light -> false
         ThemeMode.Dark -> true
         ThemeMode.System -> isSystemInDarkTheme()

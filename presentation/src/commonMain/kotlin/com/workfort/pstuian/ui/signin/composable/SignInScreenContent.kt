@@ -62,7 +62,7 @@ private fun SignInPanelPreview() {
 @Preview
 @Composable
 private fun SignInPanelDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         SignInScreenContent(
             uiState = SignInUiState.SignInPanel(
                 isLoading = false,
@@ -101,7 +101,7 @@ private fun SignUpPanelPreviewAuth() {
 @Preview
 @Composable
 private fun SignUpPanelDarkPreviewAuth() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         SignInScreenContent(
             uiState = SignInUiState.SignUpPanel(
                 isLoading = false,
@@ -147,7 +147,7 @@ private fun TeacherSignUpPanelPreviewAuth() {
 @Preview
 @Composable
 private fun TeacherSignUpPanelDarkPreviewAuth() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         SignInScreenContent(
             uiState = SignInUiState.SignUpPanel(
                 isLoading = false,
@@ -180,7 +180,7 @@ private fun ForgotPasswordPanelPreview() {
 @Preview
 @Composable
 private fun ForgotPasswordPanelDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         SignInScreenContent(
             uiState = SignInUiState.ForgotPasswordPanel(isLoading = false, email = ""),
             onUiEvent = {},
@@ -202,7 +202,7 @@ private fun EmailVerificationPanelPreview() {
 @Preview
 @Composable
 private fun EmailVerificationPanelDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         SignInScreenContent(
             uiState = SignInUiState.EmailVerificationPanel(isLoading = false, formData = EmailVerificationFormData()),
             onUiEvent = {},

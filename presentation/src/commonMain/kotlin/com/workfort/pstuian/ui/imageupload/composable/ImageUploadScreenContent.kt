@@ -85,7 +85,7 @@ private fun ImageUploadScreenContentUploadingPreview() {
 @Preview(showBackground = true, name = "Upload – dark")
 @Composable
 private fun ImageUploadScreenContentDarkPreview() {
-    AppTheme(theme = ThemeMode.Dark) {
+    AppTheme(themeMode = ThemeMode.Dark) {
         ImageUploadScreenContent(
             uiState = ImageUploadUiState.Content(
                 selectedFileUri = "https://picsum.photos/400/300",
