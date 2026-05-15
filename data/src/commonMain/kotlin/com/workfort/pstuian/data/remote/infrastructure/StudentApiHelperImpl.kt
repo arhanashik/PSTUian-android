@@ -1,53 +1,35 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.mapper.toNetworkResult
-import com.workfort.pstuian.data.model.ApiResponseCode
-import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.remote.domain.StudentApiHelper
+import com.workfort.pstuian.data.remote.safeApiCall
 import com.workfort.pstuian.data.remote.service.StudentApiService
 
 class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiHelper {
 
     override suspend fun get(studentId: Int): NetworkResult<StudentDto> {
-        return runCatching {
-            service.get(studentId).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.get(studentId) }
     }
 
     override suspend fun getByEmail(email: String): NetworkResult<StudentDto> {
-        return runCatching {
-            service.getByEmail(email).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getByEmail(email) }
     }
 
     override suspend fun changeProfileImage(imageUrl: String): NetworkResult<Unit> {
-        return runCatching {
-            service.changeProfileImage(imageUrl).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.changeProfileImage(imageUrl) }
     }
 
     override suspend fun changeName(name: String): NetworkResult<Unit> {
-        return service.changeName(name).toNetworkResult()
+        return safeApiCall { service.changeName(name) }
     }
 
     override suspend fun changeBio(bio: String): NetworkResult<Unit> {
-        return service.changeBio(bio).toNetworkResult()
+        return safeApiCall { service.changeBio(bio) }
     }
 
     override suspend fun changeCvUrl(fileUrl: String): NetworkResult<Unit> {
-        return runCatching {
-            service.changeCvUrl(fileUrl).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.changeCvUrl(fileUrl) }
     }
 
     override suspend fun changeAcademicInfo(
@@ -58,9 +40,9 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         blood: String,
         facultyId: Int,
         session: String,
-        batchId: Int
+        batchId: Int,
     ): NetworkResult<StudentDto> {
-        return runCatching {
+        return safeApiCall {
             service.changeAcademicInfo(
                 name = name,
                 studentOldId = studentOldId,
@@ -70,9 +52,7 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
                 facultyId = facultyId,
                 session = session,
                 batchId = batchId,
-            ).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+            )
         }
     }
 
@@ -83,9 +63,9 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
         newEmail: String,
         cvLink: String,
         linkedIn: String,
-        fbLink: String
+        fbLink: String,
     ): NetworkResult<StudentDto> {
-        return runCatching {
+        return safeApiCall {
             service.changeConnectInfo(
                 address = address,
                 phone = phone,
@@ -94,9 +74,7 @@ class StudentApiHelperImpl(private val service: StudentApiService) : StudentApiH
                 cvLink = cvLink,
                 linkedIn = linkedIn,
                 fbLink = fbLink,
-            ).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
+            )
         }
     }
 }

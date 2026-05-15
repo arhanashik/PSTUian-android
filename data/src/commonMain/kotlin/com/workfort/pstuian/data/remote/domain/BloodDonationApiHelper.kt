@@ -1,34 +1,33 @@
 package com.workfort.pstuian.data.remote.domain
 
 import com.workfort.pstuian.data.model.BloodDonationDto
-import com.workfort.pstuian.data.model.NetworkError
-import com.workfort.pstuian.data.model.NetworkErrorCode
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.NetworkConst
 
-abstract class BloodDonationApiHelper : ApiHelper<BloodDonationDto>()  {
-
-    open suspend fun getAll(
+interface BloodDonationApiHelper {
+    suspend fun getAll(
         userId: Int,
         userType: String,
         page: Int,
-        limit: Int = NetworkConst.Params.Default.PAGE_SIZE
-    ): NetworkResult<List<BloodDonationDto>> = super.getAll(page, limit)
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<BloodDonationDto>>
 
-    open suspend fun insert(
+    suspend fun get(id: Int): NetworkResult<BloodDonationDto>
+
+    suspend fun insert(
         userId: Int,
         userType: String,
         requestId: Int,
         date: String,
         info: String,
-    ): NetworkResult<BloodDonationDto> =
-        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+    ): NetworkResult<BloodDonationDto>
 
-    open suspend fun update(
+    suspend fun update(
         id: Int,
         requestId: Int,
         date: String,
         info: String,
-    ): NetworkResult<Unit> =
-        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+    ): NetworkResult<Unit>
+
+    suspend fun delete(id: Int): NetworkResult<Unit>
 }

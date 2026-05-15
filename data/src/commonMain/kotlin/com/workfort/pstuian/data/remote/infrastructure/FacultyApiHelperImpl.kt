@@ -1,9 +1,6 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.mapper.toNetworkResult
-import com.workfort.pstuian.data.model.ApiResponseCode
 import com.workfort.pstuian.data.model.BatchDto
-import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.CourseDto
 import com.workfort.pstuian.data.model.EmployeeDto
 import com.workfort.pstuian.data.model.FacultyDto
@@ -11,24 +8,17 @@ import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.StudentDto
 import com.workfort.pstuian.data.model.TeacherDto
 import com.workfort.pstuian.data.remote.domain.FacultyApiHelper
+import com.workfort.pstuian.data.remote.safeApiCall
 import com.workfort.pstuian.data.remote.service.FacultyApiService
 
 class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiHelper {
 
     override suspend fun getFaculties(): NetworkResult<List<FacultyDto>> {
-        return runCatching {
-            service.getFaculties().toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getFaculties() }
     }
 
     override suspend fun getFaculty(id: Int): NetworkResult<FacultyDto> {
-        return runCatching {
-            service.getFaculty(id).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getFaculty(id) }
     }
 
     override suspend fun getBatches(
@@ -36,19 +26,11 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         page: Int,
         limit: Int,
     ): NetworkResult<List<BatchDto>> {
-        return runCatching {
-            service.getBatches(facultyId, page, limit).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getBatches(facultyId, page, limit) }
     }
 
     override suspend fun getBatch(id: Int): NetworkResult<BatchDto> {
-        return runCatching {
-            service.getBatch(id).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getBatch(id) }
     }
 
     override suspend fun getStudents(
@@ -57,11 +39,7 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         page: Int,
         limit: Int,
     ): NetworkResult<List<StudentDto>> {
-        return runCatching {
-            service.getStudents(facultyId, batchId, page, limit).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getStudents(facultyId, batchId, page, limit) }
     }
 
     override suspend fun getTeachers(
@@ -69,11 +47,7 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         page: Int,
         limit: Int,
     ): NetworkResult<List<TeacherDto>> {
-        return runCatching {
-            service.getTeachers(facultyId, page, limit).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getTeachers(facultyId, page, limit) }
     }
 
     override suspend fun getCourses(
@@ -81,11 +55,7 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         page: Int,
         limit: Int,
     ): NetworkResult<List<CourseDto>> {
-        return runCatching {
-            service.getCourseSchedules(facultyId, page, limit).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getCourseSchedules(facultyId, page, limit) }
     }
 
     override suspend fun getEmployees(
@@ -93,10 +63,6 @@ class FacultyApiHelperImpl(private val service: FacultyApiService) : FacultyApiH
         page: Int,
         limit: Int,
     ): NetworkResult<List<EmployeeDto>> {
-        return runCatching {
-            service.getEmployees(facultyId, page, limit).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getEmployees(facultyId, page, limit) }
     }
 }

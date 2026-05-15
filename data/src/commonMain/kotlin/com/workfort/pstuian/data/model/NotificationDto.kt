@@ -58,3 +58,8 @@ data class CustomNotificationDto(
         updatedAt = updatedAt,
     )
 }
+
+@Serializable
+data class UserSystemNotificationReadDto(
+    val readAt: Timestamp = Timestamp(0, 0),
+)

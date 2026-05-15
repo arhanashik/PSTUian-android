@@ -47,6 +47,7 @@ import com.workfort.pstuian.data.remote.infrastructure.CheckInLocationApiHelperI
 import com.workfort.pstuian.data.remote.infrastructure.DeviceApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.DonationApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.FacultyApiHelperImpl
+import com.workfort.pstuian.data.remote.infrastructure.SliderApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.FileRemoteFetcherImpl
 import com.workfort.pstuian.data.remote.infrastructure.NotificationApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.StudentApiHelperImpl
@@ -153,7 +154,7 @@ private val networkModule = module {
     factoryOf(::DeviceApiHelperImpl) bind DeviceApiHelper::class
 
     single { SliderApiService(get()) }
-    factoryOf(::SliderApiHelper)
+    factoryOf(::SliderApiHelperImpl) bind SliderApiHelper::class
 
     single { FacultyApiService(get()) }
     factoryOf(::FacultyApiHelperImpl) bind FacultyApiHelper::class

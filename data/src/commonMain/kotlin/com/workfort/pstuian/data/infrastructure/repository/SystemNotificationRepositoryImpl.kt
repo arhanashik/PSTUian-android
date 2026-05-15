@@ -4,8 +4,8 @@ import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.firestore.FirestoreSystemNotificationDataSource
 import com.workfort.pstuian.featuredomain.model.DomainResult
+import com.workfort.pstuian.featuredomain.model.Notification
 import com.workfort.pstuian.featuredomain.model.SharedPrefKey
-import com.workfort.pstuian.featuredomain.model.SystemNotification
 import com.workfort.pstuian.featuredomain.model.SystemNotificationDisplayType
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
@@ -33,26 +33,26 @@ class SystemNotificationRepositoryImpl(
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    private val _systemNotifications = MutableStateFlow<List<SystemNotification>>(emptyList())
+    private val _systemNotifications = MutableStateFlow<List<Notification.SystemNotification>>(emptyList())
     private var systemNotificationsJobStarted = false
 
-    override fun observeSystemNotifications(userId: String): Flow<List<SystemNotification>> {
+    override fun observeSystemNotifications(userId: String): Flow<List<Notification.SystemNotification>> {
         startObservingSystemNotifications(userId)
         return _systemNotifications
     }
 
-    override fun observeUnreadSystemNotifications(): Flow<List<SystemNotification>> {
+    override fun observeUnreadSystemNotifications(): Flow<List<Notification.SystemNotification>> {
         return _systemNotifications.map { notifications ->
-            notifications.filter { !it.isRead  }
+            notifications.filter { it.readAt == 0L }
         }
     }
 
-    override fun observeNewSystemNotification(type: SystemNotificationDisplayType): Flow<SystemNotification> {
+    override fun observeNewSystemNotification(type: SystemNotificationDisplayType): Flow<Notification.SystemNotification> {
         val sharedPrefKey = type.getClosedAtSharedPrefKey() ?: return emptyFlow()
         val lastReadTimestamp = sharedPrefRepository.getDouble(sharedPrefKey)
 
         return _systemNotifications.map { notifications ->
-            notifications.firstOrNull { it.createdAt > lastReadTimestamp && it.showIn == type && !it.isRead  }
+            notifications.firstOrNull { it.createdAt > lastReadTimestamp && it.showIn == type && it.readAt == 0L }
         }.filterNotNull()
     }
 
@@ -73,10 +73,10 @@ class SystemNotificationRepositoryImpl(
         combine(
             systemNotificationDataSource.observeSystemNotifications(),
             systemNotificationDataSource.observeReadSystemNotificationIds(userId),
-        ) { networkResult, readIds ->
+        ) { networkResult, readAtByNotificationId ->
             networkResult.toDomainResult(domainErrorMapper).onSuccess { pairs ->
                 val notifications = pairs.map { (id, dto) ->
-                    dto.toModel(id = id, isRead = readIds.contains(id))
+                    dto.toModel(id = id, readAt = readAtByNotificationId[id] ?: 0L)
                 }.sortedByDescending { it.createdAt }
                 _systemNotifications.update { notifications }
             }

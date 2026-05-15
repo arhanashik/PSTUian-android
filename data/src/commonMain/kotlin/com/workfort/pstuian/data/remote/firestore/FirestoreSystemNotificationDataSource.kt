@@ -3,6 +3,7 @@ package com.workfort.pstuian.data.remote.firestore
 import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.SystemNotificationDto
+import com.workfort.pstuian.data.model.UserSystemNotificationReadDto
 import com.workfort.pstuian.data.remote.firestore.CommonFields.FIELD_IS_PUBLISHED
 import com.workfort.pstuian.data.remote.firestore.CommonFields.FIELD_READ_AT
 import com.workfort.pstuian.data.remote.firestore.FirestorePaths.SYSTEM_NOTIFICATIONS_PATH
@@ -11,6 +12,7 @@ import com.workfort.pstuian.data.remote.firestore.FirestorePaths.USER_SYSTEM_NOT
 import dev.gitlive.firebase.firestore.CollectionReference
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import dev.gitlive.firebase.firestore.Timestamp
+import dev.gitlive.firebase.firestore.toMilliseconds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -32,11 +34,15 @@ class FirestoreSystemNotificationDataSource(private val firestore: FirebaseFires
             }
     }
 
-    fun observeReadSystemNotificationIds(userId: String): Flow<List<String>> {
+    fun observeReadSystemNotificationIds(userId: String): Flow<Map<String, Long>> {
         return getUserSystemNotificationRef(userId)
             .snapshots
-            .map { snapshot -> snapshot.documents.map { it.id } }
-            .catch { emit(emptyList()) }
+            .map { snapshot ->
+                snapshot.documents.associate { document ->
+                    document.id to document.data<UserSystemNotificationReadDto>().readAt.toMilliseconds().toLong()
+                }
+            }
+            .catch { emit(emptyMap()) }
     }
 
     suspend fun markSystemNotificationAsRead(userId: String, notificationId: String): NetworkResult<Unit> {

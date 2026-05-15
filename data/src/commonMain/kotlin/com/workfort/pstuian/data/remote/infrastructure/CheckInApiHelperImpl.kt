@@ -1,11 +1,9 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.mapper.toNetworkResult
-import com.workfort.pstuian.data.model.ApiResponseCode
 import com.workfort.pstuian.data.model.CheckInDto
-import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.CheckInApiHelper
+import com.workfort.pstuian.data.remote.safeApiCall
 import com.workfort.pstuian.data.remote.service.CheckInApiService
 
 class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiHelper {
@@ -15,11 +13,7 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         page: Int,
         limit: Int,
     ): NetworkResult<List<CheckInDto>> {
-        return runCatching {
-            service.getAllByLocation(locationId, page, limit).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getAllByLocation(locationId, page, limit) }
     }
 
     override suspend fun getHistory(
@@ -28,19 +22,11 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         page: Int,
         limit: Int,
     ): NetworkResult<List<CheckInDto>> {
-        return runCatching {
-            service.getHistory(userId, userType, page, limit).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.getHistory(userId, userType, page, limit) }
     }
 
     override suspend fun getCheckIn(userId: Int, userType: String): NetworkResult<CheckInDto> {
-        return runCatching {
-            service.get(userId, userType).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.get(userId, userType) }
     }
 
     override suspend fun checkIn(
@@ -48,26 +34,14 @@ class CheckInApiHelperImpl(private val service: CheckInApiService) : CheckInApiH
         userId: Int,
         userType: String,
     ): NetworkResult<Unit> {
-        return runCatching {
-            service.checkIn(locationId, userId, userType).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.checkIn(locationId, userId, userType) }
     }
 
     override suspend fun updatePrivacy(checkInId: Int, privacy: String): NetworkResult<Unit> {
-        return runCatching {
-            service.updatePrivacy(checkInId, privacy).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.updatePrivacy(checkInId, privacy) }
     }
 
     override suspend fun delete(id: Int): NetworkResult<Unit> {
-        return runCatching {
-            service.delete(id).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.apiError(ApiResponseCode.Unknown))
-        }
+        return safeApiCall { service.delete(id) }
     }
 }

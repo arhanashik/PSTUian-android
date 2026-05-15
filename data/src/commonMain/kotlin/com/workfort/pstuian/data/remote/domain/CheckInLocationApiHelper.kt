@@ -1,18 +1,28 @@
 package com.workfort.pstuian.data.remote.domain
 
 import com.workfort.pstuian.data.model.CheckInLocationDto
-import com.workfort.pstuian.data.model.NetworkError
-import com.workfort.pstuian.data.model.NetworkErrorCode
 import com.workfort.pstuian.data.model.NetworkResult
+import com.workfort.pstuian.data.remote.NetworkConst
 
-abstract class CheckInLocationApiHelper : ApiHelper<CheckInLocationDto>() {
+interface CheckInLocationApiHelper {
+    suspend fun getAll(
+        page: Int,
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<CheckInLocationDto>>
 
-    open suspend fun insert(
+    suspend fun get(id: Int): NetworkResult<CheckInLocationDto>
+
+    suspend fun search(
+        query: String,
+        page: Int,
+        limit: Int = NetworkConst.Params.Default.PAGE_SIZE,
+    ): NetworkResult<List<CheckInLocationDto>>
+
+    suspend fun insert(
         userType: String,
         name: String,
         details: String?,
         imageUrl: String?,
         link: String?,
-    ): NetworkResult<Unit> =
-        NetworkResult.failure(NetworkError(NetworkErrorCode.UNKNOWN))
+    ): NetworkResult<Unit>
 }

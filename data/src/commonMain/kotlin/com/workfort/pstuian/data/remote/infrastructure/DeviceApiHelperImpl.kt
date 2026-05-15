@@ -1,12 +1,10 @@
 package com.workfort.pstuian.data.remote.infrastructure
 
-import com.workfort.pstuian.data.mapper.toNetworkResult
-import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.DeviceDto
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.DeviceApiHelper
+import com.workfort.pstuian.data.remote.safeApiCall
 import com.workfort.pstuian.data.remote.service.DeviceApiService
-
 
 class DeviceApiHelperImpl(private val service: DeviceApiService) : DeviceApiHelper {
 
@@ -15,13 +13,9 @@ class DeviceApiHelperImpl(private val service: DeviceApiService) : DeviceApiHelp
         userType: String,
         deviceId: String,
         page: Int,
-        limit: Int
+        limit: Int,
     ): NetworkResult<List<DeviceDto>> {
-        return runCatching {
-            return service.getAllDevices(userId, userType, deviceId, page, limit).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.UNKNOWN)
-        }
+        return safeApiCall { service.getAllDevices(userId, userType, deviceId, page, limit) }
     }
 
     override suspend fun registerDevice(
@@ -35,7 +29,7 @@ class DeviceApiHelperImpl(private val service: DeviceApiService) : DeviceApiHelp
         lng: String,
         locale: String,
     ): NetworkResult<DeviceDto> {
-        return runCatching {
+        return safeApiCall {
             service.registerDevice(
                 deviceId = deviceId,
                 model = model,
@@ -46,9 +40,7 @@ class DeviceApiHelperImpl(private val service: DeviceApiService) : DeviceApiHelp
                 lat = lat,
                 lng = lng,
                 locale = locale,
-            ).toNetworkResult()
-        }.getOrElse {
-            NetworkResult.failure(CommonNetworkError.UNKNOWN)
+            )
         }
     }
 }

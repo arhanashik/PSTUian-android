@@ -2,7 +2,6 @@ package com.workfort.pstuian.data.remote.service
 
 import com.workfort.pstuian.data.model.ApiResponse
 import com.workfort.pstuian.data.model.CustomNotificationDto
-import com.workfort.pstuian.data.model.HasUnreadNotificationDto
 import com.workfort.pstuian.data.remote.NetworkConst
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -25,7 +24,7 @@ class CustomNotificationApiService(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun hasUnreadCustomNotifications(userType: String): ApiResponse<HasUnreadNotificationDto> {
+    suspend fun hasUnreadCustomNotifications(userType: String): ApiResponse<Boolean> {
         return client.get(NetworkConst.Remote.Api.Notification.HAS_UNREAD) {
             parameter(NetworkConst.Params.USER_TYPE, userType)
         }.body()
