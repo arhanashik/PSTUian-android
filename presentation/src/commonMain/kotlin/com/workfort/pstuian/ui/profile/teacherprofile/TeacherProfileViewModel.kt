@@ -6,7 +6,7 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.UserProfile
 import com.workfort.pstuian.featuredomain.model.UserType
-import com.workfort.pstuian.featuredomain.model.getUserPresenceId
+import com.workfort.pstuian.featuredomain.model.getPrefixUserId
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
@@ -106,7 +106,7 @@ class TeacherProfileViewModel(
                         connectContents = teacherProfileDisplayDataMapper.mapConnectContents(profile),
                         isSignedIn = profile.isSignedIn,
                     )
-                    observeUserPresence(profile.user.getUserPresenceId(), profile.isSignedIn)
+                    observeUserPresence(profile.user.getPrefixUserId(), profile.isSignedIn)
                 }
                 .onFailure {
                     val message = it.message ?: "Failed to load teacher profile"

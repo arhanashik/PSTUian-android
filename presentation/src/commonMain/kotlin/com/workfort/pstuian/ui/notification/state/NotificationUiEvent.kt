@@ -1,12 +1,9 @@
 package com.workfort.pstuian.ui.notification.state
 
-import com.workfort.pstuian.featuredomain.model.NotificationEntity
+import com.workfort.pstuian.featuredomain.model.Notification
 
 sealed interface NotificationUiEvent {
-    data object OnClickBack : NotificationUiEvent
-    data class OnClickNotification(val notification: NotificationEntity) : NotificationUiEvent
-    data object OnLoadMore : NotificationUiEvent
-    data object OnRefresh : NotificationUiEvent
-    data object MessageConsumed : NotificationUiEvent
-    data object NavigationConsumed : NotificationUiEvent
+    data object BackClicked : NotificationUiEvent
+    data class TabSelected(val tabIndex: Int) : NotificationUiEvent
+    data class NotificationClicked(val notification: Notification) : NotificationUiEvent
 }

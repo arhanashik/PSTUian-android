@@ -1,38 +1,34 @@
 package com.workfort.pstuian.ui.notification
 
-import com.workfort.pstuian.featuredomain.model.NotificationEntity
 import com.workfort.pstuian.ui.common.uistate.UiStateMachine
-import com.workfort.pstuian.ui.notification.state.NotificationMessageState
-import com.workfort.pstuian.ui.notification.state.NotificationNavigationState
+import com.workfort.pstuian.ui.notification.displaydata.NotificationDisplayData
 import com.workfort.pstuian.ui.notification.state.NotificationUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class NotificationUiStateMachine : UiStateMachine<NotificationUiState> {
-    private val _uiState = MutableStateFlow(NotificationUiState())
-    override val uiState: StateFlow<NotificationUiState> = _uiState.asStateFlow()
+internal class NotificationUiStateMachine : UiStateMachine<NotificationUiState> {
 
-    fun updateNotifications(notifications: List<NotificationEntity>, isLoading: Boolean) {
-        _uiState.update {
-            it.copy(
-                notifications = notifications,
-                isLoading = isLoading,
-                error = null
-            )
-        }
+    private val _state = MutableStateFlow(NotificationUiState())
+    override val uiState: StateFlow<NotificationUiState> = _state.asStateFlow()
+
+    private fun updateUiState(updater: NotificationUiState.() -> NotificationUiState) =
+        _state.update(updater)
+
+    fun showLoading(isLoading: Boolean) = updateUiState {
+        copy(isLoading = isLoading)
     }
 
-    fun updateError(error: String) {
-        _uiState.update { it.copy(error = error, isLoading = false) }
+    fun selectTab(tabIndex: Int) = updateUiState {
+        copy(selectedTabIndex = tabIndex)
     }
 
-    fun showMessage(messageState: NotificationMessageState?) {
-        _uiState.update { it.copy(messageState = messageState) }
+    fun updateSystemNotifications(groupedNotifications: Map<String, List<NotificationDisplayData>>) = updateUiState {
+        copy(groupedSystemNotifications = groupedNotifications, isLoading = false)
     }
 
-    fun navigateTo(navigationState: NotificationNavigationState?) {
-        _uiState.update { it.copy(navigationState = navigationState) }
+    fun updateCustomNotifications(groupedNotifications: Map<String, List<NotificationDisplayData>>) = updateUiState {
+        copy(groupedCustomNotifications = groupedNotifications, isLoading = false)
     }
 }

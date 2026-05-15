@@ -6,7 +6,7 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.model.SystemNotification
 import com.workfort.pstuian.featuredomain.model.SystemNotificationDisplayType
 import com.workfort.pstuian.featuredomain.model.ThemeMode
-import com.workfort.pstuian.featuredomain.model.getUserPresenceId
+import com.workfort.pstuian.featuredomain.model.getPrefixUserId
 import com.workfort.pstuian.featuredomain.repository.AppConfigRepository
 import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
@@ -86,7 +86,7 @@ class AppViewModel(
                 sharedScreenData.setCurrentUser(signInUser)
 
                 // update user status as online
-                signInUser?.getUserPresenceId()?.let { presenceId ->
+                signInUser?.getPrefixUserId()?.let { presenceId ->
                     userPresenceRepository.observeAndSyncUserPresence(presenceId)
                 }
             }

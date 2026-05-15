@@ -106,8 +106,8 @@ private fun ProfileView(
     ) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(pageCount = { 2 })
     val tabOptions = listOf(stringResource(Res.string.txt_academic), stringResource(Res.string.txt_connect))
+    val pagerState = rememberPagerState(pageCount = { tabOptions.size })
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val themeBg = MaterialTheme.colorScheme.background
     val avatarUrl = headerDisplayData.imageUrl

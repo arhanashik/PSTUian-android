@@ -66,7 +66,7 @@ sealed interface User {
     ) : User
 }
 
-fun User.getUserPresenceId(): String {
+fun User.getPrefixUserId(): String {
     val prefix = when (this) {
         is User.Student -> UserType.STUDENT.type
         is User.Teacher -> UserType.TEACHER.type

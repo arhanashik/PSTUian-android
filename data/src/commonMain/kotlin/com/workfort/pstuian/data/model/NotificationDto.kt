@@ -1,8 +1,7 @@
 package com.workfort.pstuian.data.model
 
-import com.workfort.pstuian.featuredomain.model.CustomNotification
+import com.workfort.pstuian.featuredomain.model.Notification
 import com.workfort.pstuian.featuredomain.model.NotificationCategory
-import com.workfort.pstuian.featuredomain.model.SystemNotification
 import com.workfort.pstuian.featuredomain.model.SystemNotificationDisplayType
 import dev.gitlive.firebase.firestore.Timestamp
 import dev.gitlive.firebase.firestore.toMilliseconds
@@ -14,18 +13,18 @@ data class SystemNotificationDto(
     val body: String = "",
     val linkText: String? = null,
     val link: String? = null,
-    val showIn: String = "none",
+    val showIn: String = "",
     val requireSignIn: Boolean = false,
     val createdAt: Timestamp = Timestamp(0, 0),
 ) {
-    fun toModel(id: String, isRead: Boolean) = SystemNotification(
+    fun toModel(id: String, readAt: Long) = Notification.SystemNotification(
         id = id,
         title = title,
         body = body,
         linkText = linkText,
         link = link,
         showIn = SystemNotificationDisplayType.create(showIn),
-        isRead = isRead,
+        readAt = readAt,
         requireSignIn = requireSignIn,
         createdAt = createdAt.toMilliseconds().toLong(),
     )
@@ -41,12 +40,12 @@ data class CustomNotificationDto(
     val category: String = "",
     val fromUserId: Int = 0,
     val toUserId: Int = 0,
-    val readAt: Timestamp = Timestamp(0, 0),
-    val createdAt: Timestamp = Timestamp(0, 0),
-    val updatedAt: Timestamp = Timestamp(0, 0),
+    val readAt: Long = 0,
+    val createdAt: Long = 0,
+    val updatedAt: Long = 0,
 ) {
-    fun toModel(id: Int) = CustomNotification(
-        id = id,
+    fun toModel(id: Int) = Notification.CustomNotification(
+        id = id.toString(),
         title = title,
         body = body,
         linkText = linkText,
@@ -54,8 +53,8 @@ data class CustomNotificationDto(
         category = NotificationCategory.create(category),
         fromUserId = fromUserId,
         toUserId = toUserId,
-        readAt = readAt.toMilliseconds().toLong(),
-        createdAt = createdAt.toMilliseconds().toLong(),
-        updatedAt = updatedAt.toMilliseconds().toLong(),
+        readAt = readAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 }
