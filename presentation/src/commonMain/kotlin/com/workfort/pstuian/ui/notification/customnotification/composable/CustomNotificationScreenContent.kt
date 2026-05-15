@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.workfort.pstuian.featuredomain.model.Notification
 import com.workfort.pstuian.featuredomain.model.NotificationCategory
 import com.workfort.pstuian.featuredomain.model.ThemeMode
+import com.workfort.pstuian.featuredomain.model.UserType
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.theme.AppTheme
 import com.workfort.pstuian.ui.notification.common.displaydata.NotificationDisplayData
@@ -50,7 +51,9 @@ private fun mockGroupedNotifications() = mapOf(
                 createdAt = 1700000000000L,
                 category = NotificationCategory.NEW_FOLLOWER,
                 fromUserId = 1,
+                fromUserType = UserType.STUDENT,
                 toUserId = 2,
+                toUserType = UserType.STUDENT,
                 updatedAt = 1700000000000L,
             ),
             formattedReadAt = "",

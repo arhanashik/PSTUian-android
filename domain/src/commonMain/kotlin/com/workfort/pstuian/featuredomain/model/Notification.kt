@@ -32,7 +32,9 @@ interface Notification {
         override val createdAt: Long,
         val category: NotificationCategory,
         val fromUserId: Int,
+        val fromUserType: UserType?,
         val toUserId: Int,
+        val toUserType: UserType?,
         val updatedAt: Long,
     ) : Notification
 }
