@@ -44,6 +44,13 @@ import com.workfort.pstuian.ui.faculty.teacher.TeacherUiStateMachine
 import com.workfort.pstuian.ui.faculty.teacher.TeacherViewModel
 import com.workfort.pstuian.ui.home.HomeUiStateMachine
 import com.workfort.pstuian.ui.home.HomeViewModel
+import com.workfort.pstuian.ui.notification.common.NotificationDisplayDataMapper
+import com.workfort.pstuian.ui.notification.customnotification.CustomNotificationUiStateMachine
+import com.workfort.pstuian.ui.notification.customnotification.CustomNotificationViewModel
+import com.workfort.pstuian.ui.notification.notification.NotificationUiStateMachine
+import com.workfort.pstuian.ui.notification.notification.NotificationViewModel
+import com.workfort.pstuian.ui.notification.systemnotification.SystemNotificationUiStateMachine
+import com.workfort.pstuian.ui.notification.systemnotification.SystemNotificationViewModel
 import com.workfort.pstuian.ui.imageupload.ImageUploadUiStateMachine
 import com.workfort.pstuian.ui.imageupload.ImageUploadViewModel
 import com.workfort.pstuian.ui.profile.common.UserPresenceDisplayDataMapper
@@ -241,6 +248,16 @@ private val homeModule = module {
     factoryOf(::HomeViewModel)
 }
 
+private val notificationModule = module {
+    factoryOf(::NotificationUiStateMachine)
+    factoryOf(::SystemNotificationUiStateMachine)
+    factoryOf(::CustomNotificationUiStateMachine)
+    factoryOf(::NotificationDisplayDataMapper)
+    factoryOf(::NotificationViewModel)
+    factoryOf(::SystemNotificationViewModel)
+    factoryOf(::CustomNotificationViewModel)
+}
+
 private val signInModule = module {
     factoryOf(::SignInUiStateMachine)
     factoryOf(::SignInViewModel)
@@ -401,6 +418,7 @@ val featurePresentationModule = listOf(
     donateModule,
     facultyModule,
     homeModule,
+    notificationModule,
     signInModule,
     splashModule,
     studentsModule,

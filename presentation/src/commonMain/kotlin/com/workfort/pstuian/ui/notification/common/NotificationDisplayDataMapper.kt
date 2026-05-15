@@ -1,10 +1,10 @@
-package com.workfort.pstuian.ui.notification
+package com.workfort.pstuian.ui.notification.common
 
 import com.workfort.pstuian.featuredomain.model.Notification
-import com.workfort.pstuian.ui.notification.displaydata.NotificationDisplayData
+import com.workfort.pstuian.ui.notification.common.displaydata.NotificationDisplayData
 import com.workfort.pstuian.util.DateTimeUtil
 
-internal class NotificationDisplayDataMapper(val dateTimeUtil: DateTimeUtil) {
+class NotificationDisplayDataMapper(private val dateTimeUtil: DateTimeUtil) {
 
     fun map(notifications: List<Notification>): List<NotificationDisplayData> {
         return notifications.map { notification ->

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.notification.composable
+package com.workfort.pstuian.ui.notification.common.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,14 +38,14 @@ internal fun NotificationShimmer() {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .height(18.dp)
                             .clip(RoundedCornerShape(4.dp))
-                            .shimmerAnimation()
+                            .shimmerAnimation(),
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Box(
@@ -53,7 +53,7 @@ internal fun NotificationShimmer() {
                             .width(80.dp)
                             .height(12.dp)
                             .clip(RoundedCornerShape(4.dp))
-                            .shimmerAnimation()
+                            .shimmerAnimation(),
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -62,7 +62,7 @@ internal fun NotificationShimmer() {
                         .fillMaxWidth(0.7f)
                         .height(14.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .shimmerAnimation()
+                        .shimmerAnimation(),
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Box(
@@ -70,7 +70,7 @@ internal fun NotificationShimmer() {
                         .fillMaxWidth(0.4f)
                         .height(14.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .shimmerAnimation()
+                        .shimmerAnimation(),
                 )
             }
         }

@@ -31,6 +31,7 @@ import com.workfort.pstuian.ui.donation.donate.DonateScreen
 import com.workfort.pstuian.ui.donation.donationhistory.DonationHistoryScreen
 import com.workfort.pstuian.ui.faculty.faculty.FacultyScreen
 import com.workfort.pstuian.ui.home.HomeScreen
+import com.workfort.pstuian.ui.notification.notification.NotificationScreen
 import com.workfort.pstuian.ui.imagepreview.ImagePreviewScreen
 import com.workfort.pstuian.ui.imageupload.ImageUploadScreen
 import com.workfort.pstuian.ui.locationpicker.LocationPickerScreen
@@ -285,7 +286,7 @@ fun AppNavHost(
                     DonationHistoryScreen(viewModel = koinViewModel())
                 }
                 composable<AppScreen.Notification> {
-                    // TODO: Need Screen for Notification
+                    NotificationScreen(viewModel = koinViewModel())
                 }
             }
             overlayContent()

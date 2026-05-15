@@ -44,7 +44,7 @@ data class CustomNotificationDto(
     val createdAt: Long = 0,
     val updatedAt: Long = 0,
 ) {
-    fun toModel(id: Int) = Notification.CustomNotification(
+    fun toModel() = Notification.CustomNotification(
         id = id.toString(),
         title = title,
         body = body,

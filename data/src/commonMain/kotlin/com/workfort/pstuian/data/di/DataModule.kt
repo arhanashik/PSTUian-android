@@ -6,11 +6,11 @@ import com.workfort.pstuian.data.infrastructure.repository.BloodDonationReposito
 import com.workfort.pstuian.data.infrastructure.repository.BloodDonationRequestRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.CheckInLocationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.CheckInRepositoryImpl
+import com.workfort.pstuian.data.infrastructure.repository.CustomNotificationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.DeviceRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.DonationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.FacultyRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.FileHandlerRepositoryImpl
-import com.workfort.pstuian.data.infrastructure.repository.NotificationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SettingsRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SharedPrefRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SliderRepositoryImpl
@@ -44,10 +44,10 @@ import com.workfort.pstuian.data.remote.infrastructure.BloodDonationApiHelperImp
 import com.workfort.pstuian.data.remote.infrastructure.BloodDonationRequestApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.CheckInApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.CheckInLocationApiHelperImpl
-import com.workfort.pstuian.data.remote.infrastructure.FileRemoteFetcherImpl
 import com.workfort.pstuian.data.remote.infrastructure.DeviceApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.DonationApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.FacultyApiHelperImpl
+import com.workfort.pstuian.data.remote.infrastructure.FileRemoteFetcherImpl
 import com.workfort.pstuian.data.remote.infrastructure.NotificationApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.StudentApiHelperImpl
 import com.workfort.pstuian.data.remote.infrastructure.SupportApiHelperImpl
@@ -57,11 +57,11 @@ import com.workfort.pstuian.data.remote.service.BloodDonationApiService
 import com.workfort.pstuian.data.remote.service.BloodDonationRequestApiService
 import com.workfort.pstuian.data.remote.service.CheckInApiService
 import com.workfort.pstuian.data.remote.service.CheckInLocationApiService
+import com.workfort.pstuian.data.remote.service.CustomNotificationApiService
 import com.workfort.pstuian.data.remote.service.DeviceApiService
 import com.workfort.pstuian.data.remote.service.DonationApiService
 import com.workfort.pstuian.data.remote.service.FacultyApiService
 import com.workfort.pstuian.data.remote.service.FileHandlerApiService
-import com.workfort.pstuian.data.remote.service.NotificationApiService
 import com.workfort.pstuian.data.remote.service.SliderApiService
 import com.workfort.pstuian.data.remote.service.StudentApiService
 import com.workfort.pstuian.data.remote.service.SupportApiService
@@ -75,11 +75,11 @@ import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
 import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestRepository
 import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 import com.workfort.pstuian.featuredomain.repository.CheckInRepository
+import com.workfort.pstuian.featuredomain.repository.CustomNotificationRepository
 import com.workfort.pstuian.featuredomain.repository.DeviceRepository
 import com.workfort.pstuian.featuredomain.repository.DonationRepository
 import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 import com.workfort.pstuian.featuredomain.repository.FileHandlerRepository
-import com.workfort.pstuian.featuredomain.repository.NotificationRepository
 import com.workfort.pstuian.featuredomain.repository.SettingsRepository
 import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 import com.workfort.pstuian.featuredomain.repository.SliderRepository
@@ -172,7 +172,7 @@ private val networkModule = module {
     single { SupportApiService(get()) }
     factoryOf(::SupportApiHelperImpl) bind SupportApiHelper::class
 
-    single { NotificationApiService(get()) }
+    single { CustomNotificationApiService(get()) }
     factoryOf(::NotificationApiHelperImpl) bind NotificationApiHelper::class
 
     single { BloodDonationApiService(get()) }
@@ -211,8 +211,6 @@ val repositoryModule = module {
 
     factoryOf(::SupportRepositoryImpl) bind SupportRepository::class
 
-    factoryOf(::NotificationRepositoryImpl) bind NotificationRepository::class
-
     singleOf(::SettingsRepositoryImpl) bind SettingsRepository::class
 
     factoryOf(::BloodDonationRepositoryImpl) bind BloodDonationRepository::class
@@ -226,6 +224,7 @@ val repositoryModule = module {
     factoryOf(::SharedPrefRepositoryImpl) bind SharedPrefRepository::class
 
     factoryOf(::SystemNotificationRepositoryImpl) bind SystemNotificationRepository::class
+    factoryOf(::CustomNotificationRepositoryImpl) bind CustomNotificationRepository::class
 }
 
 private val mapperModule = module {

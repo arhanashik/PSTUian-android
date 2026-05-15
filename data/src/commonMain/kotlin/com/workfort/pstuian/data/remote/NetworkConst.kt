@@ -175,6 +175,8 @@ object NetworkConst {
 
             object Notification {
                 const val GET_ALL = "${NOTIFICATION_API_PATH}getAll"
+                const val MARK_AS_READ = "${NOTIFICATION_API_PATH}markAsRead"
+                const val HAS_UNREAD = "${NOTIFICATION_API_PATH}hasUnread"
             }
 
             object BloodDonation {

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.notification.displaydata
+package com.workfort.pstuian.ui.notification.common.displaydata
 
 import com.workfort.pstuian.featuredomain.model.Notification
 

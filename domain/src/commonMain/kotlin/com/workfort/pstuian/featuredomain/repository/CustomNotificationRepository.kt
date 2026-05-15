@@ -4,9 +4,16 @@ import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.Notification
 
 interface CustomNotificationRepository {
-    suspend fun getCustomNotifications(userId: Int): DomainResult<List<Notification.CustomNotification>>
 
-    suspend fun hasUnreadCustomNotifications(): Boolean
+    suspend fun getAll(
+        userType: String,
+        page: Int,
+        forceRefresh: Boolean,
+    ): DomainResult<List<Notification.CustomNotification>>
 
-    suspend fun markCustomNotificationAsRead(userId: Int, notificationId: String): DomainResult<Unit>
+    suspend fun hasUnreadCustomNotifications(userType: String,): DomainResult<Boolean>
+
+    suspend fun markCustomNotificationAsRead(
+        notification: Notification.CustomNotification,
+    ): DomainResult<Notification.CustomNotification>
 }
