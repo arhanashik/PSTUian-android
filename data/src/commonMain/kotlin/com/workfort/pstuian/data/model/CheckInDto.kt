@@ -19,11 +19,14 @@ data class CheckInDto(
     val userId: Int,
     @SerialName("user_type")
     val userType: String,
-    val name: String,
-    val batch: String,
-    val phone: String?,
-    @SerialName("image_url")
-    val imageUrl: String?,
+    @SerialName("user_name")
+    val userName: String,
+    @SerialName("user_info")
+    val userinfo: String,
+    @SerialName("user_phone")
+    val userPhone: String? = null,
+    @SerialName("user_image_url")
+    val userImageUrl: String? = null,
     val date: String,
 ) {
     fun toModel() = CheckIn(
@@ -35,26 +38,10 @@ data class CheckInDto(
         privacy = privacy,
         userId = userId,
         userType = userType,
-        name = name,
-        batch = batch,
-        phone = phone,
-        imageUrl = imageUrl,
+        userName = userName,
+        userinfo = userinfo,
+        userPhone = userPhone,
+        userImageUrl = userImageUrl,
         date = date,
     )
 }
-
-fun CheckIn.toDto() = CheckInDto(
-    id = id,
-    locationId = locationId,
-    locationName = locationName,
-    locationImageUrl = locationImageUrl,
-    count = count,
-    privacy = privacy,
-    userId = userId,
-    userType = userType,
-    name = name,
-    batch = batch,
-    phone = phone,
-    imageUrl = imageUrl,
-    date = date,
-)

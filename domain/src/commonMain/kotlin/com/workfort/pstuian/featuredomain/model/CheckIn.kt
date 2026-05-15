@@ -12,9 +12,9 @@ data class CheckIn(
     val privacy: String,
     val userId: Int,
     val userType: String,
-    val name: String,
-    val batch: String,
-    val phone: String?,
-    val imageUrl: String?,
+    val userName: String,
+    val userinfo: String,
+    val userPhone: String?,
+    val userImageUrl: String?,
     val date: String,
 )

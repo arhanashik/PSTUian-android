@@ -536,7 +536,7 @@ private fun CheckInItemView(
                             .background(color = MaterialTheme.colorScheme.surface, shape = CircleShape)
                             .padding(4.dp),
                     ) {
-                        LoadAsyncUserImage(url = item.checkIn.imageUrl, size = 64.dp)
+                        LoadAsyncUserImage(url = item.checkIn.userImageUrl, size = 64.dp)
                     }
                 }
                 OnlineOfflineStatusLabel(
@@ -553,11 +553,11 @@ private fun CheckInItemView(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 CheckInNameSingleLineMaybeMarquee(
-                    name = item.checkIn.name,
+                    name = item.checkIn.userName,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
-                    text = item.checkIn.batch,
+                    text = item.checkIn.userinfo,
                     style = TextStyle.label3.copy(
                         fontWeight = FontWeight.Normal,
                         fontSize = 9.sp,

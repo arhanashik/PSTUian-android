@@ -82,7 +82,7 @@ object NetworkConst {
 
     object Remote {
         const val PSTU_WEBSITE = "https://www.pstu.ac.bd/"
-        private const val LOCAL_SERVER = "http://192.168.1.3:8888/pstuian/"
+        private const val LOCAL_SERVER = "http://192.168.1.3/pstuian/"
         const val DEV_SERVER = "https://dev.pstuian.com/"
         const val LIVE_SERVER = "https://pstuian.com/"
         const val LOCAL_API_SERVER = "${LOCAL_SERVER}api/v1/"

@@ -83,10 +83,10 @@ private fun mockCheckIn(
     privacy = "public",
     userId = id,
     userType = "student",
-    name = name,
-    batch = batch,
-    phone = phone,
-    imageUrl = null,
+    userName = name,
+    userinfo = batch,
+    userPhone = phone,
+    userImageUrl = null,
     date = "2026-04-30",
 )
 

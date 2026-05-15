@@ -1,6 +1,7 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
 import com.workfort.pstuian.data.mapper.toDomainResult
+import com.workfort.pstuian.data.model.AuthUserDto
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
 import com.workfort.pstuian.data.remote.firebase.FirebaseAuthDataSource
 import com.workfort.pstuian.featuredomain.model.AuthUser
@@ -95,12 +96,7 @@ class AuthRepositoryImpl(
         val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
 
         // Auth SignUp
-        firebaseAuthDataSource.signUp(email, password).toDomainResult().getOrElse {
-            return DomainResult.failure(it)
-        }
-
-        // update auth-token for api->header
-        syncAuthTokenToPreferences()
+        authSignUp(email, password).getOrElse { return DomainResult.failure(it) }
 
         // sign up
         val result = helper.signUpStudent(
@@ -135,9 +131,7 @@ class AuthRepositoryImpl(
         val deviceId = getDeviceId().ifBlank { return DomainResult.failure(invalidDevice) }
 
         // Auth SignUp
-        firebaseAuthDataSource.signUp(email, password).toDomainResult().getOrElse {
-            return DomainResult.failure(it)
-        }
+        authSignUp(email, password).getOrElse { return DomainResult.failure(it) }
 
         // sign up
         val result = helper.signUpTeacher(
@@ -221,5 +215,16 @@ class AuthRepositoryImpl(
 
     override suspend fun removeAuthPrefs() {
         sharedPrefRepository.remove(SharedPrefKey.AUTH_TOKEN)
+    }
+
+    private suspend fun authSignUp(email: String, password: String): DomainResult<AuthUserDto> {
+        // For dev env if existing acc needs to be deleted
+        firebaseAuthDataSource.deleteAccount(email, password)
+
+        val authResult = firebaseAuthDataSource.signUp(email, password).toDomainResult()
+        // update auth-token for api->header
+        syncAuthTokenToPreferences()
+
+        return authResult
     }
 }

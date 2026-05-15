@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,10 +50,11 @@ fun FacultyContentPanel(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
+        Spacer(modifier = Modifier.height(16.dp))
         ToggleSwitch(
             options = uiState.tabs,
             selectedIndex = uiState.selectedTab,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             onSelectedIndexChange = { index ->
                 scope.launch {
                     pagerState.animateScrollToPage(index)

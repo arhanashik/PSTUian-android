@@ -2,7 +2,6 @@ package com.workfort.pstuian.data.infrastructure.repository
 
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.BloodDonationApiHelper
-import com.workfort.pstuian.data.model.toDto
 import com.workfort.pstuian.featuredomain.model.BloodDonationEntity
 import com.workfort.pstuian.featuredomain.model.DomainResult
 import com.workfort.pstuian.featuredomain.model.UserType
