@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.CheckInApiHelper
 import com.workfort.pstuian.featuredomain.model.CheckIn
@@ -12,7 +11,6 @@ import com.workfort.pstuian.featuredomain.repository.CheckInRepository
 
 class CheckInRepositoryImpl(
     private val helper: CheckInApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : CheckInRepository {
 
     private val checkInsCache = mutableMapOf<String, List<CheckIn>>()
@@ -30,7 +28,7 @@ class CheckInRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getAll(locationId = locationId, page = page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { checkInsCache[key] = it }
     }
@@ -48,7 +46,7 @@ class CheckInRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getHistory(userId = userId, userType = userType.type, page = page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { checkInsForUserCache[key] = it }
     }
@@ -62,7 +60,7 @@ class CheckInRepositoryImpl(
             return DomainResult.success(it)
         }
 
-        return helper.getCheckIn(userId, userType.type).toDomainResult(domainErrorMapper).map { it.toModel() }
+        return helper.getCheckIn(userId, userType.type).toDomainResult().map { it.toModel() }
     }
 
     override suspend fun checkIn(
@@ -74,15 +72,15 @@ class CheckInRepositoryImpl(
             locationId,
             userId,
             userType.type,
-        ).toDomainResult(domainErrorMapper)
+        ).toDomainResult()
     }
 
     override suspend fun updatePrivacy(checkInId: Int, privacy: String): DomainResult<Unit> {
-        return helper.updatePrivacy(checkInId, privacy).toDomainResult(domainErrorMapper)
+        return helper.updatePrivacy(checkInId, privacy).toDomainResult()
     }
 
     override suspend fun delete(checkInId: Int): DomainResult<Unit> {
-        return helper.delete(checkInId).toDomainResult(domainErrorMapper)
+        return helper.delete(checkInId).toDomainResult()
     }
 
     override fun clearCache() {

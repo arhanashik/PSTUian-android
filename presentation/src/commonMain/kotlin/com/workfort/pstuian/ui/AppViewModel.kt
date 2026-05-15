@@ -3,7 +3,7 @@ package com.workfort.pstuian.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
-import com.workfort.pstuian.featuredomain.model.SystemNotification
+import com.workfort.pstuian.featuredomain.model.Notification
 import com.workfort.pstuian.featuredomain.model.SystemNotificationDisplayType
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.featuredomain.model.getPrefixUserId
@@ -50,7 +50,7 @@ class AppViewModel(
                 initialValue = settingsRepository.getTheme(),
             )
 
-    val newSystemNotificationForAlert = MutableStateFlow<SystemNotification?>(null)
+    val newSystemNotificationForAlert = MutableStateFlow<Notification.SystemNotification?>(null)
 
     init {
         observeAppConfig()

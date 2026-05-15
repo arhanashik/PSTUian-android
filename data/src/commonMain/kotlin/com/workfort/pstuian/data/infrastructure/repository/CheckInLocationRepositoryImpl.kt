@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.CheckInLocationApiHelper
 import com.workfort.pstuian.featuredomain.model.CheckInLocation
@@ -12,7 +11,6 @@ import com.workfort.pstuian.featuredomain.repository.CheckInLocationRepository
 
 class CheckInLocationRepositoryImpl(
     private val helper: CheckInLocationApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : CheckInLocationRepository {
 
     private val checkInLocationsCache = mutableMapOf<Int, List<CheckInLocation>>()
@@ -24,7 +22,7 @@ class CheckInLocationRepositoryImpl(
         }
 
         return helper.getAll(page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { checkInLocationsCache[page] = it }
     }
@@ -34,11 +32,11 @@ class CheckInLocationRepositoryImpl(
             return DomainResult.success(it)
         }
 
-        return helper.get(id).toDomainResult(domainErrorMapper).map { it.toModel() }
+        return helper.get(id).toDomainResult().map { it.toModel() }
     }
 
     override suspend fun search(query: String, page: Int): DomainResult<List<CheckInLocation>>{
-        return helper.search(query, page).toDomainResult(domainErrorMapper).map { list ->
+        return helper.search(query, page).toDomainResult().map { list ->
             list.map { it.toModel() }
         }
     }
@@ -56,6 +54,6 @@ class CheckInLocationRepositoryImpl(
             details,
             imageUrl,
             link,
-        ).toDomainResult(domainErrorMapper)
+        ).toDomainResult()
     }
 }

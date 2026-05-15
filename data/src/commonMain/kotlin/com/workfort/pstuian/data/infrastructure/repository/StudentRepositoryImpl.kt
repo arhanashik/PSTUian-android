@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.StudentApiHelper
 import com.workfort.pstuian.featuredomain.model.DomainResult
@@ -11,7 +10,6 @@ import com.workfort.pstuian.featuredomain.repository.StudentRepository
 
 class StudentRepositoryImpl(
     private val helper: StudentApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : StudentRepository {
 
     private val cache = mutableSetOf<User.Student>()
@@ -21,7 +19,7 @@ class StudentRepositoryImpl(
             return DomainResult.success(cache)
         }
         return helper.get(userId)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { cache.add(it) }
     }
@@ -31,14 +29,14 @@ class StudentRepositoryImpl(
             return DomainResult.success(cache)
         }
         return helper.getByEmail(email)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { cache.add(it) }
     }
 
     override suspend fun changeProfileImage(userId: Int, imageUrl: String): DomainResult<Unit> {
         return helper.changeProfileImage(imageUrl)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .onSuccess { cache.removeAll { it.userId == userId } }
     }
 
@@ -46,7 +44,7 @@ class StudentRepositoryImpl(
         userId: Int,
         name: String
     ): DomainResult<Unit> {
-        return helper.changeName(name).toDomainResult(domainErrorMapper).onSuccess {
+        return helper.changeName(name).toDomainResult().onSuccess {
             cache.removeAll { it.userId == userId }
         }
     }
@@ -55,7 +53,7 @@ class StudentRepositoryImpl(
         userId: Int,
         bio: String
     ): DomainResult<Unit> {
-        return helper.changeBio(bio).toDomainResult(domainErrorMapper).onSuccess {
+        return helper.changeBio(bio).toDomainResult().onSuccess {
             cache.removeAll { it.userId == userId }
         }
     }
@@ -65,7 +63,7 @@ class StudentRepositoryImpl(
         fileUrl: String
     ): DomainResult<Unit> {
         return helper.changeCvUrl(fileUrl)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .onSuccess { cache.removeAll { it.userId == userId } }
     }
 
@@ -89,7 +87,7 @@ class StudentRepositoryImpl(
             session = session,
             batchId = batchId,
         )
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { student ->
                 cache.removeAll { it.userId == studentOldId }
@@ -116,7 +114,7 @@ class StudentRepositoryImpl(
             linkedIn = linkedIn,
             fbLink = facebook,
         )
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { student ->
                 cache.removeAll { it.userId == userId }

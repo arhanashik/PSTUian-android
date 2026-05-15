@@ -19,7 +19,6 @@ import com.workfort.pstuian.data.infrastructure.repository.SupportRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.SystemNotificationRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.TeacherRepositoryImpl
 import com.workfort.pstuian.data.infrastructure.repository.UserPresenceRepositoryImpl
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.remote.KtorClientFactory
 import com.workfort.pstuian.data.remote.NetworkConst
 import com.workfort.pstuian.data.remote.domain.AuthApiHelper
@@ -228,14 +227,9 @@ val repositoryModule = module {
     factoryOf(::CustomNotificationRepositoryImpl) bind CustomNotificationRepository::class
 }
 
-private val mapperModule = module {
-    factoryOf(::DomainErrorMapper)
-}
-
 val dataModule = listOf(
     platformDataModule,
     firebaseModule,
     networkModule,
     repositoryModule,
-    mapperModule,
 )

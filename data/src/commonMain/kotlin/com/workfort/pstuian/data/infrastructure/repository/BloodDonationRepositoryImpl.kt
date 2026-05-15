@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.BloodDonationApiHelper
 import com.workfort.pstuian.data.model.toDto
@@ -13,7 +12,6 @@ import com.workfort.pstuian.featuredomain.repository.BloodDonationRepository
 
 class BloodDonationRepositoryImpl(
     private val helper: BloodDonationApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : BloodDonationRepository {
     private val bloodDonationsCache = mutableMapOf<String, List<BloodDonationEntity>>()
 
@@ -30,13 +28,13 @@ class BloodDonationRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getAll(userId, userType, page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { list -> list.map { it.toModel() } }
             .onSuccess { bloodDonationsCache[key] = it }
     }
 
     override suspend fun get(id: Int): DomainResult<BloodDonationEntity> {
-        return helper.get(id).toDomainResult(domainErrorMapper).map { it.toModel() }
+        return helper.get(id).toDomainResult().map { it.toModel() }
     }
 
     override suspend fun insert(
@@ -47,7 +45,7 @@ class BloodDonationRepositoryImpl(
         info: String,
     ): DomainResult<BloodDonationEntity> {
         return helper.insert(userId, userType.type, requestId, date, info)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
     }
 
@@ -57,10 +55,10 @@ class BloodDonationRepositoryImpl(
         date: String,
         info: String,
     ): DomainResult<Unit> {
-        return helper.update(id, requestId, date, info).toDomainResult(domainErrorMapper)
+        return helper.update(id, requestId, date, info).toDomainResult()
     }
 
     override suspend fun delete(id: Int): DomainResult<Unit> {
-        return helper.delete(id).toDomainResult(domainErrorMapper)
+        return helper.delete(id).toDomainResult()
     }
 }

@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.DeviceApiHelper
 import com.workfort.pstuian.featuredomain.model.Device
@@ -17,7 +16,6 @@ import com.workfort.pstuian.featuredomain.repository.SharedPrefRepository
 class DeviceRepositoryImpl(
     private val helper: DeviceApiHelper,
     private val sharedPrefRepository: SharedPrefRepository,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : DeviceRepository {
     private val cache = mutableMapOf<Int, List<Device>>()
 
@@ -40,7 +38,7 @@ class DeviceRepositoryImpl(
         }
 
         return helper.getAllDevices(userId, userType.type, deviceId, page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { cache[page] = it }
     }
@@ -66,7 +64,7 @@ class DeviceRepositoryImpl(
             lat = lat ?: "",
             lng = lng ?: "",
             locale = locale,
-        ).toDomainResult(domainErrorMapper).map { it.toModel() }
+        ).toDomainResult().map { it.toModel() }
     }
 
     override fun clearCache() {

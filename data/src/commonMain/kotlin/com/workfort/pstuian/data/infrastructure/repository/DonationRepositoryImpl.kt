@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.DonationApiHelper
 import com.workfort.pstuian.featuredomain.model.DomainResult
@@ -11,7 +10,6 @@ import com.workfort.pstuian.featuredomain.repository.DonationRepository
 
 class DonationRepositoryImpl(
     private val helper: DonationApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : DonationRepository {
 
     private val donorsCache = mutableMapOf<Int, List<Donation>>()
@@ -23,7 +21,7 @@ class DonationRepositoryImpl(
         amount: String,
         message: String,
     ): DomainResult<Unit> {
-        return helper.saveDonation(name, email, reference, amount, message).toDomainResult(domainErrorMapper)
+        return helper.saveDonation(name, email, reference, amount, message).toDomainResult()
     }
 
     override suspend fun getDonors(page: Int, forceRefresh: Boolean): DomainResult<List<Donation>> {
@@ -33,7 +31,7 @@ class DonationRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getDonors(page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { list -> list.map { it.toModel() } }
             .onSuccess { donorsCache[page] = it }
     }

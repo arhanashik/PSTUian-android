@@ -6,7 +6,7 @@ import com.workfort.pstuian.data.model.NetworkErrorCode
 import com.workfort.pstuian.featuredomain.model.DomainError
 import com.workfort.pstuian.featuredomain.model.DomainErrorCode
 
-class DomainErrorMapper {
+object DomainErrorMapper {
 
     fun map(networkError: NetworkError): DomainError {
         val domainErrorCode: DomainErrorCode = when (val code = networkError.code) {

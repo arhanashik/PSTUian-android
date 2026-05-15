@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.firestore.FirestoreSystemNotificationDataSource
 import com.workfort.pstuian.featuredomain.model.DomainResult
@@ -28,7 +27,6 @@ import kotlinx.coroutines.flow.update
 class SystemNotificationRepositoryImpl(
     private val systemNotificationDataSource: FirestoreSystemNotificationDataSource,
     private val sharedPrefRepository: SharedPrefRepository,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : SystemNotificationRepository {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -58,7 +56,7 @@ class SystemNotificationRepositoryImpl(
 
     override suspend fun markSystemNotificationAsRead(userId: String, notificationId: String): DomainResult<Unit> {
         return systemNotificationDataSource.markSystemNotificationAsRead(userId, notificationId)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
     }
 
     override fun updateSystemNotificationClosedTimestamp(type: SystemNotificationDisplayType) {
@@ -74,7 +72,7 @@ class SystemNotificationRepositoryImpl(
             systemNotificationDataSource.observeSystemNotifications(),
             systemNotificationDataSource.observeReadSystemNotificationIds(userId),
         ) { networkResult, readAtByNotificationId ->
-            networkResult.toDomainResult(domainErrorMapper).onSuccess { pairs ->
+            networkResult.toDomainResult().onSuccess { pairs ->
                 val notifications = pairs.map { (id, dto) ->
                     dto.toModel(id = id, readAt = readAtByNotificationId[id] ?: 0L)
                 }.sortedByDescending { it.createdAt }

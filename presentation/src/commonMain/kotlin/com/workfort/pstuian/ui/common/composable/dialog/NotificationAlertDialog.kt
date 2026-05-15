@@ -20,12 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import com.workfort.pstuian.featuredomain.model.SystemNotification
+import com.workfort.pstuian.featuredomain.model.Notification
 import com.workfort.pstuian.ui.common.theme.TextStyle
 
 @Composable
 fun NotificationAlertDialog(
-    notification: SystemNotification,
+    notification: Notification.SystemNotification,
     showDontShowAgain: Boolean,
     onDismiss: (Boolean) -> Unit,
 ) {

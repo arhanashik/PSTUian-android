@@ -5,7 +5,6 @@ import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatche
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.Notification
 import com.workfort.pstuian.featuredomain.model.NotificationCategory
-import com.workfort.pstuian.featuredomain.model.User
 import com.workfort.pstuian.featuredomain.model.onFailure
 import com.workfort.pstuian.featuredomain.model.onSuccess
 import com.workfort.pstuian.featuredomain.repository.CustomNotificationRepository
@@ -33,7 +32,6 @@ class CustomNotificationViewModel(
     val message: StateFlow<CustomNotificationMessageState?> = _message.asStateFlow()
 
     private val notificationsCache = mutableListOf<NotificationDisplayData>()
-    private val currentUser: User? by lazy { sharedScreenData.getCurrentUser() }
     private var currentPage = 1
     private var hasMoreData = true
 
@@ -51,7 +49,7 @@ class CustomNotificationViewModel(
     fun onMessageHandled() = _message.update { null }
 
     private fun getCustomNotifications(forceRefresh: Boolean) {
-        val userId = currentUser?.userId ?: run {
+        val userType = sharedScreenData.getCurrentUserType() ?: run {
             uiStateMachine.showError("User not found")
             return
         }
@@ -68,7 +66,7 @@ class CustomNotificationViewModel(
             uiStateMachine.showContentLoading(isLoading = true)
 
             customNotificationRepository.getAll(
-                userId = userId,
+                userType = userType.type,
                 page = currentPage,
                 forceRefresh = forceRefresh,
             ).onSuccess { notifications ->
@@ -94,10 +92,9 @@ class CustomNotificationViewModel(
     }
 
     private fun onNotificationClicked(notification: Notification.CustomNotification) {
-        val userId = currentUser?.userId ?: return
         if (notification.readAt == 0L) {
             viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-                customNotificationRepository.markCustomNotificationAsRead(userId, notification)
+                customNotificationRepository.markCustomNotificationAsRead(notification)
                     .onSuccess { updatedNotification ->
                         updateNotificationInCache(updatedNotification)
                     }

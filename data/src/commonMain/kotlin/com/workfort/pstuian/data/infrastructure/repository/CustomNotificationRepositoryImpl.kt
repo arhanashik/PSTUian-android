@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.NotificationApiHelper
 import com.workfort.pstuian.featuredomain.model.DomainResult
@@ -12,7 +11,6 @@ import com.workfort.pstuian.util.DateTimeUtil
 
 class CustomNotificationRepositoryImpl(
     private val helper: NotificationApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
     private val dateTimeUtil: DateTimeUtil,
 ) : CustomNotificationRepository {
 
@@ -29,20 +27,20 @@ class CustomNotificationRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getAll(userType, page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { notificationsCache[page] = it }
     }
 
     override suspend fun hasUnreadCustomNotifications(userType: String): DomainResult<Boolean> {
-        return helper.hasUnreadCustomNotifications(userType).toDomainResult(domainErrorMapper)
+        return helper.hasUnreadCustomNotifications(userType).toDomainResult()
     }
 
     override suspend fun markCustomNotificationAsRead(
         notification: Notification.CustomNotification,
     ): DomainResult<Notification.CustomNotification> {
         return helper.markCustomNotificationAsRead(notification.id)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map {
                 val readAt = dateTimeUtil.getTimeInMillisNow()
                 val updatedNotification = notification.copy(

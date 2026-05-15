@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.FacultyApiHelper
 import com.workfort.pstuian.featuredomain.model.Batch
@@ -16,7 +15,6 @@ import com.workfort.pstuian.featuredomain.repository.FacultyRepository
 
 class FacultyRepositoryImpl(
     private val helper: FacultyApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : FacultyRepository {
     private val facultiesCache = mutableSetOf<Faculty>()
     private val batchesCache = mutableMapOf<String, List<Batch>>()
@@ -31,7 +29,7 @@ class FacultyRepositoryImpl(
         if (facultiesCache.isNotEmpty()) return DomainResult.success(facultiesCache.toList())
 
         return helper.getFaculties()
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { faculties ->
                 facultiesCache.clear()
@@ -44,7 +42,7 @@ class FacultyRepositoryImpl(
             return DomainResult.success(cache)
         }
         return helper.getFaculty(id)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { facultiesCache.add(it) }
     }
@@ -61,7 +59,7 @@ class FacultyRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getBatches(facultyId, page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { batchesCache[key] = it }
     }
@@ -71,7 +69,7 @@ class FacultyRepositoryImpl(
             return DomainResult.success(batch)
         }
 
-        return helper.getBatch(batchId).toDomainResult(domainErrorMapper).map { it.toModel() }
+        return helper.getBatch(batchId).toDomainResult().map { it.toModel() }
     }
 
     override suspend fun getStudents(
@@ -87,7 +85,7 @@ class FacultyRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getStudents(facultyId, batchId, page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { studentsCache[key] = it }
     }
@@ -104,7 +102,7 @@ class FacultyRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getTeachers(facultyId, page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { teachersCache[key] = it }
     }
@@ -121,7 +119,7 @@ class FacultyRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getCourses(facultyId, page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { coursesCache[key] = it }
     }
@@ -138,7 +136,7 @@ class FacultyRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getEmployees(facultyId, page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { employeesCache[key] = it }
     }

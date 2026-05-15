@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.remote.domain.TeacherApiHelper
 import com.workfort.pstuian.featuredomain.model.DomainResult
@@ -11,7 +10,6 @@ import com.workfort.pstuian.featuredomain.repository.TeacherRepository
 
 class TeacherRepositoryImpl(
     private val helper: TeacherApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : TeacherRepository {
     private val cache = mutableSetOf<User.Teacher>()
 
@@ -20,7 +18,7 @@ class TeacherRepositoryImpl(
             return DomainResult.success(cache)
         }
         return helper.get(id)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { cache.add(it) }
     }
@@ -30,25 +28,25 @@ class TeacherRepositoryImpl(
             return DomainResult.success(cache)
         }
         return helper.getByEmail(email)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { cache.add(it) }
     }
 
     override suspend fun changeProfileImage(userId: Int, imageUrl: String): DomainResult<Unit> {
         return helper.changeProfileImage(imageUrl)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .onSuccess { cache.removeAll { it.userId == userId } }
     }
 
     override suspend fun changeName(userId: Int, name: String): DomainResult<Unit> {
-        return helper.changeName(name).toDomainResult(domainErrorMapper).onSuccess {
+        return helper.changeName(name).toDomainResult().onSuccess {
             cache.removeAll { it.userId == userId }
         }
     }
 
     override suspend fun changeBio(userId: Int,  bio: String): DomainResult<Unit> {
-        return helper.changeBio(bio).toDomainResult(domainErrorMapper).onSuccess {
+        return helper.changeBio(bio).toDomainResult().onSuccess {
             cache.removeAll { it.userId == userId }
         }
     }
@@ -68,7 +66,7 @@ class TeacherRepositoryImpl(
             blood,
             facultyId,
         )
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { updatedData ->
                 cache.removeAll { it.userId == userId }
@@ -93,7 +91,7 @@ class TeacherRepositoryImpl(
             linkedIn,
             fbLink,
         )
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { it.toModel() }
             .onSuccess { updatedData ->
                 cache.removeAll { it.userId == userId }

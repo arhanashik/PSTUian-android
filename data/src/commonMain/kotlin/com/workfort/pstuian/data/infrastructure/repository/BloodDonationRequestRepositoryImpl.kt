@@ -1,6 +1,5 @@
 package com.workfort.pstuian.data.infrastructure.repository
 
-import com.workfort.pstuian.data.mapper.DomainErrorMapper
 import com.workfort.pstuian.data.mapper.toDomainResult
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.remote.domain.BloodDonationRequestApiHelper
@@ -13,7 +12,6 @@ import com.workfort.pstuian.featuredomain.repository.BloodDonationRequestReposit
 
 class BloodDonationRequestRepositoryImpl(
     private val helper: BloodDonationRequestApiHelper,
-    private val domainErrorMapper: DomainErrorMapper,
 ) : BloodDonationRequestRepository {
 
     private val bloodDonationRequestCache = mutableMapOf<Int, List<BloodDonationRequest>>()
@@ -30,7 +28,7 @@ class BloodDonationRequestRepositoryImpl(
         if (!cache.isNullOrEmpty()) return DomainResult.success(cache)
 
         return helper.getAll(userId = userId, userType = userType.type, page = page)
-            .toDomainResult(domainErrorMapper)
+            .toDomainResult()
             .map { dtos -> dtos.map { it.toModel() } }
             .onSuccess { bloodDonationRequestCache[page] = it }
     }
@@ -55,7 +53,7 @@ class BloodDonationRequestRepositoryImpl(
             beforeDate,
             contact,
             info,
-        ).toDomainResult(domainErrorMapper)
+        ).toDomainResult()
     }
 
     override suspend fun update(
@@ -65,14 +63,14 @@ class BloodDonationRequestRepositoryImpl(
         contact: String,
         info: String,
     ): DomainResult<Unit> {
-        return helper.update(id, bloodGroup, beforeDate, contact, info).toDomainResult(domainErrorMapper)
+        return helper.update(id, bloodGroup, beforeDate, contact, info).toDomainResult()
     }
 
     override suspend fun markAsComplete(id: Int, userId: Int, userType: UserType): DomainResult<Unit> {
-        return helper.markAsComplete(id, userId, userType.type).toDomainResult(domainErrorMapper)
+        return helper.markAsComplete(id, userId, userType.type).toDomainResult()
     }
 
     override suspend fun delete(id: Int): DomainResult<Unit> {
-        return helper.delete(id).toDomainResult(domainErrorMapper)
+        return helper.delete(id).toDomainResult()
     }
 }
