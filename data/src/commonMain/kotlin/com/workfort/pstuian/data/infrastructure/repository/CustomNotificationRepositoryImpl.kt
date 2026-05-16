@@ -63,3 +63,24 @@ class CustomNotificationRepositoryImpl(
         }
     }
 }
+
+private fun Notification.CustomNotification.withResolvedSenderImage(apiBaseUrl: String) =
+    copy(fromUserImageUrl = resolveAgainstApiBase(fromUserImageUrl, apiBaseUrl))
+
+/**
+ * Coil loads absolute URLs. The API sometimes returns paths relative to the API origin.
+ * Authenticated images must be fetched with the same Ktor [HttpClient] as JSON (auth headers); see app Coil setup.
+ */
+private fun resolveAgainstApiBase(raw: String?, apiBaseUrl: String): String? {
+    val trimmed = raw?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+    return when {
+        trimmed.startsWith("http://", ignoreCase = true) ||
+            trimmed.startsWith("https://", ignoreCase = true) -> trimmed
+        trimmed.startsWith("//") -> "https:$trimmed"
+        else -> {
+            val base = apiBaseUrl.trimEnd('/')
+            val path = trimmed.trimStart('/')
+            "$base/$path"
+        }
+    }
+}

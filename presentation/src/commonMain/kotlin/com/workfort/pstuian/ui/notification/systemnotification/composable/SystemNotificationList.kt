@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.notification.common.composable
+package com.workfort.pstuian.ui.notification.systemnotification.composable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsNone
@@ -14,11 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.Notification
 import com.workfort.pstuian.ui.common.composable.EmptyContentPanel
+import com.workfort.pstuian.ui.notification.common.composable.DateHeader
 import com.workfort.pstuian.ui.notification.common.displaydata.NotificationDisplayData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun NotificationList(
+internal fun SystemNotificationList(
     groupedNotifications: Map<String, List<NotificationDisplayData>>,
     isLoading: Boolean,
     emptyTitle: String,
@@ -45,7 +47,7 @@ internal fun NotificationList(
         if (isLoading) {
             items(6) {
                 Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                    NotificationShimmer()
+                    SystemNotificationShimmer()
                 }
             }
         } else {
@@ -64,7 +66,7 @@ internal fun NotificationList(
                 ) { index, displayData ->
                     val itemDelay = ((groupStartCount + index) * 50).toLong().coerceAtMost(700L)
                     Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                        NotificationItem(
+                        SystemNotificationItem(
                             displayData = displayData,
                             slideFromLeft = slideFromLeft,
                             delay = itemDelay,

@@ -1,4 +1,4 @@
-package com.workfort.pstuian.ui.notification.common.composable
+package com.workfort.pstuian.ui.notification.systemnotification.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,14 +19,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.ui.common.composable.shimmerAnimation
 import com.workfort.pstuian.ui.common.theme.AppColors
+import com.workfort.pstuian.ui.notification.common.composable.notificationCardElevation
 
 @Composable
-internal fun NotificationShimmer() {
+internal fun SystemNotificationShimmer() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = AppColors.card),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        elevation = notificationCardElevation(isUnread = true),
     ) {
         Row(
             modifier = Modifier
@@ -50,16 +51,16 @@ internal fun NotificationShimmer() {
                     Spacer(modifier = Modifier.width(16.dp))
                     Box(
                         modifier = Modifier
-                            .width(80.dp)
+                            .width(72.dp)
                             .height(12.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .shimmerAnimation(),
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
+                        .fillMaxWidth(0.75f)
                         .height(14.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .shimmerAnimation(),
@@ -67,7 +68,7 @@ internal fun NotificationShimmer() {
                 Spacer(modifier = Modifier.height(4.dp))
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.4f)
+                        .fillMaxWidth(0.45f)
                         .height(14.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .shimmerAnimation(),

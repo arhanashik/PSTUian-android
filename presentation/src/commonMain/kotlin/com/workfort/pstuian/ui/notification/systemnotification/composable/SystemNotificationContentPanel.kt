@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.workfort.pstuian.featuredomain.model.Notification
-import com.workfort.pstuian.ui.notification.common.composable.NotificationList
 import com.workfort.pstuian.ui.notification.systemnotification.state.SystemNotificationUiEvent
 import com.workfort.pstuian.ui.notification.systemnotification.state.SystemNotificationUiState
 
@@ -15,7 +14,7 @@ internal fun SystemNotificationContentPanel(
     onUiEvent: (SystemNotificationUiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        NotificationList(
+        SystemNotificationList(
             groupedNotifications = uiState.groupedNotifications,
             isLoading = uiState.isLoading,
             emptyTitle = "No system notifications",

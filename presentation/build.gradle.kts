@@ -56,6 +56,7 @@ kotlin {
 
                 implementation(libs.coil.compose)
                 implementation(libs.coil.network.ktor)
+                implementation(libs.ktor.client.core)
 
                 // Koin
                 implementation(libs.koin.core)

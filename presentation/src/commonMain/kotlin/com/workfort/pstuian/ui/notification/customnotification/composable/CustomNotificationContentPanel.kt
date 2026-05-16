@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -23,8 +24,6 @@ import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.Notification
 import com.workfort.pstuian.ui.common.composable.EmptyContentPanel
 import com.workfort.pstuian.ui.notification.common.composable.DateHeader
-import com.workfort.pstuian.ui.notification.common.composable.NotificationItem
-import com.workfort.pstuian.ui.notification.common.composable.NotificationShimmer
 import com.workfort.pstuian.ui.notification.common.displaydata.NotificationDisplayData
 import com.workfort.pstuian.ui.notification.customnotification.state.CustomNotificationUiEvent
 import com.workfort.pstuian.ui.notification.customnotification.state.CustomNotificationUiState
@@ -107,14 +106,13 @@ private fun CustomNotificationListView(
             ) { index, displayData ->
                 val itemDelay = ((groupStartCount + index) * 50).toLong().coerceAtMost(700L)
                 Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                    NotificationItem(
+                    CustomNotificationItem(
                         displayData = displayData,
                         slideFromLeft = false,
                         delay = itemDelay,
                         onClick = {
-                            val notification = displayData.notification
-                            if (notification is Notification.CustomNotification) {
-                                onUiEvent(CustomNotificationUiEvent.NotificationClicked(notification))
+                            (displayData.notification as? Notification.CustomNotification)?.let { n ->
+                                onUiEvent(CustomNotificationUiEvent.NotificationClicked(n))
                             }
                         },
                     )
@@ -126,7 +124,7 @@ private fun CustomNotificationListView(
         if (isContentLoading) {
             item {
                 Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                    NotificationShimmer()
+                    CustomNotificationShimmer()
                 }
             }
         }
@@ -141,7 +139,7 @@ private fun CustomNotificationListShimmer() {
     ) {
         items(6) {
             Box(modifier = Modifier.padding(vertical = 6.dp)) {
-                NotificationShimmer()
+                CustomNotificationShimmer()
             }
         }
     }

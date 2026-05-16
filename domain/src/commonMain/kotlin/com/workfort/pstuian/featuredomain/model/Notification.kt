@@ -33,6 +33,8 @@ interface Notification {
         val category: NotificationCategory,
         val fromUserId: Int,
         val fromUserType: UserType?,
+        val fromUserName: String?,
+        val fromUserImageUrl: String?,
         val toUserId: Int,
         val toUserType: UserType?,
         val updatedAt: Long,

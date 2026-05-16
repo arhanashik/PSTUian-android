@@ -6,6 +6,8 @@ import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
+import io.ktor.client.HttpClient
+import org.koin.compose.koinInject
 
 /**
  * Clears Coil memory and disk caches for the app singleton [ImageLoader].
@@ -18,11 +20,12 @@ fun clearSingletonCoilImageCaches(platformContext: PlatformContext) {
 }
 
 @Composable
-fun ProvideCoilImageLoader() {
+fun ProvideCoilImageLoader(httpClient: HttpClient = koinInject()) {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
             .components {
-                add(KtorNetworkFetcherFactory())
+                // Reuse the authenticated API client so image requests include x-auth-token etc.
+                add(KtorNetworkFetcherFactory(httpClient = httpClient))
             }
             .build()
     }

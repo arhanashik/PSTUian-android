@@ -19,7 +19,6 @@ import com.workfort.pstuian.featuredomain.model.SystemNotificationDisplayType
 import com.workfort.pstuian.featuredomain.model.ThemeMode
 import com.workfort.pstuian.ui.common.composable.AnimatedErrorView
 import com.workfort.pstuian.ui.common.theme.AppTheme
-import com.workfort.pstuian.ui.notification.common.composable.NotificationShimmer
 import com.workfort.pstuian.ui.notification.common.displaydata.NotificationDisplayData
 import com.workfort.pstuian.ui.notification.systemnotification.state.SystemNotificationUiEvent
 import com.workfort.pstuian.ui.notification.systemnotification.state.SystemNotificationUiState
@@ -53,29 +52,59 @@ private fun SystemNotificationListShimmer() {
     ) {
         items(6) {
             Box(modifier = Modifier.padding(vertical = 6.dp)) {
-                NotificationShimmer()
+                SystemNotificationShimmer()
             }
         }
     }
 }
 
+private fun mockSystemNotificationDisplayData(
+    id: String,
+    title: String,
+    body: String,
+    readAt: Long,
+    formattedTime: String,
+) = NotificationDisplayData(
+    notification = Notification.SystemNotification(
+        id = id,
+        title = title,
+        body = body,
+        linkText = null,
+        link = null,
+        readAt = readAt,
+        createdAt = 1_700_000_000_000L,
+        showIn = SystemNotificationDisplayType.NONE,
+        requireSignIn = false,
+    ),
+    formattedReadAt = "",
+    formattedTime = formattedTime,
+    formattedDate = "15 Nov 2023",
+)
+
 private fun mockGroupedNotifications() = mapOf(
     "Today" to listOf(
-        NotificationDisplayData(
-            notification = Notification.SystemNotification(
-                id = "1",
-                title = "Welcome",
-                body = "Start using the app!",
-                linkText = null,
-                link = null,
-                readAt = 0L,
-                createdAt = 1700000000000L,
-                showIn = SystemNotificationDisplayType.NONE,
-                requireSignIn = false,
-            ),
-            formattedReadAt = "",
+        mockSystemNotificationDisplayData(
+            id = "1",
+            title = "Welcome",
+            body = "Start using the app and explore campus features.",
+            readAt = 0L,
             formattedTime = "10:30",
-            formattedDate = "15 Nov 2023",
+        ),
+        mockSystemNotificationDisplayData(
+            id = "2",
+            title = "Maintenance tonight",
+            body = "Some services may be unavailable between 2:00 and 4:00 AM.",
+            readAt = 0L,
+            formattedTime = "09:05",
+        ),
+    ),
+    "Yesterday" to listOf(
+        mockSystemNotificationDisplayData(
+            id = "3",
+            title = "Privacy policy updated",
+            body = "We have updated our terms. Tap to read the summary.",
+            readAt = 1L,
+            formattedTime = "16:45",
         ),
     ),
 )
@@ -125,6 +154,17 @@ private fun SystemNotificationScreenContentDarkPreview() {
             uiState = SystemNotificationUiState.Content(
                 groupedNotifications = mockGroupedNotifications(),
             ),
+            onUiEvent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "System - Error")
+@Composable
+private fun SystemNotificationScreenContentErrorPreview() {
+    AppTheme {
+        SystemNotificationScreenContent(
+            uiState = SystemNotificationUiState.Error(error = "Could not load notifications"),
             onUiEvent = {},
         )
     }

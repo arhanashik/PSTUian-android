@@ -6,8 +6,10 @@ import com.workfort.pstuian.featuredomain.model.SystemNotificationDisplayType
 import com.workfort.pstuian.featuredomain.model.UserType
 import dev.gitlive.firebase.firestore.Timestamp
 import dev.gitlive.firebase.firestore.toMilliseconds
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 @Serializable
 data class SystemNotificationDto(
@@ -45,6 +47,16 @@ data class CustomNotificationDto(
     val fromUserId: Int = 0,
     @SerialName("from_user_type")
     val fromUserType: String = "",
+    @SerialName("from_user_name")
+    val fromUserName: String? = null,
+    @OptIn(ExperimentalSerializationApi::class)
+    @JsonNames(
+        "from_user_image_url",
+        "from_user_image",
+        "fromImageUrl",
+        "from_user_imageUrl",
+    )
+    val fromUserImageUrl: String? = null,
     @SerialName("to_user_id")
     val toUserId: Int = 0,
     @SerialName("to_user_type")
@@ -65,6 +77,8 @@ data class CustomNotificationDto(
         category = NotificationCategory.create(category),
         fromUserId = fromUserId,
         fromUserType = UserType.fromType(fromUserType),
+        fromUserName = fromUserName,
+        fromUserImageUrl = fromUserImageUrl,
         toUserId = toUserId,
         toUserType = UserType.fromType(toUserType),
         readAt = readAt,
