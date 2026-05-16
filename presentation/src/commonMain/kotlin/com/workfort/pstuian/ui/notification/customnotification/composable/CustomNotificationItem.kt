@@ -11,12 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -26,15 +22,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.workfort.pstuian.featuredomain.model.Notification
-import com.workfort.pstuian.ui.common.composable.LoadAsyncImage
+import com.workfort.pstuian.ui.common.composable.LoadAsyncUserImage
 import com.workfort.pstuian.ui.common.theme.AppColors
 import com.workfort.pstuian.ui.notification.common.composable.notificationCardElevation
 import com.workfort.pstuian.ui.notification.common.displaydata.NotificationDisplayData
@@ -78,12 +72,10 @@ internal fun CustomNotificationItem(
     }
 
     val backgroundColor = if (isUnread) {
-        AppColors.card
+        AppColors.notificationUnreadBackground
     } else {
-        MaterialTheme.colorScheme.primaryContainer
+        AppColors.card
     }
-
-    val showSenderName = !notification.fromUserName.isNullOrBlank()
 
     Card(
         modifier = Modifier
@@ -103,27 +95,10 @@ internal fun CustomNotificationItem(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.Top,
         ) {
-            LoadAsyncImage(
-                modifier = Modifier
-                    .padding(top = if (showSenderName) 0.dp else 2.dp)
-                    .size(44.dp)
-                    .clip(CircleShape),
-                url = notification.fromUserImageUrl?.takeIf { it.isNotBlank() },
-                placeholder = Icons.Default.AccountCircle,
-                contentScale = ContentScale.Crop,
-            )
+            LoadAsyncUserImage(url = notification.fromUserImageUrl, size = 40.dp)
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                if (showSenderName) {
-                    Text(
-                        text = notification.fromUserName.orEmpty(),
-                        style = MaterialTheme.typography.labelMedium.copy(color = AppColors.textTertiary),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,

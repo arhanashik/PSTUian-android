@@ -4,7 +4,7 @@ import com.workfort.pstuian.data.model.CommonNetworkError
 import com.workfort.pstuian.data.model.NetworkResult
 import com.workfort.pstuian.data.model.SystemNotificationDto
 import com.workfort.pstuian.data.model.UserSystemNotificationReadDto
-import com.workfort.pstuian.data.remote.firestore.CommonFields.FIELD_IS_PUBLISHED
+import com.workfort.pstuian.data.remote.firestore.CommonFields.FIELD_PUBLISHED
 import com.workfort.pstuian.data.remote.firestore.CommonFields.FIELD_READ_AT
 import com.workfort.pstuian.data.remote.firestore.FirestorePaths.SYSTEM_NOTIFICATIONS_PATH
 import com.workfort.pstuian.data.remote.firestore.FirestorePaths.USERS_PATH
@@ -23,7 +23,7 @@ class FirestoreSystemNotificationDataSource(private val firestore: FirebaseFires
 
     fun observeSystemNotifications(): Flow<NetworkResult<List<Pair<String, SystemNotificationDto>>>> {
         return systemNotificationCollection
-            .where { FIELD_IS_PUBLISHED equalTo true }
+            .where { FIELD_PUBLISHED equalTo true }
             .snapshots
             .map { snapshot ->
                 val list = snapshot.documents.map { it.id to it.data<SystemNotificationDto>() }

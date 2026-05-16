@@ -68,9 +68,9 @@ internal fun SystemNotificationItem(
     }
 
     val backgroundColor = if (isUnread) {
-        AppColors.card
+        AppColors.notificationUnreadBackground
     } else {
-        MaterialTheme.colorScheme.primaryContainer
+        AppColors.card
     }
 
     Card(

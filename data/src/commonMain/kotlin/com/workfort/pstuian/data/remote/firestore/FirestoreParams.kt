@@ -17,7 +17,7 @@ internal object CommonFields {
     const val FIELD_CREATED_AT = "createdAt"
     const val FIELD_UPDATED_AT = "updatedAt"
     const val FIELD_READ_AT = "readAt"
-    const val FIELD_IS_PUBLISHED = "isPublished"
+    const val FIELD_PUBLISHED = "published"
     const val FIELD_IS_READ = "isRead"
     const val FIELD_SENT_BY = "sentBy"
     const val FIELD_USER_ID = "userId"

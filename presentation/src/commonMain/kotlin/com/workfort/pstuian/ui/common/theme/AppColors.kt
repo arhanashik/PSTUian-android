@@ -84,6 +84,11 @@ object AppColors {
         @Composable
         get() = MaterialTheme.colorScheme.surface
 
+    /** Unread notification rows — subtle tint vs plain cards and read/archive rows. */
+    val notificationUnreadBackground: Color
+        @Composable
+        get() = MaterialTheme.colorScheme.surfaceVariant
+
     val link: Color
         @Composable
         get() = MaterialTheme.colorScheme.primary

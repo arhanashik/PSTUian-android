@@ -6,13 +6,13 @@ import com.workfort.pstuian.featuredomain.model.SystemNotificationDisplayType
 import kotlinx.coroutines.flow.Flow
 
 interface SystemNotificationRepository {
-    fun observeSystemNotifications(userId: String): Flow<List<Notification.SystemNotification>>
+    fun observeSystemNotifications(authUserId: String): Flow<List<Notification.SystemNotification>>
 
     fun observeUnreadSystemNotifications(): Flow<List<Notification.SystemNotification>>
 
     fun observeNewSystemNotification(type: SystemNotificationDisplayType): Flow<Notification.SystemNotification>
 
-    suspend fun markSystemNotificationAsRead(userId: String, notificationId: String): DomainResult<Unit>
+    suspend fun markSystemNotificationAsRead(authUserId: String, notificationId: String): DomainResult<Unit>
 
     fun updateSystemNotificationClosedTimestamp(type: SystemNotificationDisplayType)
 }

@@ -4,11 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.workfort.pstuian.featuredomain.framework.coroutine.CoroutineDispatcherProvider
 import com.workfort.pstuian.featuredomain.framework.coroutine.launchOnMain
 import com.workfort.pstuian.featuredomain.model.Notification
-import com.workfort.pstuian.featuredomain.model.User
-import com.workfort.pstuian.featuredomain.model.getPrefixUserId
 import com.workfort.pstuian.featuredomain.model.onSuccess
+import com.workfort.pstuian.featuredomain.repository.AuthRepository
 import com.workfort.pstuian.featuredomain.repository.SystemNotificationRepository
-import com.workfort.pstuian.model.SharedScreenData
 import com.workfort.pstuian.ui.common.uistate.UiStateMachineViewModel
 import com.workfort.pstuian.ui.notification.common.NotificationDisplayDataMapper
 import com.workfort.pstuian.ui.notification.common.displaydata.NotificationDisplayData
@@ -25,8 +23,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 
 class SystemNotificationViewModel(
+    private val authRepository: AuthRepository,
     private val systemNotificationRepository: SystemNotificationRepository,
-    private val sharedScreenData: SharedScreenData,
     private val notificationDisplayDataMapper: NotificationDisplayDataMapper,
     private val uiStateMachine: SystemNotificationUiStateMachine,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
@@ -36,7 +34,6 @@ class SystemNotificationViewModel(
     val message: StateFlow<SystemNotificationMessageState?> = _message.asStateFlow()
 
     private val notificationsCache = mutableListOf<NotificationDisplayData>()
-    private val currentUser: User? by lazy { sharedScreenData.getCurrentUser() }
     private var observationJob: Job? = null
 
     override fun onUiReady() {
@@ -53,13 +50,13 @@ class SystemNotificationViewModel(
     fun onMessageHandled() = _message.update { null }
 
     private fun observeSystemNotifications() {
-        val userId = currentUser?.getPrefixUserId() ?: run {
+        val authUserId = authRepository.getAuthUser()?.userId ?: run {
             uiStateMachine.showError("User not found")
             return
         }
 
         observationJob?.cancel()
-        observationJob = systemNotificationRepository.observeSystemNotifications(userId)
+        observationJob = systemNotificationRepository.observeSystemNotifications(authUserId)
             .onEach { notifications ->
                 notificationsCache.clear()
                 notificationsCache.addAll(notificationDisplayDataMapper.map(notifications))
@@ -74,10 +71,13 @@ class SystemNotificationViewModel(
     private fun onNotificationClicked(notification: Notification.SystemNotification) {
         _message.update { SystemNotificationMessageState.ShowDetail(notification) }
 
-        val userId = currentUser?.getPrefixUserId() ?: return
+        val authUserId = authRepository.getAuthUser()?.userId ?: run {
+            uiStateMachine.showError("User not found")
+            return
+        }
         if (notification.readAt == 0L) {
             viewModelScope.launchOnMain(coroutineDispatcherProvider) {
-                systemNotificationRepository.markSystemNotificationAsRead(userId, notification.id)
+                systemNotificationRepository.markSystemNotificationAsRead(authUserId, notification.id)
                     .onSuccess { observeSystemNotifications() }
             }
         }

@@ -28,7 +28,7 @@ internal fun CustomNotificationShimmer() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = AppColors.card),
+        colors = CardDefaults.cardColors(containerColor = AppColors.notificationUnreadBackground),
         elevation = notificationCardElevation(isUnread = true),
     ) {
         Row(
@@ -39,21 +39,12 @@ internal fun CustomNotificationShimmer() {
         ) {
             Box(
                 modifier = Modifier
-                    .padding(top = 2.dp)
-                    .size(44.dp)
+                    .size(40.dp)
                     .clip(CircleShape)
                     .shimmerAnimation(),
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.42f)
-                        .height(14.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .shimmerAnimation(),
-                )
-                Spacer(modifier = Modifier.height(4.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,

@@ -26,7 +26,7 @@ internal fun SystemNotificationShimmer() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = AppColors.card),
+        colors = CardDefaults.cardColors(containerColor = AppColors.notificationUnreadBackground),
         elevation = notificationCardElevation(isUnread = true),
     ) {
         Row(

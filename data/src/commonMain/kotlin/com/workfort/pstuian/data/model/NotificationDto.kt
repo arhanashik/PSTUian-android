@@ -49,13 +49,7 @@ data class CustomNotificationDto(
     val fromUserType: String = "",
     @SerialName("from_user_name")
     val fromUserName: String? = null,
-    @OptIn(ExperimentalSerializationApi::class)
-    @JsonNames(
-        "from_user_image_url",
-        "from_user_image",
-        "fromImageUrl",
-        "from_user_imageUrl",
-    )
+    @SerialName("from_user_image_url")
     val fromUserImageUrl: String? = null,
     @SerialName("to_user_id")
     val toUserId: Int = 0,

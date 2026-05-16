@@ -44,7 +44,7 @@ internal fun NotificationContentPanel(
         ToggleSwitch(
             options = uiState.tabs,
             selectedIndex = uiState.selectedTab,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(16.dp),
             onSelectedIndexChange = { index ->
                 scope.launch { pagerState.animateScrollToPage(index) }
                 onUiEvent(NotificationUiEvent.SelectTab(index))

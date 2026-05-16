@@ -34,8 +34,8 @@ class SystemNotificationRepositoryImpl(
     private val _systemNotifications = MutableStateFlow<List<Notification.SystemNotification>>(emptyList())
     private var systemNotificationsJobStarted = false
 
-    override fun observeSystemNotifications(userId: String): Flow<List<Notification.SystemNotification>> {
-        startObservingSystemNotifications(userId)
+    override fun observeSystemNotifications(authUserId: String): Flow<List<Notification.SystemNotification>> {
+        startObservingSystemNotifications(authUserId)
         return _systemNotifications
     }
 
@@ -54,8 +54,8 @@ class SystemNotificationRepositoryImpl(
         }.filterNotNull()
     }
 
-    override suspend fun markSystemNotificationAsRead(userId: String, notificationId: String): DomainResult<Unit> {
-        return systemNotificationDataSource.markSystemNotificationAsRead(userId, notificationId)
+    override suspend fun markSystemNotificationAsRead(authUserId: String, notificationId: String): DomainResult<Unit> {
+        return systemNotificationDataSource.markSystemNotificationAsRead(authUserId, notificationId)
             .toDomainResult()
     }
 
